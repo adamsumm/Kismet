@@ -1,0 +1,91 @@
+
+
+###LOCATIONS
+location tavern 7;
+location market 7;
+location smith 3;
+
+trait default_be_nice_to_friends:
+  --(angry if ->(likes)) ++(talk if ->(likes)) ++(nice if ->(likes));
+
+trait default_start_shit_with_enemies:
+  ++(angry if ->(dislikes)) --(talk if ->(likes)) --(nice if ->(likes));
+
+trait angry:
+  ++(angry);
+
+trait serene:
+  --(angry)  ++(quiet);
+
+trait stoic:
+  --(talk) --(angry) ++(quiet);
+
+trait boisterous:
+  ++(talk) ++(drink) ++(nice) --(quiet);
+
+trait brooding:
+  --(talk) ++(angry) ++(quiet);
+
+trait drunkard:
+  ++(drink) +@tavern@;
+
+trait angry_drunk:
+  ++(angry if self(drunk));
+
+trait sullen_drunk:
+  --(talk if self(drunk))  ++(quiet if self(drunk));
+
+trait happy_drunk:
+  ++(nice if self(drunk));
+
+trait innkeeper:
+  ++@tavern@;
+
+trait vendor:
+  ++@market@;
+
+trait blacksmith:
+  ++@market@;
+
+opposed innkeeper != vendor;
+opposed innkeeper != blacksmith;
+opposed vendor != blacksmith;
+
+opposed angry != serene;
+opposed stoic != boisterous;
+opposed brooding != boisterous;
+
+opposed sullen_drunk != happy_drunk;
+opposed angry_drunk != happy_drunk;
+
+action talk:
+  is talk;
+
+action fight:
+  is angry
+  if <-(dislikes) > 5
+  add <->(dislikes)
+  del <->(likes);
+
+action regale:
+  is talk nice
+  add <-(likes);
+
+action drink A:
+  is drink
+  add self(drunk);
+
+
+action brood A:
+    is quiet angry;
+
+action contemplate A:
+  is quiet;
+
+action buy_a_round:
+  is nice
+  add other(drunk) <-(likes);
+
+action sober_up A:
+  if self(drunk)
+  del self(drunk);

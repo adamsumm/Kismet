@@ -1,0 +1,7 @@
+{
+"names":["#firstNames# #lastNames#"],
+"firstNames":["#syllable.capitalize##syllable#", "#syllable.capitalize##syllable##syllable#"],
+"syllable":["tor", "rag", "dar", "nan", "dor", "dag", "tar", "nor", "nag", "nar", "sul", "kul", "kin", "sin", "kas", "ras", "hil", "hul", "hun"],
+"lastNames":["#syllable.capitalize##syllable#", "#syllable.capitalize##syllable##syllable#","of #firstNames#","the #animal#"],
+"animal":["Spider","Lion","Tiger","Shrew","Hawk","Mongoose","Wombat","Bear","Fox","Wolf","Fawn"]
+}

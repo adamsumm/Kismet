@@ -1,0 +1,48 @@
+person(1).
+person(2).
+
+has(1,default_horny).
+has(1,default_not_too_horny).
+
+has(spark,1,2).
+has(spark,2,1).
+
+location(bar,10).
+location(bank,5).
+location(market,20).
+location(church,5).
+
+trait(default_horny).
+
+tag(T) :- propensity(T,_,_,_,_).
+
+propensity(romance,2,default_horny,A,B) :-
+  has(A,default_horny),
+    has(spark,A,B).
+
+
+propensity(romance,-1,default_not_too_horny,A,B) :-
+    has(A,default_not_too_horny),person(B),A!=B.
+
+
+has_tag(date,romance).
+
+:- action(_,A,A).
+
+action(date,A,B) :-
+  not has(A,B,family),
+  has(spark,A,B),
+  has(spark,B,A),
+  not has(dating,A,_),
+  not has(dating,B,_),
+  not has(married,A,_),
+  not has(married,B,_).
+
+
+
+likelihood(A,N,Action,B) :-
+  N =  #sum{ C,Tag :
+          has_tag(Action,Tag) ,
+          propensity(Tag,C,Name,A,B)  }, action(Action,A,B).
+
+#show likelihood/4.

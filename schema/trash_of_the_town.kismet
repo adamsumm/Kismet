@@ -1,0 +1,417 @@
+#### LANGUAGE SYNTAX
+## - operator
+## ->(likes) ~ A likes B
+## <-(likes) ~ B likes A
+## <->(likes) ~ ->(likes) <-(likes) ~ A likes B and B likes A
+
+### ? operator
+## ?>(likes) ~ A likes Somebody
+## <?(likes) ~ B likes Somebody
+## <?>(likes) ~ A likes Somebody and B likes Somebody
+
+### ! negation
+## ->(!likes) ~ A does not like B
+## ?>(!likes) ~ A likes Nobody
+
+### self, other
+## self(happy) ~ A is happy
+## other(happy) ~ B is happy
+
+### LOCATION
+##  location LOCATION_NAME LOCATION_SUPPORT;
+
+### TRAITS
+## TRAIT_NAME:
+## VALENCE(MODIFIER)? VALENCE@LOCATION@?
+## ~ i.e., an increase or decrease in likelihood of performing an action that has a specific tags
+## and/or an increase or decrease in likelihood of going to a specific location
+## -- these might only take place if a specific query is found
+##
+## VALENCE = '+'+ or '-'+ ~ some number of either pluses or minuses
+##
+## MODIFIER = TAG+ (if QUERY+)? ~ i.e. at least 1 tag and some number of queries (possibly 0)
+##
+## e.g.,
+##
+## romantic:
+##    +++(romance);
+## i.e., a person with the romantic tag is more likely to take actions that are tagged as 'romance'
+##
+
+### ACTIONS
+## NAME (COUNT)? ':'
+##    (at LOCATION+)?
+##    (is TAGS+)?
+##    (if QUERY+)?
+##    (add ADD)?
+##    (del DEL)?
+##    ;
+##
+## i.e., An action with some arity (default = 2, 1 is also supported)
+## can take place at some set of LOCATION (default = all)
+## has some set of tags (that modify the likelihood of being chosen given personality traits)
+## (default = no modification to likelihood)
+## if some set of QUERYs are true (default = always true)
+## and then can ADD some set of tags (to either person in the action)
+## and/or DELete some set of tags (to either person in the action)
+##
+## e.g.,
+###  pester:
+##    is annoying talk
+##    if other(!abiding)
+##    add <-(annoyed);
+## i.e., A can pester B if B is not abiding, which results in B becoming annoyed with A
+##  -- a person who is annoying is more likely to pester (as is an extrovert)
+##
+## drink 1:
+##  is drink
+##  at bar
+##  add self(drunk);
+##
+## A can drink alone (arity 1) if they are at a bar which makes them drunk,
+## people who like to drink are more likely to drink
+
+
+
+###LOCATIONS
+location bar 10;
+location bank 5;
+location market 20;
+location church 10;
+location park 10;
+location mine 10;
+
+location apartment_complex 10;
+
+### DEFAULT PERSONALITY TRAITS
+trait default_horny:
+  ++(romance if  ->(spark));
+
+trait default_but_not_too_horny:
+  -(romance);
+
+trait default_friendly:
+  ++(nice if  ->(charge));
+
+trait default_non_sneaky:
+  --(sneaky);
+
+trait default_mundane:
+  +++(errand);
+
+trait default_dont_date_assholes:
+  --(romance if ->(dislikes)) ---(romance if ->(hates));
+
+trait hate_date:
+  +++(romance if ->(dislikes)) ++++(romance if ->(hates));
+
+trait default_not_anger:
+  --(anger);
+
+trait default_calm:
+  +(calm);
+
+trait default_fidelity:
+  ---(infidelity) +(fidelity);
+
+trait default_stay_together:
+  ---(breakup);
+
+trait default_dump_their_cheating_ass:
+  ++++(breakup if <?(cheating));
+
+trait default_dump_them:
+  ++(breakup if ->(dislikes));
+
+trait default_dump_them:
+  +++(breakup if ->(hates));
+
+trait default_non_judgy:
+  ---(judgy);
+
+### CHOSEN PERSONALITY TRAITS
+
+trait scatter_brained:
+  ---(errand) +++(waste_time);
+
+trait family_driven:
+  ++(nice if <->(family) );
+
+trait drunkard:
+  ---(sober) ++++(drink) ++@bar@;
+
+trait teetotaler:
+  +++(sober) ----(drink) --@bar@;
+
+trait angry_drunk:
+  ++(angry if self(drunk));
+
+trait overshare_drunk:
+  ++(open if self(drunk));
+
+trait quiet_drunk:
+  --(talk if self(drunk));
+
+trait loud_drunk:
+  ++(talk if self(drunk));
+
+trait pious:
+  ++(religious) ++@church@;
+
+trait monogamist:
+  --(infidelity) ++(fidelity);
+
+trait cheater:
+  +++(infidelity);
+
+trait judgy:
+  ++(judgy);
+
+trait kind:
+ ++(nice);
+
+trait extrovert:
+  ++(talk);
+
+trait introvert:
+  --(talk);
+
+trait abiding:
+  --(annoying);
+
+trait annoying:
+ ++(annoying);
+
+trait jealous:
+  ++(jealous);
+
+trait open:
+  +(open);
+
+trait closed:
+  --(open);
+
+trait angry:
+  ++(anger) -(calm);
+
+trait calm:
+  ++(calm) -(anger);
+
+trait bartender:
+  +++@bar@;
+
+trait pastor:
+  +++@church@;
+
+trait vendor:
+  +++@market@;
+
+###OPPOSED PERSONALITY TRAITS (can't cooccur)
+opposed introvert != extrovert;
+
+opposed abiding != annoying;
+
+opposed open != closed;
+
+opposed teetotaler != drunkard;
+
+opposed loud_drunk != quiet_drunk;
+
+opposed vendor != pastor;
+opposed vendor != bartender;
+opposed pastor != bartender;
+
+#ACTIONS
+action date:
+  is romance
+  if <->(!family) <->(spark) <?(!dating) ?>(!dating) <?>(!married)
+  add <->(dating)
+  del <->(cheating);
+
+action cheat:
+  is infidelity
+  if <->(!family) <->(spark) <->(!dating) <?>(dating) <?>(!married)
+  add <->(cheating);
+
+
+action have_affair:
+  is infidelity
+  if <->(!family) <->(spark) <->(!dating) <->(!married) <?>(married)
+  add <->(having_affair);
+
+action end_infidelity:
+  is fidelity
+  if <->(cheating)
+  del <->(cheating);
+
+action deescalate_hate:
+  is kind
+  if <-(hates) ->(!dislikes) ->(!hates)
+  add <-(dislikes)
+  del <-(hates);
+
+
+action deescalate_dislike:
+  is kind
+  if <-(dislikes) ->(!dislikes) ->(!hates)
+  del <-(dislikes);
+
+action marry:
+  at church
+  if <->(dating)  <?(!married) ?>(!married)
+  add <->(married)
+  del <->(dating);
+
+action pray A:
+  at church
+  is religious;
+
+action pray_for:
+  at church
+  is religious;
+
+action pray_for_atheist:
+  at church
+  is religious
+  if other(!pious)
+  add <-(annoyed);
+
+action breakup:
+  is breakup
+  if <->(dating)
+  add <-(dislikes)
+  del <->(dating)  <->(cheating) ->(spied_on);
+
+action breakup_for_cheating:
+    is breakup breakup
+    if <->(dating) <?(cheating)  ->(spied_on)
+    add <->(dislikes)
+    del <->(dating)  <?(cheating) ->(spied_on);
+
+action divorce:
+  if <->(married) ->(dislikes)
+  add <-(dislikes)
+  del <->(married);
+
+action divorce_for_cheating:
+  is breakup
+  if <->(married) <?(cheating)  ->(spied_on)
+  add <->(dislikes)
+  del <->(married) <?(cheating) ->(spied_on);
+
+action pester:
+  is annoying talk
+  if other(!abiding)
+  add <-(annoyed);
+
+action feud:
+  is anger
+  if <-(hates)
+  add ->(hates);
+
+action regard_as_asshole:
+  is anger
+  if <-(hates)
+  add ->(dislikes)
+  del ->(spark) ->(charge);
+
+action chafe:
+  is anger
+  if ->(annoyed)
+  add ->(dislikes)
+  del ->(annoyed);
+
+action fester:
+  is anger
+  if ->(dislikes)
+  add ->(hates)
+  del ->(dislikes);
+
+action forgive:
+  is calm
+  if ->(hates)
+  add ->(dislikes)
+  del ->(hates);
+
+action cooldown:
+  is calm
+  if ->(dislikes)
+  del ->(dislikes);
+
+action bicker:
+  is annoying talk
+  if ->(annoyed)
+  add <-(annoyed);
+
+action drink A:
+  at bar
+  is drink
+  add self(drunk);
+
+action sober_up A:
+  is sober
+  if self(drunk)
+  del self(drunk);
+
+action make_deposit A:
+  at bank
+  is errand;
+
+action buy_groceries A:
+  at market
+  is errand;
+
+action waste_time A:
+  is waste_time;
+
+action spy_on:
+  is jealous sneaky
+  if <?(cheating) ->(!spied_on)
+  add ->(spied_on);
+
+action chit_chat:
+  is talk;
+
+action share:
+  is talk open nice
+  add ->(charge);
+
+action flirt:
+    is talk open romance
+    add <->(spark);
+
+action pine:
+  is romance
+  add ->(spark);
+
+action bartend A:
+  at bar
+  if self(bartender);
+
+action hold_service A:
+  at church
+  if self(pastor);
+
+action vend A:
+  at market
+  if self(vendor);
+
+action scarlet_letter:
+  is fidelity judgy
+  if <?(cheating)
+  add ->(dislikes);
+
+
+
+### PATTERNS
+
+pattern love_triangle A B C :
+  A<->B(spark)
+  C<->B(spark);
+
+  pattern test A:
+  A: (thing);
+
+pattern cheating A B :
+  A<?>B(cheating)
+  A<->B(dating);
