@@ -11,7 +11,7 @@ To use Kismet you will need:
 
 
 ```
-  pip3 install antlr4-python3-runtime tracery
+  pip3 install antlr4-python3-runtime tracery graphviz
 ```
 
 The jupyter notebook contains a showcase of how to use Kismet and sample schemas can be found in the schema folder.
