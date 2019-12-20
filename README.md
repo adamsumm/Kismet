@@ -6,7 +6,8 @@ To use Kismet you will need:
 
 * python 3
 * clingo
-* The python ANTLR library, and tracery library
+* graphviz
+* The python ANTLR library, graphviz and tracery library
 * Jupyter notebook
 
 
