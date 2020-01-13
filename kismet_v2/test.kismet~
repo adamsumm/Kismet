@@ -1,0 +1,45 @@
+location bar:
+	 supports: [1-10] _.-^
+	 patron, [2-3] bartender, [1] owner;
+	 
+	 name: "[[bar_owner.first_name|bar_owner.last_name]'s [place|bar|tap]|#bar_name#";
+	 
+	 initialization:
+		cast [1] bar_owner,
+	 	cast [1-2] bartender;
+	each_turn:
+		cast [1-10] patron.
+
+role ur_job(>TheWorker):
+	tags: work;
+	if TheWorker missing ur_job.
+
+role child_laborer(>TheWorker) extends ur_job(>TheWorker):
+     if TheWorker.age < 16.
+
+action waste_time(>Person)
+"Person is lazy and just whiles the day away.":
+       tags: lazy.
+
+action drink_the_day_away(>Person)
+"Person is lazy and goes to the bar to drink the day away":
+       location: bar(Person);
+       tags: lazy.
+
+action mingle(>Person, <Other):
+       location: (Person, Other);
+       tags: talk.
+
+action gossip_about(>Gossiper, <Gossipee, ^GossipedAbout ):
+       location: (Gossiper, Gossipee) ?(GossipedAbout);
+       tags: talk;
+       visibility++;
+       result:
+       	       Person likes Other += 1.
+
+action flirt(>Person, <Other):
+       location: (Person, Other);
+       tags: talk, romance;
+       visibility++;
+       result:
+       	       Person likes Other += 1.

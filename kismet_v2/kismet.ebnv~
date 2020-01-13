@@ -1,0 +1,32 @@
+grammar kismet;
+
+num: NUMBER;
+NUMBER : [0-9]+ ;
+name : NAME;
+NAME   : ('!')?[a-z][a-zA-Z_]* ;
+var : VAR;
+VAR : [A-Z][a-zA-Z_!]*;
+pdf : PDF+;
+PDF : [^-._];
+
+num_choice
+	:  '[' NUMBER ']'
+	|   '[' NUMBER '-' NUMBER ']';
+
+world:
+ (location|trait|action|pattern)+ EOF
+ ;
+
+location:
+	'location' name ':'
+ 	(supports)*
+	'.';
+
+
+supported_entities
+	:	num_choice name
+	|	num_choice name ',' supported_entities
+	;
+	
+supports:
+	'supports' ':' supported_entities;

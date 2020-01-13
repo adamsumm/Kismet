@@ -1,0 +1,168 @@
+grammar kismet;
+
+world:
+ (location|role|action|trait)+ EOF
+ ;
+ 
+
+	
+trait: trait_type name ('/' name)* ':'
+       propensity? (',' propensity)* '.';
+
+trait_type:
+	'trait' |
+	'status';
+
+knowledge:
+	'knows'		|
+	'hears'		|
+	'heard'		|
+	'saw'		|
+	'did'		|
+	'received'	|
+	'forgets'	;
+
+propensity: modifier | goto;
+
+propensity_name: 'visibility' | name;
+
+modifier: valence '('propensity_name  (',' propensity_name)* comparison? ')';
+  
+goto:  valence '@' name (',' name)* comparison? '@';
+
+valence
+  : '+'+
+  | '-'+
+  ;
+
+
+
+action: 'action' name '(' arg (',' arg)* ')' extension? random_text? ':'
+	(action_item)? (';' (action_item))* '.'
+	;
+
+add:
+	'result' ':' change (',' change)*;
+
+change: condition;
+
+
+visibility:
+	'visibility' valence;
+
+action_location:
+	'location:' loc+;
+
+
+loc:
+	var '(' arg (',' arg)*  ')' |
+	name '(' arg (',' arg)*   ')'|
+	'?' '(' arg (',' arg)*  ')' |
+	'(' arg (',' arg)*   ')' ;
+
+action_item:
+	tags|comparison|action_location|add|visibility;
+
+role:
+	'role' name '(' arg (',' arg)* ')' extension? ':'
+	       (tags|comparison) (';' (tags|comparison))* '.';
+
+extension:
+	'extends' name '(' arg (',' arg)* ')';
+
+arg: arg_type? var;
+
+/**
+ * > -- subject
+ * ^ -- indirect object
+ * < -- direct object
+ * e.g. Adam talked to Ben about Charlie
+ * >Adam, <Ben, ^Charlie
+ */
+arg_type: ('<' | '^' | '*' | '>' | '@');
+
+tags: 'tags' ':' name (',' name)*;
+
+comparison: 'if' condition (',' condition)*;
+
+
+condition: cond1 | cond2 | cond3 | cond4 | cond5 | cond6 | cond7;
+
+cond1: arg 'is' name;
+cond2: arg 'is not' name |
+       arg 'isn\'t' name |
+       arg 'isnt' name   |
+       arg 'aint' name   |
+       arg 'missing' name;
+cond3: arg knowledge name;
+cond4: arg '.' name comparator num;
+cond5: arg 'and' arg name 'each' 'other' (operator num)?;
+cond6: arg name arg (operator num)?;
+cond7: arg name arg comparator num;
+
+
+operator: (MINUS|PLUS);
+
+MINUS: ('-=');
+PLUS: ('+=');
+
+location:
+	'location' name ':'
+        (l_name|supports|initialization|each_turn) (';' (l_name|supports|initialization|each_turn))*
+	'.';
+
+	
+
+initialization:
+	'initialization' ':' cast (',' cast)*;
+	
+each_turn:
+	'each_turn' ':' cast (',' cast)*;
+
+cast:
+	'cast' num_choice name;
+	
+random_text: RANDOM_TEXT;
+
+RANDOM_TEXT:'"' .*? '"'  ;
+
+l_name:
+	'name' ':' random_text;
+
+supported_entities
+	:	num_choice name
+	|  num_choice name ',' supported_entities
+	;
+
+
+WS : [ \t\r\n]+ -> skip ;
+
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
+;
+
+
+
+supports:
+	'supports' ':' supported_entities;
+
+num: NUMBER;
+NUMBER : [0-9]+ ;
+name : NAME;
+NAME   : [a-z][a-zA-Z_]* ;
+var : VAR;
+VAR : [A-Z][a-zA-Z_!]*;
+
+comparator:  '=' |
+	    '==' |
+	    '<' |
+	    '>' |
+	    '<='|
+	    '>='|
+	    '!=';
+
+
+num_choice
+	:  '[' NUMBER ']' 
+	|   '[' NUMBER '-' NUMBER ']' ( pdf )?;
+pdf :  ('^'|'-'|'.'|'_')+ ;
