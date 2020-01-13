@@ -17,6 +17,15 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#opposition.
+    def enterOpposition(self, ctx:kismetParser.OppositionContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#opposition.
+    def exitOpposition(self, ctx:kismetParser.OppositionContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#trait.
     def enterTrait(self, ctx:kismetParser.TraitContext):
         pass
@@ -170,6 +179,15 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#cast_name.
+    def enterCast_name(self, ctx:kismetParser.Cast_nameContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#cast_name.
+    def exitCast_name(self, ctx:kismetParser.Cast_nameContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#arg.
     def enterArg(self, ctx:kismetParser.ArgContext):
         pass
@@ -248,6 +266,15 @@ class kismetListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismetParser#cond4.
     def exitCond4(self, ctx:kismetParser.Cond4Context):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#inversion.
+    def enterInversion(self, ctx:kismetParser.InversionContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#inversion.
+    def exitInversion(self, ctx:kismetParser.InversionContext):
         pass
 
 

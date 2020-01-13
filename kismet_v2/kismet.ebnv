@@ -5,8 +5,11 @@ world:
  ;
  
 
-	
-trait: trait_type name ('/' name)* ':'
+
+opposition:
+	('opposes' name ('/' name)*);
+
+trait: trait_type name ('/' name)* opposition? ':'
        propensity? (',' propensity)* '.';
 
 trait_type:
@@ -68,9 +71,15 @@ role:
 	       (tags|comparison) (';' (tags|comparison))* '.';
 
 extension:
-	'extends' name '(' arg (',' arg)* ')';
+	'extends' (cast_name | name)  '(' arg (',' arg)* ')';
 
-arg: arg_type? var;
+cast_name:
+	'cast' name;
+
+arg: arg_type? var |
+     arg_type? (var '.' name) |
+     arg_type? (var '.' var) |
+     arg_type? name;
 
 /**
  * > -- subject
@@ -88,15 +97,16 @@ comparison: 'if' condition (',' condition)*;
 
 condition: cond1 | cond2 | cond3 | cond4 | cond5 | cond6 | cond7;
 
-cond1: arg 'is' name;
-cond2: arg 'is not' name |
-       arg 'isn\'t' name |
-       arg 'isnt' name   |
-       arg 'aint' name   |
-       arg 'missing' name;
-cond3: arg knowledge name;
-cond4: arg '.' name comparator num;
-cond5: arg 'and' arg name 'each' 'other' (operator num)?;
+cond1: arg 'is' arg;
+cond2: arg 'is not' arg |
+       arg 'isn\'t' arg |
+       arg 'isnt' arg   |
+       arg 'aint' arg   |
+       arg 'missing' arg;
+cond3: arg knowledge arg;
+cond4: arg comparator (num|arg);
+inversion: 'do not';
+cond5: arg 'and' arg inversion? name 'each' 'other' (operator num)?;
 cond6: arg name arg (operator num)?;
 cond7: arg name arg comparator num;
 
