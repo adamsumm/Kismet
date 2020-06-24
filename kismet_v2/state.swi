@@ -1,0 +1,13 @@
+person(adam).
+person(ben).
+person(james).
+
+at(adam,bar).
+
+at(james,bar).
+
+
+at(ben,grocery).
+
+is(ben,extrovert).
+is(james,extrovert).

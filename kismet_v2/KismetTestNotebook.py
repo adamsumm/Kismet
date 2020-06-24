@@ -508,7 +508,7 @@ def parseConditional(conditional,conditional_type='Conditional'):
             rel = arguments[1][1]
             char2 = arguments[2][1][1]
             operation = arguments[3][0]        
-            val = arguments[4][1]        
+            val = arguments[4][1]
             text = [f'update({char1},{rel},{char2},Y) :- state({char1},{rel},{char2},X), X {operation} {val} = Y']
         else:
             
@@ -558,6 +558,7 @@ def parseConditional(conditional,conditional_type='Conditional'):
             text = [text]
         
     elif cond_type == 'NumCompare1':
+        print(cond_type, arguments)
         char1 = arguments[0][1][1]
         stat = arguments[1][1]
         operator = arguments[2][1]
@@ -565,19 +566,19 @@ def parseConditional(conditional,conditional_type='Conditional'):
 
         text = f'is({char1},{stat},V_{char1}_{stat}), V_{char1}_{stat} {operator} {val}'
     elif cond_type == 'NumCompare2':
+        print(cond_type, arguments)
         char1 = arguments[0][1][1]
         stat = arguments[1][1]
         char2 = arguments[2][1][1]
-        operator = arguments[2][1]
-        val = arguments[3][1]
-        text = f'is({char1},{stat},char2,V_{char1}_{stat}_{char2}), V_{char1}_{stat}_{char2} {operator} {val}'
+        operator = arguments[3][1]
+        val = arguments[4][1]
+        text = f'is({char1},{stat},{char2},V_{char1}_{stat}_{char2}), V_{char1}_{stat}_{char2} {operator} {val}'
         
     else:
         print(f'UH OH --- missing "{cond_type}"')
     return text
 
 def parseConditions(conditions,conditional_type='Conditional'):
-    print('PARSING ', conditions)
     if type(unsqueeze(conditions)[0]) is list:
         conditions = unsqueeze(conditions)
     return [parseConditional(condition,conditional_type) for condition in conditions]
@@ -770,9 +771,24 @@ def propensityToASP(propensity):
         else:
             print(thing)
             print('ERROR: Expected Name, PropensityName, or Condition but encountered ' + thing[0])
+    
     return is_propensity,is_goto,valence,constraints,modified_tags
 
+default_args = {'>':'DEFAULT_INITIATOR',
+                '<':'DEFAULT_TARGET',
+                '^':'DEFAULT_OBJECT',
+                '*':'DEFAULT_ACTION',
+                '@':'DEFAULT_LOCATION'}
+
+
+arg2type = {'>':'person',
+            '<':'person',
+            '^':'person',
+            '*':'event',
+            '@':'location'}
+
 def traitToASP(trait,traitname):
+   
     print(traitname, trait)
     is_status = trait['TraitType'][0] == 'status'
     is_trait = not is_status
@@ -784,9 +800,62 @@ def traitToASP(trait,traitname):
     propensities = []
     if 'Propensity' in trait:
         propensities = [propensityToASP(prop) for prop in trait['Propensity']]
-    print(is_trait, is_status, alternative_names, arguments)
-    print('')
-    return is_trait, is_status, alternative_names, arguments
+
+    propensityASP = []
+    arguments = simpleDictify(arguments)
+    
+    arguments = {arg_type:arguments.get(arg_type,default_args[arg_type]) for arg_type in ['>','<','^','*','@']}
+                
+    asp_args = ', '.join([arguments.get(arg_type,default_args[arg_type])   for arg_type in ['>','<','^','*','@']])
+    for is_propensity,is_goto,valence,constraints,modified_tags in propensities:
+        for tag in modified_tags:
+            if is_goto:
+                kind = 'go_to_propensity'
+            else:
+                kind = 'propensity'
+
+            head = f'{kind}({tag}, {valence}, {traitname},{asp_args} ) '            
+            premises = ['binding('+','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] ) +')']
+            premises.append(f'is({arguments[">"]}, {traitname})')
+            premises += constraints
+            
+            #print(  f'{head} :- {premise}.')
+
+            premise = ',\n\t\t'.join(premises)
+            propensityASP.append(f'{head} :- \n\t\t{premise}.')
+    returns = [(is_trait, is_status, alternative_names, arguments, propensities,propensityASP)]
+
+    if 'Opposes' in trait:
+        if type(trait['Opposes'][0][0]) is list:
+            trait['Opposes'] = unsqueeze(trait['Opposes'])
+        propensityASP = []
+        
+        if len(trait['Opposes']) == 1:
+            alternative_names =  [trait['Opposes'][0][1]]
+        else:
+            alternative_names = [name[1] for name in trait['Opposes']]
+        traitname = alternative_names[0]
+        for is_propensity,is_goto,valence,constraints,modified_tags in propensities:
+            for tag in modified_tags:
+                if is_goto:
+                    kind = 'go_to_propensity'
+                else:
+                    kind = 'propensity'
+                
+
+                head = f'{kind}({tag}, {-valence}, {traitname}, {asp_args} ) '
+
+                premises = ['binding('+','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] ) +')']
+                premises.append(f'is({arguments[">"]}, {traitname})')
+                premises += constraints
+
+                #print(  f'{head} :- {premise}.')
+
+                premise = ',\n\t\t'.join(premises)
+                propensityASP.append(f'{head} :- \n\t\t{premise}.')
+        print('ALT', alternative_names)
+        returns.append((is_trait, is_status, alternative_names, arguments, propensities,propensityASP))
+    return returns
 
 for thing in world:
     name = ''
@@ -806,7 +875,15 @@ actions = {action:actionToASP(things['Action'][action],action) for action in thi
 roles = {role:roleToASP( things['Role'][role],role) for role in things['Role']}
   
 traits = {trait:traitToASP(things['Trait'][trait],trait) for trait in things['Trait']}
+traits_ = {}
+alternative_names = {}
+for trait in traits:
+    for trait_ in traits[trait]:
+        names = trait_[2]
+        alternative_names[names[0]] = names[1:]
+        traits_[names[0]] = trait_
 
+traits = traits_
 
 for name, role in roles.items():
 
@@ -824,6 +901,7 @@ for name in actions:
     extension_graph[name] = extension
 
 
+actionASP = []
 for name in actions:
     
     constraints, tags, characters,results,randomText,visibility,extension,arguments,free,response = actions[name]
@@ -875,5 +953,36 @@ for name in actions:
             constraints += converted_constraints
             tags |= set(a_tags)
         
+    #print(name,results,constraints,tags)
+    arguments = simpleDictify(arguments)
+    arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}                
+    asp_args = ', '.join([arguments.get(arg_type,'null')   for arg_type in ['>','<','^','*','@']])
+    
+    head = f'action({name}, {asp_args})'
+    
+    premises = [','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] )]
+    premises += constraints
+    premises += [f'different({arguments[">"]},{arguments["<"]})',f'different({arguments[">"]},{arguments["^"]})',f'different({arguments["<"]},{arguments["^"]})']
+    premise = '\t\t'+',\n\t\t'.join(premises)
+    
 
+    actionASP.append(head +':-\n'+ premise + '.')
+
+traitASP = []
+for trait in traits:
+    traitASP += traits[trait][-1] 
+
+
+with open('rules.swi', 'w') as asp_file:
+    text = '\n\n'.join(actionASP+traitASP)
+    options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
+               ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
+               (',',','),(', ',','),(', ',' ,'),(',',' ,'),
+               (',',')'),(', ',')'),(', ',' )'),(',',' )')]
+            
+    for name in alternative_names:
+        for alt in alternative_names[name]:
+            for option in options:
+                text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
+    asp_file.write(text)
     
