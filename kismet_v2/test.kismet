@@ -33,6 +33,12 @@ action mingle(>Person, <Other):
        tags: talk;
        result: Other likes Person.
 
+action mingle_loudly(>Person, <Other):
+       location: (Person, Other);
+       if Person is extroverted;
+       tags: talk;
+       result: Other likes Person.
+       
 action gossip_about(>Gossiper, <Gossipee, ^GossipedAbout,*GossipedAction ):
        location: (Gossiper, Gossipee) ?(GossipedAbout);
        tags: talk;
@@ -72,7 +78,7 @@ status drunk(>Self):
 trait sad_drunk(>Self):
       +++(sad if Self is drunk).
 
-trait extrovert(>Self) opposes introvert:
+trait extrovert/extroverted(>Self) opposes introvert/introverted:
       +++(talk).
 
 action become_bartender(>TheTender) 

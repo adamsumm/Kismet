@@ -51,7 +51,7 @@ tree = parser.world()
 if len(error_listener.errors) > 0:
     print('\n\n'.join(error_listener.errors))
     print(error_listener.recognizer)
-
+    exit()
 
 # In[4]:
 
@@ -509,7 +509,7 @@ def parseConditional(conditional,conditional_type='Conditional'):
             char2 = arguments[2][1][1]
             operation = arguments[3][0]        
             val = arguments[4][1]
-            text = [f'update({char1},{rel},{char2},Y) :- state({char1},{rel},{char2},X), X {operation} {val} = Y']
+            text = [f'update({char1},{rel},{char2},Y) :- state({char1},{rel},{char2},X), X {operation} {val} = Y, ']
         else:
             
             char1 = arguments[0][1][1]
@@ -542,8 +542,8 @@ def parseConditional(conditional,conditional_type='Conditional'):
         if arguments[-1][0] == 'Num':
             operation = arguments[-2][0]        
             val = arguments[-1][1]    
-            text = [f'update({char1},{rel},{char2},Y) :- state({char1},{rel},{char2},X), X {operation} {val} = Y',    
-                    f'update({char2},{rel},{char1},Y) :- state({char2},{rel},{char1},X), X {operation} {val} = Y']
+            text = [f'update({char1},{rel},{char2},Y) :- state({char1},{rel},{char2},X), X {operation} {val} = Y,',    
+                    f'update({char2},{rel},{char1},Y) :- state({char2},{rel},{char1},X), X {operation} {val} = Y,']
         else:
             text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :- ',
                     f'{comparisonMapping[conditional_type][inv]}{char2},{rel},{char1}) :- ']
@@ -558,7 +558,6 @@ def parseConditional(conditional,conditional_type='Conditional'):
             text = [text]
         
     elif cond_type == 'NumCompare1':
-        print(cond_type, arguments)
         char1 = arguments[0][1][1]
         stat = arguments[1][1]
         operator = arguments[2][1]
@@ -566,7 +565,6 @@ def parseConditional(conditional,conditional_type='Conditional'):
 
         text = f'is({char1},{stat},V_{char1}_{stat}), V_{char1}_{stat} {operator} {val}'
     elif cond_type == 'NumCompare2':
-        print(cond_type, arguments)
         char1 = arguments[0][1][1]
         stat = arguments[1][1]
         char2 = arguments[2][1][1]
@@ -597,8 +595,8 @@ def parseArguments(thing):
             characters.append((argType,character))
             if 'Sub' in argument:
                 role = argument['Name']
-                constraints.append(f'has_role({character},{role},RoleLocation)')
-                constraints.append(f'at_location({character},RoleLocation)')
+                constraints.append(f'is({character},{role},RoleLocation)')
+                constraints.append(f'at({character},RoleLocation)')
         elif argType == '@':
             pass
         elif argType == '*':
@@ -704,7 +702,7 @@ def actionToASP(action,action_name):
         namedLocations.add(name)
         for c in location:
             constraints.append(f'at({c},{name})')
-        
+    namedLocations = [location for location in namedLocations if location[0].isupper()]
     for locCombo in combinations(namedLocations, 2):
         constraints.append(f'{locCombo[0]} != {locCombo[1]}')
     
@@ -733,7 +731,7 @@ def actionToASP(action,action_name):
     else:
         visibility = 0
     extension = parseExtension(action)
-    return constraints, tags, characters,results,randomText,visibility,extension,arguments,free,response
+    return constraints, tags, characters,results,randomText,visibility,extension,arguments,free,response,False
 
 def roleToASP(role,rolename):
     characters, constraints,arguments = parseArguments(role)
@@ -789,7 +787,6 @@ arg2type = {'>':'person',
 
 def traitToASP(trait,traitname):
    
-    print(traitname, trait)
     is_status = trait['TraitType'][0] == 'status'
     is_trait = not is_status
     _, _,arguments =parseArguments(trait)
@@ -853,7 +850,6 @@ def traitToASP(trait,traitname):
 
                 premise = ',\n\t\t'.join(premises)
                 propensityASP.append(f'{head} :- \n\t\t{premise}.')
-        print('ALT', alternative_names)
         returns.append((is_trait, is_status, alternative_names, arguments, propensities,propensityASP))
     return returns
 
@@ -886,10 +882,12 @@ for trait in traits:
 traits = traits_
 
 for name, role in roles.items():
-
     characters, constraints, extension, tags,arguments = role
     char_text = ', '.join([''.join(c) for c in characters])
-    actions[f'cast_{name}'] = (constraints, tags, characters, [f'add({characters[0][1]},{name},Location) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False)
+    arg_dict = simpleDictify(arguments)
+    location = 'Location'
+    
+    actions[f'cast_{name}'] = (constraints, tags, characters, [f'add({characters[0][1]},{name},{location}) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False,True)
 
     
 extension_graph = {}
@@ -904,7 +902,7 @@ for name in actions:
 actionASP = []
 for name in actions:
     
-    constraints, tags, characters,results,randomText,visibility,extension,arguments,free,response = actions[name]
+    constraints, tags, characters,results,randomText,visibility,extension,arguments,free,response,is_cast = actions[name]
     ancestors = []
 
     ancestor = extension_graph[name]
@@ -921,7 +919,7 @@ for name in actions:
         mappings = []
         
         for ancestor in ancestors:
-            a_constraints, a_tags,_,a_results,_,_,_,a_arguments,_,_ = actions[ancestor]
+            a_constraints, a_tags,_,a_results,_,_,_,a_arguments,_,_,a_is_cast = actions[ancestor]
             mapping = {p:c for p, c in zip(prev_arguments,a_arguments)}
             r_mapping = {c:p for p, c in zip(prev_arguments,a_arguments)}
             mappings.append((mapping,r_mapping))
@@ -952,7 +950,10 @@ for name in actions:
             results += converted_results
             constraints += converted_constraints
             tags |= set(a_tags)
-        
+            is_cast = is_cast or a_is_cast
+
+    results = set(results)
+    constraints = set(constraints)
     #print(name,results,constraints,tags)
     arguments = simpleDictify(arguments)
     arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}                
@@ -963,16 +964,36 @@ for name in actions:
     premises = [','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] )]
     premises += constraints
     premises += [f'different({arguments[">"]},{arguments["<"]})',f'different({arguments[">"]},{arguments["^"]})',f'different({arguments["<"]},{arguments["^"]})']
-    premise = '\t\t'+',\n\t\t'.join(premises)
     
-
+       
+    if free:
+        premises.append(f'mode(free)')
+    if response:
+        premises.append(f'mode(response)')
+    premise = '\t\t'+',\n\t\t'.join(premises)
+        
     actionASP.append(head +':-\n'+ premise + '.')
 
+    at_location = ''
+    if is_cast:
+        at_location = f'at({arguments[">"]}, Location), '
+    for result in results:
+        actionASP.append(result + at_location +f'occurred({head}).')
+
+    for tag in tags:
+        actionASP.append(f'is({name}, {tag}).')
+    actionASP.append(f'visibility({name},{visibility}).')
 traitASP = []
 for trait in traits:
-    traitASP += traits[trait][-1] 
+    traitASP += traits[trait][-1]
 
+    trait_type = 'trait'
+    if traits[trait][1]:
+        trait_type = 'status'
+    traitASP.append(f'{trait_type}({trait}).')
+    print(trait,traits[trait])
 
+    
 with open('rules.swi', 'w') as asp_file:
     text = '\n\n'.join(actionASP+traitASP)
     options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
