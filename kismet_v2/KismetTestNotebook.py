@@ -6,6 +6,7 @@
 
 from antlr4.error.ErrorListener import ErrorListener
 
+error_log = []
 class MyErrorListener( ErrorListener ):
     def __init__(self):
         super()
@@ -304,10 +305,6 @@ class kismetVisitor(ParseTreeVisitor):
         return ('TextualName',self.visitChildren(ctx))
 
 
-    # Visit a parse tree produced by kismetParser#supported_entities.
-    def visitSupported_entities(self, ctx:kismetParser.Supported_entitiesContext):
-        # Can be skipped
-        return self.visitChildren(ctx)
     
     def visitLocWildCard(self,ctx):
         return 'LocWildCard',ctx.getText()
@@ -740,12 +737,12 @@ def roleToASP(role,rolename):
 
     extension = parseExtension(role, True)
     conditions = []
-    
+    extends = []
     if 'Conditions' in role:
         conditions = role['Conditions']
         constraints += parseConditions(conditions)
         
-    constraints += [f'at({characters[0][1]},Location)', f'castable({rolename},Location)']
+    constraints += [f'at({characters[0][1]},Location)', f'castable({rolename},Location)', f'mode(casting)']
     return characters, constraints, extension, tags,arguments
 
 def propensityToASP(propensity):
@@ -786,7 +783,8 @@ arg2type = {'>':'person',
             '@':'location'}
 
 def traitToASP(trait,traitname):
-   
+
+    
     is_status = trait['TraitType'][0] == 'status'
     is_trait = not is_status
     _, _,arguments =parseArguments(trait)
@@ -795,6 +793,7 @@ def traitToASP(trait,traitname):
     else:
         alternative_names = [name[0] for name in trait['Name']]
     propensities = []
+    
     if 'Propensity' in trait:
         propensities = [propensityToASP(prop) for prop in trait['Propensity']]
 
@@ -804,6 +803,7 @@ def traitToASP(trait,traitname):
     arguments = {arg_type:arguments.get(arg_type,default_args[arg_type]) for arg_type in ['>','<','^','*','@']}
                 
     asp_args = ', '.join([arguments.get(arg_type,default_args[arg_type])   for arg_type in ['>','<','^','*','@']])
+    
     for is_propensity,is_goto,valence,constraints,modified_tags in propensities:
         for tag in modified_tags:
             if is_goto:
@@ -863,14 +863,145 @@ for thing in world:
 
 for thing in things:
     print(thing)
-    
 
+def makeDistribution(low,high,pdf):
+    pdf2num = {'_':0,
+               '^':1,
+               '.':0.33,
+               '-':0.67,
+               }
+    import random
+    if low == high:
+        return lambda : low
+    elif len(set(pdf)) == 1:
+        return lambda : int( (high+1-low)*random.random()+low)
+    else:
+        step_size = (high-low)/(len(pdf)-1)
+        x = low
+        pieces = []
+        total_area = 0
+        for (s,e)  in zip(pdf[:-1],pdf[1:]):
+            x0 = x
+            x1 = x+step_size
+            y0 = pdf2num[s]
+            y1 = pdf2num[e]
+            if y0 == 0 and y1 == 0:
+                area = 0
+            elif y0 == 0 or y1 == 0:
+                area = 0.5*max(y0,y1)*step_size
+            else:
+                lower = min(y0,y1)
+                upper = max(y0,y1)                
+                area = lower*step_size + 0.5*(upper-lower)*step_size
+            pieces.append((area,(x0,y0),(x1,y1)))
+            total_area += area
+            x += step_size
+        
+        def piecewise_triangle():
+            import numpy as np
+            R = random.random()
+            for piece in pieces:
+                if R < piece[0]/total_area:
+                    x0,y0 = piece[1]
+                    x1,y1 = piece[2]
+                    lower = min(y0,y1)
+                    upper = max(y0,y1)
+                    #print((x0,y0),(x1,y1)) 
+                    x = random.random()        
+                    if y0 == y1:
+                        return x*(x1-x0)+x0
+                    elif y0 == lower:                        
+                        cutoff = y0/y1 * (x1-x0) + x0
+                        x= x0 + np.sqrt(x)*(x1-x0)
+                        while  x < cutoff:
+                            x = random.random()  
+                            x= x0 + np.sqrt(x)*(x1-x0)
+                        if x1 != cutoff:
+                            x= ((x-cutoff)/(x1-cutoff))*(x1-x0)+x0
+                    else:
+                        cutoff =x1-y1/y0 * (x1-x0)
+                        x = x1 - np.sqrt((1-x)*(x1-x0)**2)
+                        while x > cutoff:
+                            x = random.random()              
+                            x = x1 - np.sqrt((1-x)*(x1-x0)**2)
+                        if cutoff != x0:
+                            x = x0+(x-x0)*(x1-x0)/(cutoff-x0)                           
+                    return np.round(x)
+                else:
+                    R -= piece[0]/total_area
+            return piece[2][0]
+        return piecewise_triangle
+            
+    return lambda : low
+
+def castToASP(cast):
+    if type(cast[0][0]) is list:
+        cast = cast[0]
+    cast_ = {}
+    for casting in cast:
+        role,distribution = parseNumChoice(casting[1][1])
+        cast_[role] = distribution
+    return cast_
+
+def parseNumChoice(choice):    
+    # [a-b] pdf name
+    if len(choice) == 4:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = choice[2][1]
+        role = choice[3][1]
+    elif len(choice) == 3:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = '--'
+        role = choice[2][1]
+    else:
+        lower = int(choice[0][1])
+        upper = lower
+        pdf = '--'
+        role = choice[1][1]
+    distribution =  makeDistribution(lower,upper,pdf)
+    return role,distribution
+
+def locationToASP(location,location_name):
+    for thing in location:
+        print(thing, location[thing])
+
+    if 'Supports' not in location:
+        error_log.append(f'ERROR: supports missing in location "{location_name}"')
+        return None
+    if 'TextualName' not in location:
+        error_log.append(f'ERROR: name missing in location "{location_name}"')
+    if 'Initialization' not in location and 'EachTurn' not in location:
+        error_log.append(f'ERROR: No casting details in location "{location_name}"')
+        
+    location['Supports'] = location['Supports'][0]
+
+    
+    supported_roles = {}
+    for supported in location['Supports']:
+        role,distribution = parseNumChoice(supported[1])
+        supported_roles[role] = distribution
+
+    tracery_name = location['TextualName'][0][1]
+    initialization = []
+    each_turn = []
+    if 'Initialization' in location:
+        initialization = castToASP(location['Initialization'])
+    if 'EachTurn' in location:
+        each_turn = castToASP(location['EachTurn'])
+    return tracery_name,supported_roles, initialization,each_turn  
+        
 actions = {action:actionToASP(things['Action'][action],action) for action in things['Action']}
 
 
 roles = {role:roleToASP( things['Role'][role],role) for role in things['Role']}
   
 traits = {trait:traitToASP(things['Trait'][trait],trait) for trait in things['Trait']}
+
+locations = {location:locationToASP(things['Location'][location],location) for location in things['Location']}
+
+
 traits_ = {}
 alternative_names = {}
 for trait in traits:
@@ -886,10 +1017,9 @@ for name, role in roles.items():
     char_text = ', '.join([''.join(c) for c in characters])
     arg_dict = simpleDictify(arguments)
     location = 'Location'
-    
     actions[f'cast_{name}'] = (constraints, tags, characters, [f'add({characters[0][1]},{name},{location}) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False,True)
 
-    
+
 extension_graph = {}
 for name in actions:
     
@@ -928,11 +1058,13 @@ for name in actions:
             converted_results = []
             if a_constraints:
                 for thing in a_constraints:
+                    if 'cast' in thing:
+                       continue
                     converted_thing = thing
                     for mapping in reversed(mappings):
                         for i, (c,p) in enumerate(mapping[1].items()):
                             converted_thing = converted_thing.replace(c[1],'!@'*(i+1))
-                        for i, (c,p) in enumerate(mapping[1].items()):
+                        for i, (c,p) in reversed(list(enumerate(mapping[1].items()))):
                             converted_thing = converted_thing.replace('!@'*(i+1),p[1])
                     converted_constraints.append(converted_thing)
 
@@ -942,7 +1074,7 @@ for name in actions:
                     for mapping in reversed(mappings):
                         for i, (c,p) in enumerate(mapping[1].items()):
                             converted_thing = converted_thing.replace(c[1],'!@'*(i+1))
-                        for i, (c,p) in enumerate(mapping[1].items()):
+                        for i, (c,p) in reversed(list(enumerate(mapping[1].items()))):
                             converted_thing = converted_thing.replace('!@'*(i+1),p[1])
                     converted_results.append(converted_thing)
             if not results:
@@ -954,7 +1086,6 @@ for name in actions:
 
     results = set(results)
     constraints = set(constraints)
-    #print(name,results,constraints,tags)
     arguments = simpleDictify(arguments)
     arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}                
     asp_args = ', '.join([arguments.get(arg_type,'null')   for arg_type in ['>','<','^','*','@']])
@@ -991,11 +1122,14 @@ for trait in traits:
     if traits[trait][1]:
         trait_type = 'status'
     traitASP.append(f'{trait_type}({trait}).')
-    print(trait,traits[trait])
+locationASP = []
+for location in locations:
+    tracery_name,supported_roles, initialization,each_turn  = locations[location]
+    for role in supported_roles:
+        locationASP.append(f'castable({role},{location}).')
 
-    
 with open('rules.swi', 'w') as asp_file:
-    text = '\n\n'.join(actionASP+traitASP)
+    text = '\n\n'.join(locationASP+actionASP+traitASP)
     options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
                ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
                (',',','),(', ',','),(', ',' ,'),(',',' ,'),

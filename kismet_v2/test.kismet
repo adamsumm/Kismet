@@ -1,7 +1,7 @@
 
 	
 location bar:
-	 supports: [1-10] _.-^
+	 supports: [1-10] _-^^^^-_
 	 patron, [2-3] bartender, [1] owner;
 	 
 	 name: "[[bar_owner.first_name|bar_owner.last_name]'s [place|bar|tap]|#bar_name#";

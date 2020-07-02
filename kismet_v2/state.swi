@@ -6,6 +6,9 @@ at(adam,bar).
 
 at(james,bar).
 
+is(adam,age,36).
+is(ben,age,35).
+is(james,age,35).
 
 at(ben,grocery).
 
