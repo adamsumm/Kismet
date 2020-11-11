@@ -1,1 +1,0 @@
-state(Person,likes,Other) :- person(Person), person(Other).

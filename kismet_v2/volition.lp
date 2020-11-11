@@ -1,1 +1,0 @@
-#show likelihood/2.
