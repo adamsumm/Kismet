@@ -9,13 +9,16 @@ world:
 opposition:
 	('opposes' name ('/' name)*);
 
-trait: trait_type name ('/' name)* '(' arg (',' arg)* ')' opposition? ':'
+trait: default? trait_type is_num? name ('/' name)* '(' arg (',' arg)* ')' opposition? ':'
        propensity? (',' propensity)* '.';
+default: 'default';
 
 trait_type:
 	'trait' |
 	'status';
 
+is_num:
+	'scalar';
 
 propensity: modifier | goto;
 
@@ -32,11 +35,10 @@ valence
 
 
 
-action: (free|response)? 'action' name '(' arg (',' arg)* ')' extension? random_text? ':'
+action: (response)? 'action' name '(' arg (',' arg)* ')' cost? extension? random_text? ':'
 	(action_item)? (';' (action_item))* '.'
 	;
-
-free: 'free';
+cost: 'costs'  num;
 
 response: 'response';
 
@@ -119,16 +121,16 @@ knowledge:
 	'did'		|
 	'received'	;
 
-condition: cond3 | cond1 | cond4 | cond5 | cond6 | cond7;
+condition: cond3 | cond1 | cond4 | cond5 | cond6 | cond7 | condpattern;
 
 cond3: arg knowledge arg;
 cond1: arg tag_compare name;
 cond4: arg ('\'s'|'s') name comparator num;
 inversion: 'do not' | 'dont' | 'don\'t' |  'does not' | 'doesn\'t' | 'doesnt' ;
 cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator num)?;
-cond6: arg  inversion? name arg (operator num)?;
+cond6: arg  inversion? ('have'|'has'|'is')* name ('to'|'with')* arg (operator num)?;
 cond7: arg name arg comparator num;
-
+condpattern: 'pattern' '(' arg (',' arg)* ')';
 tag_compare: 'is missing' | 'is not' | 'is' | 'isn\'t' | 'isnt' | 'aint' | 'missing';
 
 operator: (MINUS|PLUS);
@@ -138,7 +140,7 @@ PLUS: ('+=');
 
 location:
 	'location' name ':'
-        (l_name|supports|initialization|each_turn) (';' (l_name|supports|initialization|each_turn))*
+        (l_name|supports|initialization|each_turn|tags) (';' (l_name|supports|initialization|each_turn|tags))*
 	'.';
 
 	
@@ -172,7 +174,7 @@ LINE_COMMENT
 supports:
 	'supports' ':' num_choice (',' num_choice)*;
 num: NUMBER;
-NUMBER : [0-9]+ ;
+NUMBER : [0-9]+('.'[0-9]+)? ;
 name : NAME;
 NAME   : [a-z][a-zA-Z_]* ;
 var : VAR;

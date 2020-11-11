@@ -46,6 +46,9 @@ action gossip_about(>Gossiper, <Gossipee, ^GossipedAbout,*GossipedAction ):
        if 
 	  Gossipee  doesn't know GossipedAction,
 	  GossipedAbout did GossipedAction,
+	  GossipedAbout saw GossipedAction,
+	  GossipedAbout received GossipedAction,
+	  GossipedAbout heard GossipedAction,
        	  Gossiper knows GossipedAction;
        result:
        	       Gossipee likes Gossiper += 1,
@@ -58,11 +61,18 @@ action flirt(>Person, <Other) extends mingle(>Person, <Other) :
        result:
        	       Person likes Other += 1.
 
-free action sulk(>Person):
+action sulk(>Person) costs 1:
        tags: sad;
        if Person's sadness > 5.
        
-status likes/like/liked(>Self):.
+status scalar likes/like/liked(>Self,<Other):.
+
+default trait horny(>Self,<Other):
+    ++(romance if Self  spark Other).
+    
+default trait but_not_too_horny(>Self,<Other):
+    -(romance).
+
 
 trait snoopy(>Self,*Action):
       +++(observation if *Action is secretive),
@@ -81,6 +91,12 @@ trait sad_drunk(>Self):
 trait extrovert/extroverted(>Self) opposes introvert/introverted:
       +++(talk).
 
+trait violent(>Self) opposes gentle:
+      +++(violent).
+      
+trait religious(>Self) opposes atheist:
+      +++(religious).
+      
 action become_bartender(>TheTender) 
        extends cast bartender(>TheTender)
        "[TheTender finds a job as a bartender|TheTender decided to become a barkeep]":.
