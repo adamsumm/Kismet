@@ -99,7 +99,7 @@ dependencies:
   - zipp=3.1.0=py_0
   - zlib=1.2.11=h7b6447c_3
   - pip:
-    - antlr4-python3-runtime==4.8
+    - antlr4-python3-runtime==4.7.2
     - numpy==1.19.2
     - tracery==0.1.1
 prefix: /home/bizon/anaconda3/envs/kismet
