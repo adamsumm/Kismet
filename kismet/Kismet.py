@@ -215,6 +215,9 @@ class KismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    def visitPattern(self, ctx):
+        return ('Pattern', self.visitChildren(ctx))
+    
     # Visit a parse tree produced by kismetParser#visibility.
     def visitVisibility(self, ctx:kismetParser.VisibilityContext):
         
@@ -299,6 +302,11 @@ class KismetVisitor(ParseTreeVisitor):
     def visitCond4(self, ctx:kismetParser.Cond4Context):
         
         return ('NumCompare1',self.visitChildren(ctx))
+    
+    # Visit a parse tree produced by kismetParser#cond3.
+    def visitCondpattern(self, ctx):
+        
+        return ('CondPattern',self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismetParser#inversion.
@@ -393,6 +401,10 @@ class KismetVisitor(ParseTreeVisitor):
         return ('Num',ctx.getText())
 
 
+    # Visit a parse tree produced by kismetParser#num.
+    def visitPos_num(self, ctx:kismetParser.NumContext):
+        
+        return ('Num',ctx.getText())
     # Visit a parse tree produced by kismetParser#name.
     def visitName(self, ctx:kismetParser.NameContext):
         
@@ -637,9 +649,12 @@ def parseConditional(conditional,conditional_type='Conditional'):
         operator = arguments[3][1]
         val = arguments[4][1]
         text = f'is({char1},{stat},{char2},V_{char1}_{stat}_{char2}), V_{char1}_{stat}_{char2} {operator} {val}'
-        
+    elif cond_type == 'CondPattern':
+        name = arguments[0][1]
+        args = [name] + [arg[1][1] for arg in arguments[1:]]
+        text = f'pattern({",".join(args)})'
     else:
-        print(f'UH OH --- missing "{cond_type}"')
+        print(f'UH OH --- Unknown Conditional Type -- missing "{cond_type}"')
     return text
 
 def parseConditions(conditions,conditional_type='Conditional'):
@@ -1094,6 +1109,23 @@ def locationToASP(location,location_name):
     return tracery_name,supported_roles, initialization,each_turn,tags
 
 
+@dataclass
+class Pattern:
+    asp_str: str
+        
+def patternToASP(pattern,pattern_name):
+    print(pattern)
+    conditions = parseConditions(pattern['Conditions'])
+    characters, constraints, arguments = parseArguments(pattern)    
+    
+    asp_string = f'pattern({pattern_name},' + ', '.join(arg[1] for arg in arguments) + ') :-\n\t'
+    for arg1,arg2 in itertools.combinations(arguments,2):
+        conditions.append(f'different({arg1[1]},{arg2[1]})')
+        
+    asp_string += ',\n\t'.join(conditions)     
+    asp_string += '.'
+    
+    return Pattern(asp_string)
 
 class KismetModule():
     def __init__(self,module_file,tracery_files=[],
@@ -1147,7 +1179,8 @@ class KismetModule():
                     'Action':{},
                     'Location':{},
                     'Role':{},
-                    'Trait':{}}
+                    'Trait':{},
+                    'Pattern':{}}
         for thing in world:
             name = ''
             for t in thing[1]:
@@ -1163,7 +1196,8 @@ class KismetModule():
         self.roles = {role:parseRole( things['Role'][role],role) for role in things['Role']}
         self.traits = {trait:parseTrait(things['Trait'][trait],trait) for trait in things['Trait']}
         self.locations = {location:locationToASP(things['Location'][location],location) for location in things['Location']}
-
+        self.patterns = {pattern:patternToASP(things['Pattern'][pattern],pattern) for pattern in things['Pattern']}
+        
         traits_ = {}
         self.alternative_names = {}
         for trait in self.traits:
@@ -1326,9 +1360,11 @@ class KismetModule():
                 self.locationASP.append(f'castable({role},{location}).')
             for tag in tags:                
                 self.locationASP.append(f'is({location},{tag}).')
-                
+        
+        self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
+        
         with open(f'{self.module_file}_rules.lp', 'w') as asp_file:
-            text = '\n\n'.join(self.locationASP+self.actionASP+self.traitASP)
+            text = '\n\n'.join(self.locationASP+self.actionASP+self.traitASP+self.patternASP)
             options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
                        ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
                        (',',','),(', ',','),(', ',' ,'),(',',' ,'),

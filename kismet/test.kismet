@@ -1,17 +1,20 @@
 
 	
 location bar:
-	 supports: [1-10] _-^^^^-_
-	 patron, [2-3] bartender, [1] owner;
+	 supports: [1:10] _-^^^^-_
+	 patron, [2:3] bartender, [1] owner;
 	 
 	 name: "[[bar_owner.first_name|bar_owner.last_name]'s [place|bar|tap]|#bar_name#";
 	 
 	 initialization:
 		cast [1] bar_owner,
-	 	cast [1-2] bartender;
+	 	cast [1:2] bartender;
 	each_turn:
-		cast [1-10] patron.
+		cast [1:10] patron.
 
+action befriend_enemy_of_enemy(>Person,<EnemyOfEnemy):
+    if pattern(enemy_of_enemy,Person,EnemyOfEnemy);
+    result: Person and EnemyOfEnemy like each other += 2.
 
 action waste_time(>Person)
 "Person is lazy and just whiles the day away.":
@@ -147,3 +150,12 @@ role child_laborer(>TheWorker) extends ur_job(>TheWorker):
 role bartender(>TheWorker) extends ur_job(>TheWorker):
      tags: drinking;
      if TheWorker's age >= 18.
+     
+pattern enemy_of_my_enemy(>Me,>EnemyOfMyEnemy):
+    if Me likes Enemy < -3, Enemy likes EnemyOfMyEnemy < -3.
+    
+pattern test_pattern(>Me,>You):
+    if Me likes You = 0.
+    
+action patterns_work(>Me,<You):
+    if pattern(test_pattern,Me,You).

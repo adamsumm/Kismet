@@ -1,9 +1,11 @@
 grammar kismet;
 
 world:
- (location|role|action|trait)+ EOF
+ (location|role|action|trait|pattern)+ EOF
  ;
  
+pattern:
+    'pattern'  name '(' arg (',' arg)* ')' extension? ':' comparison '.';
 
 
 opposition:
@@ -130,7 +132,7 @@ inversion: 'do not' | 'dont' | 'don\'t' |  'does not' | 'doesn\'t' | 'doesnt' ;
 cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator num)?;
 cond6: arg  inversion? ('have'|'has'|'is')* name ('to'|'with')* arg (operator num)?;
 cond7: arg name arg comparator num;
-condpattern: 'pattern' '(' arg (',' arg)* ')';
+condpattern: 'pattern' '(' name  (',' arg)* ')';
 tag_compare: 'is missing' | 'is not' | 'is' | 'isn\'t' | 'isnt' | 'aint' | 'missing';
 
 operator: (MINUS|PLUS);
@@ -174,7 +176,15 @@ LINE_COMMENT
 supports:
 	'supports' ':' num_choice (',' num_choice)*;
 num: NUMBER;
-NUMBER : [0-9]+('.'[0-9]+)? ;
+
+NUMBER : NEG? POSITIVE_NUMBER ;
+
+pos_num: POSITIVE_NUMBER;
+
+POSITIVE_NUMBER: [0-9]+('.' [0-9]+)?;
+NEG: '-';
+  
+
 name : NAME;
 NAME   : [a-z][a-zA-Z_]* ;
 var : VAR;
@@ -191,5 +201,5 @@ comparator:  '=' |
 
 num_choice
 	:  '[' num ']' name
-	|   '[' num '-' num ']' ( pdf )? name ;
+	|   '[' num ':' num ']' ( pdf )? name ;
 pdf :  ('^'|'-'|'.'|'_')+ ;
