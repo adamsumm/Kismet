@@ -1,0 +1,195 @@
+grammar kismet;
+
+world:
+ (location|role|action|trait)+ EOF
+ ;
+ 
+
+
+opposition:
+	('opposes' name ('/' name)*);
+
+trait: default? trait_type is_num? name ('/' name)* '(' arg (',' arg)* ')' opposition? ':'
+       propensity? (',' propensity)* '.';
+default: 'default';
+
+trait_type:
+	'trait' |
+	'status';
+
+is_num:
+	'scalar';
+
+propensity: modifier | goto;
+
+propensity_name: 'visibility' | name;
+
+modifier: valence '('propensity_name  (',' propensity_name)* comparison? ')';
+  
+goto:  valence '@' name (',' name)* comparison? '@';
+
+valence
+  : '+'+
+  | '-'+
+  ;
+
+
+
+action: (response)? 'action' name '(' arg (',' arg)* ')' cost? extension? random_text? ':'
+	(action_item)? (';' (action_item))* '.'
+	;
+cost: 'costs'  num;
+
+response: 'response';
+
+add:
+	'result' ':' change (',' change)*;
+
+change: condition;
+
+
+visibility:
+	'visibility' valence;
+
+action_location:
+	'location:' loc+;
+
+
+loc:
+	var '(' arg (',' arg)*  ')' |
+	name '(' arg (',' arg)*   ')'|
+	locWildCard '(' arg (',' arg)*  ')' |
+	'(' arg (',' arg)*   ')' ;
+locWildCard: '?';
+
+action_item:
+	tags|comparison|action_location|add|visibility;
+
+role:
+	'role' name '(' arg (',' arg)* ')' extension? ':'
+	       (tags|comparison) (';' (tags|comparison))* '.';
+
+extension:
+	'extends' (cast_name | name)  '(' arg (',' arg)* ')';
+
+cast_name:
+	'cast' name;
+
+arg: arg_type? var |
+     arg_type? (var sub name) |
+     arg_type? (var sub var) ;
+
+sub: '.' | ':';
+
+/**
+ * > -- subject
+ * ^ -- indirect object
+ * < -- direct object
+ * e.g. Adam talked to Ben about Charlie
+ * >Adam, <Ben, ^Charlie
+ */
+arg_type: ('<' | '^' | '*' | '>' | '@');
+
+tags: 'tags' ':' name (',' name)*;
+comparison: 'if' condition (',' condition)*;
+
+
+
+knowledge:
+	'does not know' |
+	'doesnt know' |
+	'doesn\'t know' |
+	'did' 'not' 'hear'|
+	'didnt' 'hear'|
+	'didn\'t' 'hear'|
+	'did' 'not' 'see'|
+	'didnt' 'see'|
+	'didn\'t' 'see'|
+	'did' 'not' 'do'|
+	'didnt' 'do'|
+	'didn\'t' 'do'|
+	'did' 'not' 'receive'	|
+	'didnt' 'receive'	|
+	'didn\'t' 'receive'	|
+	'forgets'	|
+	'forgot' 	|
+	'forget' |
+	'knows'		|
+	'hears'		|
+	'heard'		|
+	'saw'		|
+	'did'		|
+	'received'	;
+
+condition: cond3 | cond1 | cond4 | cond5 | cond6 | cond7 | condpattern;
+
+cond3: arg knowledge arg;
+cond1: arg tag_compare name;
+cond4: arg ('\'s'|'s') name comparator num;
+inversion: 'do not' | 'dont' | 'don\'t' |  'does not' | 'doesn\'t' | 'doesnt' ;
+cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator num)?;
+cond6: arg  inversion? ('have'|'has'|'is')* name ('to'|'with')* arg (operator num)?;
+cond7: arg name arg comparator num;
+condpattern: 'pattern' '(' arg (',' arg)* ')';
+tag_compare: 'is missing' | 'is not' | 'is' | 'isn\'t' | 'isnt' | 'aint' | 'missing';
+
+operator: (MINUS|PLUS);
+
+MINUS: ('-=');
+PLUS: ('+=');
+
+location:
+	'location' name ':'
+        (l_name|supports|initialization|each_turn|tags) (';' (l_name|supports|initialization|each_turn|tags))*
+	'.';
+
+	
+
+initialization:
+	'initialization' ':' cast (',' cast)*;
+	
+each_turn:
+	'each_turn' ':' cast (',' cast)*;
+
+cast:
+	'cast' num_choice (',' num_choice)*;
+	
+random_text: RANDOM_TEXT;
+
+RANDOM_TEXT:'"' .*? '"'  ;
+
+l_name:
+	'name' ':' random_text;
+
+
+
+WS : [ \t\r\n]+ -> skip ;
+
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
+;
+
+
+
+supports:
+	'supports' ':' num_choice (',' num_choice)*;
+num: NUMBER;
+NUMBER : [0-9]+('.'[0-9]+)? ;
+name : NAME;
+NAME   : [a-z][a-zA-Z_]* ;
+var : VAR;
+VAR : [A-Z][a-zA-Z_!]*;
+
+comparator:  '=' |
+	    '==' |
+	    '<' |
+	    '>' |
+	    '<='|
+	    '>='|
+	    '!=';
+
+
+num_choice
+	:  '[' num ']' name
+	|   '[' num '-' num ']' ( pdf )? name ;
+pdf :  ('^'|'-'|'.'|'_')+ ;
