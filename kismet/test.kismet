@@ -34,13 +34,13 @@ action sober_up(>Person)
 action mingle(>Person, <Other):
        location: (Person, Other);
        tags: talk;
-       result: Other likes Person.
+       result: Other likes Person += 1.
 
 action mingle_loudly(>Person, <Other):
        location: (Person, Other);
        if Person is extroverted;
        tags: talk;
-       result: Other likes Person.
+       result: Other likes Person += 1.
        
 action gossip_about(>Gossiper, <Gossipee, ^GossipedAbout,*GossipedAction ):
        location: (Gossiper, Gossipee) ?(GossipedAbout);
@@ -64,10 +64,29 @@ action flirt(>Person, <Other) extends mingle(>Person, <Other) :
        result:
        	       Person likes Other += 1.
 
+
 action sulk(>Person) costs 1:
        tags: sad;
        if Person's sadness > 5.
-       
+
+//COMMENTS!
+action slap(>Slapper, <Slapped, *UnwantedRomance)
+"Slapper [slaps|hits|strikes] Slapped in the face":  
+    tags: violent;
+    // Slapped did UnwantedRomance to Slapper -- ADD THIS
+    // Slapped did UnwantedRomance with Slapper -- ADD THIS
+    if Slapped did UnwantedRomance,
+       UnwantedRomance is romance,
+       Slapper received UnwantedRomance,
+       Slapper likes Slapped < 2;
+    visibility++++;
+    result: Slapped likes Slapper -= 5,
+            Slapped is hurt.
+  
+
+status hurt(>Self):
+    +++(selfcare).
+
 status scalar likes/like/liked(>Self,<Other):.
 
 default trait horny(>Self,<Other):
@@ -154,8 +173,3 @@ role bartender(>TheWorker) extends ur_job(>TheWorker):
 pattern enemy_of_my_enemy(>Me,>EnemyOfMyEnemy):
     if Me likes Enemy < -3, Enemy likes EnemyOfMyEnemy < -3.
     
-pattern test_pattern(>Me,>You):
-    if Me likes You = 0.
-    
-action patterns_work(>Me,<You):
-    if pattern(test_pattern,Me,You).
