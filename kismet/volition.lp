@@ -7,5 +7,5 @@ binding(person(INITIATOR),person(TARGET),person(SUBJECT),event(ACTION),location(
 likelihood(action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION),N) :-
   N =  #sum{ C,Tag :
           is(NAME,Tag) ,
-          propensity(Tag, C, _, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION )}, action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION).
+          propensity(Tag, C, _, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION )}, action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION), INITIATOR != null.
 

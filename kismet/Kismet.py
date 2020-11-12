@@ -16,6 +16,7 @@ import random
 import sys
 import numpy as np
 from dataclasses import dataclass
+from sys import exit
 
 def parse_likelihood(likelihood):
         logit = int(likelihood[0]['terms'][1]['predicate'])
@@ -24,11 +25,11 @@ def parse_likelihood(likelihood):
         return logit,action,actor
 
 
-def solve(args):
+def solve(args,clingo_exe='clingo'):
     """Run clingo with the provided argument list and return the parsed JSON result."""
 
-    print_args = ['clingo'] + list(args) + [' | tr [:space:] \\\\n | sort ']
-    args = ['clingo', '--outf=2'] + args + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))]
+    print_args = [clingo_exe] + list(args) + [' | tr [:space:] \\\\n | sort ']
+    args = [clingo_exe, '--outf=2'] + args + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))]
     print(' '.join(args))
     with subprocess.Popen(
         ' '.join(args),
@@ -1114,7 +1115,7 @@ class Pattern:
     asp_str: str
         
 def patternToASP(pattern,pattern_name):
-    print(pattern)
+    
     conditions = parseConditions(pattern['Conditions'])
     characters, constraints, arguments = parseArguments(pattern)    
     
@@ -1124,7 +1125,6 @@ def patternToASP(pattern,pattern_name):
         
     asp_string += ',\n\t'.join(conditions)     
     asp_string += '.'
-    
     return Pattern(asp_string)
 
 class KismetModule():
@@ -1134,7 +1134,9 @@ class KismetModule():
                  ignore_logit=5.0,
                  history_cutoff=10,
                 action_budget = 3,
-                default_cost =3):
+                default_cost = 3,
+                clingo_exe='clingo'):
+        self.clingo_exe = 'clingo'
         self.temperature = temperature
         self.observation_temp = observation_temp
         self.ignore_logit = ignore_logit
@@ -1462,14 +1464,14 @@ class KismetModule():
 
                      
     def calculate_volitions(self):
-        volitions = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp','-t','8'])
+        volitions = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp','-t','8'],clingo_exe=self.clingo_exe)
         return volitions
     def calculate_action_results(self):
-        action_results = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','results_processing.lp','-t','8'])
+        action_results = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','results_processing.lp','-t','8'],clingo_exe=self.clingo_exe)
         return action_results
     
     def calculate_observability(self):
-        visibility_results = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','observation.lp','-t','8'])
+        visibility_results = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','observation.lp','-t','8'],clingo_exe=self.clingo_exe)
         return visibility_results
     
     def knowledge2asp(self):        
@@ -1493,7 +1495,7 @@ class KismetModule():
         
         character_action_budget = {name:self.action_budget for name in self.population}
         while len(character_action_budget) > 0:
-
+            self.knowledge2asp()
 
             volitions = self.calculate_volitions()
             
@@ -1509,8 +1511,9 @@ class KismetModule():
 
             self.actions2asp(chosen_actions)
             action_results = self.calculate_action_results()[0]
-
+            
             for result in action_results['add']:
+                
                 result = [term['predicate'] for term in  result[0]['terms']]
                 character = self.population[result[0]]
                 result_key = tuple(result[1:])

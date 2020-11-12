@@ -1,14 +1,3 @@
-#KISMET SPECIFIC
-*.interp
-*.tokens
-kismet.interp
-kismet.tokens
-kismetLexer.interp
-kismetLexer.py
-kismetLexer.tokens
-kismetListener.py
-kismetParser.py
-kismetVisitor.py
 
 
 # Byte-compiled / optimized / DLL files
