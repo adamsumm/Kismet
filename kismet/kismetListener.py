@@ -17,6 +17,15 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#pattern.
+    def enterPattern(self, ctx:kismetParser.PatternContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#pattern.
+    def exitPattern(self, ctx:kismetParser.PatternContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#opposition.
     def enterOpposition(self, ctx:kismetParser.OppositionContext):
         pass
@@ -446,6 +455,15 @@ class kismetListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismetParser#num.
     def exitNum(self, ctx:kismetParser.NumContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#pos_num.
+    def enterPos_num(self, ctx:kismetParser.Pos_numContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#pos_num.
+    def exitPos_num(self, ctx:kismetParser.Pos_numContext):
         pass
 
 

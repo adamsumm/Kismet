@@ -14,6 +14,11 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#pattern.
+    def visitPattern(self, ctx:kismetParser.PatternContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#opposition.
     def visitOpposition(self, ctx:kismetParser.OppositionContext):
         return self.visitChildren(ctx)
@@ -251,6 +256,11 @@ class kismetVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismetParser#num.
     def visitNum(self, ctx:kismetParser.NumContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#pos_num.
+    def visitPos_num(self, ctx:kismetParser.Pos_numContext):
         return self.visitChildren(ctx)
 
 
