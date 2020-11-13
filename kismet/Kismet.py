@@ -17,6 +17,42 @@ import sys
 import numpy as np
 from dataclasses import dataclass
 from sys import exit
+import re
+import tracery 
+
+def process_nesting(text,count=0):
+    start = -1
+    inside = 0
+    output = []
+    for index,c in enumerate(text):
+        if c == '[':
+            if inside == 0:
+                count += 1
+                start = index
+            inside += 1
+        elif c == ']':
+            inside -= 1
+            if inside == 0:
+                rules,new_count = process_nesting(text[start+1:index],count)
+                
+                output.append( (count,text[start:index+1]))
+                output += rules
+                count = new_count
+    return output,count
+
+def random_text_to_tracery(text):
+    rules,_ = process_nesting(text)
+    rules.append((0,text))
+    final_rules = {}
+    for c1,rule in rules:
+        for cs,subrule in rules:
+            if len(subrule) >= len(rule):
+                continue
+            rule = rule.replace(subrule,f'#{cs}#')
+        if rule[0] == '[':
+            rule = rule[1:-1].split('|')
+        final_rules[str(c1)] = rule
+    return final_rules
 
 def parse_likelihood(likelihood):
         logit = int(likelihood[0]['terms'][1]['predicate'])
@@ -822,12 +858,13 @@ def parseAction(action,action_name):
             r_ += res
         results = r_
     randomText = ''
+    print(action_name,'RandomText' in action)
     if 'RandomText' in action:
         randomText = action['RandomText'][0][1:-1]
     else:
-        char_text = ', '.join([''.join(c) for c in characters])
+        char_text = ', '.join([c[1] for c in characters])
         randomText = f'{action_name} {char_text}'
-
+    print('\t',randomText)
     if 'visibility' in action:
         visibility = action['visibility'][0][1].count('+') - action['visibility'][0][1].count('-')
     else:
@@ -1488,7 +1525,30 @@ class KismetModule():
                     character = knowledge[1]
                     action = ",".join(knowledge[-1])
                     history_file.write(f'{kind}({character},action({action})).\n')
-                          
+    def pretty_print_history(self,start = 0, end = float('inf')):
+        history_text = []
+        if end == float('inf'):
+            end = len(self.history)
+            
+        for phase in self.history[start:end]:
+            for step in phase:
+                for action in step:
+                    action_name = action[0]
+                    random_text = self.actions[action_name].text                    
+                    for e_type, character in self.actions[action_name].arguments:
+                        replacement_name = ''
+                        e_index = '_><^*@'.index(e_type)
+                        if e_index <= 3:
+                            replacement_name = self.population[action[e_index]]['name']
+                        else:
+                            replacement_name = action[e_index]
+                            
+                        random_text = random_text.replace(character, replacement_name)
+                    rules = random_text_to_tracery(random_text)
+                    rules = {**rules, **self.tracery_grammar}
+                    grammar = tracery.Grammar(rules)
+                    print(grammar.flatten('#0#'))
+            print('-------')
     def step_actions(self):
         self.timestep += 1
         self.history.append([])

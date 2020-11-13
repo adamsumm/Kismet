@@ -31,12 +31,14 @@ action sober_up(>Person)
 	if Person is drunk;
        	result: Person isnt drunk.
 
-action mingle(>Person, <Other):
+action mingle(>Person, <Other)
+"Person and Other mingle with each other":
        location: (Person, Other);
        tags: talk;
        result: Other likes Person += 1.
 
-action mingle_loudly(>Person, <Other):
+action mingle_loudly(>Person, <Other)
+"Person and Other mingle loudly with each other":
        location: (Person, Other);
        if Person is extroverted;
        tags: talk;
@@ -57,7 +59,8 @@ action gossip_about(>Gossiper, <Gossipee, ^GossipedAbout,*GossipedAction ):
        	       Gossipee likes Gossiper += 1,
 	       Gossipee heard GossipedAction.
 
-action flirt(>Person, <Other) extends mingle(>Person, <Other) :
+action flirt(>Person, <Other) extends mingle(>Person, <Other)
+"Person flirts with Other":
        location: (Person, Other);
        tags: talk, romance;
        visibility++;
