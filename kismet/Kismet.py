@@ -53,10 +53,16 @@ def random_text_to_tracery(text):
             rule = rule[1:-1].split('|')
         final_rules[str(c1)] = rule
     return final_rules
+def parse_predicate(predicate):
+    if 'terms' in predicate:
+        return f'{predicate["predicate"]}({",".join(pred["predicate"] for pred in predicate["terms"])})'
+    else:
+        return predicate["predicate"]
 
 def parse_likelihood(likelihood):
         logit = int(likelihood[0]['terms'][1]['predicate'])
-        action = [pred['predicate'] for pred in likelihood[0]['terms'][0]['terms']]
+        
+        action = [parse_predicate(pred) for pred in likelihood[0]['terms'][0]['terms']]
         actor = action[1]
         return logit,action,actor
 
@@ -1495,10 +1501,14 @@ class KismetModule():
             chosen_actions.append(volitions_by_actor[actor][1][np.argmax(np.random.multinomial(1,probs))])
         return chosen_actions
     def actions2asp(self,actions):
+        action_str = ''
         with open(f'{self.module_file}_actions.lp','w') as action_file:
             for action in actions:
+                action_str += f'occurred(action({",".join(action)})).\n'
                 action_file.write(f'occurred(action({",".join(action)})).\n')
-
+        if 'slap' in action_str:
+            for action in actions:
+                print(action)
                      
     def calculate_volitions(self):
         volitions = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp','-t','8'],clingo_exe=self.clingo_exe)
@@ -1549,6 +1559,15 @@ class KismetModule():
                     grammar = tracery.Grammar(rules)
                     print(grammar.flatten('#0#'))
             print('-------')
+            
+    def display_patterns(self):
+        patterns = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
+                           'testing.lp',f'{self.module_file}_history.lp','-t','8'],clingo_exe=self.clingo_exe)
+        for thing in patterns[0]:
+            print(thing)
+
+            
+            
     def step_actions(self):
         self.timestep += 1
         self.history.append([])
