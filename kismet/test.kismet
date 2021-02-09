@@ -173,6 +173,11 @@ role bartender(>TheWorker) extends ur_job(>TheWorker):
      tags: drinking;
      if TheWorker's age >= 18.
      
-pattern enemy_of_my_enemy(>Me,>EnemyOfMyEnemy):
+pattern enemy_of_my_enemy(>Me,>EnemyOfMyEnemy)
+    "Me and EnemyOfMyEnemy are united in their dislike for Enemy":
     if Me likes Enemy < -3, Enemy likes EnemyOfMyEnemy < -3.
+    
+pattern milquetoast(>Me,>Other)
+    "Me and Other feel pretty ambivalent about each other":
+    if Me likes Other = 0, Other likes Me = 0.
     

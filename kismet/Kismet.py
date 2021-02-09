@@ -1156,7 +1156,8 @@ def locationToASP(location,location_name):
 @dataclass
 class Pattern:
     asp_str: str
-        
+    text: str
+    arguments:  str  
 def patternToASP(pattern,pattern_name):
     
     conditions = parseConditions(pattern['Conditions'])
@@ -1168,7 +1169,13 @@ def patternToASP(pattern,pattern_name):
         
     asp_string += ',\n\t'.join(conditions)     
     asp_string += '.'
-    return Pattern(asp_string)
+    if 'RandomText' in pattern:
+        randomText = pattern['RandomText'][0][1:-1]
+    else:
+        char_text = ', '.join([c[1] for c in characters])
+        randomText = f'{pattern_name} {char_text}'
+        
+    return Pattern(asp_string,randomText,arguments)
 
 class KismetModule():
     def __init__(self,module_file,tracery_files=[],
@@ -1535,6 +1542,33 @@ class KismetModule():
                     character = knowledge[1]
                     action = ",".join(knowledge[-1])
                     history_file.write(f'{kind}({character},action({action})).\n')
+                    
+    def pretty_print_random_text(self, object_type, text_object):
+        name = text_object[0]
+        if object_type == 'action':
+            random_text = self.actions[name].text
+            arguments = self.actions[name].arguments
+        else:
+            random_text = self.patterns[name].text   
+            arguments = self.patterns[name].arguments
+        for ii, (e_type, character) in enumerate(arguments):
+            replacement_name = ''
+            e_index = '_><^*@'.index(e_type)
+            if object_type == 'action':
+                ii = e_index
+            else:
+                ii = ii+1
+            if e_index <= 3:
+                replacement_name = self.population[text_object[ii]]['name']
+            else:
+                replacement_name = text_object[ii]
+
+            random_text = random_text.replace(character, replacement_name)
+        rules = random_text_to_tracery(random_text)
+        rules = {**rules, **self.tracery_grammar}
+        grammar = tracery.Grammar(rules)
+        return grammar.flatten('#0#')
+        
     def pretty_print_history(self,start = 0, end = float('inf')):
         history_text = []
         if end == float('inf'):
@@ -1543,28 +1577,58 @@ class KismetModule():
         for phase in self.history[start:end]:
             for step in phase:
                 for action in step:
-                    action_name = action[0]
-                    random_text = self.actions[action_name].text                    
-                    for e_type, character in self.actions[action_name].arguments:
-                        replacement_name = ''
-                        e_index = '_><^*@'.index(e_type)
-                        if e_index <= 3:
-                            replacement_name = self.population[action[e_index]]['name']
-                        else:
-                            replacement_name = action[e_index]
+#                     action_name = action[0]
+#                     random_text = self.actions[action_name].text                    
+#                     for e_type, character in self.actions[action_name].arguments:
+#                         replacement_name = ''
+#                         e_index = '_><^*@'.index(e_type)
+#                         if e_index <= 3:
+#                             replacement_name = self.population[action[e_index]]['name']
+#                         else:
+#                             replacement_name = action[e_index]
                             
-                        random_text = random_text.replace(character, replacement_name)
-                    rules = random_text_to_tracery(random_text)
-                    rules = {**rules, **self.tracery_grammar}
-                    grammar = tracery.Grammar(rules)
-                    print(grammar.flatten('#0#'))
+#                         random_text = random_text.replace(character, replacement_name)
+#                     rules = random_text_to_tracery(random_text)
+#                     rules = {**rules, **self.tracery_grammar}
+#                     grammar = tracery.Grammar(rules)
+                   
+                    print(self.pretty_print_random_text('action',action))
             print('-------')
             
-    def display_patterns(self):
+    def display_patterns(self,pattern_filter=None,person_filter=None):
+        if pattern_filter is None:
+            pattern_filter = list(self.patterns)
+        lengths =set()    
+        
+        pattern_filter_text = []
+        for pattern in pattern_filter:
+            lengths.add(len(self.patterns[pattern].arguments)+1)
+            args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
+            pattern_filter_text.append(f'display_pattern({pattern},{",".join(args)}) :- pattern({pattern},{",".join(args)}).')
+        for length in sorted(lengths):
+            pattern_filter_text.append(f'#show display_pattern\\{length}.')
+        with open('pattern_filter.lp','w') as outfile:
+            outfile.write('\n'.join(pattern_filter_text))
         patterns = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
-                           'testing.lp',f'{self.module_file}_history.lp','-t','8'],clingo_exe=self.clingo_exe)
-        for thing in patterns[0]:
-            print(thing)
+                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp','-t','8'],clingo_exe=self.clingo_exe)
+        if person_filter:
+            person_filter = set(person_filter)
+        for pattern in patterns[0]['display_pattern']:
+            
+            pattern = pattern[0]
+            pattern = [pred['predicate'] for pred in pattern['terms']]
+            if person_filter:
+                can_display = False
+            else:
+                can_display = True
+                
+            for arg in pattern:
+                if can_display:
+                    break
+                if person_filter and arg in person_filter:
+                    can_display = True
+            if can_display:
+                print(self.pretty_print_random_text("pattern",pattern))
 
             
             
