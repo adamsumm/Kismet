@@ -12,7 +12,7 @@ def translate_to_felt(kismet_file):
                                 history_cutoff=10,
                                 action_budget=3,
                                 default_cost=3, )
-    # This makes a file called kismet_file_rules.swi
+    # This makes a file called kismet_file_rules.lp
     fileName = kismet_file + '_rules.lp'
     fileToText = fileToString(fileName)
     print(parseArgument(fileToText))
