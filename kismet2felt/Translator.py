@@ -3,24 +3,20 @@ import re
 
 fileName = 'test.kismet_rules.swi'
 
-kismetModule = """KismetModule('test.kismet_rules.swi',['../tracery/edwardian.tracery'],
+#Method: translate_to_felt
+#Purpose: To Translate from Kismet to ASP to Felt
+def translate_to_felt(kismet_file):
+    kismetModule = KismetModule(kismet_file, ['../tracery/edwardian.tracery'],
                                 ignore_logit=3.0,
                                 observation_temp=1.5,
                                 history_cutoff=10,
-                                action_budget = 3,
-                                default_cost = 3,)"""
-
-def extractFile(kismetModule):
-    leftStr, rightStr = kismetModule.split('(')
-    rightArr = rightStr.split(',')
-    fileName = rightArr[0]
-    fileName = fileName[1:-1]
-    fileText = fileToString(fileName)
-    print(parseArgument(fileText))
+                                action_budget=3,
+                                default_cost=3, )
+    # This makes a file called kismet_file_rules.lp
+    fileName = kismet_file + '_rules.lp'
+    fileToText = fileToString(fileName)
+    print(parseArgument(fileToText))
     print(feltActionsConvert(whereMatch,associateActions))
-
-
-
 
 #Method:fileToString(fileName)
 #Purpose: Open files and return as a string
