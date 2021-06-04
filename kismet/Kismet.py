@@ -864,13 +864,11 @@ def parseAction(action,action_name):
             r_ += res
         results = r_
     randomText = ''
-    print(action_name,'RandomText' in action)
     if 'RandomText' in action:
         randomText = action['RandomText'][0][1:-1]
     else:
         char_text = ', '.join([c[1] for c in characters])
         randomText = f'{action_name} {char_text}'
-    print('\t',randomText)
     if 'visibility' in action:
         visibility = action['visibility'][0][1].count('+') - action['visibility'][0][1].count('-')
     else:
