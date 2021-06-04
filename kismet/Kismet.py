@@ -1,5 +1,5 @@
-import kismetLexer
-from kismetParser import kismetParser
+from . import kismetLexer
+from .kismetParser import kismetParser
 import tracery
 from tracery.modifiers import base_english
 from antlr4.error.ErrorListener import ErrorListener
@@ -71,8 +71,8 @@ def solve(args,clingo_exe='clingo'):
     """Run clingo with the provided argument list and return the parsed JSON result."""
 
     print_args = [clingo_exe] + list(args) + [' | tr [:space:] \\\\n | sort ']
-    args = [clingo_exe, '--outf=2'] + args + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))]
-    print(' '.join(args))
+    args = [clingo_exe, '--outf=2'] + args # + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))] #No randomness here
+    #print(' '.join(args))
     with subprocess.Popen(
         ' '.join(args),
         stdout=subprocess.PIPE,
@@ -1186,7 +1186,9 @@ class KismetModule():
                 action_budget = 3,
                 default_cost = 3,
                 clingo_exe='clingo'):
-        self.clingo_exe = 'clingo'
+        
+        self.path = os.path.abspath(os.path.dirname(__file__))
+        self.clingo_exe = clingo_exe
         self.temperature = temperature
         self.observation_temp = observation_temp
         self.ignore_logit = ignore_logit
@@ -1198,7 +1200,7 @@ class KismetModule():
         self.character_knowledge = []
         
         error_log = []
-        self.module_file = module_file
+        self.module_file = os.path.basename(module_file)
         input_stream = FileStream(module_file)
         lexer = kismetLexer.kismetLexer(input_stream)
         stream = CommonTokenStream(lexer)
@@ -1270,7 +1272,6 @@ class KismetModule():
                     self.selectable_traits.append(trait)
             if trait.is_num:
                 self.numerical_status.append(trait)
-        print(self.numerical_status)
                     
         for name, role in self.roles.items():
             
@@ -1415,7 +1416,7 @@ class KismetModule():
         
         self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
         
-        with open(f'{self.module_file}_rules.lp', 'w') as asp_file:
+        with open(os.path.join(self.path,f'{self.module_file}_rules.lp'), 'w') as asp_file:
             text = '\n\n'.join(self.locationASP+self.actionASP+self.traitASP+self.patternASP)
             options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
                        ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
@@ -1475,7 +1476,7 @@ class KismetModule():
 
                         
     def population2asp(self):
-        with open(f'{self.module_file}_population.lp','w') as population:
+        with open(os.path.join(self.path,f'{self.module_file}_population.lp'),'w') as population:
             for name in self.population:
                 character = self.population[name]
                 population.write(f'person({name}).\n')
@@ -1509,27 +1510,24 @@ class KismetModule():
         return chosen_actions
     def actions2asp(self,actions):
         action_str = ''
-        with open(f'{self.module_file}_actions.lp','w') as action_file:
+        with open(os.path.join(self.path,f'{self.module_file}_actions.lp'),'w') as action_file:
             for action in actions:
                 action_str += f'occurred(action({",".join(action)})).\n'
                 action_file.write(f'occurred(action({",".join(action)})).\n')
-        if 'slap' in action_str:
-            for action in actions:
-                print(action)
                      
     def calculate_volitions(self):
-        volitions = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp','-t','8'],clingo_exe=self.clingo_exe)
+        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return volitions
     def calculate_action_results(self):
-        action_results = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','results_processing.lp','-t','8'],clingo_exe=self.clingo_exe)
+        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return action_results
     
     def calculate_observability(self):
-        visibility_results = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','observation.lp','-t','8'],clingo_exe=self.clingo_exe)
+        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return visibility_results
     
     def knowledge2asp(self):        
-        with open(f'{self.module_file}_history.lp','w') as history_file:
+        with open(os.path.join(self.path,f'{self.module_file}_history.lp'),'w') as history_file:
             for phase in self.history[-self.history_cutoff:]:
                 for step in phase:
                     for action in step:
@@ -1577,21 +1575,6 @@ class KismetModule():
         for phase in self.history[start:end]:
             for step in phase:
                 for action in step:
-#                     action_name = action[0]
-#                     random_text = self.actions[action_name].text                    
-#                     for e_type, character in self.actions[action_name].arguments:
-#                         replacement_name = ''
-#                         e_index = '_><^*@'.index(e_type)
-#                         if e_index <= 3:
-#                             replacement_name = self.population[action[e_index]]['name']
-#                         else:
-#                             replacement_name = action[e_index]
-                            
-#                         random_text = random_text.replace(character, replacement_name)
-#                     rules = random_text_to_tracery(random_text)
-#                     rules = {**rules, **self.tracery_grammar}
-#                     grammar = tracery.Grammar(rules)
-                   
                     print(self.pretty_print_random_text('action',action))
             print('-------')
             
@@ -1607,7 +1590,7 @@ class KismetModule():
             pattern_filter_text.append(f'display_pattern({pattern},{",".join(args)}) :- pattern({pattern},{",".join(args)}).')
         for length in sorted(lengths):
             pattern_filter_text.append(f'#show display_pattern\\{length}.')
-        with open('pattern_filter.lp','w') as outfile:
+        with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
         patterns = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
                            'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp','-t','8'],clingo_exe=self.clingo_exe)
