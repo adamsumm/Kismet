@@ -72,7 +72,7 @@ def solve(args,clingo_exe='clingo'):
 
     print_args = [clingo_exe] + list(args) + [' | tr [:space:] \\\\n | sort ']
     args = [clingo_exe, '--outf=2'] + args # + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))] #No randomness here
-    #print(' '.join(args))
+    print(' '.join(args))
     with subprocess.Popen(
         ' '.join(args),
         stdout=subprocess.PIPE,
@@ -1185,7 +1185,8 @@ class KismetModule():
                  history_cutoff=10,
                 action_budget = 3,
                 default_cost = 3,
-                clingo_exe='clingo'):
+                clingo_exe='clingo',
+                base_folder=''):
         
         self.path = os.path.abspath(os.path.dirname(__file__))
         self.clingo_exe = clingo_exe
