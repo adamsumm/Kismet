@@ -72,7 +72,7 @@ def solve(args,clingo_exe='clingo'):
 
     print_args = [clingo_exe] + list(args) + [' | tr [:space:] \\\\n | sort ']
     args = [clingo_exe, '--outf=2'] + args # + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))] #No randomness here
-    print(' '.join(args))
+    #print(' '.join(args))
     with subprocess.Popen(
         ' '.join(args),
         stdout=subprocess.PIPE,
