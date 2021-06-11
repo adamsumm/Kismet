@@ -1587,7 +1587,15 @@ class KismetModule():
                 print(f'Could not find person with id="{person}"')
             else:
                 print(self.population[person]['name'] + ':\n\t' + '\n\t'.join([trait_name for trait_name in self.population[person]['traits'] if not ignore_default_traits or trait_name not in default_traits]))
-                
+    def to_pretty_name(self,iterable):
+        return [self.population.get(thing,{'name':thing})['name'] for thing in iterable]
+        
+    def print_status(self,status):
+        if status is None:
+            return ''
+        else:
+            return ' : ' + str(status)
+        
     def display_statuses(self,person_filter=None):
         if person_filter is None:
             person_filter =  self.population
@@ -1596,7 +1604,7 @@ class KismetModule():
             if person not in self.population:
                 print(f'Could not find person with id="{person}"')
             else:
-                print(self.population[person]['name'] + ':\n\t' + '\n\t'.join(str(trait_name) for trait_name in self.population[person]['status']))
+                print(self.population[person]['name'] + ':\n\t' + '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']))
                 
                 
                 
