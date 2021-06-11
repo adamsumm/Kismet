@@ -1653,7 +1653,8 @@ class KismetModule():
         character_action_budget = {name:self.action_budget for name in self.population}
         while len(character_action_budget) > 0:
             self.knowledge2asp()
-
+            self.population2asp()
+            
             volitions = self.calculate_volitions()
             
             chosen_actions = self.compute_actions(volitions)
