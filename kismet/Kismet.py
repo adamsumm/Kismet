@@ -1576,7 +1576,17 @@ class KismetModule():
                 for action in step:
                     print(self.pretty_print_random_text('action',action))
             print('-------')
-            
+    
+    def display_traits(self,person_filter=None):
+        if person_filter is None:
+            person_filter =  self.population
+        
+        for person in person_filter:
+            if person not in self.population:
+                print(f'Could not find person with id="{person}"')
+            else:
+                print(self.population[person]['name'] + ':\n' + self.population[person]['traits'])
+                
     def display_patterns(self,pattern_filter=None,person_filter=None):
         if pattern_filter is None:
             pattern_filter = list(self.patterns)
