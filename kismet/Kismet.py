@@ -1591,8 +1591,9 @@ class KismetModule():
             pattern_filter_text.append(f'#show display_pattern\\{length}.')
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
-        patterns = solve(['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
-                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp','-t','8'],clingo_exe=self.clingo_exe)
+        patterns = solve([os.path.join(self.path,t) for t in 
+                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
+                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp'] + ['-t','8'],clingo_exe=self.clingo_exe)
         if person_filter:
             person_filter = set(person_filter)
         for pattern in patterns[0]['display_pattern']:
