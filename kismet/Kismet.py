@@ -83,7 +83,8 @@ def solve(args,clingo_exe='clingo'):
     #if err:
     #    print(err)
     out = outb.decode("utf-8")
-    
+    if len(out) == 0:
+        print(f'Command "{" ".join(args)}" failed.')
     with open('dump.lp', 'w') as outfile:
         result = json.loads(out)
         witness = result['Call'][0]['Witnesses'][-1]['Value']
@@ -1577,15 +1578,27 @@ class KismetModule():
                     print(self.pretty_print_random_text('action',action))
             print('-------')
     
-    def display_traits(self,person_filter=None):
+    def display_traits(self,person_filter=None,ignore_default_traits=True):
         if person_filter is None:
             person_filter =  self.population
-        
+            default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
         for person in person_filter:
             if person not in self.population:
                 print(f'Could not find person with id="{person}"')
             else:
-                print(self.population[person]['name'] + ':\n' + self.population[person]['traits'])
+                print(self.population[person]['name'] + ':\n\t' + '\n\t'.join([trait_name for trait_name in self.population[person]['traits'] if not ignore_default_traits or trait_name not in default_traits]))
+                
+    def display_statuses(self,person_filter=None):
+        if person_filter is None:
+            person_filter =  self.population
+            default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
+        for person in person_filter:
+            if person not in self.population:
+                print(f'Could not find person with id="{person}"')
+            else:
+                print(self.population[person]['name'] + ':\n\t' + '\n\t'.join(str(trait_name) for trait_name in self.population[person]['status']))
+                
+                
                 
     def display_patterns(self,pattern_filter=None,person_filter=None):
         if pattern_filter is None:
