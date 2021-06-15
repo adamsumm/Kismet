@@ -1606,8 +1606,30 @@ class KismetModule():
             else:
                 print(self.population[person]['name'] + ':\n\t' + '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']))
                 
-                
-                
+    def relations2json(self,person_filter=None):         
+        if person_filter is None:
+            person_filter =  self.population
+            default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
+        relations = {}
+        for person in person_filter:
+            if person not in self.population:
+                print(f'Could not find person with id="{person}"')
+            else:
+                for relation in self.population[person]['status']:
+                    if len(relation) > 1:
+                        source = self.population[person]['name']
+                        target = self.to_pretty_name([relation[1]])[0]
+                        relation_name = relation[0]
+                        val = 0
+                        if self.population[person]['status'][relation] is not None:
+                            val = self.population[person]['status'][relation]
+                        
+                        if relation_name not in relations:
+                            relations[relation_name] = []
+                            
+                        relations[relation_name].append([source,target,val])
+        return relations
+                            
     def display_patterns(self,pattern_filter=None,person_filter=None):
         if pattern_filter is None:
             pattern_filter = list(self.patterns)
