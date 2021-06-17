@@ -1,0 +1,74 @@
+grammar kismet_initialization;
+
+
+init:
+ (initialization|initialize)+ EOF
+ ;
+
+name : NAME;
+NAME   : [a-z][a-zA-Z_]* ;
+var : VAR;
+VAR : [A-Z][a-zA-Z_!]*;
+
+comparator:  '=' |
+	    '==' |
+	    '<' |
+	    '>' |
+	    '<='|
+	    '>='|
+	    '!=';
+
+
+num_choice
+	:  '[' num ']' name
+	|   '[' num ':' num ']' ( pdf )? name ;
+pdf :  ('^'|'-'|'.'|'_')+ ;
+
+num: NUMBER;
+
+NUMBER : NEG? POSITIVE_NUMBER ;
+
+pos_num: POSITIVE_NUMBER;
+
+POSITIVE_NUMBER: [0-9]+('.' [0-9]+)?;
+NEG: '-';
+
+WS : [ \t\r\n]+ -> skip ;
+
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
+;
+
+
+random_text: RANDOM_TEXT;
+
+RANDOM_TEXT:'"' .*? '"'  ;
+
+initialization:
+	'initialization' name ':' create (';' create)* '.';
+	
+	
+create:
+	'create' num_choice  ('as' name)? (options)?;
+	
+options:
+	':' option (',' option)*;
+
+	
+option:
+	assignment |
+	description;
+
+assignment:
+	name '=' num_choice |
+	name '=' name |
+	name '=' random_text;
+
+description:
+	'is' name |
+	'is' name 'to' name |
+	name name;
+	
+	
+initialize:
+	'initialize' ':' create (';' create)* '.';
