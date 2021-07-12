@@ -1,5 +1,11 @@
-from . import kismetLexer
-from .kismetParser import kismetParser
+print(__name__)
+if __name__ == 'Kismet':
+    import kismetLexer
+    from kismetParser import kismetParser    
+else:    
+    from . import kismetLexer
+    from .kismetParser import kismetParser
+    
 import tracery
 from tracery.modifiers import base_english
 from antlr4.error.ErrorListener import ErrorListener
@@ -1611,7 +1617,7 @@ class KismetModule():
             person_filter =  self.population
             default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
         relations = {}
-        characters = []
+        characters = {}
         
         default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
         for person in person_filter:
@@ -1619,19 +1625,19 @@ class KismetModule():
                 print(f'Could not find person with id="{person}"')
             else:
                 source = self.population[person]['name']
-                characters.append({'name':source,
+                characters[source] = {'name':source,
                                       'traits':[],
-                                      'statuses':[]})
+                                      'statuses':[]}
                 for trait in self.population[person]['traits']:
                     if trait not in default_traits:
-                        characters[-1]['traits'].append(trait)
+                        characters[source]['traits'].append(trait)
                 for relation in self.population[person]['status']:
                     if len(relation) == 1:
                         if self.population[person]['status'][relation] is not None:
                             val = self.population[person]['status'][relation]
-                            characters[-1]['statuses'].append([relation_name,val])
+                            characters[source]['statuses'].append([relation_name,val])
                         else:
-                            characters[-1]['statuses'].append([relation_name])
+                            characters[source]['statuses'].append([relation_name])
                             
                     elif len(relation) > 1:
                         source = self.population[person]['name']
@@ -1682,9 +1688,58 @@ class KismetModule():
                     can_display = True
             if can_display:
                 print(self.pretty_print_random_text("pattern",pattern))
-
+                
+    def patterns_to_json(self,pattern_filter=None,person_filter=None):
+        if pattern_filter is None:
+            pattern_filter = list(self.patterns)
+        lengths =set()    
+        
+        pattern_filter_text = []
+        for pattern in pattern_filter:
+            lengths.add(len(self.patterns[pattern].arguments)+1)
+            args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
+            pattern_filter_text.append(f'display_pattern({pattern},{",".join(args)}) :- pattern({pattern},{",".join(args)}).')
+        for length in sorted(lengths):
+            pattern_filter_text.append(f'#show display_pattern\\{length}.')
+        with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
+            outfile.write('\n'.join(pattern_filter_text))
+        patterns = solve([os.path.join(self.path,t) for t in 
+                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
+                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
+        if person_filter:
+            person_filter = set(person_filter)
             
+        found_patterns = {}
+        for pattern in patterns[0]['display_pattern']:
             
+            pattern = pattern[0]
+            pattern = [pred['predicate'] for pred in pattern['terms']]
+            if person_filter:
+                can_display = False
+            else:
+                can_display = True
+                
+            for arg in pattern:
+                if can_display:
+                    break
+                if person_filter and arg in person_filter:
+                    can_display = True
+            if can_display:
+                pattern_name = pattern[0]
+                if pattern_name not in found_patterns:
+                    found_patterns[pattern_name] = {'arguments':[var[1] for var in self.patterns[pattern_name].arguments],
+                                                    'reified':[]}
+                renamed_args = []
+                for argument, reified_arg in zip(self.patterns[pattern_name].arguments, pattern[1:]):
+                    e_type = argument[0]
+                    e_index = '_><^*@'.index(e_type)
+                      
+                    if e_index <= 3:
+                        reified_arg = self.population[reified_arg]['name']
+                    renamed_args.append(reified_arg)                        
+                    
+                found_patterns[pattern_name]['reified'].append(renamed_args)
+        return found_patterns
     def step_actions(self):
         self.timestep += 1
         self.history.append([])
