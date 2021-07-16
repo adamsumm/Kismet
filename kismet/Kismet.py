@@ -1633,10 +1633,13 @@ class KismetModule():
                         characters[source]['traits'].append(trait)
                 for relation in self.population[person]['status']:
                     if len(relation) == 1:
+                        relation_name  = relation[0]
                         if self.population[person]['status'][relation] is not None:
                             val = self.population[person]['status'][relation]
+                            print('Adding status', [relation_name,val])
                             characters[source]['statuses'].append([relation_name,val])
                         else:
+                            print('Adding status', [relation_name])
                             characters[source]['statuses'].append([relation_name])
                             
                     elif len(relation) > 1:
@@ -1647,11 +1650,12 @@ class KismetModule():
                         if relation_name not in relations:
                             relations[relation_name] = []
                         if self.population[person]['status'][relation] is not None:
+                
                             val = self.population[person]['status'][relation]
                             relations[relation_name].append([source,target,val])
                         else:
                             relations[relation_name].append([source,target])
-        return {'characters':characters,'relations':relations}
+        return {'characters':list(characters.values()),'relations':relations}
                             
     def display_patterns(self,pattern_filter=None,person_filter=None):
         if pattern_filter is None:
