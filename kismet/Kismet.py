@@ -1501,7 +1501,7 @@ class KismetModule():
                 character = self.population[name]
                 population.write(f'person({name}).\n')
                 for trait in character['traits']:
-                    population.write(f'is({name},{trait}).\n')
+                    population.write(f'is({name},{self.name2uniq.get(trait,[trait])[0]}).\n')
                 population.write('\n')
                 
                 for combo in character['status']:
