@@ -497,7 +497,7 @@ class KismetVisitor(ParseTreeVisitor):
 
 
 def thing2dict(thing):
-    
+    id = 0
     if len(thing) == 1 and (type(thing) is tuple or type(thing) is list):
         return thing2dict(thing[0])
     elif len(thing) == 1 or not (type(thing) is tuple or type(thing) is list):
@@ -1241,12 +1241,23 @@ class KismetModule():
                     'Role':{},
                     'Trait':{},
                     'Pattern':{}}
+        uniq_id = 0
+        self.name2uniq = {}
+        self.uniq2name = {}
         for thing in world:
             name = ''
             for t in thing[1]:
                 if t[0] == 'Name':
                     name = t[1]
                     break
+            
+            uniq_name = name + str(uniq_id)
+            uniq_id += 1
+            if name not in self.name2uniq:
+                self.name2uniq[name] = []
+            self.name2uniq[name].append(uniq_name)
+            self.uniq2name[uniq_name] = name
+            name = uniq_name
             things[thing[0]][name] = thing2dict(thing[1])
         self.actions = {action:parseAction(things['Action'][action],action) for action in things['Action']}
         for name,action in self.actions.items():
@@ -1256,6 +1267,8 @@ class KismetModule():
         self.roles = {role:parseRole( things['Role'][role],role) for role in things['Role']}
         self.traits = {trait:parseTrait(things['Trait'][trait],trait) for trait in things['Trait']}
         self.locations = {location:locationToASP(things['Location'][location],location) for location in things['Location']}
+        for pattern in things['Pattern']:
+            print(pattern)
         self.patterns = {pattern:patternToASP(things['Pattern'][pattern],pattern) for pattern in things['Pattern']}
         
         traits_ = {}
@@ -1286,8 +1299,8 @@ class KismetModule():
             arg_dict = simpleDictify(arguments)
             location = 'Location'
             self.actions[f'cast_{name}'] = Action(constraints, tags, characters, [f'add({characters[0][1]},{name},{location}) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False,True,1)
-
-        
+            
+            self.name2uniq[f'cast_{self.uniq2name[name]}'] = [f'cast_{name}']
         self.extension_graph = {}
         for name in self.actions:
             extension = self.actions[name].extensions
@@ -1319,7 +1332,7 @@ class KismetModule():
                 while ancestor:
                     ancestors.append(ancestor)
                     current = ancestor
-
+                    current = self.name2uniq[current][0]
                     ancestor = self.extension_graph[current]
 
                 extension_arguments = extension[1]
@@ -1328,6 +1341,7 @@ class KismetModule():
                 mappings = []
 
                 for ancestor in ancestors:
+                    ancestor = self.name2uniq[ancestor][0]
                     a_constraints = self.actions[ancestor].constraints
                     a_tags = self.actions[ancestor].tags
                     a_characters = self.actions[ancestor].characters
