@@ -26,6 +26,9 @@ from sys import exit
 import re
 import tracery 
 
+
+module_singleton = None
+
 def process_nesting(text,count=0):
     start = -1
     inside = 0
@@ -622,6 +625,8 @@ def parseConditional(conditional,conditional_type='Conditional'):
     if cond_type == 'Compare':
         arg1 = parseArg(arguments[0])[1]
         arg2 = arguments[2][1]
+        
+        arg2 = get_unique_name(arg2)
         comparison = arguments[1][1]
         text = f'{comparisonMapping[conditional_type][comparison]}{arg1}, {arg2})'
         if conditional_type == 'Result':
@@ -631,6 +636,7 @@ def parseConditional(conditional,conditional_type='Conditional'):
         if arguments[-1][0] == 'Num':
             char1 = arguments[0][1][1]
             rel = arguments[1][1]
+            rel = get_unique_name(rel)
             char2 = arguments[2][1][1]
             operation = arguments[3][0]        
             val = arguments[4][1]
@@ -647,6 +653,8 @@ def parseConditional(conditional,conditional_type='Conditional'):
                 inv = 'is'
                 rel = arguments[1][1]
                 char2 = arguments[2][1][1]
+                
+            rel = get_unique_name(rel)
             if conditional_type == 'Result':
                 text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :-']
             else:
@@ -665,13 +673,13 @@ def parseConditional(conditional,conditional_type='Conditional'):
         else:       
             inv = 'is'
             rel = arguments[2][1]
-        
+        rel = get_unique_name(rel)
         # A and B like each other -=5
         if arguments[-1][0] == 'Num':
             operation = arguments[-2][0]        
-            val = arguments[-1][1]    
-            text = [f'update({char1},{rel},{char2},Y) :- state({char1},{rel},{char2},X), X {operation} {val} = Y,',    
-                    f'update({char2},{rel},{char1},Y) :- state({char2},{rel},{char1},X), X {operation} {val} = Y,']
+            val = arguments[-1][1]  
+            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), X {operation} {val} = Y,',    
+                    f'update({char2},{rel},{char1},Y) :- is({char2},{rel},{char1},X), X {operation} {val} = Y,']
         else:
             text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :- ',
                     f'{comparisonMapping[conditional_type][inv]}{char2},{rel},{char1}) :- ']
@@ -687,25 +695,32 @@ def parseConditional(conditional,conditional_type='Conditional'):
         
     elif cond_type == 'NumCompare1':
         char1 = arguments[0][1][1]
-        stat = arguments[1][1]
+        stat = get_unique_name(arguments[1][1])
         operator = arguments[2][1]
         val = arguments[3][1]
 
         text = f'is({char1},{stat},V_{char1}_{stat}), V_{char1}_{stat} {operator} {val}'
     elif cond_type == 'NumCompare2':
         char1 = arguments[0][1][1]
-        stat = arguments[1][1]
+        stat = get_unique_name(arguments[1][1])
         char2 = arguments[2][1][1]
         operator = arguments[3][1]
         val = arguments[4][1]
+        
         text = f'is({char1},{stat},{char2},V_{char1}_{stat}_{char2}), V_{char1}_{stat}_{char2} {operator} {val}'
     elif cond_type == 'CondPattern':
-        name = arguments[0][1]
+        name = get_unique_name(arguments[0][1])
         args = [name] + [arg[1][1] for arg in arguments[1:]]
         text = f'pattern({",".join(args)})'
     else:
         print(f'UH OH --- Unknown Conditional Type -- missing "{cond_type}"')
     return text
+
+def get_unique_name(name):
+    return module_singleton.name2uniq.get(name,[name])[0]
+
+def get_common_name(name):
+    return module_singleton.uniq2name.get(name,name)
 
 def parseConditions(conditions,conditional_type='Conditional'):
     if type(unsqueeze(conditions)[0]) is list:
@@ -1192,7 +1207,8 @@ class KismetModule():
                 default_cost = 3,
                 clingo_exe='clingo',
                 base_folder=''):
-        
+        global module_singleton
+        module_singleton = self
         self.path = os.path.abspath(os.path.dirname(__file__))
         self.clingo_exe = clingo_exe
         self.temperature = temperature
@@ -1256,6 +1272,8 @@ class KismetModule():
             if name not in self.name2uniq:
                 self.name2uniq[name] = []
             self.name2uniq[name].append(uniq_name)
+            if name == 'likes':
+                print(name, uniq_name)
             self.uniq2name[uniq_name] = name
             name = uniq_name
             things[thing[0]][name] = thing2dict(thing[1])
@@ -1266,9 +1284,9 @@ class KismetModule():
 
         self.roles = {role:parseRole( things['Role'][role],role) for role in things['Role']}
         self.traits = {trait:parseTrait(things['Trait'][trait],trait) for trait in things['Trait']}
+        
         self.locations = {location:locationToASP(things['Location'][location],location) for location in things['Location']}
-        for pattern in things['Pattern']:
-            print(pattern)
+        
         self.patterns = {pattern:patternToASP(things['Pattern'][pattern],pattern) for pattern in things['Pattern']}
         
         traits_ = {}
@@ -1446,7 +1464,7 @@ class KismetModule():
             for name in self.alternative_names:
                 for alt in self.alternative_names[name]:
                     for option in options:
-                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
+                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{get_unique_name(name)}{option[1]}')
             asp_file.write(text)
     def make_population(self,parameters):
         #TODO MAKE POPULATION
@@ -1505,7 +1523,9 @@ class KismetModule():
                 population.write('\n')
                 
                 for combo in character['status']:
+                    print(combo)
                     val = character["status"][combo]
+                    combo = tuple([get_unique_name(c) for c in combo])
                     if val is not None:
                         population.write(f'is({name},{",".join(combo)},{val}).\n')
                     else:
@@ -1644,10 +1664,10 @@ class KismetModule():
                                       'statuses':[]}
                 for trait in self.population[person]['traits']:
                     if trait not in default_traits:
-                        characters[source]['traits'].append(trait)
+                        characters[source]['traits'].append(get_common_name(trait))
                 for relation in self.population[person]['status']:
                     if len(relation) == 1:
-                        relation_name  = relation[0]
+                        relation_name  = get_common_name(relation[0])
                         if self.population[person]['status'][relation] is not None:
                             val = self.population[person]['status'][relation]
                             print('Adding status', [relation_name,val])
@@ -1659,7 +1679,7 @@ class KismetModule():
                     elif len(relation) > 1:
                         source = self.population[person]['name']
                         target = self.to_pretty_name([relation[1]])[0]
-                        relation_name = relation[0]
+                        relation_name = get_common_name(relation[0])
                         
                         if relation_name not in relations:
                             relations[relation_name] = []
@@ -1743,12 +1763,12 @@ class KismetModule():
                 if person_filter and arg in person_filter:
                     can_display = True
             if can_display:
-                pattern_name = pattern[0]
+                pattern_name = get_common_name(pattern[0])
                 if pattern_name not in found_patterns:
-                    found_patterns[pattern_name] = {'arguments':[var[1] for var in self.patterns[pattern_name].arguments],
+                    found_patterns[pattern_name] = {'arguments':[var[1] for var in self.patterns[get_unique_name(pattern_name)].arguments],
                                                     'reified':[]}
                 renamed_args = []
-                for argument, reified_arg in zip(self.patterns[pattern_name].arguments, pattern[1:]):
+                for argument, reified_arg in zip(self.patterns[get_unique_name(pattern_name)].arguments, pattern[1:]):
                     e_type = argument[0]
                     e_index = '_><^*@'.index(e_type)
                       
