@@ -1272,8 +1272,6 @@ class KismetModule():
             if name not in self.name2uniq:
                 self.name2uniq[name] = []
             self.name2uniq[name].append(uniq_name)
-            if name == 'likes':
-                print(name, uniq_name)
             self.uniq2name[uniq_name] = name
             name = uniq_name
             things[thing[0]][name] = thing2dict(thing[1])
@@ -1523,7 +1521,6 @@ class KismetModule():
                 population.write('\n')
                 
                 for combo in character['status']:
-                    print(combo)
                     val = character["status"][combo]
                     combo = tuple([get_unique_name(c) for c in combo])
                     if val is not None:
