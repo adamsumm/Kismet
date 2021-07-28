@@ -161,6 +161,7 @@ def parse_json_result(out):
             preds[parsed[0]['predicate']].append(parsed)
         all_preds.append(preds)
     return all_preds
+
 class MyErrorListener( ErrorListener ):
     def __init__(self):
         super()
@@ -717,7 +718,8 @@ def parseConditional(conditional,conditional_type='Conditional'):
     return text
 
 def get_unique_name(name):
-    return module_singleton.name2uniq.get(name,[name])[0]
+    return name
+    #return module_singleton.name2uniq.get(name,[name])[0]
 
 def get_common_name(name):
     return module_singleton.uniq2name.get(name,name)
@@ -915,7 +917,7 @@ def parseRole(role,rolename):
         conditions = role['Conditions']
         constraints += parseConditions(conditions)
         
-    constraints += [f'at({characters[0][1]},Location)', f'castable({rolename},Location)', f'mode(casting)']
+    constraints += [f'at({characters[0][1]},Location)', f'castable({get_common_name(rolename)},Location)', f'mode(casting)']
     return Role(characters, constraints, extension, tags,arguments)
 
 
@@ -991,10 +993,10 @@ def parseTrait(trait,traitname):
             else:
                 kind = 'propensity'
 
-            head = f'{kind}({tag}, {valence}, {traitname},{asp_args} ) '            
+            head = f'{kind}({tag}, {valence}, {get_common_name(traitname)},{asp_args} ) '            
             #premises = ['action(ACTION_NAME,'+','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] ) +')']
             premises = ['action(ACTION_NAME,'+','.join([f'{arguments[arg_type]}' for arg_type in ['>','<','^','*','@']] ) +')']
-            premises.append(f'is({arguments[">"]}, {traitname})')
+            premises.append(f'is({arguments[">"]}, {get_common_name(traitname)})')
             
             constraints = unsqueeze(constraints)
             if (type(constraints) is list):
@@ -1182,7 +1184,7 @@ def patternToASP(pattern,pattern_name):
     
     conditions = parseConditions(pattern['Conditions'])
     characters, constraints, arguments = parseArguments(pattern)    
-    
+    pattern_name = get_common_name(pattern_name)
     asp_string = f'pattern({pattern_name},' + ', '.join(arg[1] for arg in arguments) + ') :-\n\t'
     for arg1,arg2 in itertools.combinations(arguments,2):
         conditions.append(f'different({arg1[1]},{arg2[1]})')
@@ -1294,7 +1296,12 @@ class KismetModule():
                 names = trait_.alternative_names
                 self.alternative_names[names[0]] = names[1:]
                 traits_[names[0]] = trait_
-
+        self.name_map = {}
+        for name in self.alternative_names:
+            self.name_map[name] = name
+            for other in self.alternative_names[name]:
+                self.name_map[other] = name
+                
         self.traits = traits_
         self.default_traits = []
         self.selectable_traits = []
@@ -1307,14 +1314,13 @@ class KismetModule():
                     self.selectable_traits.append(trait)
             if trait.is_num:
                 self.numerical_status.append(trait)
-                    
         for name, role in self.roles.items():
             
             characters, constraints, extension, tags,arguments = role
             char_text = ', '.join([''.join(c) for c in characters])
             arg_dict = simpleDictify(arguments)
             location = 'Location'
-            self.actions[f'cast_{name}'] = Action(constraints, tags, characters, [f'add({characters[0][1]},{name},{location}) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False,True,1)
+            self.actions[f'cast_{name}'] = Action(constraints, tags, characters, [f'add({characters[0][1]},{get_common_name(name)},{location}) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False,True,1)
             
             self.name2uniq[f'cast_{self.uniq2name[name]}'] = [f'cast_{name}']
         self.extension_graph = {}
@@ -1323,7 +1329,10 @@ class KismetModule():
             if extension:
                 extension = extension[0]
             self.extension_graph[name] = extension
-
+        
+        
+        self.sanity_check()            
+        
         self.actionASP = []
         for name in self.actions:
 
@@ -1405,7 +1414,7 @@ class KismetModule():
             arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}                
             asp_args = ', '.join([arguments.get(arg_type,'null')   for arg_type in ['>','<','^','*','@']])
 
-            head = f'action({name}, {asp_args})'
+            head = f'action({get_common_name(name)}, {asp_args})'
 
             premises = [','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] )]
             premises += constraints
@@ -1430,8 +1439,8 @@ class KismetModule():
                 self.actionASP.append(result + at_location +f'occurred({head}).')
 
             for tag in tags:
-                self.actionASP.append(f'is({name}, {tag}).')
-            self.actionASP.append(f'visibility({name},{visibility}).')
+                self.actionASP.append(f'is({get_common_name(name)}, {tag}).')
+            self.actionASP.append(f'visibility({get_common_name(name)},{visibility}).')
 
         self.traitASP = []
         for trait in self.traits:
@@ -1440,15 +1449,15 @@ class KismetModule():
             trait_type = 'trait'
             if self.traits[trait].is_status:
                 trait_type = 'status'
-            self.traitASP.append(f'{trait_type}({trait}).')
+            self.traitASP.append(f'{trait_type}({get_common_name(trait)}).')
         self.locationASP = []
         
         for location in self.locations:
             tracery_name,supported_roles, initialization,each_turn,tags  = self.locations[location]
             for role in supported_roles:
-                self.locationASP.append(f'castable({role},{location}).')
+                self.locationASP.append(f'castable({get_common_name(role)},{get_common_name(location)}).')
             for tag in tags:                
-                self.locationASP.append(f'is({location},{tag}).')
+                self.locationASP.append(f'is({get_common_name(location)},{tag}).')
         
         self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
         
@@ -1464,6 +1473,152 @@ class KismetModule():
                     for option in options:
                         text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{get_unique_name(name)}{option[1]}')
             asp_file.write(text)
+    def strip_constraint(self,constraint):
+        current = ''
+        parts = []
+        stack = []
+        for c in constraint:
+            if c == '(':
+                parts.append(current)
+                current = ''
+                stack.append(parts)
+                parts = []
+            elif c == ')':
+                parts.append(current)
+                current = ''
+                prev = stack.pop()
+                prev.append(parts)
+                parts = prev
+                
+            elif c == ',':
+                if current != '':
+                    parts.append(current)
+                current = ''
+            else:
+                current += c
+            
+        if current != '':
+            parts.append(current)
+            
+        all_constraints = []
+        for thing, next_thing in zip(parts,parts[1:]):
+            if isinstance(thing,str) and isinstance(next_thing,list):
+                current_constraint = {}
+                current_constraint['name'] = thing.replace('not ','').strip()
+                current_constraint['args'] = [t.strip() for t in next_thing]
+                all_constraints.append(current_constraint)
+        return all_constraints
+        
+    def sanity_check(self):
+        
+        
+        found_locations = set()
+        found_traits = set(['age'])
+        found_tags = set()
+        found_actions = set()
+        found_patterns = set()
+        
+        required_locations = set()
+        required_traits = set()
+        required_tags = set()
+        required_actions = set()
+        required_patterns = set()
+        for name, action in self.actions.items():
+            location_vars = set()
+            people_vars = set()
+            action_vars = set()
+            
+            found_tags |= set(action.tags)
+            for argtype,arg_name in action.arguments:
+                
+                if argtype in '><^':
+                    people_vars.add(arg_name)
+                elif argtype == '*':
+                    action_vars.add(arg_name)
+                elif argtype == '@':
+                    location_vars.add(arg_name)
+            mentions = {}
+            for constraint in action.constraints:
+                constraint_parts = self.strip_constraint(constraint)
+                for constraint in constraint_parts:
+                    if constraint['name'] == 'is':
+                        var_name = constraint['args'][0]
+                        tag = constraint['args'][1]
+                        if var_name not in mentions:
+                            mentions[var_name] = set()
+                        mentions[var_name].add(tag)
+                    elif constraint['name'] == 'pattern':
+                        required_patterns.add(constraint['args'][0])
+                    elif constraint['name'] == 'at':
+                        location_vars.add(constraint['args'][1])
+                    else:
+                        pass
+                        #print(f'DONT KNOW HOW TO HANDLE "{constraint["name"]}"')
+                        #print('\t', constraint)
+                        
+
+            for mention in mentions:
+                if mention in location_vars:
+                    required_locations |= mentions[mention]
+                elif mention in people_vars:
+                    required_traits |= mentions[mention]
+                elif mention in action_vars:
+                    required_tags  |= mentions[mention]
+                    
+            mentions = {}
+            for result in action.results:
+                result = result.split(':-')
+                for result_piece in result:
+                    if result_piece != " ":
+                        result_parts = self.strip_constraint(result_piece)
+
+                        for result in result_parts:
+                            if result['name'] in ['add','update','is','del']:
+                                var_name = result['args'][0]
+                                tag = result['args'][1]
+                                if var_name not in mentions:
+                                    mentions[var_name] = set()
+                                mentions[var_name].add(tag)
+                            else:
+                                print('RESULT TYPE', result['name'])           
+            
+            for mention in mentions:
+                if mention in location_vars:
+                    found_locations |= mentions[mention]
+                elif mention in people_vars:
+                    found_traits |= mentions[mention]
+                    
+        for location in self.locations:
+            found_locations.add(get_common_name(location))
+            
+        for name,  trait in self.traits.items():
+            
+            found_traits.add(get_common_name(name))
+            
+            for propensity in trait.propensities:
+                if propensity.is_goto:
+                    required_locations |= set(propensity.modified_tags)
+                else:
+                    required_tags |= set(propensity.modified_tags)
+                    
+        for pattern in self.patterns:
+            found_patterns.add(get_common_name(pattern))
+        found_traits = set([self.name_map.get(n,n) for n in found_traits])
+        required_traits = set([self.name_map.get(n,n) for n in required_traits])
+        
+        print('Locations:\n','\tF-R',found_locations-required_locations)
+        print('\tR-F',required_locations-found_locations)
+        
+        print('Tags:\n','\tF-R',found_tags-required_tags)
+        print('\tR-F',required_tags-found_tags)
+        
+        print('Traits:\n','\tF-R',found_traits-required_traits)
+        print('\tR-F',required_traits-found_traits)
+        
+        
+        print('Patterns:\n','\tF-R',found_patterns-required_patterns)
+        print('\tR-F',required_patterns-found_patterns)
+        
     def make_population(self,parameters):
         #TODO MAKE POPULATION
         self.population = {}
@@ -1509,7 +1664,7 @@ class KismetModule():
                         status_args += 1
                 for args in itertools.product(self.population.keys(), repeat=status_args):
                     person['status'][tuple([status.alternative_names[0]]+list(args))] = 0
-
+        
                         
     def population2asp(self):
         with open(os.path.join(self.path,f'{self.module_file}_population.lp'),'w') as population:
@@ -1517,7 +1672,7 @@ class KismetModule():
                 character = self.population[name]
                 population.write(f'person({name}).\n')
                 for trait in character['traits']:
-                    population.write(f'is({name},{self.name2uniq.get(trait,[trait])[0]}).\n')
+                    population.write(f'is({name},{get_unique_name(trait)}).\n')
                 population.write('\n')
                 
                 for combo in character['status']:
@@ -1579,7 +1734,7 @@ class KismetModule():
                     history_file.write(f'{kind}({character},action({action})).\n')
                     
     def pretty_print_random_text(self, object_type, text_object):
-        name = text_object[0]
+        name = self.name2uniq[text_object[0]][0]
         if object_type == 'action':
             random_text = self.actions[name].text
             arguments = self.actions[name].arguments
@@ -1697,7 +1852,7 @@ class KismetModule():
         for pattern in pattern_filter:
             lengths.add(len(self.patterns[pattern].arguments)+1)
             args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
-            pattern_filter_text.append(f'display_pattern({pattern},{",".join(args)}) :- pattern({pattern},{",".join(args)}).')
+            pattern_filter_text.append(f'display_pattern({get_common_name(pattern)},{",".join(args)}) :- pattern({get_common_name(pattern)},{",".join(args)}).')
         for length in sorted(lengths):
             pattern_filter_text.append(f'#show display_pattern\\{length}.')
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
@@ -1788,7 +1943,8 @@ class KismetModule():
             
             chosen_actions = self.compute_actions(volitions)
             for action in chosen_actions:
-                name = action[0]
+                name = self.name2uniq[action[0]][0]
+                
                 initiator = action[1]
                 cost = self.actions[name].cost
                 character_action_budget[initiator] -= cost
