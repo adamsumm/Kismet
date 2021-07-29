@@ -1323,6 +1323,7 @@ class KismetModule():
             self.actions[f'cast_{name}'] = Action(constraints, tags, characters, [f'add({characters[0][1]},{get_common_name(name)},{location}) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False,True,1)
             
             self.name2uniq[f'cast_{self.uniq2name[name]}'] = [f'cast_{name}']
+            self.uniq2name[f'cast_{name}'] = f'cast_{self.uniq2name[name]}'
         self.extension_graph = {}
         for name in self.actions:
             extension = self.actions[name].extensions
@@ -1334,6 +1335,8 @@ class KismetModule():
         self.sanity_check()            
         
         self.actionASP = []
+        
+        
         for name in self.actions:
 
             constraints = self.actions[name].constraints
@@ -1523,11 +1526,23 @@ class KismetModule():
         required_tags = set()
         required_actions = set()
         required_patterns = set()
+        
+        action_to_requirement = {}
+        action_to_found = {}
+        
+        trait_to_requirement = {}
+        trait_to_found = {}
+        
+        name_to_type = {}
+        
         for name, action in self.actions.items():
             location_vars = set()
             people_vars = set()
             action_vars = set()
-            
+            name = get_common_name(name)
+            name_to_type[name] = 'Action'
+            action_to_requirement[name] = set()
+            action_to_found[name] = set()
             found_tags |= set(action.tags)
             for argtype,arg_name in action.arguments:
                 
@@ -1547,8 +1562,11 @@ class KismetModule():
                         if var_name not in mentions:
                             mentions[var_name] = set()
                         mentions[var_name].add(tag)
+                        
+                        action_to_requirement[name].add(tag)
                     elif constraint['name'] == 'pattern':
                         required_patterns.add(constraint['args'][0])
+                        action_to_requirement[name].add(constraint['args'][0])
                     elif constraint['name'] == 'at':
                         location_vars.add(constraint['args'][1])
                     else:
@@ -1579,8 +1597,9 @@ class KismetModule():
                                 if var_name not in mentions:
                                     mentions[var_name] = set()
                                 mentions[var_name].add(tag)
+                                action_to_found[name].add(tag)
                             else:
-                                print('RESULT TYPE', result['name'])           
+                                pass#print('RESULT TYPE', result['name'])           
             
             for mention in mentions:
                 if mention in location_vars:
@@ -1591,33 +1610,105 @@ class KismetModule():
         for location in self.locations:
             found_locations.add(get_common_name(location))
             
-        for name,  trait in self.traits.items():
+        for name,  trait in self.traits.items():    
+            name =get_common_name(name)
             
-            found_traits.add(get_common_name(name))
-            
+            name_to_type[name] = 'Trait'
+            trait_to_requirement[name] = set()
+            found_traits.add(get_common_name(name))            
             for propensity in trait.propensities:
                 if propensity.is_goto:
                     required_locations |= set(propensity.modified_tags)
+                    trait_to_requirement[name] |=  set(propensity.modified_tags)
                 else:
                     required_tags |= set(propensity.modified_tags)
-                    
-        for pattern in self.patterns:
-            found_patterns.add(get_common_name(pattern))
+                    trait_to_requirement[name] |=  set(propensity.modified_tags)
+        for role_name, role in self.roles.items():
+            role_name = get_common_name(role_name)
+            name_to_type[role_name] = 'Role'
+            
+                         
+        for pattern_name,pattern in self.patterns.items():
+            pattern_name = get_common_name(pattern_name)
+            #print(pattern_name,pattern)
+            
+            name_to_type[pattern_name] = 'Pattern'
+            found_patterns.add(pattern_name)
+          
         found_traits = set([self.name_map.get(n,n) for n in found_traits])
-        required_traits = set([self.name_map.get(n,n) for n in required_traits])
+        required_traits = set([self.name_map.get(n,n) for n in required_traits])              
+         
+        l_f_r = found_locations-required_locations
+        l_r_f = required_locations-found_locations
         
-        print('Locations:\n','\tF-R',found_locations-required_locations)
-        print('\tR-F',required_locations-found_locations)
+        t_f_r = found_tags-required_tags
+        t_r_f = required_tags-found_tags
         
-        print('Tags:\n','\tF-R',found_tags-required_tags)
-        print('\tR-F',required_tags-found_tags)
+        tr_f_r= found_traits-required_traits
+        tr_r_f= required_traits-found_traits
         
-        print('Traits:\n','\tF-R',found_traits-required_traits)
-        print('\tR-F',required_traits-found_traits)
+        p_f_r= found_patterns-required_patterns
+        p_r_f= required_patterns-found_patterns
         
+        all_kinds = [('Locations: Not referenced in actions or traits', l_f_r),
+                     ('Locations: Referenced but not found', l_r_f),
+                     ('Tags: Not referenced in traits', t_f_r),
+                     ('Tags: Referenced in traits but not found in actions', t_r_f),
+                     ('Traits: Not referenced in actions', tr_f_r),
+                     ('Traits: Referenced in actions but not found', tr_r_f),
+                     ('Patterns: Not referenced in actions or traits', p_f_r),
+                     ('Patterns: Referenced but not found', p_r_f)]
+        found_problems = False
+        for _, s in all_kinds:
+            if len(s) > 0:
+                found_problems = True
+                break
+        if found_problems:
+            print('*************************POTENTIAL PROBLEMS*************************')
+            for label, problems in all_kinds:
+                if len(problems) > 0:
+                    print(label)
+                    print('\t'+'\n\t'.join(problems))
+                
+        component_to_whole = {}
         
-        print('Patterns:\n','\tF-R',found_patterns-required_patterns)
-        print('\tR-F',required_patterns-found_patterns)
+        print('*************************Reference Section*************************')
+        for mapping in [action_to_requirement, action_to_found, trait_to_requirement]:
+            for name, subs in mapping.items():      
+                name = get_common_name(name)
+                for n in subs:
+                    n = self.name_map.get(n,n)
+                    if n not in component_to_whole:
+                        component_to_whole[n] = set()
+                    component_to_whole[n].add(name)
+                    
+        for component, whole in component_to_whole.items():
+            name_to_type[component] = name_to_type.get(component,'Tag')
+             
+        type_to_name = {}
+        for name, type_ in name_to_type.items():
+            if type_ not in type_to_name:
+                type_to_name[type_] = set()
+            type_to_name[type_].add(get_common_name(name))
+            
+        for type_, names in type_to_name.items():
+            print(type_+'s')
+            for n in names:
+                print('\t'+n)
+                if n in component_to_whole:
+                    print('\t\t referenced in:',', '.join(component_to_whole[n]))
+        
+        print('Requirements:')
+        for mapping in [action_to_requirement, trait_to_requirement]:
+            for name, subs in mapping.items():
+                print(name)
+                if len(subs) > 0:
+                    print('\tReferences:' ,', '.join(subs))
+            
+        
+        #print(component_to_whole)
+            
+        
         
     def make_population(self,parameters):
         #TODO MAKE POPULATION
