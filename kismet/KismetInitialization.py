@@ -1,14 +1,5 @@
-print(__name__)
-if __name__ == 'Kismet':
-    import kismetLexer
-    from kismetParser import kismetParser 
-    import KismetInitialization
-else:    
-    
-    from . import KismetInitialization
-    from . import kismetLexer
-    from .kismetParser import kismetParser
-    
+import kismetLexer
+from kismetParser import kismetParser
 import tracery
 from tracery.modifiers import base_english
 from antlr4.error.ErrorListener import ErrorListener
@@ -28,9 +19,21 @@ from dataclasses import dataclass
 from sys import exit
 import re
 import tracery 
+import inspect
+import kismet_initializationLexer
+from kismet_initializationParser import  kismet_initializationParser
+from abc import ABC
+from dataclasses import dataclass, field
+from collections.abc import Callable
+import mod
 
 
-module_singleton = None
+from antlr4.error.ErrorListener import ErrorListener
+from antlr4 import *
+if __name__ is not None and "." in __name__:
+    from .kismet_initializationParser import kismet_initializationParser
+else:
+    from kismet_initializationParser import kismet_initializationParser
 
 def process_nesting(text,count=0):
     start = -1
@@ -164,7 +167,6 @@ def parse_json_result(out):
             preds[parsed[0]['predicate']].append(parsed)
         all_preds.append(preds)
     return all_preds
-
 class MyErrorListener( ErrorListener ):
     def __init__(self):
         super()
@@ -500,11 +502,8 @@ class KismetVisitor(ParseTreeVisitor):
         
         return ('Sub', ctx.getText())
 
-# In[7]:
-
-
 def thing2dict(thing):
-    id = 0
+    
     if len(thing) == 1 and (type(thing) is tuple or type(thing) is list):
         return thing2dict(thing[0])
     elif len(thing) == 1 or not (type(thing) is tuple or type(thing) is list):
@@ -551,6 +550,7 @@ def parseArg(argument):
         argt = argument['ArgType'],
     name = ''
     if 'Var' in argument:
+        
         name = argument['Var']
     elif 'Name' in argument:
         name = argument['Name']
@@ -629,8 +629,6 @@ def parseConditional(conditional,conditional_type='Conditional'):
     if cond_type == 'Compare':
         arg1 = parseArg(arguments[0])[1]
         arg2 = arguments[2][1]
-        
-        arg2 = get_unique_name(arg2)
         comparison = arguments[1][1]
         text = f'{comparisonMapping[conditional_type][comparison]}{arg1}, {arg2})'
         if conditional_type == 'Result':
@@ -640,7 +638,6 @@ def parseConditional(conditional,conditional_type='Conditional'):
         if arguments[-1][0] == 'Num':
             char1 = arguments[0][1][1]
             rel = arguments[1][1]
-            rel = get_unique_name(rel)
             char2 = arguments[2][1][1]
             operation = arguments[3][0]        
             val = arguments[4][1]
@@ -657,8 +654,6 @@ def parseConditional(conditional,conditional_type='Conditional'):
                 inv = 'is'
                 rel = arguments[1][1]
                 char2 = arguments[2][1][1]
-                
-            rel = get_unique_name(rel)
             if conditional_type == 'Result':
                 text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :-']
             else:
@@ -677,13 +672,13 @@ def parseConditional(conditional,conditional_type='Conditional'):
         else:       
             inv = 'is'
             rel = arguments[2][1]
-        rel = get_unique_name(rel)
+        
         # A and B like each other -=5
         if arguments[-1][0] == 'Num':
             operation = arguments[-2][0]        
-            val = arguments[-1][1]  
-            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), X {operation} {val} = Y,',    
-                    f'update({char2},{rel},{char1},Y) :- is({char2},{rel},{char1},X), X {operation} {val} = Y,']
+            val = arguments[-1][1]    
+            text = [f'update({char1},{rel},{char2},Y) :- state({char1},{rel},{char2},X), X {operation} {val} = Y,',    
+                    f'update({char2},{rel},{char1},Y) :- state({char2},{rel},{char1},X), X {operation} {val} = Y,']
         else:
             text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :- ',
                     f'{comparisonMapping[conditional_type][inv]}{char2},{rel},{char1}) :- ']
@@ -699,33 +694,25 @@ def parseConditional(conditional,conditional_type='Conditional'):
         
     elif cond_type == 'NumCompare1':
         char1 = arguments[0][1][1]
-        stat = get_unique_name(arguments[1][1])
+        stat = arguments[1][1]
         operator = arguments[2][1]
         val = arguments[3][1]
 
         text = f'is({char1},{stat},V_{char1}_{stat}), V_{char1}_{stat} {operator} {val}'
     elif cond_type == 'NumCompare2':
         char1 = arguments[0][1][1]
-        stat = get_unique_name(arguments[1][1])
+        stat = arguments[1][1]
         char2 = arguments[2][1][1]
         operator = arguments[3][1]
         val = arguments[4][1]
-        
         text = f'is({char1},{stat},{char2},V_{char1}_{stat}_{char2}), V_{char1}_{stat}_{char2} {operator} {val}'
     elif cond_type == 'CondPattern':
-        name = get_unique_name(arguments[0][1])
+        name = arguments[0][1]
         args = [name] + [arg[1][1] for arg in arguments[1:]]
         text = f'pattern({",".join(args)})'
     else:
         print(f'UH OH --- Unknown Conditional Type -- missing "{cond_type}"')
     return text
-
-def get_unique_name(name):
-    return name
-    #return module_singleton.name2uniq.get(name,[name])[0]
-
-def get_common_name(name):
-    return module_singleton.uniq2name.get(name,name)
 
 def parseConditions(conditions,conditional_type='Conditional'):
     if type(unsqueeze(conditions)[0]) is list:
@@ -920,7 +907,7 @@ def parseRole(role,rolename):
         conditions = role['Conditions']
         constraints += parseConditions(conditions)
         
-    constraints += [f'at({characters[0][1]},Location)', f'castable({get_common_name(rolename)},Location)', f'mode(casting)']
+    constraints += [f'at({characters[0][1]},Location)', f'castable({rolename},Location)', f'mode(casting)']
     return Role(characters, constraints, extension, tags,arguments)
 
 
@@ -961,8 +948,19 @@ arg2type = {'>':'person',
             '^':'person',
             '*':'event',
             '@':'location'}
-
-Trait = namedtuple('Trait',['is_default','is_num','is_trait','is_status','alternative_names','arguments','propensities','propensityASP','opposition'])
+@dataclass
+class Trait:
+    is_default:bool
+    is_num:bool
+    is_trait:bool
+    is_status:bool
+    alternative_names:list
+    arguments:list
+    propensities:list
+    propensityASP:str
+    opposition:list
+    def __repr__(self):
+        return self.alternative_names[0]
 def parseTrait(trait,traitname):
 
     
@@ -996,10 +994,10 @@ def parseTrait(trait,traitname):
             else:
                 kind = 'propensity'
 
-            head = f'{kind}({tag}, {valence}, {get_common_name(traitname)},{asp_args} ) '            
+            head = f'{kind}({tag}, {valence}, {traitname},{asp_args} ) '            
             #premises = ['action(ACTION_NAME,'+','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] ) +')']
             premises = ['action(ACTION_NAME,'+','.join([f'{arguments[arg_type]}' for arg_type in ['>','<','^','*','@']] ) +')']
-            premises.append(f'is({arguments[">"]}, {get_common_name(traitname)})')
+            premises.append(f'is({arguments[">"]}, {traitname})')
             
             constraints = unsqueeze(constraints)
             if (type(constraints) is list):
@@ -1187,7 +1185,7 @@ def patternToASP(pattern,pattern_name):
     
     conditions = parseConditions(pattern['Conditions'])
     characters, constraints, arguments = parseArguments(pattern)    
-    pattern_name = get_common_name(pattern_name)
+    
     asp_string = f'pattern({pattern_name},' + ', '.join(arg[1] for arg in arguments) + ') :-\n\t'
     for arg1,arg2 in itertools.combinations(arguments,2):
         conditions.append(f'different({arg1[1]},{arg2[1]})')
@@ -1203,8 +1201,7 @@ def patternToASP(pattern,pattern_name):
     return Pattern(asp_string,randomText,arguments)
 
 class KismetModule():
-    def __init__(self,module_file,initialization_file,
-                 tracery_files=[],
+    def __init__(self,module_file,tracery_files=[],
                  temperature=1.0,
                  observation_temp=1.0,
                  ignore_logit=5.0,
@@ -1213,9 +1210,8 @@ class KismetModule():
                 default_cost = 3,
                 clingo_exe='clingo',
                 base_folder=''):
-        global module_singleton
-        module_singleton = self
-        self.path = os.path.abspath(os.path.dirname(__file__))
+        
+        self.path = os.path.abspath(os.path.dirname('.'))
         self.clingo_exe = clingo_exe
         self.temperature = temperature
         self.observation_temp = observation_temp
@@ -1263,35 +1259,14 @@ class KismetModule():
                     'Role':{},
                     'Trait':{},
                     'Pattern':{}}
-        uniq_id = 0
-        self.name2uniq = {}
-        self.uniq2name = {}
         for thing in world:
             name = ''
             for t in thing[1]:
                 if t[0] == 'Name':
                     name = t[1]
                     break
-            
-            uniq_name = name + str(uniq_id)
-            uniq_id += 1
-            if name not in self.name2uniq:
-                self.name2uniq[name] = []
-            self.name2uniq[name].append(uniq_name)
-            self.uniq2name[uniq_name] = name
-            name = uniq_name
             things[thing[0]][name] = thing2dict(thing[1])
-        self.actions = {action:parseAction(things['Action'][action],action) for action in things['Action']}
-        for name,action in self.actions.items():
-            if action.cost <= 0:
-                action.cost = self.default_cost
-
-        self.roles = {role:parseRole( things['Role'][role],role) for role in things['Role']}
         self.traits = {trait:parseTrait(things['Trait'][trait],trait) for trait in things['Trait']}
-        
-        self.locations = {location:locationToASP(things['Location'][location],location) for location in things['Location']}
-        
-        self.patterns = {pattern:patternToASP(things['Pattern'][pattern],pattern) for pattern in things['Pattern']}
         
         traits_ = {}
         self.alternative_names = {}
@@ -1300,12 +1275,6 @@ class KismetModule():
                 names = trait_.alternative_names
                 self.alternative_names[names[0]] = names[1:]
                 traits_[names[0]] = trait_
-        self.name_map = {}
-        for name in self.alternative_names:
-            self.name_map[name] = name
-            for other in self.alternative_names[name]:
-                self.name_map[other] = name
-                
         self.traits = traits_
         self.default_traits = []
         self.selectable_traits = []
@@ -1316,764 +1285,830 @@ class KismetModule():
                     self.default_traits.append(trait)
                 else:
                     self.selectable_traits.append(trait)
-            if trait.is_num:
-                self.numerical_status.append(trait)
-        for name, role in self.roles.items():
-            
-            characters, constraints, extension, tags,arguments = role
-            char_text = ', '.join([''.join(c) for c in characters])
-            arg_dict = simpleDictify(arguments)
-            location = 'Location'
-            self.actions[f'cast_{name}'] = Action(constraints, tags, characters, [f'add({characters[0][1]},{get_common_name(name)},{location}) :- '], f'cast_{name} {char_text}', 0, extension,arguments,False,False,True,1)
-            
-            self.name2uniq[f'cast_{self.uniq2name[name]}'] = [f'cast_{name}']
-            self.uniq2name[f'cast_{name}'] = f'cast_{self.uniq2name[name]}'
-        self.extension_graph = {}
-        for name in self.actions:
-            extension = self.actions[name].extensions
-            if extension:
-                extension = extension[0]
-            self.extension_graph[name] = extension
-        
-        
-        self.sanity_check()            
-        
-        self.actionASP = []
-        
-        
-        for name in self.actions:
-
-            constraints = self.actions[name].constraints
-            tags = self.actions[name].tags
-            characters = self.actions[name].characters
-            results = self.actions[name].results
-            randomText = self.actions[name].text
-            visibility = self.actions[name].visibility
-            extension = self.actions[name].extensions
-            arguments = self.actions[name].arguments
-            free = self.actions[name].free
-            response = self.actions[name].response
-            is_cast = self.actions[name].is_cast
-            cost = self.actions[name].cost
-            ancestors = []
-            
-            #Here we go through and follow the extensions
-            ancestor = self.extension_graph[name]
-            if ancestor:
-                current = name
-                while ancestor:
-                    ancestors.append(ancestor)
-                    current = ancestor
-                    current = self.name2uniq[current][0]
-                    ancestor = self.extension_graph[current]
-
-                extension_arguments = extension[1]
-                tags = set(tags)
-                prev_arguments = arguments
-                mappings = []
-
-                for ancestor in ancestors:
-                    ancestor = self.name2uniq[ancestor][0]
-                    a_constraints = self.actions[ancestor].constraints
-                    a_tags = self.actions[ancestor].tags
-                    a_characters = self.actions[ancestor].characters
-                    a_results = self.actions[ancestor].results
-                    a_is_cast = self.actions[ancestor].is_cast
-                    a_arguments = self.actions[ancestor].arguments
                     
-                    mapping = {p:c for p, c in zip(prev_arguments,a_arguments)}
-                    r_mapping = {c:p for p, c in zip(prev_arguments,a_arguments)}
-                    mappings.append((mapping,r_mapping))
-
-                    converted_constraints = []
-                    converted_results = []
-                    if a_constraints:
-                        for thing in a_constraints:
-                            if 'cast' in thing:
-                                continue
-                            converted_thing = thing
-                            for mapping in reversed(mappings):
-                                for i, (c,p) in enumerate(mapping[1].items()):
-                                    converted_thing = converted_thing.replace(c[1],'!@'*(i+1))
-                                for i, (c,p) in reversed(list(enumerate(mapping[1].items()))):
-                                    converted_thing = converted_thing.replace('!@'*(i+1),p[1])
-                            converted_constraints.append(converted_thing)
-
-                    if a_results:
-                        for thing in a_results:
-                            converted_thing = thing
-                            for mapping in reversed(mappings):
-                                for i, (c,p) in enumerate(mapping[1].items()):
-                                    converted_thing = converted_thing.replace(c[1],'!@'*(i+1))
-                                for i, (c,p) in reversed(list(enumerate(mapping[1].items()))):
-                                    converted_thing = converted_thing.replace('!@'*(i+1),p[1])
-                            converted_results.append(converted_thing)
-                    if not results:
-                        results = []
-                    results += converted_results
-                    constraints += converted_constraints
-                    tags |= set(a_tags)
-                    is_cast = is_cast or a_is_cast
-
-            results = set(results)
-            constraints = set(constraints)
-            arguments = simpleDictify(arguments)
-            arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}                
-            asp_args = ', '.join([arguments.get(arg_type,'null')   for arg_type in ['>','<','^','*','@']])
-
-            head = f'action({get_common_name(name)}, {asp_args})'
-
-            premises = [','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] )]
-            premises += constraints
-            premises += [f'different({arguments[">"]},{arguments["<"]})',f'different({arguments[">"]},{arguments["^"]})',f'different({arguments["<"]},{arguments["^"]})']
-            for argument in ['>','<','^']:
-                if arguments[argument] != 'null':
-                    premises.append(f'{arguments[argument]} != null')
-
-
-            if free:
-                premises.append(f'mode(free)')
-            if response:
-                premises.append(f'mode(response)')
-            premise = '\t\t'+',\n\t\t'.join(premises)
-
-            self.actionASP.append(head +':-\n'+ premise + '.')
-
-            at_location = ''
-            if is_cast:
-                at_location = f'at({arguments[">"]}, Location), '
-            for result in results:
-                self.actionASP.append(result + at_location +f'occurred({head}).')
-
-            for tag in tags:
-                self.actionASP.append(f'is({get_common_name(name)}, {tag}).')
-            self.actionASP.append(f'visibility({get_common_name(name)},{visibility}).')
-
-        self.traitASP = []
-        for trait in self.traits:
-            self.traitASP += self.traits[trait].propensityASP
-
-            trait_type = 'trait'
-            if self.traits[trait].is_status:
-                trait_type = 'status'
-            self.traitASP.append(f'{trait_type}({get_common_name(trait)}).')
-        self.locationASP = []
-        
-        for location in self.locations:
-            tracery_name,supported_roles, initialization,each_turn,tags  = self.locations[location]
-            for role in supported_roles:
-                self.locationASP.append(f'castable({get_common_name(role)},{get_common_name(location)}).')
-            for tag in tags:                
-                self.locationASP.append(f'is({get_common_name(location)},{tag}).')
-        
-        self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
-        
-        with open(os.path.join(self.path,f'{self.module_file}_rules.lp'), 'w') as asp_file:
-            text = '\n\n'.join(self.locationASP+self.actionASP+self.traitASP+self.patternASP)
-            options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
-                       ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
-                       (',',','),(', ',','),(', ',' ,'),(',',' ,'),
-                       (',',')'),(', ',')'),(', ',' )'),(',',' )')]
-
-            for name in self.alternative_names:
-                for alt in self.alternative_names[name]:
-                    for option in options:
-                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{get_unique_name(name)}{option[1]}')
-            asp_file.write(text)
-            
-            
-        
-        
-        self.initialization = KismetInitialization.KismetInitialization(initialization_file,self)
-
-    def strip_constraint(self,constraint):
-        current = ''
-        parts = []
-        stack = []
-        for c in constraint:
-            if c == '(':
-                parts.append(current)
-                current = ''
-                stack.append(parts)
-                parts = []
-            elif c == ')':
-                parts.append(current)
-                current = ''
-                prev = stack.pop()
-                prev.append(parts)
-                parts = prev
-                
-            elif c == ',':
-                if current != '':
-                    parts.append(current)
-                current = ''
-            else:
-                current += c
-            
-        if current != '':
-            parts.append(current)
-            
-        all_constraints = []
-        for thing, next_thing in zip(parts,parts[1:]):
-            if isinstance(thing,str) and isinstance(next_thing,list):
-                current_constraint = {}
-                current_constraint['name'] = thing.replace('not ','').strip()
-                current_constraint['args'] = [t.strip() for t in next_thing]
-                all_constraints.append(current_constraint)
-        return all_constraints
-        
-    def sanity_check(self):
-        
-        
-        found_locations = set()
-        found_traits = set(['age'])
-        found_tags = set()
-        found_actions = set()
-        found_patterns = set()
-        
-        required_locations = set()
-        required_traits = set()
-        required_tags = set()
-        required_actions = set()
-        required_patterns = set()
-        
-        action_to_requirement = {}
-        action_to_found = {}
-        
-        trait_to_requirement = {}
-        trait_to_found = {}
-        
-        name_to_type = {}
-        
-        for name, action in self.actions.items():
-            location_vars = set()
-            people_vars = set()
-            action_vars = set()
-            name = get_common_name(name)
-            name_to_type[name] = 'Action'
-            action_to_requirement[name] = set()
-            action_to_found[name] = set()
-            found_tags |= set(action.tags)
-            for argtype,arg_name in action.arguments:
-                
-                if argtype in '><^':
-                    people_vars.add(arg_name)
-                elif argtype == '*':
-                    action_vars.add(arg_name)
-                elif argtype == '@':
-                    location_vars.add(arg_name)
-            mentions = {}
-            for constraint in action.constraints:
-                constraint_parts = self.strip_constraint(constraint)
-                for constraint in constraint_parts:
-                    if constraint['name'] == 'is':
-                        var_name = constraint['args'][0]
-                        tag = constraint['args'][1]
-                        if var_name not in mentions:
-                            mentions[var_name] = set()
-                        mentions[var_name].add(tag)
-                        
-                        action_to_requirement[name].add(tag)
-                    elif constraint['name'] == 'pattern':
-                        required_patterns.add(constraint['args'][0])
-                        action_to_requirement[name].add(constraint['args'][0])
-                    elif constraint['name'] == 'at':
-                        location_vars.add(constraint['args'][1])
-                    else:
-                        pass
-                        #print(f'DONT KNOW HOW TO HANDLE "{constraint["name"]}"')
-                        #print('\t', constraint)
-                        
-
-            for mention in mentions:
-                if mention in location_vars:
-                    required_locations |= mentions[mention]
-                elif mention in people_vars:
-                    required_traits |= mentions[mention]
-                elif mention in action_vars:
-                    required_tags  |= mentions[mention]
-                    
-            mentions = {}
-            for result in action.results:
-                result = result.split(':-')
-                for result_piece in result:
-                    if result_piece != " ":
-                        result_parts = self.strip_constraint(result_piece)
-
-                        for result in result_parts:
-                            if result['name'] in ['add','update','is','del']:
-                                var_name = result['args'][0]
-                                tag = result['args'][1]
-                                if var_name not in mentions:
-                                    mentions[var_name] = set()
-                                mentions[var_name].add(tag)
-                                action_to_found[name].add(tag)
-                            else:
-                                pass#print('RESULT TYPE', result['name'])           
-            
-            for mention in mentions:
-                if mention in location_vars:
-                    found_locations |= mentions[mention]
-                elif mention in people_vars:
-                    found_traits |= mentions[mention]
-                    
-        for location in self.locations:
-            found_locations.add(get_common_name(location))
-            
-        for name,  trait in self.traits.items():    
-            name =get_common_name(name)
-            
-            name_to_type[name] = 'Trait'
-            trait_to_requirement[name] = set()
-            found_traits.add(get_common_name(name))            
-            for propensity in trait.propensities:
-                if propensity.is_goto:
-                    required_locations |= set(propensity.modified_tags)
-                    trait_to_requirement[name] |=  set(propensity.modified_tags)
-                else:
-                    required_tags |= set(propensity.modified_tags)
-                    trait_to_requirement[name] |=  set(propensity.modified_tags)
-        for role_name, role in self.roles.items():
-            role_name = get_common_name(role_name)
-            name_to_type[role_name] = 'Role'
-            
-                         
-        for pattern_name,pattern in self.patterns.items():
-            pattern_name = get_common_name(pattern_name)
-            #print(pattern_name,pattern)
-            
-            name_to_type[pattern_name] = 'Pattern'
-            found_patterns.add(pattern_name)
-          
-        found_traits = set([self.name_map.get(n,n) for n in found_traits])
-        required_traits = set([self.name_map.get(n,n) for n in required_traits])              
-         
-        l_f_r = found_locations-required_locations
-        l_r_f = required_locations-found_locations
-        
-        t_f_r = found_tags-required_tags
-        t_r_f = required_tags-found_tags
-        
-        tr_f_r= found_traits-required_traits
-        tr_r_f= required_traits-found_traits
-        
-        p_f_r= found_patterns-required_patterns
-        p_r_f= required_patterns-found_patterns
-        
-        all_kinds = [('Locations: Not referenced in actions or traits', l_f_r),
-                     ('Locations: Referenced but not found', l_r_f),
-                     ('Tags: Not referenced in traits', t_f_r),
-                     ('Tags: Referenced in traits but not found in actions', t_r_f),
-                     ('Traits: Not referenced in actions', tr_f_r),
-                     ('Traits: Referenced in actions but not found', tr_r_f),
-                     ('Patterns: Not referenced in actions or traits', p_f_r),
-                     ('Patterns: Referenced but not found', p_r_f)]
-        found_problems = False
-        for _, s in all_kinds:
-            if len(s) > 0:
-                found_problems = True
-                break
-        if found_problems:
-            print('*************************POTENTIAL PROBLEMS*************************')
-            for label, problems in all_kinds:
-                if len(problems) > 0:
-                    print(label)
-                    print('\t'+'\n\t'.join(problems))
-                
-        component_to_whole = {}
-        
-        print('*************************Reference Section*************************')
-        for mapping in [action_to_requirement, action_to_found, trait_to_requirement]:
-            for name, subs in mapping.items():      
-                name = get_common_name(name)
-                for n in subs:
-                    n = self.name_map.get(n,n)
-                    if n not in component_to_whole:
-                        component_to_whole[n] = set()
-                    component_to_whole[n].add(name)
-                    
-        for component, whole in component_to_whole.items():
-            name_to_type[component] = name_to_type.get(component,'Tag')
-             
-        type_to_name = {}
-        for name, type_ in name_to_type.items():
-            if type_ not in type_to_name:
-                type_to_name[type_] = set()
-            type_to_name[type_].add(get_common_name(name))
-            
-        for type_, names in type_to_name.items():
-            print(type_+'s')
-            for n in names:
-                print('\t'+n)
-                if n in component_to_whole:
-                    print('\t\t referenced in:',', '.join(component_to_whole[n]))
-        
-        print('Requirements:')
-        for mapping in [action_to_requirement, trait_to_requirement]:
-            for name, subs in mapping.items():
-                print(name)
-                if len(subs) > 0:
-                    print('\tReferences:' ,', '.join(subs))
-            
-        
-        #print(component_to_whole)
-            
-        
-        
-    def make_population(self):
-        
-        population = self.initialization.run_initialization()
-        
-        self.population = {}
-        
-        for thing in population:
-            if thing['type'] == 'character':
-                name = KismetInitialization.get_name(thing)
-                asp_name = name.replace(' ','_').lower()
-                
-                person = {'name':name,'asp_name':asp_name}
-                self.population[asp_name] = person
-                
-                person['traits'] = set( [trait.alternative_names[0] for trait in thing['traits']])
-                person['status'] = {**thing.get('status',{}), 
-                                    **{(relation, name.replace(' ','_').lower()):None for relation, name in thing.get('relationships',{})},
-                                    **{('age',):thing['age'][0]}}
-                print(person['status'])
-        for name in self.population:
-            person = self.population[name]
-            for status in self.numerical_status:
-                status_args = 0
-                for arg_type in ['<','^']:
-                    if 'DEFAULT' not in status.arguments[arg_type]:
-                        status_args += 1
-                for args in itertools.product(self.population.keys(), repeat=status_args):
-                    key = tuple([status.alternative_names[0]]+list(args))
-                    if key not in person['status']:
-                        person['status'][key] = 0
-        
-                        
-    def population2asp(self):
-        with open(os.path.join(self.path,f'{self.module_file}_population.lp'),'w') as population:
-            for name in self.population:
-                character = self.population[name]
-                population.write(f'person({name}).\n')
-                for trait in character['traits']:
-                    population.write(f'is({name},{get_unique_name(trait)}).\n')
-                population.write('\n')
-                
-                for combo in character['status']:
-                    val = character["status"][combo]
-                    combo = tuple([get_unique_name(c) for c in combo])
-                    if val is not None:
-                        population.write(f'is({name},{",".join(combo)},{val}).\n')
-                    else:
-                        population.write(f'is({name},{",".join(combo)}).\n')
-                        
-
-    def compute_actions(self,volitions):
-        volitions_by_actor = {}
-        for volition in volitions[0]['likelihood']:
-            logit,action,actor = parse_likelihood(volition)
-            if actor not in volitions_by_actor:
-                volitions_by_actor[actor] = [[],[]]
-            volitions_by_actor[actor][0].append(logit)
-            volitions_by_actor[actor][1].append(action)
-        chosen_actions = []
-        for actor in volitions_by_actor:
-
-            logits = np.array(volitions_by_actor[actor][0])
-            logits = np.exp(logits/self.temperature)
-            probs = logits/np.sum(logits)
-            chosen_actions.append(volitions_by_actor[actor][1][np.argmax(np.random.multinomial(1,probs))])
-        return chosen_actions
-    def actions2asp(self,actions):
-        action_str = ''
-        with open(os.path.join(self.path,f'{self.module_file}_actions.lp'),'w') as action_file:
-            for action in actions:
-                action_str += f'occurred(action({",".join(action)})).\n'
-                action_file.write(f'occurred(action({",".join(action)})).\n')
-                     
-    def calculate_volitions(self):
-        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
-        return volitions
-    def calculate_action_results(self):
-        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
-        return action_results
+       
     
-    def calculate_observability(self):
-        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
-        return visibility_results
-    
-    def knowledge2asp(self):        
-        with open(os.path.join(self.path,f'{self.module_file}_history.lp'),'w') as history_file:
-            for phase in self.history[-self.history_cutoff:]:
-                for step in phase:
-                    for action in step:
-                        history_file.write(f'did({action[1]},action({",".join(action)})).\n')
-                        history_file.write(f'received({action[2]},action({",".join(action)})).\n')
-    
-            for step in self.character_knowledge[-self.history_cutoff:]:
-                for knowledge in step:
-                    kind = knowledge[0]
-                    character = knowledge[1]
-                    action = ",".join(knowledge[-1])
-                    history_file.write(f'{kind}({character},action({action})).\n')
-                    
-    def pretty_print_random_text(self, object_type, text_object):
-        name = self.name2uniq[text_object[0]][0]
-        if object_type == 'action':
-            random_text = self.actions[name].text
-            arguments = self.actions[name].arguments
-        else:
-            random_text = self.patterns[name].text   
-            arguments = self.patterns[name].arguments
-        for ii, (e_type, character) in enumerate(arguments):
-            replacement_name = ''
-            e_index = '_><^*@'.index(e_type)
-            if object_type == 'action':
-                ii = e_index
-            else:
-                ii = ii+1
-            if e_index <= 3:
-                replacement_name = self.population[text_object[ii]]['name']
-            else:
-                replacement_name = text_object[ii]
+class MyErrorListener( ErrorListener ):
+    def __init__(self):
+        super()
+        self.errors = []
+        self.recognizer  = None
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        self.recognizer  =  recognizer
+        self.errors.append(str(line) + ":" + str(column) + ": syntax ERROR, " + str(msg) + '---{' + str(offendingSymbol) + '}---'  )
 
-            random_text = random_text.replace(character, replacement_name)
-        rules = random_text_to_tracery(random_text)
-        rules = {**rules, **self.tracery_grammar}
+    def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):
+        self.errors.append( "Ambiguity ERROR, " + str(configs))
+
+    def reportAttemptingFullContext(self, recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs):
+        self.errors.append( "Attempting full context ERROR, " + str(configs))
+
+
+    def reportContextSensitivity(self, recognizer, dfa, startIndex, stopIndex, prediction, configs):
+        self.errors.append( "Context ERROR, " + str(configs))
+        
+
+class kismet_initializationVisitor(ParseTreeVisitor):
+
+        
+    def visitChildren(self,node):
+        n = node.getChildCount()
+        results = []
+        for i in range(n):
+            c = node.getChild(i)
+            childResult = c.accept(self)
+            if childResult:
+                results.append(childResult)
+        return results
+    
+    # Visit a parse tree produced by kismet_initializationParser#init.
+    def visitInit(self, ctx:kismet_initializationParser.InitContext):
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Init',self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismet_initializationParser#name.
+    def visitName(self, ctx:kismet_initializationParser.NameContext):
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Name', ctx.getText()) 
+
+    # Visit a parse tree produced by kismet_initializationParser#var.
+    def visitVar(self, ctx:kismet_initializationParser.VarContext):
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Var', ctx.getText()) 
+
+    # Visit a parse tree produced by kismet_initializationParser#comparator.
+    def visitComparator(self, ctx:kismet_initializationParser.ComparatorContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Comparator', ctx.getText())
+    
+
+    # Visit a parse tree produced by kismet_initializationParser#num_choice.
+    def visitNum_choice(self, ctx:kismet_initializationParser.Num_choiceContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('num_choice',self.visitChildren(ctx))
+
+
+
+    # Visit a parse tree produced by kismet_initializationParser#num_choice.
+    def visitNum_range(self, ctx:kismet_initializationParser.Num_rangeContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('num_range',self.visitChildren(ctx))
+
+
+
+    # Visit a parse tree produced by kismet_initializationParser#pdf.
+    def visitPdf(self, ctx:kismet_initializationParser.PdfContext):
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('PDF', ctx.getText())
+
+
+    # Visit a parse tree produced by kismetParser#num.
+    def visitNum(self, ctx:kismet_initializationParser.NumContext):
+        print(inspect.currentframe().f_code.co_name,ctx.getText())     
+        
+        return ('Num',ctx.getText())
+
+
+    # Visit a parse tree produced by kismet_initializationParser#pos_num.
+    def visitPos_num(self, ctx:kismet_initializationParser.Pos_numContext):
+        print(inspect.currentframe().f_code.co_name,ctx.getText())        
+        return ('Num',ctx.getText())
+
+
+    # Visit a parse tree produced by kismet_initializationParser#random_text.
+    def visitRandom_text(self, ctx:kismet_initializationParser.Random_textContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('RandomText',ctx.getText())
+
+
+    # Visit a parse tree produced by kismet_initializationParser#initialization.
+    def visitInitialization(self, ctx:kismet_initializationParser.InitializationContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Initialization', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismet_initializationParser#let.
+    def visitLet(self, ctx:kismet_initializationParser.LetContext):
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Let', self.visitChildren(ctx))
+
+    # Visit a parse tree produced by kismet_initializationParser#create.
+    def visitCreate(self, ctx:kismet_initializationParser.CreateContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Create', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismet_initializationParser#create.
+    def visitSelect(self, ctx:kismet_initializationParser.CreateContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Select', self.visitChildren(ctx))
+    
+    # Visit a parse tree produced by kismet_initializationParser#create.
+    def visitNegative(self, ctx:kismet_initializationParser.CreateContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Negative')
+    # Visit a parse tree produced by kismet_initializationParser#options.
+    def visitOptions(self, ctx:kismet_initializationParser.OptionsContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Options', self.visitChildren(ctx))
+
+    # Visit a parse tree produced by kismet_initializationParser#options.
+    def visitConditions(self, ctx:kismet_initializationParser.OptionsContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Conditions', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismet_initializationParser#option.
+    def visitOption(self, ctx:kismet_initializationParser.OptionContext):
+        
+        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#assignment.
+    def visitAssignment(self, ctx:kismet_initializationParser.AssignmentContext):
+        
+        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('Assignment', self.visitChildren(ctx))
+
+    # Visit a parse tree produced by kismet_initializationParser#assignment.
+    def visitDeferred_assignment(self, ctx:kismet_initializationParser.AssignmentContext):
+        
+        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('DeferredAssignment', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismet_initializationParser#description.
+    def visitDescription(self, ctx:kismet_initializationParser.DescriptionContext):
+        
+        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('Description', self.visitChildren(ctx))
+    
+
+    # Visit a parse tree produced by kismet_initializationParser#initialize.
+    def visitInitialize(self, ctx:kismet_initializationParser.InitializeContext):
+        
+        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('Initialize', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismet_initializationParser#initialize.
+    def visitDefault(self, ctx:kismet_initializationParser.DefaultContext):
+        
+        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('Default', self.visitChildren(ctx))
+
+@dataclass
+class RandomText:
+    text: str
+    def __init__(self,text):
+        self.text = self.random_text_to_tracery(text)
+        
+    def process_nesting(self,text,count=0):
+        start = -1
+        inside = 0
+        output = []
+        for index,c in enumerate(text):
+            if c == '[':
+                if inside == 0:
+                    count += 1
+                    start = index
+                inside += 1
+            elif c == ']':
+                inside -= 1
+                if inside == 0:
+                    rules,new_count = self.process_nesting(text[start+1:index],count)
+
+                    output.append( (count,text[start:index+1]))
+                    output += rules
+                    count = new_count
+        return output,count
+    
+    def random_text_to_tracery(self,text):
+        rules,_ = self.process_nesting(text)
+        rules.append((0,text))
+        final_rules = {}
+        for c1,rule in rules:
+            for cs,subrule in rules:
+                if len(subrule) >= len(rule):
+                    continue
+                rule = rule.replace(subrule,f'#{cs}#')
+            if rule[0] == '[':
+                rule = rule[1:-1].split('|')
+            final_rules[str(c1)] = rule
+        return final_rules
+
+    def __call__(self,initializations,selections,creations):
+        rules = {**self.text, **mod.tracery_grammar}
+        
+        for selection_key, selection_values in selections.items():
+            assigned = []
+            for thing in selection_values:
+                if isinstance(thing,str):
+                    assigned.append(thing)
+            if len(assigned) > 0:
+                rules[selection_key] = assigned
         grammar = tracery.Grammar(rules)
         return grammar.flatten('#0#')
-        
-    def pretty_print_history(self,start = 0, end = float('inf')):
-        history_text = []
-        if end == float('inf'):
-            end = len(self.history)
-            
-        for phase in self.history[start:end]:
-            for step in phase:
-                for action in step:
-                    print(self.pretty_print_random_text('action',action))
-            print('-------')
     
-    def display_traits(self,person_filter=None,ignore_default_traits=True):
-        if person_filter is None:
-            person_filter =  self.population
-            default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
-        for person in person_filter:
-            if person not in self.population:
-                print(f'Could not find person with id="{person}"')
+
+@dataclass 
+class Distribution:
+    string: str
+    func:  Callable
+    lower: int
+    upper: int
+    def __call__(self):
+        return self.func()
+    
+    def __str__(self):
+        return self.string
+    
+def makeDistribution(low,high,pdf):
+    pdf2num = {'_':0,
+               '^':1,
+               '.':0.33,
+               '-':0.67,
+               }
+    import random
+    if low == high:
+        return lambda : low
+    elif len(set(pdf)) == 1:
+        return lambda : int( (high+1-low)*random.random()+low)
+    else:
+        step_size = (high-low)/(len(pdf)-1)
+        x = low
+        pieces = []
+        total_area = 0
+        for (s,e)  in zip(pdf[:-1],pdf[1:]):
+            x0 = x
+            x1 = x+step_size
+            y0 = pdf2num[s]
+            y1 = pdf2num[e]
+            if y0 == 0 and y1 == 0:
+                area = 0
+            elif y0 == 0 or y1 == 0:
+                area = 0.5*max(y0,y1)*step_size
             else:
-                print(self.population[person]['name'] + ':\n\t' + '\n\t'.join([trait_name for trait_name in self.population[person]['traits'] if not ignore_default_traits or trait_name not in default_traits]))
-    def to_pretty_name(self,iterable):
-        return [self.population.get(thing,{'name':thing})['name'] for thing in iterable]
+                lower = min(y0,y1)
+                upper = max(y0,y1)                
+                area = lower*step_size + 0.5*(upper-lower)*step_size
+            pieces.append((area,(x0,y0),(x1,y1)))
+            total_area += area
+            x += step_size
         
-    def print_status(self,status):
-        if status is None:
-            return ''
+        def piecewise_triangle():
+            import numpy as np
+            R = random.random()
+            for piece in pieces:
+                if R < piece[0]/total_area:
+                    x0,y0 = piece[1]
+                    x1,y1 = piece[2]
+                    lower = min(y0,y1)
+                    upper = max(y0,y1)
+                    #print((x0,y0),(x1,y1)) 
+                    x = random.random()        
+                    if y0 == y1:
+                        return int(x*(x1-x0)+x0)
+                    elif y0 == lower:                        
+                        cutoff = y0/y1 * (x1-x0) + x0
+                        x= x0 + np.sqrt(x)*(x1-x0)
+                        while  x < cutoff:
+                            x = random.random()  
+                            x= x0 + np.sqrt(x)*(x1-x0)
+                        if x1 != cutoff:
+                            x= ((x-cutoff)/(x1-cutoff))*(x1-x0)+x0
+                    else:
+                        cutoff =x1-y1/y0 * (x1-x0)
+                        x = x1 - np.sqrt((1-x)*(x1-x0)**2)
+                        while x > cutoff:
+                            x = random.random()              
+                            x = x1 - np.sqrt((1-x)*(x1-x0)**2)
+                        if cutoff != x0:
+                            x = x0+(x-x0)*(x1-x0)/(cutoff-x0)                           
+                    return int(np.round(x))
+                else:
+                    R -= piece[0]/total_area
+            return int(piece[2][0])
+        return piecewise_triangle
+            
+    return lambda : low
+
+@dataclass
+class NumChoice:
+    variable: str
+    distribution: Distribution
+    def __repr__(self):
+        return f'NumChoice({self.variable},{str(self.distribution)})'
+    def __call__(self,initializations,selections,creations):
+        if self.variable == 'traits':            
+            traits = []
+            trait_count = self.distribution()
+            while len(traits) != trait_count:
+                trait = random.choice(selections[self.variable])
+                trait_name = trait.alternative_names[0]
+                selectable = True
+                
+                for selected in traits:
+                    if trait_name in selected.opposition or trait_name in selected.alternative_names:
+                        selectable = False
+                        break
+                if selectable:
+                    traits.append(trait)
+            return traits
+        elif self.variable in selections:
+            val = self.distribution()
+            
+            if val <= len(selections[self.variable]):
+                return random.sample(selections[self.variable],val)
+            else:
+                return selections[self.variable]
+        elif self.variable in initializations:
+            num_to_make = self.distribution()
+            new_instantiations = []
+            for _ in range(num_to_make):
+                initialized = initializations[self.variable](initializations,selections,creations)
+                if isinstance(initialized,list):
+                    new_instantiations += initialized
+                else:
+                    new_instantiations.append(initialized)
+            return new_instantiations
         else:
-            return ' : ' + str(status)
-        
-    def display_statuses(self,person_filter=None):
-        if person_filter is None:
-            person_filter =  self.population
-            default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
-        for person in person_filter:
-            if person not in self.population:
-                print(f'Could not find person with id="{person}"')
+            print(f'Uh oh -- trying to randomly create some number of {self.variable} -- but it is unknown')
+    
+def parseNumChoice(choice):    
+    # [a-b] pdf name
+    choice = choice[1]
+    if len(choice) == 4:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = choice[2][1]
+        role = choice[3][1]
+    elif len(choice) == 3:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = '--'
+        role = choice[2][1]
+    else:
+        lower = int(choice[0][1])
+        upper = lower
+        pdf = '--'
+        role = choice[1][1]
+    distribution =  Distribution(f'{lower} {pdf} {upper}',makeDistribution(lower,upper,pdf),upper,lower)
+    return NumChoice(role,distribution) 
+
+@dataclass
+class NumRange:
+    distribution: Distribution
+    def __repr__(self):
+        return f'NumRange({self.distribution})'
+    
+    def __call__(self,ignored,ignored2,creations):
+        return self.distribution()
+    
+def parseNumRange(choice):    
+    # [a-b] pdf name
+    choice = choice[1]
+    if len(choice) == 3:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = choice[2][1]
+    elif len(choice) == 2:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = '--'
+    else:
+        lower = int(choice[0][1])
+        upper = lower
+        pdf = '--'
+    distribution =    Distribution(f'{lower} {pdf} {upper}',makeDistribution(lower,upper,pdf),lower,upper)
+    return NumRange(distribution) 
+
+@dataclass 
+class DeferredAssignment:
+    
+    assigned_to: str
+    assigned_source: str
+    assigned_val: ABC     
+
+@dataclass 
+class Assignment:
+    is_var: bool
+    assigned_to: str
+    assigned_val: ABC     
+    
+    def is_satisfied(self, creations):
+        satisfactory = set()
+        for creation in creations:
+            if self.assigned_to != 'age':
+                print('WARNING: only age is allowed for numerical checking in selections at this point in time. Do not use "'+ self.assigned_to+'"')
             else:
-                print(self.population[person]['name'] + ':\n\t' + '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']))
-                
-    def to_json(self,person_filter=None):         
-        if person_filter is None:
-            person_filter =  self.population
-            default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
-        relations = {}
-        characters = {}
+                if creation['age'][0] >= self.assigned_val[0].distribution.lower and\
+                   creation['age'][0] <= self.assigned_val[0].distribution.upper:
+                    satisfactory.add(get_name(creation))
+        return satisfactory
+@dataclass
+class Lookup:
+    name:str
         
-        default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
-        for person in person_filter:
-            if person not in self.population:
-                print(f'Could not find person with id="{person}"')
-            else:
-                source = self.population[person]['name']
-                characters[source] = {'name':source,
-                                      'traits':[],
-                                      'statuses':[]}
-                for trait in self.population[person]['traits']:
-                    if trait not in default_traits:
-                        characters[source]['traits'].append(get_common_name(trait))
-                for relation in self.population[person]['status']:
-                    if len(relation) == 1:
-                        relation_name  = get_common_name(relation[0])
-                        if self.population[person]['status'][relation] is not None:
-                            val = self.population[person]['status'][relation]
-                            print('Adding status', [relation_name,val])
-                            characters[source]['statuses'].append([relation_name,val])
-                        else:
-                            print('Adding status', [relation_name])
-                            characters[source]['statuses'].append([relation_name])
-                            
-                    elif len(relation) > 1:
-                        source = self.population[person]['name']
-                        target = self.to_pretty_name([relation[1]])[0]
-                        relation_name = get_common_name(relation[0])
+    def __call__(self,initializations,selections,creations):
+        if self.name in initializations:
+            return initializations[self.name]
+        elif self.name in selections:
+            return selections[self.name]
+        else:
+            print(f'Uh oh -- trying to lookup {self.name}, but it cant be found')
+def parse_assign_val(assign_val):
+    if assign_val[0] == 'num_choice':
+        return parseNumChoice(assign_val)
+    if assign_val[0] == 'num_range':
+        return parseNumRange(assign_val)
+    elif assign_val[0] == 'RandomText':
+        return RandomText(assign_val[1][1:-1])
+    elif assign_val[0] == 'Var':
+        return Lookup(assign_val[1])
+    elif assign_val[0] == 'Name':
+        return  Lookup(assign_val[1])
+    else:
+        print(f'Uh Oh -- assignment value "{assign_val}" is unrecognized')
+        
+def parse_assignment(assignment):
+    assigned_to = assignment[1][0]
+    assigned_val = [parse_assign_val(assigned) for assigned in assignment[1][1:]]
+    
+    return Assignment(assignment[1][0] == 'Var',
+                      assigned_to[1],
+                        assigned_val)
+        
+def parse_deferred_assignment(assignment):
+
+    assigned_to = assignment[1][0]
+    #assigned_val = [parse_assign_val(assigned) for assigned in assignment[1][1:]]
+    
+    return DeferredAssignment(assigned_to[1],
+                        assignment[1][1][1],
+                        assignment[1][2][1])
+
+@dataclass
+class DescTrait:
+    name: str
+    value: int = None
+    negation:bool = False
+    
+    def is_satisfied(self, creations):
+        satisfies = set()
+        for creation in creations:
+            relationships = creation.get('relationships',[])
+            found = False
+            for relationship in relationships:
+                if relationship[0] == self.name:
+                    if len(relationship) == 2:
+                        found = True
                         
-                        if relation_name not in relations:
-                            relations[relation_name] = []
-                        if self.population[person]['status'][relation] is not None:
-                
-                            val = self.population[person]['status'][relation]
-                            relations[relation_name].append([source,target,val])
-                        else:
-                            relations[relation_name].append([source,target])
-        return {'characters':list(characters.values()),'relations':relations}
-                            
-    def display_patterns(self,pattern_filter=None,person_filter=None):
-        if pattern_filter is None:
-            pattern_filter = list(self.patterns)
-        lengths =set()    
-        
-        pattern_filter_text = []
-        for pattern in pattern_filter:
-            lengths.add(len(self.patterns[pattern].arguments)+1)
-            args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
-            pattern_filter_text.append(f'display_pattern({get_common_name(pattern)},{",".join(args)}) :- pattern({get_common_name(pattern)},{",".join(args)}).')
-        for length in sorted(lengths):
-            pattern_filter_text.append(f'#show display_pattern\\{length}.')
-        with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
-            outfile.write('\n'.join(pattern_filter_text))
-        patterns = solve([os.path.join(self.path,t) for t in 
-                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
-                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
-        if person_filter:
-            person_filter = set(person_filter)
-        for pattern in patterns[0]['display_pattern']:
-            
-            pattern = pattern[0]
-            pattern = [pred['predicate'] for pred in pattern['terms']]
-            if person_filter:
-                can_display = False
-            else:
-                can_display = True
-                
-            for arg in pattern:
-                if can_display:
-                    break
-                if person_filter and arg in person_filter:
-                    can_display = True
-            if can_display:
-                print(self.pretty_print_random_text("pattern",pattern))
-                
-    def patterns_to_json(self,pattern_filter=None,person_filter=None):
-        if pattern_filter is None:
-            pattern_filter = list(self.patterns)
-        lengths =set()    
-        
-        pattern_filter_text = []
-        for pattern in pattern_filter:
-            lengths.add(len(self.patterns[pattern].arguments)+1)
-            args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
-            pattern_filter_text.append(f'display_pattern({pattern},{",".join(args)}) :- pattern({pattern},{",".join(args)}).')
-        for length in sorted(lengths):
-            pattern_filter_text.append(f'#show display_pattern\\{length}.')
-        with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
-            outfile.write('\n'.join(pattern_filter_text))
-        patterns = solve([os.path.join(self.path,t) for t in 
-                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
-                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
-        if person_filter:
-            person_filter = set(person_filter)
-            
-        found_patterns = {}
-        for pattern in patterns[0]['display_pattern']:
-            
-            pattern = pattern[0]
-            pattern = [pred['predicate'] for pred in pattern['terms']]
-            if person_filter:
-                can_display = False
-            else:
-                can_display = True
-                
-            for arg in pattern:
-                if can_display:
-                    break
-                if person_filter and arg in person_filter:
-                    can_display = True
-            if can_display:
-                pattern_name = get_common_name(pattern[0])
-                if pattern_name not in found_patterns:
-                    found_patterns[pattern_name] = {'arguments':[var[1] for var in self.patterns[get_unique_name(pattern_name)].arguments],
-                                                    'reified':[]}
-                renamed_args = []
-                for argument, reified_arg in zip(self.patterns[get_unique_name(pattern_name)].arguments, pattern[1:]):
-                    e_type = argument[0]
-                    e_index = '_><^*@'.index(e_type)
-                      
-                    if e_index <= 3:
-                        reified_arg = self.population[reified_arg]['name']
-                    renamed_args.append(reified_arg)                        
+                    else:
+                        print('ERROR: Relationships with values can not be used in selections at this point of time --', self.name, self.target, self.value)
+            for trait in creation.get('traits',[]):
+                if trait == self.name:
+                    found = True
                     
-                found_patterns[pattern_name]['reified'].append(renamed_args)
-        return found_patterns
-    def step_actions(self):
-        self.timestep += 1
-        self.history.append([])
+            if found != self.negation:
+                char_name = creation.get('name',creation.get('first_name',[''])[0] + ' ' + creation.get('last_name',[''])[0])
+                
+                satisfies.add(char_name)
+        return satisfies    
+@dataclass
+class Relationship:
+    name: str
+    target: str
+    value: int = None
+    negation: bool = False
+    def __hash__(self):
+        return hash(self.name+self.target+str(self.negation))
+    
+    def is_satisfied(self, creations):
+        satisfies = set()
+        for creation in creations:
+            relationships = creation.get('relationships',[])
+            found = False
+            for relationship in relationships:
+                if relationship[0] == self.name:
+                    if len(relationship) == 2:
+                        found = True
+                        
+                    else:
+                        print('ERROR: Relationships with values can not be used in selections at this point of time --', self.name, self.target, self.value)
+            if found != negation:
+                satisfies.add(creation)
+        return satisfies
+    
+def parse_description(description):
+    description = description[1]
+    negative = False
+    if 'Negative' in description:
+        negative = True
+        description = [d for d in description if d != 'Negative']
+    
+    if len(description) == 3:
+        return Relationship(description[0][1], description[1][1], int(description[2][1]),negation= negative)
+    elif len(description) == 1:
+        return DescTrait(description[0][1],negation= negative)
+    elif len(description) == 2:
+        if description[1][0] == 'Name':
+            return Relationship(description[0][1], description[1][1],negation= negative)
+        else:
+            return DescTrait(description[0][1], int(description[1][1]),negation= negative)
+            
+    else:
+        print(f'UH OH -- description "{description}" does not match any known patterns')
+def flatten_list(listed):
+    flattened = []
+    for thing in listed:
+        if isinstance(thing,list):
+            flattened += thing
+        else:
+            flattened.append(thing)
+    return flattened
+@dataclass
+class Creation():
+    num: int
+    name: str
+    options: list
+    def __call__(self,initializations,selections,creations):
+        to_create = self.num(initializations,selections,creations)
+        relationships = []
+        for creation in to_create:
+            for option in self.options:
+                if isinstance(option,Assignment):
+                    creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+                elif isinstance(option,Relationship):
+                    relationships.append((self.name,option))
+                    
+                elif isinstance(option,DescTrait):
+                    if 'status' not in creation:
+                        creation['status'] = {}
+                    creation['status'][(option.name,)] = option.value
+        return to_create,list(set(relationships))
+    
+def parse_options(all_options):
+    
+    options = []
+    for option in all_options[1]:
+        option = option[0]
+        if option[0] == 'Assignment':
+            options.append(parse_assignment(option))
+        elif option[0] == 'Description':
+            options.append(parse_description(option))
+        else:
+            print('UH OH',option)
+    return options
+
+def parse_create(creation):
+    num = None
+    creation_type = None
+    name = None
+    options = None
+    for thing in creation:
+        if thing[0] == 'num_choice':
+            num = parseNumChoice(thing)
+        elif thing[0] == 'Name':
+            name = thing[1]
+        elif thing[0] == 'Options':
+            options = parse_options(thing)
+    return Creation(num,name,options)
+
+def get_name(character):
+    return character.get('name',character.get('first_name',[''])[0] + ' ' + character.get('last_name',[''])[0])
+    
+
+@dataclass
+class Selection():
+    num: int
+    name: str
+    options: list
+    conditions: list
+    def __call__(self,initializations,selections,creations,used):
+        satisfactory = set([get_name(creation) for creation in creations]) - used
+        for condition in self.conditions:
+            satisfactory &= condition.is_satisfied(creations)
         
-        character_action_budget = {name:self.action_budget for name in self.population}
-        while len(character_action_budget) > 0:
-            self.knowledge2asp()
-            self.population2asp()
-            
-            volitions = self.calculate_volitions()
-            
-            chosen_actions = self.compute_actions(volitions)
-            for action in chosen_actions:
-                name = self.name2uniq[action[0]][0]
+        to_select = self.num(initializations,selections,creations)
+        if len(satisfactory) >= len(to_select):
+            to_select = random.sample(satisfactory,len(to_select))
+            to_select = [character for character in creations if get_name(character) in to_select]
+            to_create = []
+        else:
+            to_create = to_select
+        relationships = []
+        for creation in to_select:
+            for option in self.options:
+                if isinstance(option,Assignment):
+                    creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+                elif isinstance(option,Relationship):
+                    relationships.append((self.name,option))
+                    
+                elif isinstance(option,DescTrait):
+                    if 'status' not in creation:
+                        creation['status'] = {}
+                    creation['status'][(option.name,)] = option.value
+        
+        if to_create == to_select:
+            to_select = []
+        return to_create,to_select,list(set(relationships))
+    
+def parse_select(creation):
+    num = None
+    creation_type = None
+    name = None
+    options = None
+    for thing in creation:
+        if thing[0] == 'num_choice':
+            num = parseNumChoice(thing)
+        elif thing[0] == 'Name':
+            name = thing[1]
+        elif thing[0] == 'Options':
+            options = parse_options(thing)
+        elif thing[0] == 'Conditions':
+            conditions = parse_options(thing)
+    return Selection(num,name,options,conditions)
+
+@dataclass
+class Initialization:
+    name: str
+    lets: list  = field(default_factory=list)
+    deferred_lets: list  = field(default_factory=list)
+    creates: list = field(default_factory=list)
+    selects: list = field(default_factory=list)
+    def __call__(self,initializations,selections,creations):
+        instantiated_lets = {}
+        for let in self.lets:
+            instantiated_lets[let.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in let.assigned_val])
+            selections[let.assigned_to] = instantiated_lets[let.assigned_to]
+        
+        deferred_lets = {}
+        for let in self.deferred_lets:
+            #DeferredAssignment(assigned_to='OwnerLastName', assigned_source='owner', assigned_val='last_name')
+            if let.assigned_source not in deferred_lets:
+                deferred_lets[let.assigned_source] = []
+            deferred_lets[let.assigned_source].append(let)
+        created = {}
+        all_relationships = []
+        all_objects = {}
+        
+        
+        used = set()
+        for select in self.selects:
+            created_objects,selected_objects, relationships = select(initializations,selections,creations,used)
+            created[select.name] = created_objects
+            used |= set([get_name(selected) for selected in selected_objects])
+            all_objects[select.name] = created_objects+selected_objects
+            all_relationships += relationships
+            if select.name in deferred_lets:
+                for let in deferred_lets[select.name]:
+                    instantiated_lets[let.assigned_to] = flatten_list([thing[let.assigned_val] for thing in all_objects[select.name]])
+                    selections[let.assigned_to] = instantiated_lets[let.assigned_to]
                 
-                initiator = action[1]
-                cost = self.actions[name].cost
-                character_action_budget[initiator] -= cost
-                if character_action_budget[initiator] <= 0:
-                    del character_action_budget[initiator]
-            self.history[-1].append(chosen_actions)
-
-            self.actions2asp(chosen_actions)
-            action_results = self.calculate_action_results()[0]
-            
-            for result in action_results['add']:
                 
-                result = [term['predicate'] for term in  result[0]['terms']]
-                character = self.population[result[0]]
-                result_key = tuple(result[1:])
-                character['status'][result_key] = None
-
-            for result in action_results['del']:
-                result = [term['predicate'] for term in  result[0]['terms']]            
-                character = self.population[result[0]]
-                result_key = tuple(result[1:])
-                if result_key in character['status']:
-                    del character['status'][result_key]
-
-            for result in action_results['update']:
-                result = [term['predicate'] for term in  result[0]['terms']]
-                character = self.population[result[0]]
-                result_key = tuple(result[1:-1])
-                val = int(result[-1])
-                character['status'][result_key] = val
-
-
-            visibility_results = self.calculate_observability()
-            self.character_knowledge.append([])
-            for observability in visibility_results[0]['observability']:
-                terms = [term['predicate'] for term in observability[0]['terms']]
-
-                action = tuple(terms[:5])
-                observer = terms[6]
-                location = terms[7]
-                observability = int(terms[8])
-                probs = np.exp(np.array([observability, self.ignore_logit])/self.observation_temp)
-                probs /= np.sum(probs)
-                if np.argmax(np.random.multinomial(1,probs)) == 0:
-                    self.character_knowledge[-1].append(('saw', observer, location, action))
+        for create in self.creates:
+            created_objects, relationships = create(initializations,selections,creations)
+            created[create.name] = created_objects
+            all_objects[create.name] = created_objects
+            all_relationships += relationships
             
+        for relationship in all_relationships:
+            source = relationship[0]
+            relationship = relationship[1]
+            target = relationship.target
+            name = relationship.name
+            val = relationship.value
+            
+            for source_char in all_objects[source]:
+                source_name = source_char.get('name',source_char.get('first_name',[''])[0] + ' ' + source_char.get('last_name',[''])[0])
+                    
+                if 'relationships' not in source_char:
+                    source_char['relationships'] = []
+                for target_char in all_objects[target]:
+                    target_name = target_char.get('name',target_char.get('first_name',[''])[0] + ' ' + target_char.get('last_name',[''])[0])
+                    
+                    if len(target_name) == 1:
+                        target_name = target_name[0]
+                    if val is not None:
+                        source_char['relationships'].append((name,target_name,val))
+                    else:
+                        source_char['relationships'].append((name,target_name))
+                        
+        flattened = []
+        for cat in created.values():
+            flattened += cat
+        return flattened
+def parse_initialization(initialization):
+    initialization = initialization[1]
+    lets = []
+    creates = []
+    selects = []
+    for thing in initialization:
+        if thing[0] == 'Name':
+            name = thing[1]
+        elif thing[0] == 'Let':
+            lets = []
+            deferred_lets = []
+            for assignment in thing[1]:
+                if assignment[0] == 'Assignment':
+                    lets.append(parse_assignment(assignment))
+                elif assignment[0] == 'DeferredAssignment':
+                    deferred_lets.append(parse_deferred_assignment(assignment))
+        elif thing[0] == 'Create':
+            creates.append(parse_create(thing[1]))
+        elif thing[0] == 'Select':
+            selects.append(parse_select(thing[1]))
+    return Initialization(name,lets,deferred_lets,creates,selects)
+
+@dataclass
+class Initialize:
+    creates: list = field(default_factory=list)
+    def __call__(self,initializations,selections,creations):
+        creations = []
+        for create in self.creates:
+            created = create.num(initializations,selections,creations)
+            creations += created
+        
+        return creations
+    
+def parse_initialize(initialize):
+    initialize = initialize[1]
+    creates = []
+    for thing in initialize:
+        if thing[0] == 'Create':
+            creates.append(parse_create(thing[1]))
+        else:
+            print(f'Uh Oh -- {thing[0]} is not recognized for an initialize command' )
+    return Initialize(creates)
+
+@dataclass
+class Default:
+    name:str
+    options:list
+    def __call__(self,initializations,selections,creations):
+        constructed = {'type':self.name}
+        for option in self.options:
+            constructed[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+        return constructed
+        
+def parse_default(default):
+    default = default[1]
+    name = ''
+    options = []
+    for thing in default:
+        if thing[0] == 'Name':
+            name = thing[1]
+        elif thing[0] == 'Options':
+            options = parse_options(thing)
+    return Default(name,options)
+
+
+class KismetInitialization():
+    def __init__(self,initialization_file,kismet_module):
+        self.module = kismet_module
+        
+        init_file = initialization_file
+        input_stream = FileStream(init_file)
+        lexer = kismet_initializationLexer.kismet_initializationLexer(input_stream)
+        stream = CommonTokenStream(lexer)
+        parser = kismet_initializationParser(stream)
+        error_listener = MyErrorListener()
+        parser._listeners = [ error_listener ]
+        tree = parser.init()
+        vis = kismet_initializationVisitor()
+        initialization = vis.visit(tree)
+
+        self.all_things = {}
+
+        for thing in initialization[1]:
+            if thing[0] not in self.all_things:
+                self.all_things[thing[0]] = []
+            self.all_things[thing[0]].append(thing)
+
+    def run_initialization(self):   
+        initializations = {}
+        for default in self.all_things['Default']:
+            default = parse_default(default)
+            initializations[default.name] = default
+
+        for initialization in self.all_things['Initialization']:
+            initialization = parse_initialization(initialization)
+            initializations[initialization.name] = initialization
+
+        creations = []
+        for initialize in self.all_things['Initialize']:
+            creations += parse_initialize(initialize)(initializations,{'traits':self.module.selectable_traits},creations)
+        return creations
