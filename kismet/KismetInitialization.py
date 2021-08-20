@@ -1,5 +1,4 @@
-import kismetLexer
-from kismetParser import kismetParser
+
 import tracery
 from tracery.modifiers import base_english
 from antlr4.error.ErrorListener import ErrorListener
@@ -32,8 +31,12 @@ from antlr4.error.ErrorListener import ErrorListener
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .kismet_initializationParser import kismet_initializationParser
+    from . import kismetLexer
+    from .kismetParser import kismetParser
 else:
     from kismet_initializationParser import kismet_initializationParser
+    import kismetLexer
+    from kismetParser import kismetParser
 
 def process_nesting(text,count=0):
     start = -1
