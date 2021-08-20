@@ -2104,11 +2104,11 @@ class KismetInitialization():
 
     def run_initialization(self):   
         initializations = {}
-        for default in self.all_things['Default']:
+        for default in self.all_things.get('Default',[]):
             default = parse_default(default)
             initializations[default.name] = default
 
-        for initialization in self.all_things['Initialization']:
+        for initialization in self.all_things.get('Initialization',[]):
             initialization = parse_initialization(initialization)
             initializations[initialization.name] = initialization
 
