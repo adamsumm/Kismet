@@ -19,8 +19,6 @@ from sys import exit
 import re
 import tracery 
 import inspect
-import kismet_initializationLexer
-from kismet_initializationParser import  kismet_initializationParser
 from abc import ABC
 from dataclasses import dataclass, field
 from collections.abc import Callable
