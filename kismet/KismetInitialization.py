@@ -2086,7 +2086,7 @@ class KismetInitialization():
         
         init_file = initialization_file
         input_stream = FileStream(init_file)
-        lexer = kismet_initializationLexer.kismet_initializationLexer(input_stream)
+        lexer = kismet_initializationLexer(input_stream)
         stream = CommonTokenStream(lexer)
         parser = kismet_initializationParser(stream)
         error_listener = MyErrorListener()
