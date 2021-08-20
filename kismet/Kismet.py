@@ -1718,7 +1718,8 @@ class KismetModule():
         
         #print(component_to_whole)
             
-        
+    def aspify_name(self,name):
+        return name.replace(' ','_').replace("'",'_').lower()
         
     def make_population(self):
         
@@ -1729,16 +1730,18 @@ class KismetModule():
         for thing in population:
             if thing['type'] == 'character':
                 name = KismetInitialization.get_name(thing)
-                asp_name = name.replace(' ','_').lower()
-                
+                asp_name = self.aspify_name(name)
+                status = thing.get('status',{})
+                status = {name:None if val is None else val(None,None,None) for name,val in status.items()}
                 person = {'name':name,'asp_name':asp_name}
                 self.population[asp_name] = person
-                
+                relation_pairs = {(r[0], self.aspify_name(r[1])):None for r in thing.get('relationships',{}) if len(r) == 2}
+                relation_triples = {(r[0], self.aspify_name(r[1])):r[2](None,None,None) for r in thing.get('relationships',{}) if len(r) == 3}
                 person['traits'] = set( [trait.alternative_names[0] for trait in thing['traits']])
-                person['status'] = {**thing.get('status',{}), 
-                                    **{(relation, name.replace(' ','_').lower()):None for relation, name in thing.get('relationships',{})},
+                person['status'] = {**status, 
+                                    **relation_pairs,
+                                    **relation_triples,
                                     **{('age',):thing['age'][0]}}
-                print(person['status'])
         for name in self.population:
             person = self.population[name]
             for status in self.numerical_status:

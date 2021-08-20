@@ -1323,31 +1323,31 @@ class kismet_initializationVisitor(ParseTreeVisitor):
     
     # Visit a parse tree produced by kismet_initializationParser#init.
     def visitInit(self, ctx:kismet_initializationParser.InitContext):
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Init',self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismet_initializationParser#name.
     def visitName(self, ctx:kismet_initializationParser.NameContext):
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Name', ctx.getText()) 
 
     # Visit a parse tree produced by kismet_initializationParser#var.
     def visitVar(self, ctx:kismet_initializationParser.VarContext):
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Var', ctx.getText()) 
 
     # Visit a parse tree produced by kismet_initializationParser#comparator.
     def visitComparator(self, ctx:kismet_initializationParser.ComparatorContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Comparator', ctx.getText())
     
 
     # Visit a parse tree produced by kismet_initializationParser#num_choice.
     def visitNum_choice(self, ctx:kismet_initializationParser.Num_choiceContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('num_choice',self.visitChildren(ctx))
 
 
@@ -1355,118 +1355,118 @@ class kismet_initializationVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by kismet_initializationParser#num_choice.
     def visitNum_range(self, ctx:kismet_initializationParser.Num_rangeContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('num_range',self.visitChildren(ctx))
 
 
 
     # Visit a parse tree produced by kismet_initializationParser#pdf.
     def visitPdf(self, ctx:kismet_initializationParser.PdfContext):
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('PDF', ctx.getText())
 
 
     # Visit a parse tree produced by kismetParser#num.
     def visitNum(self, ctx:kismet_initializationParser.NumContext):
-        print(inspect.currentframe().f_code.co_name,ctx.getText())     
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())     
         
         return ('Num',ctx.getText())
 
 
     # Visit a parse tree produced by kismet_initializationParser#pos_num.
     def visitPos_num(self, ctx:kismet_initializationParser.Pos_numContext):
-        print(inspect.currentframe().f_code.co_name,ctx.getText())        
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())        
         return ('Num',ctx.getText())
 
 
     # Visit a parse tree produced by kismet_initializationParser#random_text.
     def visitRandom_text(self, ctx:kismet_initializationParser.Random_textContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('RandomText',ctx.getText())
 
 
     # Visit a parse tree produced by kismet_initializationParser#initialization.
     def visitInitialization(self, ctx:kismet_initializationParser.InitializationContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Initialization', self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismet_initializationParser#let.
     def visitLet(self, ctx:kismet_initializationParser.LetContext):
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Let', self.visitChildren(ctx))
 
     # Visit a parse tree produced by kismet_initializationParser#create.
     def visitCreate(self, ctx:kismet_initializationParser.CreateContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Create', self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismet_initializationParser#create.
     def visitSelect(self, ctx:kismet_initializationParser.CreateContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Select', self.visitChildren(ctx))
     
     # Visit a parse tree produced by kismet_initializationParser#create.
     def visitNegative(self, ctx:kismet_initializationParser.CreateContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Negative')
     # Visit a parse tree produced by kismet_initializationParser#options.
     def visitOptions(self, ctx:kismet_initializationParser.OptionsContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Options', self.visitChildren(ctx))
 
     # Visit a parse tree produced by kismet_initializationParser#options.
     def visitConditions(self, ctx:kismet_initializationParser.OptionsContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return ('Conditions', self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismet_initializationParser#option.
     def visitOption(self, ctx:kismet_initializationParser.OptionContext):
         
-        print(inspect.currentframe().f_code.co_name,ctx.getText())
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by kismet_initializationParser#assignment.
     def visitAssignment(self, ctx:kismet_initializationParser.AssignmentContext):
         
-        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
         return ('Assignment', self.visitChildren(ctx))
 
     # Visit a parse tree produced by kismet_initializationParser#assignment.
     def visitDeferred_assignment(self, ctx:kismet_initializationParser.AssignmentContext):
         
-        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
         return ('DeferredAssignment', self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismet_initializationParser#description.
     def visitDescription(self, ctx:kismet_initializationParser.DescriptionContext):
         
-        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
         return ('Description', self.visitChildren(ctx))
     
 
     # Visit a parse tree produced by kismet_initializationParser#initialize.
     def visitInitialize(self, ctx:kismet_initializationParser.InitializeContext):
         
-        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
         return ('Initialize', self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismet_initializationParser#initialize.
     def visitDefault(self, ctx:kismet_initializationParser.DefaultContext):
         
-        print(inspect.currentframe().f_code.co_name, ctx.getText())
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
         return ('Default', self.visitChildren(ctx))
 
 @dataclass
@@ -1813,6 +1813,7 @@ class Relationship:
         return satisfies
     
 def parse_description(description):
+    
     description = description[1]
     negative = False
     if 'Negative' in description:
@@ -1820,14 +1821,14 @@ def parse_description(description):
         description = [d for d in description if d != 'Negative']
     
     if len(description) == 3:
-        return Relationship(description[0][1], description[1][1], int(description[2][1]),negation= negative)
+        return Relationship(description[0][1], description[1][1],  parseNumRange(description[2]),negation= negative)
     elif len(description) == 1:
         return DescTrait(description[0][1],negation= negative)
     elif len(description) == 2:
         if description[1][0] == 'Name':
             return Relationship(description[0][1], description[1][1],negation= negative)
         else:
-            return DescTrait(description[0][1], int(description[1][1]),negation= negative)
+            return DescTrait(description[0][1], parseNumRange(description[1]),negation= negative)
             
     else:
         print(f'UH OH -- description "{description}" does not match any known patterns')

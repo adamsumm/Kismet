@@ -1,27 +1,20 @@
 default location:.
 
 initialization bar:
-	let OwnerLastName = "#lastNames#",
-		OwnerFirstName = "#firstNames#";
+	let OwnerLastName = ownerChar's last_name,
+		OwnerFirstName = ownerChar's first_name;
 		
-	create [1] character as owner:
-		age = [28:70],
-		first_name = OwnerFirstName,
-		last_name = OwnerLastName,
-		is owner of barA;
+	select [1] character as ownerChar:
+		is owner of barA,
+        is drunkard,
 		
-	select [1] character as owner:
-		first_name = OwnerFirstName,
-		last_name = OwnerLastName,
-		is owner of barA
-		
-		where 
+	:where 
 		age = [28:70],
 		not employee of Location,
 		not teetotaler;	
 		
 	create [1] location as barA:
-		type = "bar",
+		location_type = "bar",
 		name = "[#OwnerLastName#|#OwnerFirstName#]'s [place|bar|tap|public house]".
 		
 default character: 
@@ -35,30 +28,36 @@ initialization family:
 	ParentATraits = [3:5] traits,
 	ParentBTraits = [3:5] traits;
 	
-	select_create [1] character as parentA:
+	select [1] character as parentA:
 		age = [20:50],
 		last_name = FamilyName,
 		traits = ParentATraits,
 		is married to parentB,
 		is parent to child,
+        is old,
+        is angry = [2:4],
+        likes parentB = [5],
+		:where 
+        is not parent, 
+        is not married;
 		
-		where not parent, not married;
-		
-	create [1] character as parentB:
+	select [1] character as parentB:
 		age = [20:50],
 		last_name = FamilyName,
 		traits = ParentBTraits,
 		is married to parentA,
-		is parent to child;
+		is parent to child
+		:where is not parent, is not married;
 	
 	create [1:5] character as child:
 		age = [1:15],
 		last_name = FamilyName,
 		traits = [1:2] traits + [0:2] ParentBTraits + [0:2] ParentATraits,
+        is young,
 		is child to parentA,
 		is child to parentB.
 	
 initialize:
-	create [5] character;
+	create [1] character;
 	create [3:5] family;
 	create [1] bar.

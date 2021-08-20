@@ -74,8 +74,18 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismet_initializationParser#select.
+    def visitSelect(self, ctx:kismet_initializationParser.SelectContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismet_initializationParser#options.
     def visitOptions(self, ctx:kismet_initializationParser.OptionsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#conditions.
+    def visitConditions(self, ctx:kismet_initializationParser.ConditionsContext):
         return self.visitChildren(ctx)
 
 
@@ -91,6 +101,16 @@ class kismet_initializationVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismet_initializationParser#assignment.
     def visitAssignment(self, ctx:kismet_initializationParser.AssignmentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#deferred_assignment.
+    def visitDeferred_assignment(self, ctx:kismet_initializationParser.Deferred_assignmentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#negative.
+    def visitNegative(self, ctx:kismet_initializationParser.NegativeContext):
         return self.visitChildren(ctx)
 
 

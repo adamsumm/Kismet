@@ -125,12 +125,30 @@ class kismet_initializationListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismet_initializationParser#select.
+    def enterSelect(self, ctx:kismet_initializationParser.SelectContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#select.
+    def exitSelect(self, ctx:kismet_initializationParser.SelectContext):
+        pass
+
+
     # Enter a parse tree produced by kismet_initializationParser#options.
     def enterOptions(self, ctx:kismet_initializationParser.OptionsContext):
         pass
 
     # Exit a parse tree produced by kismet_initializationParser#options.
     def exitOptions(self, ctx:kismet_initializationParser.OptionsContext):
+        pass
+
+
+    # Enter a parse tree produced by kismet_initializationParser#conditions.
+    def enterConditions(self, ctx:kismet_initializationParser.ConditionsContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#conditions.
+    def exitConditions(self, ctx:kismet_initializationParser.ConditionsContext):
         pass
 
 
@@ -158,6 +176,24 @@ class kismet_initializationListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismet_initializationParser#assignment.
     def exitAssignment(self, ctx:kismet_initializationParser.AssignmentContext):
+        pass
+
+
+    # Enter a parse tree produced by kismet_initializationParser#deferred_assignment.
+    def enterDeferred_assignment(self, ctx:kismet_initializationParser.Deferred_assignmentContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#deferred_assignment.
+    def exitDeferred_assignment(self, ctx:kismet_initializationParser.Deferred_assignmentContext):
+        pass
+
+
+    # Enter a parse tree produced by kismet_initializationParser#negative.
+    def enterNegative(self, ctx:kismet_initializationParser.NegativeContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#negative.
+    def exitNegative(self, ctx:kismet_initializationParser.NegativeContext):
         pass
 
 

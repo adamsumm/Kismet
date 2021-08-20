@@ -2,7 +2,7 @@ grammar kismet_initialization;
 
 
 init:
- (initialization|initialize)+ EOF
+ (initialization|initialize|default)+ EOF
  ;
 
 name : NAME;
@@ -18,10 +18,13 @@ comparator:  '=' |
 	    '>='|
 	    '!=';
 
+num_range:
+	'[' num ']' | 
+	'[' num ':' num ']' ( pdf )? ;
 
 num_choice
-	:  '[' num ']' name
-	|   '[' num ':' num ']' ( pdf )? name ;
+	:  '[' num ']' (name|var) |
+	'[' num ':' num ']' ( pdf )? (name|var) ;
 pdf :  ('^'|'-'|'.'|'_')+ ;
 
 num: NUMBER;
@@ -45,29 +48,55 @@ random_text: RANDOM_TEXT;
 RANDOM_TEXT:'"' .*? '"'  ;
 
 initialization:
-	'initialization' name ':' create (';' create)* '.';
-	
+	'initialization' name ':' let? (create|select) (';' (create|select))* '.';
+
+let:
+	'let' (assignment|deferred_assignment) (',' (assignment|deferred_assignment))* ';';
 	
 create:
 	'create' num_choice  ('as' name)? (options)?;
+    
+select:
+	'select' num_choice  ('as' name)? (options)? (conditions)?;
 	
 options:
 	':' option (',' option)*;
 
+conditions:
+	':' 'where' option (',' option)*;
+    
+default:
+	'default' name options;
+	
 	
 option:
 	assignment |
 	description;
 
 assignment:
-	name '=' num_choice |
-	name '=' name |
-	name '=' random_text;
+	(name|var) '=' num_range|
+	(name|var) '=' num_choice ('+' num_choice)* |
+	(name|var) '=' var |
+	(name|var) '=' random_text;
 
+deferred_assignment:
+    var '=' name '\'s' name |
+    var '=' name '.' name;
+    
+negative:
+    'is' 'not' |
+    'isnt' |
+    'isn\'t';
+    
 description:
+	negative name |
+	negative name ('to'|'of'|'with') name |
 	'is' name |
-	'is' name 'to' name |
-	name name;
+	'is' name '=' num_range |
+	'is' name ('to'|'of'|'with') name |
+	name name |
+    name name '=' num_range |
+	'is' name ('to'|'of'|'with') name '=' num_range;
 	
 	
 initialize:
