@@ -3,12 +3,13 @@ if __name__ == 'Kismet':
     import kismetLexer
     from kismetParser import kismetParser 
     import KismetInitialization
+    import mod
 else:    
     
     from . import KismetInitialization
     from . import kismetLexer
     from .kismetParser import kismetParser
-    
+    from . import mod
 import tracery
 from tracery.modifiers import base_english
 from antlr4.error.ErrorListener import ErrorListener
@@ -28,7 +29,6 @@ from dataclasses import dataclass
 from sys import exit
 import re
 import tracery 
-
 
 module_singleton = None
 
@@ -1247,6 +1247,7 @@ class KismetModule():
                 self.tracery_grammar[key] = grammar[key]
         
         self.grammar = tracery.Grammar(self.tracery_grammar)
+        mod.tracery_grammar = self.tracery_grammar 
         self.grammar.add_modifiers(base_english)
 
         

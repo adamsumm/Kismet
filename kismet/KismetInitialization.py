@@ -23,17 +23,20 @@ from abc import ABC
 from dataclasses import dataclass, field
 from collections.abc import Callable
 
-
 from antlr4.error.ErrorListener import ErrorListener
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .kismet_initializationParser import kismet_initializationParser
+    from .kismet_initializationLexer import kismet_initializationLexer
     from . import kismetLexer
     from .kismetParser import kismetParser
+    from . import mod
 else:
     from kismet_initializationParser import kismet_initializationParser
     import kismetLexer
+    import kismet_initializationLexer
     from kismetParser import kismetParser
+    import mod
 
 def process_nesting(text,count=0):
     start = -1
