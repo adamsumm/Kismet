@@ -2226,6 +2226,7 @@ class KismetModule():
         self.timestep += 1
         self.history.append([])
         
+        self.knowledge2asp()
         self.determine_character_locations()
         
         character_action_budget = {name:self.action_budget for name in self.population}
