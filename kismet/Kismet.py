@@ -1230,7 +1230,8 @@ def locationToASP(location,location_name):
     #    error_log.append(f'ERROR: No casting details in location "{location_name}"')
         
     location['Supports'] = location['Supports'][0]
-
+    if not isinstance(location['Supports'][0],list):
+        location['Supports'] = [location['Supports']]
     
     tags = parseTags(location)
     supported_roles = {}
