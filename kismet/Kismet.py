@@ -2182,7 +2182,7 @@ class KismetModule():
                 available_slots[(location,role)] = role_slots[role]
                 
                 
-        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
                 
         volitions_by_actor = {}
         
