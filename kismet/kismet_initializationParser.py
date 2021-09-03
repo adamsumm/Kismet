@@ -8,8 +8,8 @@ import sys
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3*")
-        buf.write("\u012e\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3,")
+        buf.write("\u0137\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
         buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\3\2")
@@ -36,35 +36,36 @@ def serializedATN():
         buf.write("\n\26\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27")
         buf.write("\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27")
         buf.write("\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27")
-        buf.write("\3\27\3\27\3\27\5\27\u0120\n\27\3\30\3\30\3\30\3\30\3")
-        buf.write("\30\7\30\u0127\n\30\f\30\16\30\u012a\13\30\3\30\3\30\3")
-        buf.write("\30\2\2\31\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$")
-        buf.write("&(*,.\2\5\3\2\3\t\4\2\r\17\'\'\3\2\37!\2\u0142\2\63\3")
-        buf.write("\2\2\2\49\3\2\2\2\6;\3\2\2\2\b=\3\2\2\2\nK\3\2\2\2\f`")
-        buf.write("\3\2\2\2\16c\3\2\2\2\20g\3\2\2\2\22i\3\2\2\2\24k\3\2\2")
-        buf.write("\2\26m\3\2\2\2\30\u0083\3\2\2\2\32\u0094\3\2\2\2\34\u009d")
-        buf.write("\3\2\2\2\36\u00a9\3\2\2\2 \u00b2\3\2\2\2\"\u00bc\3\2\2")
-        buf.write("\2$\u00c2\3\2\2\2&\u00e6\3\2\2\2(\u00f4\3\2\2\2*\u00fa")
-        buf.write("\3\2\2\2,\u011f\3\2\2\2.\u0121\3\2\2\2\60\64\5\26\f\2")
-        buf.write("\61\64\5.\30\2\62\64\5\"\22\2\63\60\3\2\2\2\63\61\3\2")
-        buf.write("\2\2\63\62\3\2\2\2\64\65\3\2\2\2\65\63\3\2\2\2\65\66\3")
-        buf.write("\2\2\2\66\67\3\2\2\2\678\7\2\2\38\3\3\2\2\29:\7#\2\2:")
-        buf.write("\5\3\2\2\2;<\7$\2\2<\7\3\2\2\2=>\t\2\2\2>\t\3\2\2\2?@")
-        buf.write("\7\n\2\2@A\5\20\t\2AB\7\13\2\2BL\3\2\2\2CD\7\n\2\2DE\5")
-        buf.write("\20\t\2EF\7\f\2\2FG\5\20\t\2GI\7\13\2\2HJ\5\16\b\2IH\3")
-        buf.write("\2\2\2IJ\3\2\2\2JL\3\2\2\2K?\3\2\2\2KC\3\2\2\2L\13\3\2")
-        buf.write("\2\2MN\7\n\2\2NO\5\20\t\2OR\7\13\2\2PS\5\4\3\2QS\5\6\4")
-        buf.write("\2RP\3\2\2\2RQ\3\2\2\2Sa\3\2\2\2TU\7\n\2\2UV\5\20\t\2")
-        buf.write("VW\7\f\2\2WX\5\20\t\2XZ\7\13\2\2Y[\5\16\b\2ZY\3\2\2\2")
-        buf.write("Z[\3\2\2\2[^\3\2\2\2\\_\5\4\3\2]_\5\6\4\2^\\\3\2\2\2^")
-        buf.write("]\3\2\2\2_a\3\2\2\2`M\3\2\2\2`T\3\2\2\2a\r\3\2\2\2bd\t")
-        buf.write("\3\2\2cb\3\2\2\2de\3\2\2\2ec\3\2\2\2ef\3\2\2\2f\17\3\2")
-        buf.write("\2\2gh\7%\2\2h\21\3\2\2\2ij\7&\2\2j\23\3\2\2\2kl\7*\2")
-        buf.write("\2l\25\3\2\2\2mn\7\20\2\2no\5\4\3\2oq\7\f\2\2pr\5\30\r")
-        buf.write("\2qp\3\2\2\2qr\3\2\2\2ru\3\2\2\2sv\5\32\16\2tv\5\34\17")
-        buf.write("\2us\3\2\2\2ut\3\2\2\2v~\3\2\2\2wz\7\21\2\2x{\5\32\16")
-        buf.write("\2y{\5\34\17\2zx\3\2\2\2zy\3\2\2\2{}\3\2\2\2|w\3\2\2\2")
-        buf.write("}\u0080\3\2\2\2~|\3\2\2\2~\177\3\2\2\2\177\u0081\3\2\2")
+        buf.write("\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27")
+        buf.write("\3\27\5\27\u0129\n\27\3\30\3\30\3\30\3\30\3\30\7\30\u0130")
+        buf.write("\n\30\f\30\16\30\u0133\13\30\3\30\3\30\3\30\2\2\31\2\4")
+        buf.write("\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\2\6\3\2\3")
+        buf.write("\t\4\2\r\17))\3\2\37\"\3\2\37!\2\u014d\2\63\3\2\2\2\4")
+        buf.write("9\3\2\2\2\6;\3\2\2\2\b=\3\2\2\2\nK\3\2\2\2\f`\3\2\2\2")
+        buf.write("\16c\3\2\2\2\20g\3\2\2\2\22i\3\2\2\2\24k\3\2\2\2\26m\3")
+        buf.write("\2\2\2\30\u0083\3\2\2\2\32\u0094\3\2\2\2\34\u009d\3\2")
+        buf.write("\2\2\36\u00a9\3\2\2\2 \u00b2\3\2\2\2\"\u00bc\3\2\2\2$")
+        buf.write("\u00c2\3\2\2\2&\u00e6\3\2\2\2(\u00f4\3\2\2\2*\u00fa\3")
+        buf.write("\2\2\2,\u0128\3\2\2\2.\u012a\3\2\2\2\60\64\5\26\f\2\61")
+        buf.write("\64\5.\30\2\62\64\5\"\22\2\63\60\3\2\2\2\63\61\3\2\2\2")
+        buf.write("\63\62\3\2\2\2\64\65\3\2\2\2\65\63\3\2\2\2\65\66\3\2\2")
+        buf.write("\2\66\67\3\2\2\2\678\7\2\2\38\3\3\2\2\29:\7%\2\2:\5\3")
+        buf.write("\2\2\2;<\7&\2\2<\7\3\2\2\2=>\t\2\2\2>\t\3\2\2\2?@\7\n")
+        buf.write("\2\2@A\5\20\t\2AB\7\13\2\2BL\3\2\2\2CD\7\n\2\2DE\5\20")
+        buf.write("\t\2EF\7\f\2\2FG\5\20\t\2GI\7\13\2\2HJ\5\16\b\2IH\3\2")
+        buf.write("\2\2IJ\3\2\2\2JL\3\2\2\2K?\3\2\2\2KC\3\2\2\2L\13\3\2\2")
+        buf.write("\2MN\7\n\2\2NO\5\20\t\2OR\7\13\2\2PS\5\4\3\2QS\5\6\4\2")
+        buf.write("RP\3\2\2\2RQ\3\2\2\2Sa\3\2\2\2TU\7\n\2\2UV\5\20\t\2VW")
+        buf.write("\7\f\2\2WX\5\20\t\2XZ\7\13\2\2Y[\5\16\b\2ZY\3\2\2\2Z[")
+        buf.write("\3\2\2\2[^\3\2\2\2\\_\5\4\3\2]_\5\6\4\2^\\\3\2\2\2^]\3")
+        buf.write("\2\2\2_a\3\2\2\2`M\3\2\2\2`T\3\2\2\2a\r\3\2\2\2bd\t\3")
+        buf.write("\2\2cb\3\2\2\2de\3\2\2\2ec\3\2\2\2ef\3\2\2\2f\17\3\2\2")
+        buf.write("\2gh\7\'\2\2h\21\3\2\2\2ij\7(\2\2j\23\3\2\2\2kl\7,\2\2")
+        buf.write("l\25\3\2\2\2mn\7\20\2\2no\5\4\3\2oq\7\f\2\2pr\5\30\r\2")
+        buf.write("qp\3\2\2\2qr\3\2\2\2ru\3\2\2\2sv\5\32\16\2tv\5\34\17\2")
+        buf.write("us\3\2\2\2ut\3\2\2\2v~\3\2\2\2wz\7\21\2\2x{\5\32\16\2")
+        buf.write("y{\5\34\17\2zx\3\2\2\2zy\3\2\2\2{}\3\2\2\2|w\3\2\2\2}")
+        buf.write("\u0080\3\2\2\2~|\3\2\2\2~\177\3\2\2\2\177\u0081\3\2\2")
         buf.write("\2\u0080~\3\2\2\2\u0081\u0082\7\16\2\2\u0082\27\3\2\2")
         buf.write("\2\u0083\u0086\7\22\2\2\u0084\u0087\5&\24\2\u0085\u0087")
         buf.write("\5(\25\2\u0086\u0084\3\2\2\2\u0086\u0085\3\2\2\2\u0087")
@@ -118,30 +119,34 @@ def serializedATN():
         buf.write(")\3\2\2\2\u00f6\u00f7\7\33\2\2\u00f7\u00fb\7\34\2\2\u00f8")
         buf.write("\u00fb\7\35\2\2\u00f9\u00fb\7\36\2\2\u00fa\u00f6\3\2\2")
         buf.write("\2\u00fa\u00f8\3\2\2\2\u00fa\u00f9\3\2\2\2\u00fb+\3\2")
-        buf.write("\2\2\u00fc\u00fd\5*\26\2\u00fd\u00fe\5\4\3\2\u00fe\u0120")
+        buf.write("\2\2\u00fc\u00fd\5*\26\2\u00fd\u00fe\5\4\3\2\u00fe\u0129")
         buf.write("\3\2\2\2\u00ff\u0100\5*\26\2\u0100\u0101\5\4\3\2\u0101")
-        buf.write("\u0102\t\4\2\2\u0102\u0103\5\4\3\2\u0103\u0120\3\2\2\2")
-        buf.write("\u0104\u0105\7\33\2\2\u0105\u0120\5\4\3\2\u0106\u0107")
+        buf.write("\u0102\t\4\2\2\u0102\u0103\5\4\3\2\u0103\u0129\3\2\2\2")
+        buf.write("\u0104\u0105\7\33\2\2\u0105\u0129\5\4\3\2\u0106\u0107")
         buf.write("\7\33\2\2\u0107\u0108\5\4\3\2\u0108\u0109\7\3\2\2\u0109")
-        buf.write("\u010a\5\n\6\2\u010a\u0120\3\2\2\2\u010b\u010c\7\33\2")
+        buf.write("\u010a\5\n\6\2\u010a\u0129\3\2\2\2\u010b\u010c\7\33\2")
         buf.write("\2\u010c\u010d\5\4\3\2\u010d\u010e\t\4\2\2\u010e\u010f")
-        buf.write("\5\4\3\2\u010f\u0120\3\2\2\2\u0110\u0111\5\4\3\2\u0111")
-        buf.write("\u0112\5\4\3\2\u0112\u0120\3\2\2\2\u0113\u0114\5\4\3\2")
-        buf.write("\u0114\u0115\5\4\3\2\u0115\u0116\7\3\2\2\u0116\u0117\5")
-        buf.write("\n\6\2\u0117\u0120\3\2\2\2\u0118\u0119\7\33\2\2\u0119")
-        buf.write("\u011a\5\4\3\2\u011a\u011b\t\4\2\2\u011b\u011c\5\4\3\2")
-        buf.write("\u011c\u011d\7\3\2\2\u011d\u011e\5\n\6\2\u011e\u0120\3")
-        buf.write("\2\2\2\u011f\u00fc\3\2\2\2\u011f\u00ff\3\2\2\2\u011f\u0104")
-        buf.write("\3\2\2\2\u011f\u0106\3\2\2\2\u011f\u010b\3\2\2\2\u011f")
-        buf.write("\u0110\3\2\2\2\u011f\u0113\3\2\2\2\u011f\u0118\3\2\2\2")
-        buf.write("\u0120-\3\2\2\2\u0121\u0122\7\"\2\2\u0122\u0123\7\f\2")
-        buf.write("\2\u0123\u0128\5\32\16\2\u0124\u0125\7\21\2\2\u0125\u0127")
-        buf.write("\5\32\16\2\u0126\u0124\3\2\2\2\u0127\u012a\3\2\2\2\u0128")
-        buf.write("\u0126\3\2\2\2\u0128\u0129\3\2\2\2\u0129\u012b\3\2\2\2")
-        buf.write("\u012a\u0128\3\2\2\2\u012b\u012c\7\16\2\2\u012c/\3\2\2")
+        buf.write("\5\4\3\2\u010f\u0129\3\2\2\2\u0110\u0111\5\4\3\2\u0111")
+        buf.write("\u0112\5\4\3\2\u0112\u0129\3\2\2\2\u0113\u0114\5\4\3\2")
+        buf.write("\u0114\u0115\7\33\2\2\u0115\u0116\5\4\3\2\u0116\u0129")
+        buf.write("\3\2\2\2\u0117\u0118\7#\2\2\u0118\u0119\5\4\3\2\u0119")
+        buf.write("\u011a\7 \2\2\u011a\u011b\5\4\3\2\u011b\u0129\3\2\2\2")
+        buf.write("\u011c\u011d\5\4\3\2\u011d\u011e\5\4\3\2\u011e\u011f\7")
+        buf.write("\3\2\2\u011f\u0120\5\n\6\2\u0120\u0129\3\2\2\2\u0121\u0122")
+        buf.write("\7\33\2\2\u0122\u0123\5\4\3\2\u0123\u0124\t\5\2\2\u0124")
+        buf.write("\u0125\5\4\3\2\u0125\u0126\7\3\2\2\u0126\u0127\5\n\6\2")
+        buf.write("\u0127\u0129\3\2\2\2\u0128\u00fc\3\2\2\2\u0128\u00ff\3")
+        buf.write("\2\2\2\u0128\u0104\3\2\2\2\u0128\u0106\3\2\2\2\u0128\u010b")
+        buf.write("\3\2\2\2\u0128\u0110\3\2\2\2\u0128\u0113\3\2\2\2\u0128")
+        buf.write("\u0117\3\2\2\2\u0128\u011c\3\2\2\2\u0128\u0121\3\2\2\2")
+        buf.write("\u0129-\3\2\2\2\u012a\u012b\7$\2\2\u012b\u012c\7\f\2\2")
+        buf.write("\u012c\u0131\5\32\16\2\u012d\u012e\7\21\2\2\u012e\u0130")
+        buf.write("\5\32\16\2\u012f\u012d\3\2\2\2\u0130\u0133\3\2\2\2\u0131")
+        buf.write("\u012f\3\2\2\2\u0131\u0132\3\2\2\2\u0132\u0134\3\2\2\2")
+        buf.write("\u0133\u0131\3\2\2\2\u0134\u0135\7\16\2\2\u0135/\3\2\2")
         buf.write("\2$\63\65IKRZ^`equz~\u0086\u008b\u008f\u0098\u009b\u00a1")
         buf.write("\u00a4\u00a7\u00af\u00b9\u00c2\u00c6\u00cd\u00d5\u00da")
-        buf.write("\u00e1\u00e6\u00f4\u00fa\u011f\u0128")
+        buf.write("\u00e1\u00e6\u00f4\u00fa\u0128\u0131")
         return buf.getvalue()
 
 
@@ -159,9 +164,9 @@ class kismet_initializationParser ( Parser ):
                      "'!='", "'['", "']'", "':'", "'^'", "'.'", "'_'", "'initialization'", 
                      "';'", "'let'", "','", "'create'", "'as'", "'select'", 
                      "'where'", "'default'", "'+'", "''s'", "'is'", "'not'", 
-                     "'isnt'", "'isn't'", "'to'", "'of'", "'with'", "'initialize'", 
-                     "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "'-'" ]
+                     "'isnt'", "'isn't'", "'to'", "'of'", "'with'", "'at'", 
+                     "'has'", "'initialize'", "<INVALID>", "<INVALID>", 
+                     "<INVALID>", "<INVALID>", "'-'" ]
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
@@ -171,8 +176,9 @@ class kismet_initializationParser ( Parser ):
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "NAME", "VAR", "NUMBER", "POSITIVE_NUMBER", 
-                      "NEG", "WS", "LINE_COMMENT", "RANDOM_TEXT" ]
+                      "<INVALID>", "<INVALID>", "<INVALID>", "NAME", "VAR", 
+                      "NUMBER", "POSITIVE_NUMBER", "NEG", "WS", "LINE_COMMENT", 
+                      "RANDOM_TEXT" ]
 
     RULE_init = 0
     RULE_name = 1
@@ -237,14 +243,16 @@ class kismet_initializationParser ( Parser ):
     T__29=30
     T__30=31
     T__31=32
-    NAME=33
-    VAR=34
-    NUMBER=35
-    POSITIVE_NUMBER=36
-    NEG=37
-    WS=38
-    LINE_COMMENT=39
-    RANDOM_TEXT=40
+    T__32=33
+    T__33=34
+    NAME=35
+    VAR=36
+    NUMBER=37
+    POSITIVE_NUMBER=38
+    NEG=39
+    WS=40
+    LINE_COMMENT=41
+    RANDOM_TEXT=42
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -323,7 +331,7 @@ class kismet_initializationParser ( Parser ):
                     self.state = 46
                     self.initialization()
                     pass
-                elif token in [kismet_initializationParser.T__31]:
+                elif token in [kismet_initializationParser.T__33]:
                     self.state = 47
                     self.initialize()
                     pass
@@ -337,7 +345,7 @@ class kismet_initializationParser ( Parser ):
                 self.state = 51 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_initializationParser.T__13) | (1 << kismet_initializationParser.T__21) | (1 << kismet_initializationParser.T__31))) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_initializationParser.T__13) | (1 << kismet_initializationParser.T__21) | (1 << kismet_initializationParser.T__33))) != 0)):
                     break
 
             self.state = 53
@@ -1905,7 +1913,7 @@ class kismet_initializationParser ( Parser ):
         self.enterRule(localctx, 42, self.RULE_description)
         self._la = 0 # Token type
         try:
-            self.state = 285
+            self.state = 294
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,32,self._ctx)
             if la_ == 1:
@@ -1924,7 +1932,7 @@ class kismet_initializationParser ( Parser ):
                 self.name()
                 self.state = 255
                 _la = self._input.LA(1)
-                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_initializationParser.T__28) | (1 << kismet_initializationParser.T__29) | (1 << kismet_initializationParser.T__30))) != 0)):
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_initializationParser.T__28) | (1 << kismet_initializationParser.T__29) | (1 << kismet_initializationParser.T__30) | (1 << kismet_initializationParser.T__31))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
@@ -1961,7 +1969,7 @@ class kismet_initializationParser ( Parser ):
                 self.name()
                 self.state = 267
                 _la = self._input.LA(1)
-                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_initializationParser.T__28) | (1 << kismet_initializationParser.T__29) | (1 << kismet_initializationParser.T__30))) != 0)):
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_initializationParser.T__28) | (1 << kismet_initializationParser.T__29) | (1 << kismet_initializationParser.T__30) | (1 << kismet_initializationParser.T__31))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
@@ -1983,31 +1991,53 @@ class kismet_initializationParser ( Parser ):
                 self.state = 273
                 self.name()
                 self.state = 274
-                self.name()
+                self.match(kismet_initializationParser.T__24)
                 self.state = 275
-                self.match(kismet_initializationParser.T__0)
-                self.state = 276
-                self.num_range()
+                self.name()
                 pass
 
             elif la_ == 8:
                 self.enterOuterAlt(localctx, 8)
+                self.state = 277
+                self.match(kismet_initializationParser.T__32)
                 self.state = 278
-                self.match(kismet_initializationParser.T__24)
-                self.state = 279
                 self.name()
+                self.state = 279
+                self.match(kismet_initializationParser.T__29)
                 self.state = 280
+                self.name()
+                pass
+
+            elif la_ == 9:
+                self.enterOuterAlt(localctx, 9)
+                self.state = 282
+                self.name()
+                self.state = 283
+                self.name()
+                self.state = 284
+                self.match(kismet_initializationParser.T__0)
+                self.state = 285
+                self.num_range()
+                pass
+
+            elif la_ == 10:
+                self.enterOuterAlt(localctx, 10)
+                self.state = 287
+                self.match(kismet_initializationParser.T__24)
+                self.state = 288
+                self.name()
+                self.state = 289
                 _la = self._input.LA(1)
                 if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_initializationParser.T__28) | (1 << kismet_initializationParser.T__29) | (1 << kismet_initializationParser.T__30))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 281
+                self.state = 290
                 self.name()
-                self.state = 282
+                self.state = 291
                 self.match(kismet_initializationParser.T__0)
-                self.state = 283
+                self.state = 292
                 self.num_range()
                 pass
 
@@ -2061,25 +2091,25 @@ class kismet_initializationParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 287
-            self.match(kismet_initializationParser.T__31)
-            self.state = 288
+            self.state = 296
+            self.match(kismet_initializationParser.T__33)
+            self.state = 297
             self.match(kismet_initializationParser.T__9)
-            self.state = 289
+            self.state = 298
             self.create()
-            self.state = 294
+            self.state = 303
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==kismet_initializationParser.T__14:
-                self.state = 290
+                self.state = 299
                 self.match(kismet_initializationParser.T__14)
-                self.state = 291
+                self.state = 300
                 self.create()
-                self.state = 296
+                self.state = 305
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 297
+            self.state = 306
             self.match(kismet_initializationParser.T__11)
         except RecognitionException as re:
             localctx.exception = re

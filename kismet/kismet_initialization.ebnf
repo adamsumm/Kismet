@@ -90,11 +90,13 @@ negative:
     
 description:
 	negative name |
-	negative name ('to'|'of'|'with') name |
+	negative name ('to'|'of'|'with'|'at') name |
 	'is' name |
 	'is' name '=' num_range |
-	'is' name ('to'|'of'|'with') name |
+	'is' name ('to'|'of'|'with'|'at') name |
 	name name |
+	name 'is' name |
+    'has' name 'of' name |
     name name '=' num_range |
 	'is' name ('to'|'of'|'with') name '=' num_range;
 	

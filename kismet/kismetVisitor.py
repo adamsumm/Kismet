@@ -169,6 +169,11 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#cond8.
+    def visitCond8(self, ctx:kismetParser.Cond8Context):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#cond3.
     def visitCond3(self, ctx:kismetParser.Cond3Context):
         return self.visitChildren(ctx)
@@ -181,6 +186,16 @@ class kismetVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismetParser#cond4.
     def visitCond4(self, ctx:kismetParser.Cond4Context):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#cond9.
+    def visitCond9(self, ctx:kismetParser.Cond9Context):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#cond10.
+    def visitCond10(self, ctx:kismetParser.Cond10Context):
         return self.visitChildren(ctx)
 
 
@@ -224,11 +239,6 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by kismetParser#initialization.
-    def visitInitialization(self, ctx:kismetParser.InitializationContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by kismetParser#each_turn.
     def visitEach_turn(self, ctx:kismetParser.Each_turnContext):
         return self.visitChildren(ctx)
@@ -241,11 +251,6 @@ class kismetVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismetParser#random_text.
     def visitRandom_text(self, ctx:kismetParser.Random_textContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by kismetParser#l_name.
-    def visitL_name(self, ctx:kismetParser.L_nameContext):
         return self.visitChildren(ctx)
 
 

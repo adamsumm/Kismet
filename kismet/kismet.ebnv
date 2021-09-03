@@ -28,7 +28,8 @@ propensity_name: 'visibility' | name;
 
 modifier: valence '('propensity_name  (',' propensity_name)* comparison? ')';
   
-goto:  valence '@' name (',' name)* comparison? '@';
+goto:  valence '@' name (',' name)* comparison? '@'|
+       valence '@' comparison  '@';
 
 valence
   : '+'+
@@ -123,46 +124,40 @@ knowledge:
 	'did'		|
 	'received'	;
 
-condition: cond3 | cond1 | cond4 | cond5 | cond6 | cond7 | condpattern;
+condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern;
 
+cond8: arg ('\'s'|'s') name operator num;
 cond3: arg knowledge arg;
 cond1: arg tag_compare name;
 cond4: arg ('\'s'|'s') name comparator num;
+cond9: arg ('\'s'|'s') name comparator arg ('\'s'|'s') name;
+cond10: arg name arg comparator arg name arg;
 inversion: 'do not' | 'dont' | 'don\'t' |  'does not' | 'doesn\'t' | 'doesnt' ;
 cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator num)?;
-cond6: arg  inversion? ('have'|'has'|'is')* name ('to'|'with')* arg (operator num)?;
+cond6: arg  inversion? ('have'|'has'|'is')* name ('of'|'to'|'with' | 'at')* arg (operator num)?;
 cond7: arg name arg comparator num;
 condpattern: 'pattern' '(' name  (',' arg)* ')';
 tag_compare: 'is missing' | 'is not' | 'is' | 'isn\'t' | 'isnt' | 'aint' | 'missing';
 
-operator: (MINUS|PLUS);
+operator: (MINUS|PLUS|EQUALS);
 
 MINUS: ('-=');
 PLUS: ('+=');
+EQUALS: ('=');
 
 location:
 	'location' name ':'
-        (l_name|supports|initialization|each_turn|tags) (';' (l_name|supports|initialization|each_turn|tags))*
-	'.';
+        (supports|each_turn|tags) (';' (supports|each_turn|tags))* '.';
 
-	
-
-initialization:
-	'initialization' ':' cast (',' cast)*;
-	
 each_turn:
-	'each_turn' ':' cast (',' cast)*;
+	'each_turn' ':' cast;
 
 cast:
-	'cast' num_choice (',' num_choice)*;
+	'cast' name (',' name)*;
 	
 random_text: RANDOM_TEXT;
 
 RANDOM_TEXT:'"' .*? '"'  ;
-
-l_name:
-	'name' ':' random_text;
-
 
 
 WS : [ \t\r\n]+ -> skip ;

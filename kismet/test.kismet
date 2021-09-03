@@ -1,19 +1,37 @@
-
-	
 location bar:
-	 supports: [1:10] _-^^^^-_
-	 patron, [2:3] bartender, [1] owner;
-	 
-	 name: "[[bar_owner.first_name|bar_owner.last_name]'s [place|bar|tap]|#bar_name#";
-	 
-	 initialization:
-		cast [1] bar_owner,
-	 	cast [1:2] bartender;
-	each_turn:
-		cast [1:10] patron.
+    supports: [10:20] _-^^^^-_ patron, 
+              [2:3] bartender, 
+              [1] owner;
+    each_turn:
+        cast patron.
+        
+location restaurant:
+    supports: [20:30] _-^^^^-_ patron, 
+              [2:3] server, 
+              [2:3] host, 
+              [1] owner;
+    each_turn:
+        cast patron.
+        
 
+location church:
+    supports: [10:20] _-^^^^-_ parishioners,
+              [1] minister;
+    each_turn:
+        cast parishioners.
+        
+
+default trait regular(>Self, @Location):
+    +++@hospitality_establishment if Self likes Location@.
+
+default trait favorite_place(>Self, @Location):
+    +++@if Self likes Location@.
+
+default trait worker(>Self,@Location):
+    ++++++@if Self is employee of Location@.                
+        
 action befriend_enemy_of_enemy(>Person,<EnemyOfEnemy):
-    if pattern(enemy_of_enemy,Person,EnemyOfEnemy);
+    if pattern(enemy_of_my_enemy,Person,EnemyOfEnemy);
     result: Person and EnemyOfEnemy like each other += 2.
 
 action waste_time(>Person)
@@ -24,7 +42,7 @@ action drink_the_day_away(>Person)
 "Person is lazy and goes to the bar to drink the day away":
        location: bar(Person);
        tags: lazy, drinking;
-       result: Person is drunk.
+       result: Person's drunk += 1.
 
 action sober_up(>Person)
 "Person sobers up":
@@ -59,6 +77,13 @@ action gossip_about(>Gossiper, <Gossipee, ^GossipedAbout,*GossipedAction ):
        	       Gossipee likes Gossiper += 1,
 	       Gossipee heard GossipedAction.
 
+action dominate_conversation(>Person, <Other) 
+    "Person talks to Other and dominates the conversation":
+        tags: talk, domineering;
+        if Person's bossiness > Other's bossiness;
+        result:
+            Other likes Person -= 1.
+
 action flirt(>Person, <Other) extends mingle(>Person, <Other)
 "Person flirts with Other":
        location: (Person, Other);
@@ -67,6 +92,14 @@ action flirt(>Person, <Other) extends mingle(>Person, <Other)
        result:
        	       Person likes Other += 1.
 
+action flirt_unsuccessfully(>Person, <Other) extends mingle(>Person, <Other)
+"Person flirts with Other":
+       location: (Person, Other);
+       tags: talk, romance;
+       if Person likes Other > Other likes Person;
+       visibility++;
+       result:
+       	       Person likes Other -= 1.
 
 action sulk(>Person) costs 1:
        tags: sad;
@@ -105,8 +138,9 @@ trait snoopy(>Self,*Action):
       
 trait drunkard(>Self) opposes teetotaler:
       +++(drinking),
-      +@bar@.
+      +++@bar@.
 
+    
 status drunk(>Self):
        +++(impulsive, anger).
 
@@ -121,10 +155,12 @@ trait violent(>Self) opposes gentle:
       
 trait religious(>Self) opposes atheist:
       +++(religious).
-      
+  
+
 action become_bartender(>TheTender) 
        extends cast bartender(>TheTender)
-       "[TheTender finds a job as a bartender|TheTender decided to become a barkeep]":.
+       "[TheTender finds a job as a bartender|TheTender decided to become a barkeep]":
+       tags: drinking, job_hunt.
        
 action repair_location(>Initiator, @Location):
 	location: Location(Initiator);
@@ -132,8 +168,21 @@ action repair_location(>Initiator, @Location):
 	result: Location is not damaged.
 
 action tend_bar(>Tender:bartender)
- "The Tender serves drinks at their work.":
+ "Tender serves drinks at their work.":
       	tags: work, drinking.
+
+action drink_together(>DrinkerA:patron, <DrinkerB:patron)
+"DrinkerA and DrinkerB share a round together":
+    location: bar(DrinkerA,DrinkerB);
+    tags: drinking, talk, nice;
+    result: DrinkerA and DrinkerB like each other += 1.
+
+
+action drunken_disagreement(>DrinkerA:patron, <DrinkerB:patron)
+"DrinkerA and DrinkerB get into words over a drink":
+    location: bar(DrinkerA,DrinkerB);
+    tags: drinking, talk, mean;
+    result: DrinkerA and DrinkerB like each other -= 3.
 
 action be_sneaky(>Sneaker):
        tags: sneaky;
@@ -181,3 +230,6 @@ pattern milquetoast(>Me,>Other)
     "Me and Other feel pretty ambivalent about each other":
     if Me likes Other = 0, Other likes Me = 0.
     
+pattern milquetoast(>Me,>Other)
+    "Me and Other feel pretty ambivalent about each other 2":
+    if Me likes Other = 1, Other likes Me = 0.

@@ -6,6 +6,7 @@ initialization bar:
 		
 	select [1] character as ownerChar:
 		is owner of barA,
+        is employee at barA,
         is drunkard,
 		
 	:where 
@@ -13,10 +14,69 @@ initialization bar:
 		not employee of Location,
 		not teetotaler;	
 		
+	select [2:3] character as bartender:
+		is bartender of barA,
+        is employee at barA,
+        is drunkard,
+	:where 
+		age = [18:70],
+		not employee of Location,
+		not teetotaler;	
+        
 	create [1] location as barA:
 		location_type = "bar",
+        has owner of ownerChar,
+        has bartender of bartender,
 		name = "[#OwnerLastName#|#OwnerFirstName#]'s [place|bar|tap|public house]".
+
+initialization restaurant:
+	let OwnerLastName = ownerChar's last_name,
+		OwnerFirstName = ownerChar's first_name;
 		
+	select [1] character as ownerChar:
+		is owner of restaurant,
+        is employee at restaurant,		
+	:where 
+		age = [28:70],
+		not employee of Location,
+		not teetotaler;	
+		
+	select [2:3] character as server:
+		is server of restaurant,
+        is employee at restaurant,
+	:where 
+		age = [18:70],
+		not employee of Location;	
+        
+	select [1] character as host:
+		is host of restaurant,
+        is employee at restaurant,
+	:where 
+		age = [18:70],
+		not employee of Location;	
+        
+	create [1] location as restaurant:
+		location_type = "restaurant",
+        has owner of ownerChar,
+        has host of host,
+        has server of server,
+		name = "[The [Barking|Howling|Crazy|Whispering|Meloncholy] [Horse|Frog|Dog|Porpoise]|[#OwnerLastName#|#OwnerFirstName#]'s[ |place]]".
+
+
+initialization church:
+    select [1] character as minister:
+		is minister of church,
+        is employee at church,
+	:where 
+		age = [28:70],
+        is pious;	
+		
+	create [1] location as church:
+		location_type = "church",
+        has minister of minister,
+		name = "[First|Second] [House of Worship|Church][| of our [Lady|Father]'s [Grace|Wrath]]".
+
+
 default character: 
 	last_name = "#lastNames#",
 	first_name = "#firstNames#",
@@ -28,16 +88,20 @@ initialization family:
 	ParentATraits = [3:5] traits,
 	ParentBTraits = [3:5] traits;
 	
-	select [1] character as parentA:
-		age = [20:50],
+	select [1] character as parentA:,
 		last_name = FamilyName,
 		traits = ParentATraits,
 		is married to parentB,
 		is parent to child,
+        is family with parentB,
+        is family with child,
         is old,
         is angry = [2:4],
-        likes parentB = [5],
+        is seniority = [0],
+        likes parentB = [3:5],
+        likes child = [6:10],
 		:where 
+		age = [20:50],
         is not parent, 
         is not married;
 		
@@ -45,19 +109,25 @@ initialization family:
 		age = [20:50],
 		last_name = FamilyName,
 		traits = ParentBTraits,
-		is married to parentA,
+		is married to parentA,,
+        is family with parentA,
+        is family with child,
 		is parent to child
 		:where is not parent, is not married;
 	
 	create [1:5] character as child:
 		age = [1:15],
 		last_name = FamilyName,
+        is family with parentA,
+        is family with parentB,
 		traits = [1:2] traits + [0:2] ParentBTraits + [0:2] ParentATraits,
         is young,
 		is child to parentA,
 		is child to parentB.
 	
 initialize:
-	create [1] character;
+	create [30] character;
 	create [3:5] family;
-	create [1] bar.
+	create [1:3] bar;
+	create [1:3] restaurant;
+	create [1:2] church.

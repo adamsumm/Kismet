@@ -1,4 +1,4 @@
-print(__name__)
+
 if __name__ == 'Kismet':
     import kismetLexer
     from kismetParser import kismetParser 
@@ -388,7 +388,20 @@ class KismetVisitor(ParseTreeVisitor):
         children = self.visitChildren(ctx)
         return ('NumCompare2',children)
 
+    # Visit a parse tree produced by kismetParser#cond7.
+    def visitCond8(self, ctx:kismetParser.Cond7Context):
+        children = self.visitChildren(ctx)
+        return ('SetSelfValue',children)
 
+    # Visit a parse tree produced by kismetParser#cond7.
+    def visitCond9(self, ctx:kismetParser.Cond7Context):
+        children = self.visitChildren(ctx)
+        return ('DualCompare',children)
+
+    # Visit a parse tree produced by kismetParser#cond7.
+    def visitCond10(self, ctx:kismetParser.Cond7Context):
+        children = self.visitChildren(ctx)
+        return ('DualCompareRelations',children)
     # Visit a parse tree produced by kismetParser#operator.
     def visitOperator(self, ctx:kismetParser.OperatorContext):
         
@@ -398,12 +411,6 @@ class KismetVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by kismetParser#location.
     def visitLocation(self, ctx:kismetParser.LocationContext):
         return ('Location',self.visitChildren(ctx))
-
-
-    # Visit a parse tree produced by kismetParser#initialization.
-    def visitInitialization(self, ctx:kismetParser.InitializationContext):
-        
-        return ('Initialization',self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by kismetParser#each_turn.
@@ -435,11 +442,6 @@ class KismetVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by kismetParser#random_text.
     def visitRandom_text(self, ctx:kismetParser.Random_textContext):
         return ('RandomText',ctx.getText())
-
-
-    # Visit a parse tree produced by kismetParser#l_name.
-    def visitL_name(self, ctx:kismetParser.L_nameContext):
-        return ('TextualName',self.visitChildren(ctx))
 
 
     
@@ -630,7 +632,7 @@ def parseConditional(conditional,conditional_type='Conditional'):
         arg1 = parseArg(arguments[0])[1]
         arg2 = arguments[2][1]
         
-        arg2 = get_unique_name(arg2)
+        arg2 = arg2
         comparison = arguments[1][1]
         text = f'{comparisonMapping[conditional_type][comparison]}{arg1}, {arg2})'
         if conditional_type == 'Result':
@@ -640,11 +642,15 @@ def parseConditional(conditional,conditional_type='Conditional'):
         if arguments[-1][0] == 'Num':
             char1 = arguments[0][1][1]
             rel = arguments[1][1]
-            rel = get_unique_name(rel)
+            rel = rel
             char2 = arguments[2][1][1]
-            operation = arguments[3][0]        
+            operation = arguments[3]       
             val = arguments[4][1]
-            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), X {operation} {val} = Y, ']
+            if len(operation) == 2:
+                operator_text = f'X {operation[0]} {val} = Y'
+            else:
+                operator_text = f'{val} = Y'
+            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), {operator_text}, ']
         else:
             
             char1 = arguments[0][1][1]
@@ -658,7 +664,7 @@ def parseConditional(conditional,conditional_type='Conditional'):
                 rel = arguments[1][1]
                 char2 = arguments[2][1][1]
                 
-            rel = get_unique_name(rel)
+            rel = rel
             if conditional_type == 'Result':
                 text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :-']
             else:
@@ -677,13 +683,20 @@ def parseConditional(conditional,conditional_type='Conditional'):
         else:       
             inv = 'is'
             rel = arguments[2][1]
-        rel = get_unique_name(rel)
+        rel = rel
         # A and B like each other -=5
         if arguments[-1][0] == 'Num':
-            operation = arguments[-2][0]        
+            operation = arguments[-2]#[0]
+            
             val = arguments[-1][1]  
-            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), X {operation} {val} = Y,',    
-                    f'update({char2},{rel},{char1},Y) :- is({char2},{rel},{char1},X), X {operation} {val} = Y,']
+            
+            if len(operation) == 2:
+                operator_text = f'X {operation[0]} {val} = Y'
+            else:
+                operator_text = f'{val} = Y'
+            
+            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), {operator_text},',    
+                    f'update({char2},{rel},{char1},Y) :- is({char2},{rel},{char1},X), {operator_text},']
         else:
             text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :- ',
                     f'{comparisonMapping[conditional_type][inv]}{char2},{rel},{char1}) :- ']
@@ -699,21 +712,54 @@ def parseConditional(conditional,conditional_type='Conditional'):
         
     elif cond_type == 'NumCompare1':
         char1 = arguments[0][1][1]
-        stat = get_unique_name(arguments[1][1])
+        stat = arguments[1][1]
         operator = arguments[2][1]
         val = arguments[3][1]
 
         text = f'is({char1},{stat},V_{char1}_{stat}), V_{char1}_{stat} {operator} {val}'
     elif cond_type == 'NumCompare2':
         char1 = arguments[0][1][1]
-        stat = get_unique_name(arguments[1][1])
+        stat = arguments[1][1]
         char2 = arguments[2][1][1]
         operator = arguments[3][1]
         val = arguments[4][1]
         
         text = f'is({char1},{stat},{char2},V_{char1}_{stat}_{char2}), V_{char1}_{stat}_{char2} {operator} {val}'
+    elif cond_type == 'DualCompare':
+        char1 = arguments[0][1][1]
+        stat1 = arguments[1][1]
+        operator = arguments[2][1]
+        char2 = arguments[3][1][1]
+        stat2 = arguments[4][1]
+        
+        text = f'is({char1},{stat1},V_{char1}_{stat1}), is({char2},{stat2},V_{char2}_{stat2}), V_{char1}_{stat1} {operator} V_{char2}_{stat2}'
+    elif cond_type == 'DualCompareRelations':
+        char1 = arguments[0][1][1]
+        stat1 = arguments[1][1]
+        target1 = arguments[2][1][1]
+        operator = arguments[3][1]
+        char2 = arguments[4][1][1]
+        stat2 = arguments[5][1]
+        target2 = arguments[6][1][1]
+        
+        text = f'is({char1},{stat1},{target1},V_{char1}_{stat1}_{target1}), is({char2},{stat2},{target2},V_{char2}_{stat2}_{target2}), V_{char1}_{stat1}_{target1} {operator} V_{char2}_{stat2}_{target2}'
+    elif cond_type == 'SetSelfValue':
+        
+        char1 = arguments[0][1][1]
+        stat = arguments[1][1]
+        
+        operator = arguments[2]
+        val = arguments[3][1]
+        
+        if len(operator) == 2:
+            operator_text = f'X {operator[0]} {val} = Y'
+        else:
+            operator_text = f'{val} = Y'
+            
+        
+        text = [f'update({char1},{stat},Y) :- is({char1},{stat},X), {operator_text}, ']
     elif cond_type == 'CondPattern':
-        name = get_unique_name(arguments[0][1])
+        name = arguments[0][1]
         args = [name] + [arg[1][1] for arg in arguments[1:]]
         text = f'pattern({",".join(args)})'
     else:
@@ -721,8 +767,7 @@ def parseConditional(conditional,conditional_type='Conditional'):
     return text
 
 def get_unique_name(name):
-    return name
-    #return module_singleton.name2uniq.get(name,[name])[0]
+    return module_singleton.name2uniq.get(name,[name])[0]
 
 def get_common_name(name):
     return module_singleton.uniq2name.get(name,name)
@@ -985,20 +1030,27 @@ def parseTrait(trait,traitname):
     pos_propensityASP = []
     arguments = simpleDictify(arguments)
     
-    arguments = {arg_type:arguments.get(arg_type,default_args[arg_type]) for arg_type in ['>','<','^','*','@']}
-                
-    asp_args = ', '.join([arguments.get(arg_type,default_args[arg_type])   for arg_type in ['>','<','^','*','@']])
+    orig_arguments = arguments
+    
     
     for is_propensity,is_goto,valence,constraints,modified_tags in pos_propensities:
+        if len(modified_tags) == 0:
+            modified_tags = ['go_to_location']
         for tag in modified_tags:
             if is_goto:
                 kind = 'go_to_propensity'
+                arguments = {arg_type:orig_arguments.get(arg_type,default) for arg_type,default in [('>','null'),('<','null'),('^','null'),('*','null'),('@','LOCATION')]}
+                asp_args = ', '.join([orig_arguments.get(arg_type,default) for arg_type,default in [('>','null'),('<','null'),('^','null'),('*','null'),('@','LOCATION')]])
             else:
                 kind = 'propensity'
-
-            head = f'{kind}({tag}, {valence}, {get_common_name(traitname)},{asp_args} ) '            
-            #premises = ['action(ACTION_NAME,'+','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] ) +')']
-            premises = ['action(ACTION_NAME,'+','.join([f'{arguments[arg_type]}' for arg_type in ['>','<','^','*','@']] ) +')']
+                arguments = {arg_type:orig_arguments.get(arg_type,default_args[arg_type]) for arg_type in ['>','<','^','*','@']}           
+                asp_args = ', '.join([orig_arguments.get(arg_type,default_args[arg_type])   for arg_type in ['>','<','^','*','@']])
+                
+            head = f'{kind}({tag}, {valence}, {get_common_name(traitname)},{asp_args} ) ' 
+            if kind == 'propensity':
+                premises = ['action(ACTION_NAME,'+','.join([f'{arguments[arg_type]}' for arg_type in ['>','<','^','*','@']] ) +')']
+            else:
+                premises = []
             premises.append(f'is({arguments[">"]}, {get_common_name(traitname)})')
             
             constraints = unsqueeze(constraints)
@@ -1006,7 +1058,12 @@ def parseTrait(trait,traitname):
                 premises += constraints
             else:
                 premises.append(constraints)
-            premises.append(f'is(ACTION_NAME,{tag})')
+            if tag != 'go_to_location':
+                if kind == 'propensity':
+                    premises.append(f'is(ACTION_NAME,{tag})')
+                else:
+                    premises.append(f'is({arguments["@"]},{tag})')
+                
             #print(  f'{head} :- {premise}.')
             premise = ',\n\t\t'.join(premises)
             pos_propensityASP.append(f'{head} :- \n\t\t{premise}.')
@@ -1028,17 +1085,30 @@ def parseTrait(trait,traitname):
             for tag in modified_tags:
                 if is_goto:
                     kind = 'go_to_propensity'
+                    arguments = {arg_type:orig_arguments.get(arg_type,default) for arg_type,default in [('>','null'),('<','null'),('^','null'),('*','null'),('@','LOCATION')]}
+                    asp_args = ', '.join([orig_arguments.get(arg_type,default) for arg_type,default in [('>','null'),('<','null'),('^','null'),('*','null'),('@','LOCATION')]])
+                    
                 else:
                     kind = 'propensity'
+                    arguments = {arg_type:orig_arguments.get(arg_type,default_args[arg_type]) for arg_type in ['>','<','^','*','@']}
+                    asp_args = ', '.join([orig_arguments.get(arg_type,default_args[arg_type])   for arg_type in ['>','<','^','*','@']])
                 
 
                 head = f'{kind}({tag}, {-valence}, {traitname}, {asp_args} ) '
 
-                premises = ['action(ACTION_NAME,'+','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] ) +')']
+                if kind == 'propensity':
+                    premises = ['action(ACTION_NAME,'+','.join([f'{arguments[arg_type]}' for arg_type in ['>','<','^','*','@']] ) +')']
+                else:
+                    premises = []
                 premises.append(f'is({arguments[">"]}, {traitname})')
                 premises += constraints
 
-                #print(  f'{head} :- {premise}.')
+                if tag != 'go_to_location':
+                    if kind == 'propensity':
+                        premises.append(f'is(ACTION_NAME,{tag})')
+                    else:
+                        premises.append(f'is({arguments["@"]},{tag})')
+                
 
                 premise = ',\n\t\t'.join(premises)
                 propensityASP.append(f'{head} :- \n\t\t{premise}.')
@@ -1122,10 +1192,7 @@ def castToASP(cast):
     if type(cast[0][0]) is list:
         cast = cast[0]
     cast_ = {}
-    for casting in cast:
-        role,distribution = parseNumChoice(casting[1][1])
-        cast_[role] = distribution
-    return cast_
+    return [casting[1][1] for casting in cast]
 
 def parseNumChoice(choice):    
     # [a-b] pdf name
@@ -1147,15 +1214,20 @@ def parseNumChoice(choice):
     distribution =  makeDistribution(lower,upper,pdf)
     return role,distribution
 
+@dataclass 
+class Location:
+    supports: dict
+    each_turn: list
+    tags: list
 def locationToASP(location,location_name):
 
-    if 'Supports' not in location:
-        error_log.append(f'ERROR: supports missing in location "{location_name}"')
-        return None
-    if 'TextualName' not in location:
-        error_log.append(f'ERROR: name missing in location "{location_name}"')
-    if 'Initialization' not in location and 'EachTurn' not in location:
-        error_log.append(f'ERROR: No casting details in location "{location_name}"')
+    #if 'Supports' not in location:
+    #    error_log.append(f'ERROR: supports missing in location "{location_name}"')
+    #    return None
+    #if 'TextualName' not in location:
+    #    error_log.append(f'ERROR: name missing in location "{location_name}"')
+    #if 'Initialization' not in location and 'EachTurn' not in location:
+    #    error_log.append(f'ERROR: No casting details in location "{location_name}"')
         
     location['Supports'] = location['Supports'][0]
 
@@ -1166,16 +1238,11 @@ def locationToASP(location,location_name):
         role,distribution = parseNumChoice(supported[1])
         supported_roles[role] = distribution
 
-    tracery_name = location['TextualName'][0][1]
     initialization = []
     each_turn = []
-    if 'Initialization' in location:
-        initialization = castToASP(location['Initialization'])
     if 'EachTurn' in location:
         each_turn = castToASP(location['EachTurn'])
-    if 'EachTurn' in location:
-        each_turn = castToASP(location['EachTurn'])
-    return tracery_name,supported_roles, initialization,each_turn,tags
+    return Location(supported_roles, each_turn, tags)
 
 
 @dataclass
@@ -1225,6 +1292,7 @@ class KismetModule():
         self.history_cutoff = history_cutoff
         self.action_budget = action_budget
         self.history = []
+        self.location_history = []
         self.character_knowledge = []
         
         error_log = []
@@ -1390,7 +1458,7 @@ class KismetModule():
                     converted_results = []
                     if a_constraints:
                         for thing in a_constraints:
-                            if 'cast' in thing:
+                            if 'mode' in thing:
                                 continue
                             converted_thing = thing
                             for mapping in reversed(mappings):
@@ -1461,7 +1529,8 @@ class KismetModule():
         self.locationASP = []
         
         for location in self.locations:
-            tracery_name,supported_roles, initialization,each_turn,tags  = self.locations[location]
+            supported_roles = self.locations[location].supports
+            tags = self.locations[location].tags
             for role in supported_roles:
                 self.locationASP.append(f'castable({get_common_name(role)},{get_common_name(location)}).')
             for tag in tags:                
@@ -1479,7 +1548,7 @@ class KismetModule():
             for name in self.alternative_names:
                 for alt in self.alternative_names[name]:
                     for option in options:
-                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{get_unique_name(name)}{option[1]}')
+                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
             asp_file.write(text)
             
             
@@ -1529,6 +1598,7 @@ class KismetModule():
         found_locations = set()
         found_traits = set(['age'])
         found_tags = set()
+        found_roles = {get_common_name(role_name) for role_name in self.roles}
         found_actions = set()
         found_patterns = set()
         
@@ -1614,9 +1684,12 @@ class KismetModule():
             
             for mention in mentions:
                 if mention in location_vars:
-                    found_locations |= mentions[mention]
+                    #found_locations |= mentions[mention]
+                    required_traits |= mentions[mention]
+                    
                 elif mention in people_vars:
-                    found_traits |= mentions[mention]
+                    #found_traits |= mentions[mention]
+                    required_traits |= mentions[mention]
                     
         for location in self.locations:
             found_locations.add(get_common_name(location))
@@ -1634,11 +1707,13 @@ class KismetModule():
                 else:
                     required_tags |= set(propensity.modified_tags)
                     trait_to_requirement[name] |=  set(propensity.modified_tags)
-        for role_name, role in self.roles.items():
-            role_name = get_common_name(role_name)
-            name_to_type[role_name] = 'Role'
             
-                         
+        for t in found_traits:
+            name_to_type[t] = 'Trait' 
+            
+        for t in required_traits:
+            name_to_type[t] = 'Trait'
+            
         for pattern_name,pattern in self.patterns.items():
             pattern_name = get_common_name(pattern_name)
             #print(pattern_name,pattern)
@@ -1656,7 +1731,7 @@ class KismetModule():
         t_r_f = required_tags-found_tags
         
         tr_f_r= found_traits-required_traits
-        tr_r_f= required_traits-found_traits
+        tr_r_f= (required_traits-found_traits)-found_roles
         
         p_f_r= found_patterns-required_patterns
         p_r_f= required_patterns-found_patterns
@@ -1694,15 +1769,21 @@ class KismetModule():
                     component_to_whole[n].add(name)
                     
         for component, whole in component_to_whole.items():
+           
             name_to_type[component] = name_to_type.get(component,'Tag')
              
+                
+        for role_name, role in self.roles.items():
+            role_name = get_common_name(role_name)
+            name_to_type[role_name] = 'Role'
+            
         type_to_name = {}
         for name, type_ in name_to_type.items():
             if type_ not in type_to_name:
                 type_to_name[type_] = set()
             type_to_name[type_].add(get_common_name(name))
-            
-        for type_, names in type_to_name.items():
+        
+        for type_, names in sorted(type_to_name.items()):
             print(type_+'s')
             for n in names:
                 print('\t'+n)
@@ -1727,7 +1808,7 @@ class KismetModule():
         population = self.initialization.run_initialization()
         
         self.population = {}
-        
+        self.created_locations = {}
         for thing in population:
             if thing['type'] == 'character':
                 name = KismetInitialization.get_name(thing)
@@ -1739,16 +1820,28 @@ class KismetModule():
                 relation_pairs = {(r[0], self.aspify_name(r[1])):None for r in thing.get('relationships',{}) if len(r) == 2}
                 relation_triples = {(r[0], self.aspify_name(r[1])):r[2](None,None,None) for r in thing.get('relationships',{}) if len(r) == 3}
                 person['traits'] = set( [trait.alternative_names[0] for trait in thing['traits']])
+                for trait in self.default_traits:
+                    person['traits'].add(trait.alternative_names[0])
                 person['status'] = {**status, 
                                     **relation_pairs,
                                     **relation_triples,
                                     **{('age',):thing['age'][0]}}
+            elif thing['type'] == 'location':
+                location_type = thing['location_type'][0]
+                name = thing['name'][0]
+                asp_name = self.aspify_name(name)
+                uniq_name =get_unique_name(location_type)
+                self.created_locations[asp_name] = {'name':name,
+                                                    'location_type':location_type,
+                                                    'relationships':thing.get('relationships',[])}
+            else:
+                print(f'Unknown Object Type {thing["type"]} for {thing}')
         for name in self.population:
             person = self.population[name]
             for status in self.numerical_status:
                 status_args = 0
                 for arg_type in ['<','^']:
-                    if 'DEFAULT' not in status.arguments[arg_type]:
+                    if 'DEFAULT' not in status.arguments.get(arg_type,'DEFAULT'):
                         status_args += 1
                 for args in itertools.product(self.population.keys(), repeat=status_args):
                     key = tuple([status.alternative_names[0]]+list(args))
@@ -1762,18 +1855,25 @@ class KismetModule():
                 character = self.population[name]
                 population.write(f'person({name}).\n')
                 for trait in character['traits']:
-                    population.write(f'is({name},{get_unique_name(trait)}).\n')
+                    population.write(f'is({name},{trait}).\n')
                 population.write('\n')
                 
                 for combo in character['status']:
                     val = character["status"][combo]
-                    combo = tuple([get_unique_name(c) for c in combo])
+                    combo = tuple([c for c in combo])
                     if val is not None:
                         population.write(f'is({name},{",".join(combo)},{val}).\n')
                     else:
                         population.write(f'is({name},{",".join(combo)}).\n')
-                        
-
+            population.write('\n')
+            for name in self.created_locations:
+                population.write(f'location({name}).\n')
+                population.write(f'is({name},{self.created_locations[name]["location_type"]}).\n')
+                for relationship in self.created_locations[name]['relationships']:
+                    role, char_name = relationship
+                    char_name = self.aspify_name(char_name)
+                    population.write(f'cast({name},{role},{char_name}).\n')
+                population.write('\n')
     def compute_actions(self,volitions):
         volitions_by_actor = {}
         for volition in volitions[0]['likelihood']:
@@ -1784,11 +1884,11 @@ class KismetModule():
             volitions_by_actor[actor][1].append(action)
         chosen_actions = []
         for actor in volitions_by_actor:
-
             logits = np.array(volitions_by_actor[actor][0])
             logits = np.exp(logits/self.temperature)
             probs = logits/np.sum(logits)
             chosen_actions.append(volitions_by_actor[actor][1][np.argmax(np.random.multinomial(1,probs))])
+            
         return chosen_actions
     def actions2asp(self,actions):
         action_str = ''
@@ -1798,14 +1898,34 @@ class KismetModule():
                 action_file.write(f'occurred(action({",".join(action)})).\n')
                      
     def calculate_volitions(self):
-        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
-        return volitions
+        
+        
+        #print(' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp']]))
+        
+        
+        
+        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        
+        #Only select one of a given Actor, Action Type pair -- this is to stop combinatorics from dominating the likelihood
+        volitions_by_actor = {}
+        for volition in volitions[0]['likelihood']:
+            logit,action,actor = parse_likelihood(volition)
+            action_key = tuple(action[:2])
+            if action_key not in volitions_by_actor:
+                volitions_by_actor[action_key] = []
+            volitions_by_actor[action_key].append(volition)
+            
+        possible_actions = []
+        for action_key in volitions_by_actor:
+            possible_actions.append(random.choice(volitions_by_actor[action_key]))
+        
+        return [{'likelihood':possible_actions}]
     def calculate_action_results(self):
-        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp','population_locations.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return action_results
     
     def calculate_observability(self):
-        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp', 'testing.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp','population_locations.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return visibility_results
     
     def knowledge2asp(self):        
@@ -1854,10 +1974,18 @@ class KismetModule():
         if end == float('inf'):
             end = len(self.history)
             
-        for phase in self.history[start:end]:
+        for ind, phase in enumerate(self.history[start:end]):
+            action_by_location = {}
             for step in phase:
                 for action in step:
-                    print(self.pretty_print_random_text('action',action))
+                    location = self.location_history[start+ind][action[1]]
+                    if location not in action_by_location:
+                        action_by_location[location] = []
+                    
+                    action_by_location[location].append(self.pretty_print_random_text('action',action))
+            for location in sorted(action_by_location):
+                print(f'At {self.created_locations[location]["name"]}:')
+                print('\t'+'\n\t'.join(action_by_location[location]))
             print('-------')
     
     def display_traits(self,person_filter=None,ignore_default_traits=True):
@@ -1948,8 +2076,7 @@ class KismetModule():
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
         patterns = solve([os.path.join(self.path,t) for t in 
-                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
-                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
+                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
         if person_filter:
             person_filter = set(person_filter)
         for pattern in patterns[0]['display_pattern']:
@@ -1984,8 +2111,7 @@ class KismetModule():
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
         patterns = solve([os.path.join(self.path,t) for t in 
-                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',
-                           'testing.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
+                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
         if person_filter:
             person_filter = set(person_filter)
             
@@ -2007,10 +2133,10 @@ class KismetModule():
             if can_display:
                 pattern_name = get_common_name(pattern[0])
                 if pattern_name not in found_patterns:
-                    found_patterns[pattern_name] = {'arguments':[var[1] for var in self.patterns[get_unique_name(pattern_name)].arguments],
+                    found_patterns[pattern_name] = {'arguments':[var[1] for var in self.patterns[pattern_name].arguments],
                                                     'reified':[]}
                 renamed_args = []
-                for argument, reified_arg in zip(self.patterns[get_unique_name(pattern_name)].arguments, pattern[1:]):
+                for argument, reified_arg in zip(self.patterns[pattern_name].arguments, pattern[1:]):
                     e_type = argument[0]
                     e_index = '_><^*@'.index(e_type)
                       
@@ -2020,9 +2146,85 @@ class KismetModule():
                     
                 found_patterns[pattern_name]['reified'].append(renamed_args)
         return found_patterns
+    
+    
+    def determine_character_locations(self):
+        shuffled = [name for name in self.population]
+        random.shuffle(shuffled)
+        
+        locations = [location for location in  self.created_locations]
+        random.shuffle(locations)
+        
+        available_slots = {}
+        
+        location_assignments = {}
+        for location in locations:
+            location_type = self.created_locations[location]['location_type']            
+           
+            uniq = get_unique_name(location_type)
+            
+            supported_roles = self.locations[uniq].supports
+            
+            role_slots = {}
+            for role in supported_roles:
+                role_slots[role] = supported_roles[role]()
+                
+            for relationship in self.created_locations[location]['relationships']:
+                role, name = relationship
+                location_assignments[(location,self.aspify_name(name))] = role
+                role_slots[role] -= 1
+                
+            each_turn = self.locations[uniq].each_turn
+            
+            for role in each_turn:
+                available_slots[(location,role)] = role_slots[role]
+                
+                
+        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+                
+        volitions_by_actor = {}
+        
+        for volition in goto_volitions[0]['go_to']:
+            volition = volition[0]['terms']
+            name = volition[0]['predicate']
+            location = volition[1]['predicate']
+            value = volition[2]['predicate']
+            if name not in volitions_by_actor:
+                volitions_by_actor[name] = []
+            volitions_by_actor[name].append((value,location))
+        
+        chosen_locations = []    
+        for actor in shuffled:
+            available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
+            volitions_by_actor[actor] = [(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations]
+            
+            if len(volitions_by_actor[actor]) == 0:
+                chosen_locations.append((actor, (actor,'by_themself')))
+            else :   
+                logits = np.array([float(logit) for logit,_ in volitions_by_actor[actor]])
+                logits = np.exp(logits/self.temperature)
+                probs = logits/np.sum(logits)
+                chosen_location = volitions_by_actor[actor][np.argmax(np.random.multinomial(1,probs))][1]
+                possible_roles = [(location,role) for location,role in available_slots if location == chosen_location and available_slots[(location,role)] > 0]
+                chosen_role = random.choice(possible_roles)
+                available_slots[chosen_role] -= 1
+                chosen_locations.append((actor, chosen_role))
+                
+           
+        with open('population_locations.lp','w') as location_file:
+            for actor, (location, role) in chosen_locations:
+                if (location,actor) not in location_assignments:
+                    location_file.write(f'cast({location},{role},{actor}).\n')
+                location_file.write(f'at({actor},{location}).\n\n')
+            location_file.write('is(Actor,Role,RoleLocation) :- cast(RoleLocation, Role, Actor).\n')
+        self.location_history.append({actor:location for actor, (location, role) in chosen_locations})
+        
+            
     def step_actions(self):
         self.timestep += 1
         self.history.append([])
+        
+        self.determine_character_locations()
         
         character_action_budget = {name:self.action_budget for name in self.population}
         while len(character_action_budget) > 0:

@@ -296,6 +296,15 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#cond8.
+    def enterCond8(self, ctx:kismetParser.Cond8Context):
+        pass
+
+    # Exit a parse tree produced by kismetParser#cond8.
+    def exitCond8(self, ctx:kismetParser.Cond8Context):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#cond3.
     def enterCond3(self, ctx:kismetParser.Cond3Context):
         pass
@@ -320,6 +329,24 @@ class kismetListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismetParser#cond4.
     def exitCond4(self, ctx:kismetParser.Cond4Context):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#cond9.
+    def enterCond9(self, ctx:kismetParser.Cond9Context):
+        pass
+
+    # Exit a parse tree produced by kismetParser#cond9.
+    def exitCond9(self, ctx:kismetParser.Cond9Context):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#cond10.
+    def enterCond10(self, ctx:kismetParser.Cond10Context):
+        pass
+
+    # Exit a parse tree produced by kismetParser#cond10.
+    def exitCond10(self, ctx:kismetParser.Cond10Context):
         pass
 
 
@@ -395,15 +422,6 @@ class kismetListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by kismetParser#initialization.
-    def enterInitialization(self, ctx:kismetParser.InitializationContext):
-        pass
-
-    # Exit a parse tree produced by kismetParser#initialization.
-    def exitInitialization(self, ctx:kismetParser.InitializationContext):
-        pass
-
-
     # Enter a parse tree produced by kismetParser#each_turn.
     def enterEach_turn(self, ctx:kismetParser.Each_turnContext):
         pass
@@ -428,15 +446,6 @@ class kismetListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismetParser#random_text.
     def exitRandom_text(self, ctx:kismetParser.Random_textContext):
-        pass
-
-
-    # Enter a parse tree produced by kismetParser#l_name.
-    def enterL_name(self, ctx:kismetParser.L_nameContext):
-        pass
-
-    # Exit a parse tree produced by kismetParser#l_name.
-    def exitL_name(self, ctx:kismetParser.L_nameContext):
         pass
 
 

@@ -34,7 +34,7 @@ if __name__ is not None and "." in __name__:
 else:
     from kismet_initializationParser import kismet_initializationParser
     import kismetLexer
-    import kismet_initializationLexer
+    from kismet_initializationLexer import kismet_initializationLexer
     from kismetParser import kismetParser
     import mod
 
@@ -405,11 +405,6 @@ class KismetVisitor(ParseTreeVisitor):
         return ('Location',self.visitChildren(ctx))
 
 
-    # Visit a parse tree produced by kismetParser#initialization.
-    def visitInitialization(self, ctx:kismetParser.InitializationContext):
-        
-        return ('Initialization',self.visitChildren(ctx))
-
 
     # Visit a parse tree produced by kismetParser#each_turn.
     def visitEach_turn(self, ctx:kismetParser.Each_turnContext):
@@ -440,13 +435,6 @@ class KismetVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by kismetParser#random_text.
     def visitRandom_text(self, ctx:kismetParser.Random_textContext):
         return ('RandomText',ctx.getText())
-
-
-    # Visit a parse tree produced by kismetParser#l_name.
-    def visitL_name(self, ctx:kismetParser.L_nameContext):
-        return ('TextualName',self.visitChildren(ctx))
-
-
     
     def visitLocWildCard(self,ctx):
         return 'LocWildCard',ctx.getText()
@@ -1717,6 +1705,8 @@ class Assignment:
             if self.assigned_to != 'age':
                 print('WARNING: only age is allowed for numerical checking in selections at this point in time. Do not use "'+ self.assigned_to+'"')
             else:
+                if 'age' not in creation:
+                    continue
                 if creation['age'][0] >= self.assigned_val[0].distribution.lower and\
                    creation['age'][0] <= self.assigned_val[0].distribution.upper:
                     satisfactory.add(get_name(creation))
@@ -1892,7 +1882,7 @@ def parse_create(creation):
     return Creation(num,name,options)
 
 def get_name(character):
-    return character.get('name',character.get('first_name',[''])[0] + ' ' + character.get('last_name',[''])[0])
+    return character.get('name',[character.get('first_name',[''])[0] + ' ' + character.get('last_name',[''])[0]])[0]
     
 
 @dataclass
@@ -1934,7 +1924,8 @@ def parse_select(creation):
     num = None
     creation_type = None
     name = None
-    options = None
+    options = []
+    conditions = []
     for thing in creation:
         if thing[0] == 'num_choice':
             num = parseNumChoice(thing)
@@ -2020,12 +2011,11 @@ def parse_initialization(initialization):
     lets = []
     creates = []
     selects = []
+    deferred_lets = []
     for thing in initialization:
         if thing[0] == 'Name':
             name = thing[1]
         elif thing[0] == 'Let':
-            lets = []
-            deferred_lets = []
             for assignment in thing[1]:
                 if assignment[0] == 'Assignment':
                     lets.append(parse_assignment(assignment))
