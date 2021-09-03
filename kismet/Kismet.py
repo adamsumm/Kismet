@@ -2213,7 +2213,7 @@ class KismetModule():
                 chosen_locations.append((actor, chosen_role))
                 
            
-        with open(f'{self.module_file}_population_locations.lp','w') as location_file:
+        with open(os.path.join(self.path,f'{self.module_file}_population_locations.lp'),'w') as location_file:
             for actor, (location, role) in chosen_locations:
                 if (location,actor) not in location_assignments:
                     location_file.write(f'cast({location},{role},{actor}).\n')
