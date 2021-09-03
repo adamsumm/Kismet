@@ -1906,7 +1906,7 @@ class KismetModule():
         
         
         
-        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         
         #Only select one of a given Actor, Action Type pair -- this is to stop combinatorics from dominating the likelihood
         volitions_by_actor = {}
@@ -1923,11 +1923,11 @@ class KismetModule():
         
         return [{'likelihood':possible_actions}]
     def calculate_action_results(self):
-        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp','population_locations.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return action_results
     
     def calculate_observability(self):
-        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp','population_locations.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return visibility_results
     
     def knowledge2asp(self):        
@@ -2213,7 +2213,7 @@ class KismetModule():
                 chosen_locations.append((actor, chosen_role))
                 
            
-        with open('population_locations.lp','w') as location_file:
+        with open(f'{self.module_file}_population_locations.lp','w') as location_file:
             for actor, (location, role) in chosen_locations:
                 if (location,actor) not in location_assignments:
                     location_file.write(f'cast({location},{role},{actor}).\n')
