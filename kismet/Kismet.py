@@ -1828,7 +1828,8 @@ class KismetModule():
                                     **{('age',):thing['age'][0]}}
             elif thing['type'] == 'location':
                 location_type = thing['location_type'][0]
-                name = thing['name'][0]
+                
+                name = thing.get('name',[location_type])[0]
                 asp_name = self.aspify_name(name)
                 uniq_name =get_unique_name(location_type)
                 self.created_locations[asp_name] = {'name':name,
