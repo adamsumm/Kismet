@@ -2053,9 +2053,15 @@ class Default:
     name:str
     options:list
     def __call__(self,initializations,selections,creations):
-        constructed = {'type':self.name}
+        constructed = {'type':self.name,'status':{}}
         for option in self.options:
-            constructed[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+            print(option)
+            if isinstance(option,Assignment):
+                constructed[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+            else:
+                
+                constructed['status'][(option.name,)] = option.value
+        print(constructed)
         return constructed
         
 def parse_default(default):
