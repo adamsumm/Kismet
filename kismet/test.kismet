@@ -19,7 +19,11 @@ location church:
               [1] minister;
     each_turn:
         cast parishioners.
-        
+
+location the_office:
+    supports: [1000] people;
+    each_turn:
+        cast people.        
 
 default trait regular(>Self, @Location):
     +++@hospitality_establishment if Self likes Location@.

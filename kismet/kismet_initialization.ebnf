@@ -84,6 +84,7 @@ deferred_assignment:
     var '=' name '.' name;
     
 negative:
+    'not' |
     'is' 'not' |
     'isnt' |
     'isn\'t';

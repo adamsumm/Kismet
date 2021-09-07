@@ -1816,7 +1816,6 @@ class KismetModule():
                 asp_name = self.aspify_name(name)
                 status = thing.get('status',{})
                 status = {name:None if val is None else val(None,None,None) for name,val in status.items()}
-                print(status)
                 
                 person = {'name':name,'asp_name':asp_name}
                 self.population[asp_name] = person

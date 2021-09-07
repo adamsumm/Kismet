@@ -1776,9 +1776,7 @@ class DescTrait:
                     found = True
                     
             if found != self.negation:
-                char_name = creation.get('name',creation.get('first_name',[''])[0] + ' ' + creation.get('last_name',[''])[0])
-                
-                satisfies.add(char_name)
+                satisfies.add(get_name(creation))
         return satisfies    
 @dataclass
 class Relationship:
@@ -1801,8 +1799,8 @@ class Relationship:
                         
                     else:
                         print('ERROR: Relationships with values can not be used in selections at this point of time --', self.name, self.target, self.value)
-            if found != negation:
-                satisfies.add(creation)
+            if found != self.negation:
+                satisfies.add(get_name(creation))
         return satisfies
     
 def parse_description(description):
@@ -1884,7 +1882,6 @@ def parse_create(creation):
 def get_name(character):
     return character.get('name',[character.get('first_name',[''])[0] + ' ' + character.get('last_name',[''])[0]])[0]
     
-
 @dataclass
 class Selection():
     num: int
@@ -1897,6 +1894,11 @@ class Selection():
             satisfactory &= condition.is_satisfied(creations)
         
         to_select = self.num(initializations,selections,creations)
+        selection_type = to_select[0]['type']
+        
+        satisfactory = {get_name(character) for character in creations if get_name(character) in satisfactory and character['type'] == selection_type}
+        
+            
         if len(satisfactory) >= len(to_select):
             to_select = random.sample(satisfactory,len(to_select))
             to_select = [character for character in creations if get_name(character) in to_select]
@@ -2055,13 +2057,11 @@ class Default:
     def __call__(self,initializations,selections,creations):
         constructed = {'type':self.name,'status':{}}
         for option in self.options:
-            print(option)
             if isinstance(option,Assignment):
                 constructed[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
             else:
                 
                 constructed['status'][(option.name,)] = option.value
-        print(constructed)
         return constructed
         
 def parse_default(default):
