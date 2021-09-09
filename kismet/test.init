@@ -1,4 +1,4 @@
-default location:.
+ default location:.
 
 
 initialization church:
@@ -39,7 +39,7 @@ initialization boarding_house:
         age = [50:70],
         not employee of Location,
         not resident of Location,
-        is not married;
+        not married;
         
     select [1] character as housekeeper:
         is housekeeper of boarding_house,
@@ -76,7 +76,7 @@ initialization school:
         age = [45:70],
         not employee at Location;
         
-    create [4:6] character as student:
+    create [6:8] character as student:
         is student at school,
         is employee at school,
         age = [6:16],
@@ -86,42 +86,115 @@ initialization school:
         location_type = "school",
         has headmaster of headmaster,
         has student of student,
-        name = "School of Wayward Souls".
+        name = "[Arkham|Barnard|East|Providence|ArlingtonWest Armitage|High Lane|Northside|Saltonstall|Pickman] [Public|Private] School".
 
 initialization bookstore:
-    create [1] location as bookstore:
-        location_type = "bookstore".
+    let OwnerName = "#lastNames#",
+    let RandomName = "#lastNames#";
+    
+    select [1] character as owner:
+        is owner of bookstore,
+        is employee of bookstore,
+        last_name = OwnerName,
+    :where
+        age = [35:80],
+        not employee at Location;
         
-    //character: proprietor x1
-    //character: customer 0-2
-    //detail: name
+    select [2:3] character as clerk:
+        is clerk of bookstore,
+        is employee of bookstore,
+    :where
+        age = [20:25],
+        not employee at Location;
+        
+    select [1:3] character as regular:
+        is regular of bookstore,
+    :where
+        age = [40:60];
+
+    create [1] location as bookstore:
+        location_type = "bookstore",
+        has owner of owner,
+        has clerk of clerk,
+        has regular of regular,
+        name = "[[[#OwnerName#]'s [Books|Book Store|Used Books|Rare Books|Rare Books & Maps]]|[[#RandomName#]'s [Books|Book Store|Used Books|Rare Books|Rare Books & Maps]]|[[Seekers|Wanderer's|Mindful] Books]]".
+        
     //question: can I have sublocations? like a basement or back room?
         
 initialization town_square:
     create [1] location as town_square:
-        location_type = "town_square".
+        location_type = "town_square",
+        name = "The Town Square".
 
         
 initialization wharf:
-    create [1] location as wharf:
-        location_type = "wharf".
+    select [4] character as dockworker:
+        is dockworker of wharf,
+        is employee of wharf,
+    :where
+        age = [30:50],
+        not employee at Location;
         
-    //character: dockworker x1-2
-    //character: fisherman x1-2
-    //character: sailor x1
-    //character: loiterer x0-2
+    select [4] character as fisherman:
+        is fisherman of wharf,
+        is employee of wharf,
+    :where
+        age = [30:70],
+        not employee at Location;
+    
+    select [1] character as sailor:
+        is sailor of wharf,
+        is employee of wharf,
+    :where
+        not employee at Location;
+
+    create [1] location as wharf:
+        location_type = "wharf",
+        has dockworker of dockworker,
+        has fisherman of fisherman,
+        has sailor of sailor,
+        name = "The Wharf".
         
 initialization warehouse:
-    create [1] location as warehouse:
-        location_type = "warehouse".
+    let OwnerName = "#lastNames#";
+    
+    select [6:8] character as worker:
+        is worker of warehouse,
+        is employee of warehouse,
+    :where
+        age = [18:50],
+        not employee at Location;
         
-    //character: dockworker
-    //character: worker
-    //character: union rep
-    //character: butcher
-    //character: foreman
-    //character: owner
+    select [1] character as unionrep:
+        //is worker at warehouse,
+        is employee of warehouse,
+        is unionrep of warehouse,
+    :where
+        age = [35:50],
+        not employee at Location;
+        
+    select [1] character as foreman:
+        is foreman of warehouse,
+        is employee of warehouse,
+    :where
+        age = [35:50],
+        not employee at Location;
+        
+    select [1] character as owner:
+        is owner of warehouse,
+        is employee of warehouse,
+        last_name = OwnerName,
+    :where
+        not employee at Location;
 
+    create [1] location as warehouse:
+        location_type = "warehouse",
+        has worker of worker,
+        has unionrep of unionrep,
+        has foreman of foreman,
+        has owner of owner,
+        name = "[[[#OwnerName#]'s [Warehouses|Factory|Properties|Depot|Stockpile|Imports]]|[[Easterly|Westside|Waterfront|Seaside] [Warehouses|Imports]]|[The Stockyard]]".
+        
 initialization bar:
     create [1] location as bar:
         location_type = "bar".
@@ -136,21 +209,8 @@ default character:
 	age = [18:50],
 	traits = [1:2] traits.
 
-//residences: mansion, shack, etc. etc.
-//train station
-//historical society
-//"n Street": area to loiter, talk, travel through, etc.
-//Cemetary
-//Park/Greens
-//
-
-
-//initialization minimial_example:
-//    create [1] character:.
-
-
 initialize:
-	create [20] character;
+	create [1] character;
 	create [1] church;
 	create [1] school;
 	create [1] boarding_house;

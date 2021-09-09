@@ -1497,7 +1497,9 @@ class RandomText:
                 rule = rule.replace(subrule,f'#{cs}#')
             if rule[0] == '[':
                 rule = rule[1:-1].split('|')
-            final_rules[str(c1)] = rule
+                rule = [thing.replace('[','').replace(']','') for thing in rule]
+            final_rules[str(c1)] = rule 
+        
         return final_rules
 
     def __call__(self,initializations,selections,creations):

@@ -2174,7 +2174,12 @@ class KismetModule():
                 
             for relationship in self.created_locations[location]['relationships']:
                 role, name = relationship
-                location_assignments[(location,self.aspify_name(name))] = role
+                asp_name = self.aspify_name(name)
+                if asp_name not in location_assignments:
+                    location_assignments[asp_name] = {}
+                if location not in location_assignments[asp_name]:
+                    location_assignments[asp_name][location] = []
+                location_assignments[asp_name][location].append(role)
                 role_slots[role] -= 1
                 
             each_turn = self.locations[uniq].each_turn
@@ -2182,11 +2187,10 @@ class KismetModule():
             for role in each_turn:
                 available_slots[(location,role)] = role_slots[role]
                 
-                
+        #print('LOCATION VOLITION', ' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]))       
         goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
                 
         volitions_by_actor = {}
-        
         for volition in goto_volitions[0]['go_to']:
             volition = volition[0]['terms']
             name = volition[0]['predicate']
@@ -2199,6 +2203,8 @@ class KismetModule():
         chosen_locations = []    
         for actor in shuffled:
             available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
+            available_locations |= {location for location in location_assignments[actor]}
+                
             volitions_by_actor[actor] = [(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations]
             
             if len(volitions_by_actor[actor]) == 0:
@@ -2209,14 +2215,18 @@ class KismetModule():
                 probs = logits/np.sum(logits)
                 chosen_location = volitions_by_actor[actor][np.argmax(np.random.multinomial(1,probs))][1]
                 possible_roles = [(location,role) for location,role in available_slots if location == chosen_location and available_slots[(location,role)] > 0]
+                for location in location_assignments[actor]:                    
+                    possible_roles += [(location,role) for role in location_assignments[actor][location]]
+                    
                 chosen_role = random.choice(possible_roles)
-                available_slots[chosen_role] -= 1
+                if chosen_role in available_slots:
+                    available_slots[chosen_role] -= 1
                 chosen_locations.append((actor, chosen_role))
                 
            
         with open(os.path.join(self.path,f'{self.module_file}_population_locations.lp'),'w') as location_file:
             for actor, (location, role) in chosen_locations:
-                if (location,actor) not in location_assignments:
+                if actor not in location_assignments or location not in location_assignments[actor]:
                     location_file.write(f'cast({location},{role},{actor}).\n')
                 location_file.write(f'at({actor},{location}).\n\n')
             location_file.write('is(Actor,Role,RoleLocation) :- cast(RoleLocation, Role, Actor).\n')
@@ -2228,6 +2238,7 @@ class KismetModule():
         self.history.append([])
         
         self.knowledge2asp()
+        self.population2asp()
         self.determine_character_locations()
         
         character_action_budget = {name:self.action_budget for name in self.population}
@@ -2238,14 +2249,21 @@ class KismetModule():
             volitions = self.calculate_volitions()
             
             chosen_actions = self.compute_actions(volitions)
+            _chosen_actions = []
             for action in chosen_actions:
                 name = self.name2uniq[action[0]][0]
                 
                 initiator = action[1]
+                if initiator not in character_action_budget:
+                    continue
                 cost = self.actions[name].cost
                 character_action_budget[initiator] -= cost
                 if character_action_budget[initiator] <= 0:
                     del character_action_budget[initiator]
+                _chosen_actions.append(action)
+            if len(_chosen_actions) == 0:
+                break
+            chosen_actions = _chosen_actions
             self.history[-1].append(chosen_actions)
 
             self.actions2asp(chosen_actions)
