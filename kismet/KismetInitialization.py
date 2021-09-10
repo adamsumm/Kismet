@@ -1,5 +1,6 @@
 
 import tracery
+from warnings import warn
 from tracery.modifiers import base_english
 from antlr4.error.ErrorListener import ErrorListener
 from itertools import *
@@ -17,7 +18,6 @@ import numpy as np
 from dataclasses import dataclass
 from sys import exit
 import re
-import tracery 
 import inspect
 from abc import ABC
 from dataclasses import dataclass, field
@@ -2107,7 +2107,12 @@ class KismetInitialization():
         tree = parser.init()
         vis = kismet_initializationVisitor()
         initialization = vis.visit(tree)
-
+        
+        if len(error_listener.errors) > 0:
+            errors = [re.sub(r"^(\d+):",r"On Line #\1\n",error) for error in error_listener.errors]
+            warn(f'Errors found in {initialization_file}')
+            warn('\n\n'+'\n\n'.join(errors))
+            raise Exception(f'Errors found in {initialization_file}')
         self.all_things = {}
 
         for thing in initialization[1]:

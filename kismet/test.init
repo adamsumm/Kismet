@@ -1,12 +1,11 @@
-default location:.
-
+default location.
 
 initialization church:
 
 	select [1] character as deacon:
 		is deacon of church,
         is employee at church,
-        is resident of church,
+        is resident of church
 	:where 
 		age = [60:80],
 		not employee of Location,
@@ -15,7 +14,7 @@ initialization church:
 		
 	select [1:2] character as priest:
 		is priest of church,
-        is employee at church,
+        is employee at church
 	:where 
 		age = [30:70],
 		not employee of Location,
@@ -35,7 +34,7 @@ initialization boarding_house:
         is employee at boarding_house,
         is resident at boarding_house,
         last_name = FamilyName,
-        is married to housekeeper,
+        is married to housekeeper
         //likes housekeeper = [10],
     :where
         age = [50:70],
@@ -48,7 +47,7 @@ initialization boarding_house:
         is employee at boarding_house,
         is resident at boarding_house,
         last_name = FamilyName,
-        is married to owner,
+        is married to owner
         //likes owner = [10],
     :where
         age = [50:70],
@@ -58,7 +57,7 @@ initialization boarding_house:
         
     select [1:2] character as boarder:
         is boarder at boarding_house,
-        is resident of boarding_house,
+        is resident of boarding_house
     :where
         age = [22:30],
         not resident of Location;
@@ -73,7 +72,7 @@ initialization boarding_house:
 initialization school:
     select [1] character as headmaster:
         is headmaster at school,
-        is employee at school,
+        is employee at school
     :where
         age = [45:70],
         not employee at Location;
@@ -92,25 +91,25 @@ initialization school:
 
 initialization bookstore:
     let OwnerName = "#lastNames#",
-    let RandomName = "#lastNames#";
+        RandomName = "#lastNames#";
     
     select [1] character as owner:
         is owner of bookstore,
         is employee of bookstore,
-        last_name = OwnerName,
+        last_name = OwnerName
     :where
         age = [35:80],
         not employee at Location;
         
     select [2:3] character as clerk:
         is clerk of bookstore,
-        is employee of bookstore,
+        is employee of bookstore
     :where
         age = [20:25],
         not employee at Location;
         
     select [1:3] character as regular:
-        is regular of bookstore,
+        is regular of bookstore
     :where
         age = [40:60];
 
@@ -262,14 +261,14 @@ initialization historicalsociety:
         is curator at historicalsociety,
         is employee at historicalsociety,
     :where
-        age [45:80],
+        age = [45:80],
         not employee at Location;
         
     select [4:8] character as contributer:
         is contributer at historicalsociety,
         is member at historicalsociety,
     :where
-        age [40:80],
+        age = [40:80],
         is traditionalist,
         not member at Location;
 

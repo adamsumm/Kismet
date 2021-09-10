@@ -222,5 +222,5 @@ trait believer (>Self):
     +++(believer).
     
 
-default trait worker(>Self,@Location):
+default trait workers_go_to_work(>Self,@Location):
     ++++++@if Self is employee of Location@.       

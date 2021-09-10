@@ -54,19 +54,19 @@ let:
 	'let' (assignment|deferred_assignment) (',' (assignment|deferred_assignment))* ';';
 	
 create:
-	'create' num_choice  ('as' name)? (options)?;
+	'create' num_choice  ('as' name)? (options|':')?;
     
 select:
-	'select' num_choice  ('as' name)? (options)? (conditions)?;
+	'select' num_choice  ('as' name)? (options|':')? (conditions)?;
 	
 options:
 	':' option (',' option)*;
 
 conditions:
-	':' 'where' option (',' option)*;
+	(',')? ':' 'where' option (',' option)*;
     
 default:
-	'default' name options;
+	'default' name (options|':')? '.';
 	
 	
 option:
@@ -91,7 +91,7 @@ negative:
     
 description:
 	negative name |
-	negative name ('to'|'of'|'with'|'at') name |
+	negative name ('to'|'of'|'with'|'at') (name|var) |
 	'is' name |
 	'is' name '=' num_range |
 	'is' name ('to'|'of'|'with'|'at') name |

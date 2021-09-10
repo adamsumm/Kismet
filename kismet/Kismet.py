@@ -10,6 +10,8 @@ else:
     from . import kismetLexer
     from .kismetParser import kismetParser
     from . import mod
+    
+from warnings import warn
 import tracery
 from tracery.modifiers import base_english
 from antlr4.error.ErrorListener import ErrorListener
@@ -28,7 +30,6 @@ import numpy as np
 from dataclasses import dataclass
 from sys import exit
 import re
-import tracery 
 
 module_singleton = None
 
@@ -1321,9 +1322,9 @@ class KismetModule():
 
         
         if len(error_listener.errors) > 0:
-            print('\n\n'.join(error_listener.errors))
-            print(error_listener.recognizer)
-            exit()
+            warn(f'Errors found in {self.module_file}')
+            warn('\n\n'.join(error_listener.errors))
+            raise Exception(f'Errors found in {self.module_file}')
         vis = KismetVisitor()
         world = vis.visit(tree)
 
@@ -1405,8 +1406,7 @@ class KismetModule():
                 extension = extension[0]
             self.extension_graph[name] = extension
         
-        
-        self.sanity_check()            
+                
         
         self.actionASP = []
         
@@ -1556,7 +1556,8 @@ class KismetModule():
         
         
         self.initialization = KismetInitialization.KismetInitialization(initialization_file,self)
-
+        
+        self.sanity_check()    
     def strip_constraint(self,constraint):
         current = ''
         parts = []
