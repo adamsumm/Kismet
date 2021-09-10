@@ -1,4 +1,4 @@
- default location:.
+default location:.
 
 
 initialization church:
@@ -6,6 +6,7 @@ initialization church:
 	select [1] character as deacon:
 		is deacon of church,
         is employee at church,
+        is resident of church,
 	:where 
 		age = [60:80],
 		not employee of Location,
@@ -17,7 +18,8 @@ initialization church:
         is employee at church,
 	:where 
 		age = [30:70],
-		not employee of Location;	
+		not employee of Location,
+		is believer;
         
     create [1] location as church:
 		location_type = "church",
@@ -34,7 +36,7 @@ initialization boarding_house:
         is resident at boarding_house,
         last_name = FamilyName,
         is married to housekeeper,
-        likes housekeeper = [10],
+        //likes housekeeper = [10],
     :where
         age = [50:70],
         not employee of Location,
@@ -47,7 +49,7 @@ initialization boarding_house:
         is resident at boarding_house,
         last_name = FamilyName,
         is married to owner,
-        likes owner = [10],
+        //likes owner = [10],
     :where
         age = [50:70],
         not employee of Location,
@@ -130,21 +132,21 @@ initialization town_square:
 initialization wharf:
     select [4] character as dockworker:
         is dockworker of wharf,
-        is employee of wharf,
+        is employee at wharf,
     :where
         age = [30:50],
         not employee at Location;
         
     select [4] character as fisherman:
         is fisherman of wharf,
-        is employee of wharf,
+        is employee at wharf,
     :where
         age = [30:70],
         not employee at Location;
     
     select [1] character as sailor:
         is sailor of wharf,
-        is employee of wharf,
+        is employee at wharf,
     :where
         not employee at Location;
 
@@ -160,14 +162,14 @@ initialization warehouse:
     
     select [6:8] character as worker:
         is worker of warehouse,
-        is employee of warehouse,
+        is employee at warehouse,
     :where
         age = [18:50],
         not employee at Location;
         
     select [1] character as unionrep:
         //is worker at warehouse,
-        is employee of warehouse,
+        is employee at warehouse,
         is unionrep of warehouse,
     :where
         age = [35:50],
@@ -175,14 +177,14 @@ initialization warehouse:
         
     select [1] character as foreman:
         is foreman of warehouse,
-        is employee of warehouse,
+        is employee at warehouse,
     :where
         age = [35:50],
         not employee at Location;
         
     select [1] character as owner:
         is owner of warehouse,
-        is employee of warehouse,
+        is employee at warehouse,
         last_name = OwnerName,
     :where
         not employee at Location;
@@ -195,6 +197,251 @@ initialization warehouse:
         has owner of owner,
         name = "[[[#OwnerName#]'s [Warehouses|Factory|Properties|Depot|Stockpile|Imports]]|[[Easterly|Westside|Waterfront|Seaside] [Warehouses|Imports]]|[The Stockyard]]".
         
+initialization theater:
+    select [1] character as owner:
+        is owner of theater,
+        is employee at theater,
+    :where
+        age = [30:80],
+        not employee at Location;
+        
+    select [1] character as usher:
+        is usher at theater,
+        is employee at theater,
+    :where
+        age = [16:24],
+        not employee at Location;
+        
+    select [1] character as playwright:
+        is playwright at theater,
+        is employee at theater,
+    :where
+        age = [25:65],
+        not employee at Location;
+        
+    select [1] character as director:
+        is director at theater,
+        is employee at theater,
+    :where
+        age = [35:50],
+        not employee at Location;
+        
+    select [1] character as stagehand:
+        is stangehand at theater,
+        is employee at theater,
+    :where
+        age = [18:25],
+        not employee at Location;
+        
+    select [1] character as ticketer:
+        is ticketer at theater,
+        is employee at theater,
+    :where
+        age = [16:25],
+        not employee at Location;
+        
+    select [6] character as actor:
+        is actor at theater,
+        is member at theater,
+    :where
+        not member at Location;
+        
+    create [1] location as theater:
+        location_type = "theater",
+        has owner of owner,
+        has usher of usher,
+        has stagehand of stagehand,
+        has director of director,
+        has playwright of playwright,
+        has actor of actor,
+        has ticketer of ticketer,
+        name = "Regal Theatre".
+        
+initialization historicalsociety:
+    select [1] character as curator:
+        is curator at historicalsociety,
+        is employee at historicalsociety,
+    :where
+        age [45:80],
+        not employee at Location;
+        
+    select [4:8] character as contributer:
+        is contributer at historicalsociety,
+        is member at historicalsociety,
+    :where
+        age [40:80],
+        is traditionalist,
+        not member at Location;
+
+    create [1] location as historicalsociety:
+        location_type = "historicalsociety",
+        has curator of curator,
+        has contributer of contributer,
+        name = "Arkham Historical Society".
+        
+initialization bank:
+    create [1] location as bank:
+        location_type = "bank".
+        
+initialization graveyard:
+    create [1] location as graveyard:
+        location_type = "graveyard".
+        
+initialization jailhouse:
+    create [1] location as jailhouse:
+        location_type = "jailhouse".
+        
+initialization postoffice:
+    create [1] location as postoffice:
+        location_type = "postoffice".
+        
+initialization newspaper:
+    create [1] location as newspaper:
+        location_type = "newspaper".
+        
+initialization hospital:
+    create [1] location as hospital:
+        location_type = "hospital".
+        
+initialization library:
+    create [1] location as library:
+        location_type = "library".
+        
+initialization slaughterhouse:
+    create [1] location as slaughterhouse:
+        location_type = "slaughterhouse".
+        
+initialization baitshop:
+    create [1] location as baitshop:
+        location_type = "baitshop".
+        
+initialization grocer:
+    create [1] location as grocer:
+        location_type = "grocer".
+        
+initialization generalstore:
+    create [1] location as generalstore:
+        location_type = "generalstore".
+
+//high priority:        
+//art gallery
+//diner
+//cafe
+//hotel
+//town hall
+//butcher shop
+//bakery
+//masonic lodge
+//gentleman's club
+//social parlour
+//rotary club
+//union headquarters
+//athletics association
+//apothecary
+//drug store
+//general store
+//curios & antiques
+//goldsmith & jeweler
+//confectionary & candy store
+//funeral home & mortuary
+//veteran's home
+//charity house
+//church (abandoned)
+//cinema
+//wax museum
+//penny arcade
+//street cafe
+//chamber of commerce
+//loan agency
+//gas station
+//bus station
+//train station
+//lumber yard
+//construction & supply
+//law firm
+//billards hall
+//speakeasy
+//music hall
+//school of dance
+//fire department
+//police department
+//courthouse
+//Pump house & water tower
+//sanitarium
+//newstand
+//brickyard
+//credit agency
+//funeral parlor
+//chemical supply
+//bathhouse
+//nursing home
+//construction site
+//demolition site
+//tenement
+//restaurant
+//spa
+//gym
+//finishing/etiquette school
+//specific trade school
+//university campus:
+    //residence/dormitory/hall
+    //science building
+    //bell tower
+    //administration building
+    //"x Hall"
+    //liberal arts
+    //school of medicine
+    //university library
+//barbershop & hairdresser
+//gift shop
+//print shop
+//clothiers
+//blacksmith
+//locksmith
+//supply store for props/theater
+//market
+//furniture & carpets
+//glassblower
+//music store
+//toy & train shop
+//flower shop
+//office supplies
+//department store
+//ice cream parlour
+//auto lot
+//stamps & coins
+//boutique shop
+//ice house
+//hardware store
+//timepieces & clocks/watches
+//beauty parlor
+//laundry
+//pet shop
+//haberdashery
+//tattoo shop
+//radio center
+//shoe store
+//Dimestore
+//electric company (edison)
+//phone company (bell)
+//transformer station
+//railroad properties
+//FREELANCERS or work from own office
+//therapist
+//surgeon
+//doctor
+//midwife
+//jumker
+//private investigator
+//consulting architect, bibliophile, academic, etc.
+//taxidermist
+//tobacconist
+//
+
+
+
+        
+        
 initialization bar:
     create [1] location as bar:
         location_type = "bar".
@@ -206,7 +453,7 @@ initialization bar:
 default character: 
 	last_name = "#lastNames#",
 	first_name = "#firstNames#",
-	age = [18:50],
+	age = [18:60],
 	traits = [1:2] traits.
 
 initialize:
@@ -218,4 +465,17 @@ initialize:
 	create [1] town_square;
 	create [1] wharf;
 	create [1] warehouse;
+	create [1] theater;
+	create [1] historicalsociety;
+	create [1] bank;
+	create [1] graveyard;
+	create [1] jailhouse;
+	create [1] postoffice;
+	create [1] newspaper;
+	create [1] hospital;
+	create [1] library;
+	create [1] slaughterhouse;
+	create [1] baitshop;
+	create [1] grocer;
+	create [1] generalstore;
 	create [1] bar.

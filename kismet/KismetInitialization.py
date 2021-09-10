@@ -1776,6 +1776,9 @@ class DescTrait:
             for trait in creation.get('traits',[]):
                 if trait == self.name:
                     found = True
+            for trait in creation.get('status',[]):
+                if trait[0] == self.name:
+                    found = True
                     
             if found != self.negation:
                 satisfies.add(get_name(creation))
@@ -1852,6 +1855,7 @@ class Creation():
                     if 'status' not in creation:
                         creation['status'] = {}
                     creation['status'][(option.name,)] = option.value
+                    creation['traits'] = [trait for trait in creation.get('traits',[]) if trait.opposition != option.name]
         return to_create,list(set(relationships))
     
 def parse_options(all_options):
@@ -1900,7 +1904,7 @@ class Selection():
         
         satisfactory = {get_name(character) for character in creations if get_name(character) in satisfactory and character['type'] == selection_type}
         
-            
+       
         if len(satisfactory) >= len(to_select):
             to_select = random.sample(satisfactory,len(to_select))
             to_select = [character for character in creations if get_name(character) in to_select]
@@ -1919,7 +1923,18 @@ class Selection():
                     if 'status' not in creation:
                         creation['status'] = {}
                     creation['status'][(option.name,)] = option.value
-        
+            for condition in self.conditions:
+                if len(condition.is_satisfied([creation])) == 0:
+                    if isinstance(condition,Assignment):
+                        creation[condition.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in condition.assigned_val])
+                    elif isinstance(condition,Relationship):
+                        relationships.append((self.name,condition))
+
+                    elif isinstance(condition,DescTrait):
+                        if 'status' not in creation:
+                            creation['status'] = {}
+                        creation['status'][(condition.name,)] = condition.value
+                        creation['traits'] = [trait for trait in creation.get('traits',[]) if trait.opposition != condition.name]
         if to_create == to_select:
             to_select = []
         return to_create,to_select,list(set(relationships))
