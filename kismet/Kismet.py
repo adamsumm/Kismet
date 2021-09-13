@@ -1988,7 +1988,7 @@ class KismetModule():
                     
                     action_by_location[location].append(self.pretty_print_random_text('action',action))
             for location in sorted(action_by_location):
-                print(f'At {self.created_locations[location]["name"]}:')
+                print(f'At {self.created_locations.get(location,{"name":"their own mind"})["name"]}:')
                 print('\t'+'\n\t'.join(action_by_location[location]))
             print('-------')
     
@@ -2002,7 +2002,7 @@ class KismetModule():
             else:
                 print(self.population[person]['name'] + ':\n\t' + '\n\t'.join([trait_name for trait_name in self.population[person]['traits'] if not ignore_default_traits or trait_name not in default_traits]))
     def to_pretty_name(self,iterable):
-        return [self.population.get(thing,{'name':thing})['name'] for thing in iterable]
+        return [self.population.get(thing,self.created_locations.get(thing,{'name':thing}))['name'] for thing in iterable]
         
     def print_status(self,status):
         if status is None:
@@ -2019,7 +2019,9 @@ class KismetModule():
                 print(f'Could not find person with id="{person}"')
             else:
                 print(self.population[person]['name'] + ':\n\t' + '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']))
-                
+    
+    def from_json(self,json):
+        pass
     def to_json(self,person_filter=None):         
         if person_filter is None:
             person_filter =  self.population
@@ -2027,7 +2029,28 @@ class KismetModule():
         relations = {}
         characters = {}
         
+        history = []
+        for ur_step in self.history:
+            actions = []
+            for step in ur_step:
+                for action in step:
+                    action_name = action[0]
+                    action_arguments = self.to_pretty_name([thing for thing in action[1:] if thing != 'null'])
+                    actions.append([action_name] + action_arguments)
+        
+            history.append(actions)
+        location_history = []
+        for step in self.location_history:
+            location_characters = {}
+            for person,location in step.items():
+                person,location = self.to_pretty_name([person,location])
+                if location not in location_characters:
+                    location_characters[location] = []
+                location_characters[location].append(person)
+            location_history.append(location_characters)
+        
         default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
+        locations = list(self.created_locations.values())
         for person in person_filter:
             if person not in self.population:
                 print(f'Could not find person with id="{person}"')
@@ -2045,10 +2068,10 @@ class KismetModule():
                         relation_name  = get_common_name(relation[0])
                         if self.population[person]['status'][relation] is not None:
                             val = self.population[person]['status'][relation]
-                            print('Adding status', [relation_name,val])
+                            #print('Adding status', [relation_name,val])
                             characters[source]['statuses'].append([relation_name,val])
                         else:
-                            print('Adding status', [relation_name])
+                            #print('Adding status', [relation_name])
                             characters[source]['statuses'].append([relation_name])
                             
                     elif len(relation) > 1:
@@ -2064,7 +2087,8 @@ class KismetModule():
                             relations[relation_name].append([source,target,val])
                         else:
                             relations[relation_name].append([source,target])
-        return {'characters':list(characters.values()),'relations':relations}
+        return {'characters':list(characters.values()),'relations':relations,
+                'locations':locations,'history':history,'location_history':location_history}
                             
     def display_patterns(self,pattern_filter=None,person_filter=None):
         if pattern_filter is None:
@@ -2205,7 +2229,7 @@ class KismetModule():
         chosen_locations = []    
         for actor in shuffled:
             available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
-            available_locations |= {location for location in location_assignments[actor]}
+            available_locations |= {location for location in location_assignments.get(actor,[])}
                 
             volitions_by_actor[actor] = [(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations]
             
@@ -2217,7 +2241,7 @@ class KismetModule():
                 probs = logits/np.sum(logits)
                 chosen_location = volitions_by_actor[actor][np.argmax(np.random.multinomial(1,probs))][1]
                 possible_roles = [(location,role) for location,role in available_slots if location == chosen_location and available_slots[(location,role)] > 0]
-                for location in location_assignments[actor]:                    
+                for location in location_assignments.get(actor,[]):                    
                     possible_roles += [(location,role) for role in location_assignments[actor][location]]
                     
                 chosen_role = random.choice(possible_roles)
