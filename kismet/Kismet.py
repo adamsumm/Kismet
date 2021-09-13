@@ -2033,6 +2033,7 @@ class KismetModule():
                 print(f'Could not find person with id="{person}"')
             else:
                 source = self.population[person]['name']
+                
                 characters[source] = {'name':source,
                                       'traits':[],
                                       'statuses':[]}

@@ -1821,7 +1821,7 @@ def parse_description(description):
     elif len(description) == 1:
         return DescTrait(description[0][1],negation= negative)
     elif len(description) == 2:
-        if description[1][0] == 'Name':
+        if description[1][0] in ['Name', 'Var']:
             return Relationship(description[0][1], description[1][1],negation= negative)
         else:
             return DescTrait(description[0][1], parseNumRange(description[1]),negation= negative)
