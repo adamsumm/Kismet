@@ -30,7 +30,8 @@ import numpy as np
 from dataclasses import dataclass
 from sys import exit
 import re
-
+import shutil
+import functools
 module_singleton = None
 
 def process_nesting(text,count=0):
@@ -342,6 +343,42 @@ class KismetVisitor(ParseTreeVisitor):
     def visitCondition(self, ctx:kismetParser.ConditionContext):
         
         return ('Conditional',self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#time.
+    def visitTime(self, ctx:kismetParser.TimeContext):
+        return ('Time', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#num_range.
+    def visitNum_range(self, ctx:kismetParser.Num_rangeContext):
+        return ('NumRange', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#time_statement.
+    def visitTime_statement(self, ctx:kismetParser.Time_statementContext):
+        return ('TimeStatement', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#time_start_modifier.
+    def visitTime_start_modifier(self, ctx:kismetParser.Time_start_modifierContext):
+        return ('TimeStartModifier',ctx.getText())
+
+
+    # Visit a parse tree produced by kismetParser#time_iteration_modifier.
+    def visitTime_iteration_modifier(self, ctx:kismetParser.Time_iteration_modifierContext):
+        return ('TimeIterationModifier',ctx.getText(), self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#list_range.
+    def visitList_range(self, ctx:kismetParser.List_rangeContext):
+        return ('TimeType', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#time_type.
+    def visitTime_type(self, ctx:kismetParser.Time_typeContext):
+        return  ('TimeType', self.visitChildren(ctx))
+
 
 
     # Visit a parse tree produced by kismetParser#cond1.
@@ -1215,11 +1252,191 @@ def parseNumChoice(choice):
     distribution =  makeDistribution(lower,upper,pdf)
     return role,distribution
 
+
+def parseNumRange(choice):    
+    # [a-b] pdf name
+    if len(choice) == 3:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = choice[2][1]
+    elif len(choice) == 2:
+        lower = int(choice[0][1])
+        upper = int(choice[1][1])
+        pdf = '--'
+    else:
+        lower = int(choice[0][1])
+        upper = lower
+        pdf = '--'
+    return  makeDistribution(lower,upper,pdf)
+
+@dataclass
+class TimeLoop:
+    name: str
+    startModifier: list
+    iterationModifier: list
+    time:list
+    
+    def init(self):
+        if self.startModifier:
+            self.time()
+    
+    def __call__(self):
+        return self.time.step(self.iterationModifier)
+    
+    def get_counter(self,label):
+        return self.time.get_counter(label)
+    
+    def __len__(self):
+        return len(self.time)
+    
+    def get(self):
+        return self.time.get()
+@dataclass
+class TimeRange:
+    distribution: list
+    current:int
+    lower:int
+    upper:int
+        
+    def __call__(self):
+        self.current = self.distribution()
+    
+    def get(self):
+        return self.current
+    
+    def get_counter(self, label):
+        return label-self.lower+1
+    
+    def __len__(self):
+        return self.upper-self.lower+1
+    
+    def step(self,step_function):
+        loop_type, step = step_function()
+        self.current += step
+        loops = 0
+        if loop_type == '*':
+            while  self.current > self.upper:
+                loops += 1
+                self.current -= self.upper
+        return loops
+@dataclass 
+class TimeList:
+    members: list
+    current: int = 0
+    
+    label2index: dict = None
+    def __call__(self):
+        self.current =  random.randrange(len(self.members))
+    def get(self):
+        return self.members[self.current]
+    
+    def get_counter(self, label):
+        if self.label2index is None:
+            self.label2index = {label:index for index, label in enumerate(self.members)}
+        return self.label2index[label]
+    
+    def __len__(self):
+        return len(self.members)
+    
+    def step(self, step_function):
+        loops = 0
+        loop_type, step = step_function()
+        self.current =  self.current + step
+        
+        while  self.current >= len(self.members):
+            loops += 1
+            self.current -= len(self.members)
+        return loops
+    
+def parseTimeLoop(statement):
+    name = ''
+    startModifier = None
+    iterationModifier = lambda: ('+', 1)
+    time = None
+    arguments = ['']
+    for kind, *arguments in statement:
+        if kind == 'Name':
+            name = arguments[0]
+        elif kind == 'TimeStartModifier':
+            startModifier = arguments[0]
+        elif kind == 'TimeType':
+            timeType, *arguments = unsqueeze(arguments)
+            arguments = unsqueeze(arguments)
+            if timeType == 'NumRange':
+                lower = int(arguments[0][1])
+                upper = int(arguments[1][1])
+                num_range = parseNumRange(arguments)
+                time = TimeRange(num_range,lower,lower,upper)
+            elif timeType == 'TimeType':
+                arguments = [a[1] for a in arguments]
+                time = TimeList(arguments)
+            else:
+                print(f'Dont know what to do with TimeType: {timeType}')
+        elif kind == 'TimeIterationModifier':
+            raw, *parameters = arguments
+            parameters = unsqueeze(parameters)
+            if len(raw) == 1:
+                if raw == '+':
+                    pass
+                elif raw == '?':
+                    iterationModifier = lambda: (raw[0], random.randrange(len(arguments)))
+                else:
+                    iterationModifier = lambda: ('*', 1)
+                    
+            elif len(parameters) == 1:
+                iterationModifier = lambda: (raw[0],int(parameters[0][1]))
+            else:
+                distribution = parseNumRange(parameters[1])
+                iterationModifier = lambda: (raw[0], distribution())
+                
+        else:
+            print(f'DONT KNOW WHAT TO DO WITH {kind} {arguments} when Parsing A Time Loop')
+    timeLoop = TimeLoop(name, startModifier, iterationModifier, time)
+    timeLoop.init()
+    return timeLoop
+
+@dataclass
+class Time:
+    time_loops: list
+    current_time: list = None
+    common_denominator:list = None
+    def __call__(self):
+        for loop in self.time_loops:
+            looped = loop()
+            if looped == 0:
+                break
+        self.current_time = [(loop.name, loop.get()) for loop in self.time_loops]
+        
+        #print(self.delta([('day', 25), ('month', 'feb'), ('year', 1899)],self.current_time))
+            
+        return self.current_time
+    
+    def delta(self, earlier, later):
+        earlier_indices =  [loop.get_counter(label[1]) for loop, label in zip(self.time_loops,earlier)]
+        later_indices =  [loop.get_counter(label[1]) for loop, label in zip(self.time_loops,later)]
+        if self.common_denominator is None:
+            loop_lengths = [len(loop) for loop in self.time_loops]
+            self.common_denominator = [1]
+            for i in range(1,len(loop_lengths)):
+                self.common_denominator.append(self.common_denominator[i-1]*loop_lengths[i-1])
+        diffs = [ (l-e)*cd for l,e,cd in zip(later_indices, earlier_indices,self.common_denominator)]
+        d = functools.reduce(lambda x,y: x+y, diffs)
+        diffs = [d//cd for cd in self.common_denominator]
+        return diffs
+    
+    
+def parseTime(raw):
+    raw = raw['TimeStatement']
+    time_loops = [parseTimeLoop(unsqueeze(statement)) for statement in raw]
+    t = Time(list(reversed(time_loops)))
+    return Time(list(reversed(time_loops)))
+
 @dataclass 
 class Location:
     supports: dict
     each_turn: list
     tags: list
+        
 def locationToASP(location,location_name):
 
     #if 'Supports' not in location:
@@ -1272,7 +1489,7 @@ def patternToASP(pattern,pattern_name):
     return Pattern(asp_string,randomText,arguments)
 
 class KismetModule():
-    def __init__(self,module_file,initialization_file,
+    def __init__(self,module_files,
                  tracery_files=[],
                  temperature=1.0,
                  observation_temp=1.0,
@@ -1284,22 +1501,35 @@ class KismetModule():
                 base_folder=''):
         global module_singleton
         module_singleton = self
+            
+                                
+                    
         self.path = os.path.abspath(os.path.dirname(__file__))
+        self.module_files = module_files
+        all_files = ''.join(self.module_files)
+        all_files = all_files.replace('/','_').replace('\\','_').replace('..','_')
+        self.module_file = os.path.basename(all_files+'_conglomeration.kismet')
+        with open(self.module_file,'wb') as wfd:
+            for f in self.module_files:
+                with open(f,'rb') as fd:
+                    shutil.copyfileobj(fd, wfd)
+        
         self.clingo_exe = clingo_exe
         self.temperature = temperature
         self.observation_temp = observation_temp
         self.ignore_logit = ignore_logit
         self.default_cost = default_cost
         self.timestep = 0
+        self.tempstep = 0
         self.history_cutoff = history_cutoff
         self.action_budget = action_budget
         self.history = []
+        self.times = []
         self.location_history = []
         self.character_knowledge = []
         
         error_log = []
-        self.module_file = os.path.basename(module_file)
-        input_stream = FileStream(module_file)
+        input_stream = FileStream(self.module_file)
         lexer = kismetLexer.kismetLexer(input_stream)
         stream = CommonTokenStream(lexer)
         parser = kismetParser(stream)
@@ -1333,7 +1563,8 @@ class KismetModule():
                     'Location':{},
                     'Role':{},
                     'Trait':{},
-                    'Pattern':{}}
+                    'Pattern':{},
+                    'Time':{}}
         uniq_id = 0
         self.name2uniq = {}
         self.uniq2name = {}
@@ -1352,6 +1583,8 @@ class KismetModule():
             self.uniq2name[uniq_name] = name
             name = uniq_name
             things[thing[0]][name] = thing2dict(thing[1])
+            
+        self.time = parseTime(list(things['Time'].values())[0])
         self.actions = {action:parseAction(things['Action'][action],action) for action in things['Action']}
         for name,action in self.actions.items():
             if action.cost <= 0:
@@ -1555,7 +1788,6 @@ class KismetModule():
             
         
         
-        self.initialization = KismetInitialization.KismetInitialization(initialization_file,self)
         
         self.sanity_check()    
     def strip_constraint(self,constraint):
@@ -1593,6 +1825,9 @@ class KismetModule():
                 current_constraint['args'] = [t.strip() for t in next_thing]
                 all_constraints.append(current_constraint)
         return all_constraints
+    
+    def mark_time(self):
+        self.tempstep = 0
         
     def sanity_check(self):
         
@@ -1805,9 +2040,9 @@ class KismetModule():
     def aspify_name(self,name):
         return name.replace(' ','_').replace("'",'_').lower()
         
-    def make_population(self):
+    def make_population(self,initialization):
         
-        population = self.initialization.run_initialization()
+        population = initialization.run_initialization()
         
         self.population = {}
         self.created_locations = {}
@@ -1934,13 +2169,13 @@ class KismetModule():
     
     def knowledge2asp(self):        
         with open(os.path.join(self.path,f'{self.module_file}_history.lp'),'w') as history_file:
-            for phase in self.history[-self.history_cutoff:]:
+            for time, phase in zip(self.times,self.history[-self.history_cutoff:]):
                 for step in phase:
                     for action in step:
                         history_file.write(f'did({action[1]},action({",".join(action)})).\n')
                         history_file.write(f'received({action[2]},action({",".join(action)})).\n')
     
-            for step in self.character_knowledge[-self.history_cutoff:]:
+            for time, step in zip(self.times,self.character_knowledge[-self.history_cutoff:]):
                 for knowledge in step:
                     kind = knowledge[0]
                     character = knowledge[1]
@@ -1978,8 +2213,9 @@ class KismetModule():
         if end == float('inf'):
             end = len(self.history)
             
-        for ind, phase in enumerate(self.history[start:end]):
+        for ind, (time, phase) in enumerate(zip(self.times[start:end],self.history[start:end])):
             action_by_location = {}
+            print(time)
             for step in phase:
                 for action in step:
                     location = self.location_history[start+ind][action[1]]
@@ -2018,10 +2254,69 @@ class KismetModule():
             if person not in self.population:
                 print(f'Could not find person with id="{person}"')
             else:
-                print(self.population[person]['name'] + ':\n\t' + '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']))
+                print(self.population[person]['name'] + ':\n\t' + \
+                      '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']) + '\n\t' + \
+                      '\n\t'.join([trait_name for trait_name in self.population[person]['traits']]))
     
-    def from_json(self,json):
-        pass
+    
+    def from_json_file(self,json_file):
+        with open(json_file) as in_file:
+            kismet_module = json.load(in_file)
+        self.from_json(kismet_module)
+        
+    def from_json(self,kismet_module):
+        characters = kismet_module['characters']
+        relations = kismet_module['relations']
+        locations = kismet_module['locations']
+        history = kismet_module['history']
+        location_history = kismet_module['location_history']
+        
+        self.population = {}
+        for character in characters:
+            name = character['name']
+            asp_name = self.aspify_name(name)
+            statuses = {}
+            for status in character['statuses']:
+                if len(status[-1]) == 0:
+                    statuses[tuple(status[:-1])] = None
+                else:
+                    statuses[tuple(status[:-1])] = status[-1][0]
+                    
+            character_dictionary = {'name':name,
+                                    'asp_name':asp_name,
+                                    'traits':set(character['traits']),
+                                    'status':statuses}
+            self.population[asp_name] = character_dictionary
+            
+        for relation_type, all_relations in relations.items():
+            for relation in all_relations:
+                source_asp = self.aspify_name(relation[0])
+                target_asp = self.aspify_name(relation[1])
+                val = None
+                if len(relation) > 2:
+                    val = relation[-1]
+                self.population[source_asp][(relation_type,target_asp)] = val
+        
+        self.created_locations = {}
+        for location in locations:
+            asp_name = self.aspify_name(location['name'])
+            self.created_locations[asp_name] = location
+        
+        self.history = [ [[[self.aspify_name(binding) for binding in action] + ['null']*(5-len(action)) for action in step]] for step in history]
+        self.times = kismet_module['times']
+        self.location_history = []
+        
+        for step in location_history:
+            locations_at_step = {}
+            for location in step:
+                asp_location = self.aspify_name(location)
+                for person in step[location]:
+                    locations_at_step[self.aspify_name(person)] = asp_location
+            self.location_history.append(locations_at_step)
+            
+        self.knowledge2asp()
+        self.population2asp()
+            
     def to_json(self,person_filter=None):         
         if person_filter is None:
             person_filter =  self.population
@@ -2069,10 +2364,10 @@ class KismetModule():
                         if self.population[person]['status'][relation] is not None:
                             val = self.population[person]['status'][relation]
                             #print('Adding status', [relation_name,val])
-                            characters[source]['statuses'].append([relation_name,val])
+                            characters[source]['statuses'].append([relation_name,[val]])
                         else:
                             #print('Adding status', [relation_name])
-                            characters[source]['statuses'].append([relation_name])
+                            characters[source]['statuses'].append([relation_name,[]])
                             
                     elif len(relation) > 1:
                         source = self.population[person]['name']
@@ -2088,7 +2383,7 @@ class KismetModule():
                         else:
                             relations[relation_name].append([source,target])
         return {'characters':list(characters.values()),'relations':relations,
-                'locations':locations,'history':history,'location_history':location_history}
+                'locations':locations,'history':history,'location_history':location_history,'times':self.times}
                             
     def display_patterns(self,pattern_filter=None,person_filter=None):
         if pattern_filter is None:
@@ -2261,7 +2556,11 @@ class KismetModule():
             
     def step_actions(self):
         self.timestep += 1
+        self.tempstep += 1
+        self.current_time = self.time()
+        print(self.current_time)
         self.history.append([])
+        self.times.append(self.current_time)
         
         self.knowledge2asp()
         self.population2asp()
