@@ -100,7 +100,9 @@ def solve(args,clingo_exe='clingo'):
     out = outb.decode("utf-8")
     if len(out) == 0:
         print(f'Command "{" ".join(args)}" failed.')
-        print(outb
+        print(outb)
+        print(out)
+        
     with open('dump.lp', 'w') as outfile:
         result = json.loads(out)
         witness = result['Call'][0]['Witnesses'][-1]['Value']
@@ -1499,7 +1501,7 @@ class KismetModule():
                  history_cutoff=10,
                 action_budget = 3,
                 default_cost = 3,
-                clingo_exe='clingo',
+                clingo_exe='./clingo',
                 base_folder=''):
         global module_singleton
         module_singleton = self
