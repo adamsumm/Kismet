@@ -94,11 +94,13 @@ def solve(args,clingo_exe='clingo'):
         shell=True
     ) as clingo:
         outb, err = clingo.communicate()
-    #if err:
-    #    print(err)
+    if err:
+        print('ERROR',err)
+        
     out = outb.decode("utf-8")
     if len(out) == 0:
         print(f'Command "{" ".join(args)}" failed.')
+        print(outb
     with open('dump.lp', 'w') as outfile:
         result = json.loads(out)
         witness = result['Call'][0]['Witnesses'][-1]['Value']
