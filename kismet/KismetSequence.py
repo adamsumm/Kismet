@@ -2,9 +2,15 @@
 if __name__ == 'KismetSequence' or __name__ == '__main__':
     import kismet_sequenceLexer
     from kismet_sequenceParser import kismet_sequenceParser 
+    import Kismet
+    from Kismet import KismetModule
+    import KismetInitialization
 else:    
     from . import kismet_sequenceLexer
     from .kismet_sequenceParser import kismet_sequenceParser
+    from . import Kismet
+    from .Kismet import KismetModule
+    from . import KismetInitialization
     
 from antlr4 import *
 from antlr4.error.ErrorListener import ErrorListener
@@ -12,9 +18,6 @@ import re
 from warnings import warn
 import itertools
 from dataclasses import dataclass, field
-import Kismet
-from Kismet import KismetModule
-import KismetInitialization
 import os
 class MyErrorListener( ErrorListener ):
     def __init__(self):
