@@ -1,0 +1,153 @@
+grammar kismet_sequence;
+
+sequence:
+ (statement)+ EOF
+ ;
+
+statement: 
+        load |
+        initialize |
+        run |
+        add |
+        remove|
+        while_block |
+        if_block;
+    
+load:
+    'load' filename  (',' filename)*  'with' tracery_ filename (',' filename)* ';' ;
+tracery_:
+    'tracery';
+    
+while_block:
+    'while' while_condition  OPEN statement+ CLOSE;
+
+while_condition:
+    ('iter'|'iters'|'i'|'count'|'iterations'|'time') comparator num;
+
+if_block:
+    'if' if_statement ( ('else' 'if'|'elif'|'elseif') if_statement)* ('else' OPEN statement+ CLOSE)?;
+    
+if_statement: 
+    conditional_statement ('or' conditional_statement)* OPEN statement+ CLOSE;
+
+add:
+    'add'  filename  (',' filename)* ';';
+
+remove:
+    'remove' filename  (',' filename)* ';';
+
+conditional_statement:
+    until_clause |
+    where;
+
+name : NAME;
+NAME   : [a-z][a-zA-Z_]* ;
+filename : FILENAME;
+FILENAME   : [.a-z][a-zA-Z_.\\/]* ;
+var : VAR;
+VAR : [A-Z][a-zA-Z_!]*;
+
+num: NUMBER;
+
+NUMBER : NEG? POSITIVE_NUMBER ;
+
+pos_num: POSITIVE_NUMBER;
+
+POSITIVE_NUMBER: [0-9]+('.' [0-9]+)?;
+NEG: '-';
+
+WS : [ \t\r\n]+ -> skip ;
+
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
+;
+
+
+initialize:
+    'initialize' filename (':' (keeping|stashing|restoring))* ';' ;
+    
+characters: 'character'|'characters';  
+
+locations: 'location'|'locations';     
+
+keeping:
+    'keeping' (characters|locations) ('where'|'with'|) where ('or' where)*;
+
+stashing:
+    'stashing' (((characters|locations) ('where'|'with'|) where ('or' where)*)|('the')? 'rest') 'in' var;
+
+restoring:
+    'restoring' ((characters|locations|'everybody'|'everyone') 'in')? var;
+    
+where:
+    where_clause ( (','|'and'|',' 'and') where_clause)*;
+    
+with_clause:
+    in_pattern |
+    ('is'|'in') 'kept'|
+    ('is'|'who') name;
+    
+in_pattern:
+    'in' 'pattern' name '/' num ('with' 'character' with_clause )?;
+
+
+comparator:  '=' |
+	    '==' |
+	    '<' |
+	    '>' |
+	    '<='|
+	    '>='|
+	    '!=';
+TYPE: 'type' | 'types';
+
+types: TYPE;
+TAGS: 'tags' | 'tag';
+tags: TAGS;
+
+where_clause:
+    in_pattern |
+    name '/' num ('with' 'character' with_clause )? |
+    name comparator num |
+    'is' name     ;
+
+
+run:
+    'run' until ';' ;
+    
+duration:
+    num name;
+    
+none: 
+    'no' | 'none' | 'noone' | 'no' 'one';
+every:
+    'all' | 'every' | 'everyone' | 'everybody';
+    
+plus:
+    '+';
+quantity:
+    num plus |
+    num |
+    comparator num
+    ;
+  
+until:
+     until_clauses ('or' until_clauses)*;
+
+until_clauses:
+    ('until')? until_clause ( (','|'and'|',' 'and') until_clause)* |
+    duration; 
+
+positive_find:
+    'is' | 'are';
+negative_find:
+    'isnt' | 'is not' | 'is\'nt' | 'arent' | 'are not' | 'are\'nt';
+
+until_clause:
+    quantity (characters|locations) in_pattern |
+    quantity (characters|locations) (positive_find|negative_find) name ('/' num)?|
+    quantity (characters|locations) name  ('/' num)? comparator num |
+    name comparator num;
+
+OPEN: '{';
+CLOSE: '}';
+ 
