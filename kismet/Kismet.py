@@ -94,8 +94,8 @@ def solve(args,clingo_exe='clingo'):
         shell=True
     ) as clingo:
         outb, err = clingo.communicate()
-    if err:
-        print('ERROR',err)
+    #if err:
+    #    print('ERROR',err)
         
     out = outb.decode("utf-8")
     if len(out) == 0:
