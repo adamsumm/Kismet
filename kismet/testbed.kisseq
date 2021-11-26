@@ -1,0 +1,61 @@
+load cult.kismet with tracery edwardian.tracery;
+
+//how to say to keep people and have some people leave the simulation after a point
+//big event comes and up ends a town and then 
+//saving of multiple towns and loading them 
+
+///////////////////////////////////////////LOOPS///////////////////////////////////////
+while iterations < 10 {
+
+/////////////////////////////////ADDING MODULES////////////////////////////////////////
+    add cult.kismet;
+    initialize cult.init: restoring characters in Town;
+    
+    run until 
+        2 characters in pattern getting_married /2 or
+        1 character is just_died or
+        10 steps;
+
+/////////////////////////////////////CONDITIONALS/////////////////////////////////////
+    if 2 characters in pattern getting_married /2 {
+        add wedding.kismet;
+        
+/////////////////////////////////////REMOVING MODULES/////////////////////////////////////
+        remove cult.kismet;
+
+        initialize wedding.init:
+            keeping characters where in pattern getting_married /2:
+            keeping characters where friends /2 with 
+                                character in pattern getting_married /2:
+            keeping characters where family /2 with 
+                                character in pattern getting_married /2:
+///////////////////////////////////////STASHING CHARACTERS/LOCATIONS///////////////////////
+            stashing the rest in Town;
+            
+        run 1 week;
+        remove wedding.kismet;
+    }
+    else if 1 character is just_died {
+        add funeral.kismet;
+        remove cult.kismet;
+        
+        initialize funeral.init:
+            keeping characters where is just_died:
+            keeping characters where friends /2 with character is just_died:
+            keeping characters where family /2 with character is just_died:
+            stashing the rest in Town;
+            
+        run 1 week;
+        remove funeral.kismet;
+   }
+   else {
+       add cult_ritual.kismet;
+       remove cult.kismet;
+       initialize cult_ritual.kismet:
+           keeping characters where is believer:
+           keeping characters in pattern nemesis /2 with character in kept:
+           stashing the rest in Town;
+       run 1 week;
+       remove cult_ritual.kismet;
+   }
+}

@@ -1,0 +1,116 @@
+#include <incmode>.
+
+
+#const families = 5.
+#const characters = 100.
+#const factories = 1.
+
+1 {family_count(M) } 1  :- M =families..families.
+family(I) :- I = 1..M, family_count(M).
+
+1 {character_count(M)} 1 :- M =characters..characters.
+character(I) :- I = 1..M, character_count(M).
+
+
+%%%%Trait Stuff
+traits(extrovert;introvert;manic_depressive;happy_go_lucky;generous;selfish;gregarious;cantankerous).
+
+2 {is(character(Character),Trait) : traits(Trait)} 5 :- character(Character).
+
+:- is(Character,extrovert), is(Character,introvert).
+:- is(Character,generous), is(Character,selfish).
+:- is(Character,gregarious), is(Character,cantankerous).
+
+%For each trait, it should be the case, that it shows up some amount of time
+:- {is(Character, Trait)} Characters/(2*Traits) ,traits(Trait), Traits = {traits(_)}, character_count(Characters).
+
+
+
+bits(B) :- B=0..8.
+%%%%Other Stuff
+%1 {age(character(Character), Age): Age=1..70} 1 :- character(Character).
+%{age_bits(character(Character), Bit): Bit=0..8} :- character(Character).
+%:- #sum {2**Bit:age_bits(character(Character), Bit)} > 70, character(Character).
+%:- #sum {2**Bit:age_bits(character(Character), Bit)} < 1, character(Character).  
+
+%mutually exclusive wealth: rich/poor/middleclass.
+exclusive_trait(wealth, (rich;poor;middleclass)).
+
+%default character:
+%    has [1] wealth.
+1  {is(character(Character),Trait) : exclusive_trait(TraitType,Trait)} 1 :- character(Character),exclusive_trait(TraitType,_).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Family %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2 {assigned(family(FamilyID), parent, character(CharacterID)): 
+    character(CharacterID),
+    (CharacterID+FamilyID) \  (characters/(4*families)) = 0
+    }2 :- family(FamilyID).
+
+:- assigned(Family, parent, Character), #sum {2**Bit:age_bits(Character, Bit)} < 20.
+:- assigned(Family, parent, Character), #sum {2**Bit:age_bits(Character, Bit)} > 60.
+:- 2 {assigned(Family, parent, Character)}, character(Character).
+
+is(Character,parent,Other)  :- assigned(Family, parent, Character), assigned(Family, child, Other).
+
+is(Character,married,Other)  :- assigned(Family, parent, Character), assigned(Family, parent, Other), Character != Other.
+
+
+%Child Stuff
+%1 {assigned(family(FamilyID), child, character(CharacterID)): CharacterID=(FamilyID*characters/families)..(FamilyID+1)*characters/families} 5 :- family(FamilyID).
+
+1 {assigned(family(FamilyID), child, character(CharacterID)):  
+    character(CharacterID),
+    (CharacterID+FamilyID) \ (characters/(10*families)) = 0
+    } 5 :- family(FamilyID).
+
+:- 2 {assigned(Family, child, Character)}, character(Character).
+
+:- assigned(Family, child, Character), #sum {2**Bit:age_bits(Character, Bit)} <1.
+:- assigned(Family, child, Character),#sum {2**Bit:age_bits(Character, Bit)} > 40.
+is(Character,child,Other)  :- assigned(Family, child, Character), assigned(Family, parent, Other).
+is(Character,sibling,Other)  :- assigned(Family, child, Character), assigned(Family, child, Other), Character != Other.
+
+
+:- assigned(Family, child, Character),assigned(Family, parent, Other),
+            #sum {2**Bit:age_bits(Other, Bit); -(2**Bit2):age_bits(Character, Bit2)} < 20.
+            
+%Parent and Child share traits
+:- assigned(Family, child, Character), assigned(Family, parent, Other), {is(Character,Trait); is(Other,Trait) } 0.        
+        
+
+
+%%% SPECIFY CONSTRAINTS ABOUT THE GENERATION
+%pattern(grand_parent(GC,P,GP)) :- is(GC, child, P), is(P, child, GP).
+%:- not pattern(grand_parent(_,_,_)).
+pattern(grand_parent) :- is(GC, child, P), is(P, child, GP).
+:- not pattern(grand_parent).
+
+%pattern(fall_from_wealth(GC,GP)) :- is(GC, child, P), is(P, child, GP), is(GC,poor), is(GP,rich).
+%:- not pattern(fall_from_wealth(_,_)).
+pattern(fall_from_wealth) :- is(GC, child, P), is(P, child, GP), is(GC,poor), is(GP,rich).
+:- not pattern(fall_from_wealth).
+
+%pattern(rags_to_riches(GC,P)) :- is(GC, child, P), is(GC,rich), is(P,poor).
+%:- not pattern(rags_to_riches(_,_)).
+
+pattern(rags_to_riches) :- is(GC, child, P), is(GC,rich), is(P,poor).
+:- not pattern(rags_to_riches).
+
+
+
+
+% select [1] character as parentA:
+%     shares wealth with parentB.
+:-  assigned(Family, parent, Character), assigned(Family, parent, Other), is(Character,Trait), exclusive_trait(wealth,Trait), not is(Other,Trait).
+
+% select [1] character as child:
+%     shares wealth with parentA if age < 25.
+:-  assigned(Family, parent, Character), assigned(Family, child, Other), is(Character,Trait), exclusive_trait(wealth,Trait), not is(Other,Trait),
+     #sum {2**Bit:age_bits(Other, Bit)} < 25.
+     
+%#show is/2.
+%#show is/3.
+%#show pattern/1.
+%#show age_bits/2.

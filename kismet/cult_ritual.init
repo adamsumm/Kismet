@@ -1,0 +1,25 @@
+default location:.
+
+
+initialization church:
+     create [1] location as narthex:
+		location_type = "narthex";
+        
+     create [1] location as sanctuary:
+		location_type = "sanctuary";
+        
+     create [1] location as altar:
+		location_type = "altar";
+        
+     create [1] location as crypt:
+		location_type = "crypt";
+        
+     create [1] location as nave:
+		location_type = "nave";
+        
+     create [1] location as chapel:
+		location_type = "chapel".
+        
+        
+initialize:
+	create [1] church.

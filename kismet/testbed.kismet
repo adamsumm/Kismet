@@ -1,0 +1,59 @@
+//////////////////////////////////SETUP / CLEANUP////////////////////////////////////////
+//SETUP ACTIONS RUN WHEN THE MODULE IS RUN FOR THE VERY FIRST TIME
+setup_action make_just_died_the_deceased(>TheDeceased):
+    if TheDeceased is just_died;
+    result TheDeceased is not just_died, TheDeceased is the_deceased;
+   
+//CLEANUP ACTIONS RUN WHEN THE MODULE IS UNLOADED
+cleanup_action make_the_deceased_normal(>TheDeceased):
+    if TheDeceased is the_deceased;
+    result TheDeceased is not the_deceased;
+    
+/////////////////////////////////////////////////EVENTS /////////////////////////////////   
+//EVENTS OCCUR WITHOUT REQUIRING A PERSON TO DO THEM
+event have_birthday(>Person):
+    if time is 1 year since Person's last_birthday,
+       last_birthday is today;
+    result: Person's age += 1.
+
+event die_of_old_age(>Person):
+    likelihood = +++(Person's age);
+    if Person is not immortal;
+    result Person is dead.
+
+event turn_into_werewolf(>Werewolf):
+    if time is 1 month since last_transformation,
+       last_transformation is today, Werewolf is lycan;
+    result: Werewolf is wolf.
+   
+event turn_into_human(>Werewolf):
+    if time is 1 day since last_transformation,
+       Werewolf is human.
+         
+event unleash_evil(*ForbiddenEvent):
+    likelihood = +++(ForbiddenEvent has occurred);
+    ForbiddenEvent is forbidden;
+    if ForbiddenEvent has occurred >= 10 times.
+    
+    
+    
+//////////////////////////////////////REMOVAL FROM SIM////////////////////////////////////   
+//PEOPLE CAN BE DEAD, BANISHED TO SHADOW REALM, IN EXILE, ETC
+//there are statuses that state that a person is removed from the simulation
+status in_shadow_realm is removed.
+status dead/died is removed.
+status exile/exiled in removed.
+
+//By default, all actions assume that you can't have a removed status
+action mingle(>Person,<Other):
+    //Secretly has
+    if Person is not in_shadow_realm,
+        Person is not dead,
+        Person is not exiled,
+        Other is not in_shadow_realm,
+        Other is not dead,
+        Other is not exiled;
+    ...
+//Unless you specifically look for one of them
+action resurrect(>Cultist, <Resurrected):
+   if Resurrected is dead.

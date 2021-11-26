@@ -1,0 +1,3 @@
+load astronaut_early_life.kismet with north_america.tracery;
+
+initialize astronaut_early_life.init;

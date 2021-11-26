@@ -1,0 +1,32 @@
+location city:
+    supports: [1000] citizens;
+    each_turn:
+        cast citizens.
+        
+
+location town:
+    supports: [100] citizens;
+    each_turn:
+        cast citizens.
+        
+location farmland:
+    supports: [100] citizens;
+    each_turn:
+        cast citizens.
+        
+        
+trait brave(>Self) opposes cowardly:.
+
+trait rule_bound(>Self) opposes anarchic:.
+
+trait loyal(>Self) opposes disloyal:.
+
+trait social(>Self) opposes solitary:.
+
+trait independent(>Self) opposes dependent:.
+
+trait controlling(>Self) opposes freespirited:.
+
+trait tranquil(>Self) opposes agitated:.
+
+trait covetous(>Self) opposes giving:.

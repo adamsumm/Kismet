@@ -1,0 +1,1509 @@
+default location.
+
+
+////////////////////////////////////////////////////////
+//  FAMILIES
+////////////////////////////////////////////////////////
+initialization family_couple_young:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+    :where
+        age = [22:30],
+        not married;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+    :where
+        age = [22:30],
+        not married.
+        
+initialization family_couple_midlife:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+    :where
+        age = [30:45],
+        not married;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+    :where
+        age = [30:45],
+        not married.
+        
+initialization family_couple_old:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+    :where
+        age = [45:60],
+        not married;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+    :where
+        age = [45:60],
+        not married.
+        
+initialization family_couple_elderly:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+    :where
+        age = [60:75],
+        not married;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+    :where
+        age = [60:75],
+        not married.
+
+
+initialization family_young:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+        is parent to child,
+        is family with child,
+    :where
+        age = [22:30],
+        not married,
+        not parent;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+        is parent to child,
+        is family with child,
+    :where
+        age = [22:30],
+        not married,
+        not parent;
+        
+    select [1:4] character as child:
+        last_name = FamilyName,
+        is family with spouseA,
+        is family with spouseB,
+        is child to spouseA,
+        is child to spouseB,
+    :where
+        age = [1:5],
+        not child.
+        
+initialization family_midlife:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+        is parent to child,
+        is family with child,
+    :where
+        age = [30:45],
+        not married,
+        not parent;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+        is parent to child,
+        is family with child,
+    :where
+        age = [30:45],
+        not married,
+        not parent;
+        
+    select [1:5] character as child:
+        last_name = FamilyName,
+        is family with spouseA,
+        is family with spouseB,
+        is child to spouseA,
+        is child to spouseB,
+    :where
+        age = [4:14],
+        not child.
+        
+initialization family_old:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+        is parent to child,
+        is family with child,
+    :where
+        age = [45:60],
+        not married,
+        not parent;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+        is parent to child,
+        is family with child,
+    :where
+        age = [45:60],
+        not married,
+        not parent;
+        
+    select [1:5] character as child:
+        last_name = FamilyName,
+        is family with spouseA,
+        is family with spouseB,
+        is child to spouseA,
+        is child to spouseB,
+    :where
+        age = [15:25],
+        not child.
+        
+initialization family_elderly:
+    let FamilyName = "#lastNames#";
+    
+    select [1] character as spouseA:
+        last_name = FamilyName,
+        is married to spouseB,
+        is family with spouseB,
+        is parent to child,
+        is family with child,
+    :where
+        age = [60:75],
+        not married,
+        not parent;
+        
+    select [1] character as spouseB:
+        last_name = FamilyName,
+        is married to spouseA,
+        is family with spouseA,
+        is parent to child,
+        is family with child,
+    :where
+        age = [60:75],
+        not married,
+        not parent;
+        
+    select [1:5] character as child:
+        last_name = FamilyName,
+        is family with spouseA,
+        is family with spouseB,
+        is child to spouseA,
+        is child to spouseB,
+    :where
+        age = [30:40],
+        not child.
+
+
+initialization church:
+
+	select [1] character as deacon:
+		is deacon of church,
+        is employee at church,
+        is resident of church
+	:where 
+		age = [60:80],
+		not employee of Location,
+		is traditionalist,	
+		is believer;
+		
+	select [1:2] character as priest:
+		is priest of church,
+        is employee at church
+	:where 
+		age = [30:70],
+		not employee of Location,
+		not rich,
+		is believer;
+        
+    create [1] location as church:
+		location_type = "church",
+        has deacon of deacon,
+        has priest of priest,
+		name = "[The [Temple|Church] of [Starry|Everlasting|Loving|Immortal] [Wisdom|Truth|Revelation]]".
+		
+initialization boarding_house:
+    let FamilyName = "#lastNames#";
+
+    select [1] character as owner:
+        is owner of boarding_house,
+        is employee at boarding_house,
+        is resident at boarding_house,
+        last_name = FamilyName,
+        is married to housekeeper
+        //likes housekeeper = [10],
+    :where
+        age = [50:70],
+        not employee of Location,
+        not resident of Location,
+        not married,
+        not rich;
+        
+    select [1] character as housekeeper:
+        is housekeeper of boarding_house,
+        is employee at boarding_house,
+        is resident at boarding_house,
+        last_name = FamilyName,
+        is married to owner
+        //likes owner = [10],
+    :where
+        age = [50:70],
+        not employee of Location,
+        not resident of Location,
+        not married,
+        not rich;
+        
+    select [1:2] character as boarder:
+        is boarder at boarding_house,
+        is resident of boarding_house
+    :where
+        age = [22:30],
+        not resident of Location,
+        is poor,
+        not married,
+        not parent,
+        not child;
+        
+    create [1] location as boarding_house:
+        location_type = "boarding_house",
+        has owner of owner,
+        has housekeeper of housekeeper,
+        has boarder of boarder,
+        name = "[[#FamilyName#]'s [Boarding House|House]|[#FamilyName#] [House|Apartment]]".
+        
+initialization school:
+    select [1] character as headmaster:
+        is headmaster at school,
+        is employee at school
+    :where
+        age = [45:70],
+        not employee at Location;
+        
+    select [6:8] character as student:
+        is student at school,
+        is employee at school,
+    :where
+        age = [6:16];
+        
+    create [1] location as school:
+        location_type = "school",
+        has headmaster of headmaster,
+        has student of student,
+        name = "[Arkham|Barnard|East|Providence|Arlington|West Armitage|High Lane|Northside|Saltonstall|Pickman] [Public|Private] School".
+
+initialization bookstore:
+    let OwnerName = "#lastNames#",
+        RandomName = "#lastNames#";
+    
+    select [1] character as owner:
+        is owner of bookstore,
+        is employee of bookstore,
+        last_name = OwnerName
+    :where
+        age = [35:80],
+        not employee at Location,
+        is scholar;
+        
+    select [2:3] character as clerk:
+        is clerk of bookstore,
+        is employee of bookstore
+    :where
+        age = [20:25],
+        not employee at Location,
+        is poor;
+        
+    select [1:3] character as regular:
+        is regular of bookstore
+    :where
+        age = [40:60],
+        is scholar,
+        is rich;
+
+    create [1] location as bookstore:
+        location_type = "bookstore",
+        has owner of owner,
+        has clerk of clerk,
+        has regular of regular,
+        name = "[[[#OwnerName#]'s [Books|Book Store|Used Books|Rare Books|Rare Books & Maps]]|[[#RandomName#]'s [Books|Book Store|Used Books|Rare Books|Rare Books & Maps]]|[[Seekers|Wanderer's|Mindful] Books]]".
+        
+    //question: can I have sublocations? like a basement or back room?
+        
+initialization town_square:
+    create [1] location as town_square:
+        location_type = "town_square",
+        name = "The Town Square".
+
+        
+initialization wharf:
+    select [4] character as dockworker:
+        is dockworker of wharf,
+        is employee at wharf,
+        is unionized,
+    :where
+        age = [30:50],
+        not employee at Location,
+        is poor;
+        
+    select [4] character as fisherman:
+        is fisherman of wharf,
+        is employee at wharf,
+    :where
+        age = [30:70],
+        not employee at Location,
+        is poor;
+    
+    select [1] character as sailor:
+        is sailor of wharf,
+        is employee at wharf,
+    :where
+        not employee at Location,
+        is poor;
+
+    create [1] location as wharf:
+        location_type = "wharf",
+        has dockworker of dockworker,
+        has fisherman of fisherman,
+        has sailor of sailor,
+        name = "The Wharf".
+        
+initialization warehouse:
+    let OwnerName = "#lastNames#";
+    
+    select [6:8] character as worker:
+        is worker of warehouse,
+        is employee at warehouse,
+        is unionized,
+    :where
+        age = [18:50],
+        not employee at Location,
+        is poor;
+        
+    select [1] character as unionrep:
+        is worker at warehouse,
+        is employee at warehouse,
+        is unionrep of warehouse,
+        is unionized,
+    :where
+        age = [35:50],
+        is political,
+        not employee at Location,
+        is poor;
+        
+    select [1] character as foreman:
+        is foreman of warehouse,
+        is employee at warehouse,
+    :where
+        age = [35:50],
+        not employee at Location;
+        
+    select [1] character as owner:
+        is owner of warehouse,
+        is employee at warehouse,
+        last_name = OwnerName,
+    :where
+        not employee at Location,
+        is rich;
+
+    create [1] location as warehouse:
+        location_type = "warehouse",
+        has worker of worker,
+        has unionrep of unionrep,
+        has foreman of foreman,
+        has owner of owner,
+        name = "[[[#OwnerName#]'s [Warehouses|Factory|Properties|Depot|Stockpile|Imports]]|[[Easterly|Westside|Waterfront|Seaside] [Warehouses|Imports]]|[The Stockyard]]".
+        
+initialization theater:
+    select [1] character as owner:
+        is owner of theater,
+        is employee at theater,
+    :where
+        age = [30:80],
+        not employee at Location,
+        is rich;
+        
+    select [1] character as usher:
+        is usher at theater,
+        is employee at theater,
+    :where
+        age = [16:24],
+        not employee at Location;
+        
+    select [1] character as playwright:
+        is playwright at theater,
+        is employee at theater,
+    :where
+        age = [25:65],
+        is artistic,
+        not employee at Location;
+        
+    select [1] character as director:
+        is director at theater,
+        is employee at theater,
+    :where
+        age = [35:50],
+        is artistic,
+        not employee at Location;
+        
+    select [1] character as stagehand:
+        is stagehand at theater,
+        is employee at theater,
+    :where
+        age = [18:25],
+        not employee at Location,
+        is poor;
+        
+    select [1] character as ticketer:
+        is ticketer at theater,
+        is employee at theater,
+    :where
+        age = [16:25],
+        not employee at Location,
+        is poor;
+        
+    select [6] character as actor:
+        is actor at theater,
+        is member at theater,
+    :where
+        not member at Location,
+        is artistic;
+        
+    create [1] location as theater:
+        location_type = "theater",
+        has owner of owner,
+        has usher of usher,
+        has stagehand of stagehand,
+        has director of director,
+        has playwright of playwright,
+        has actor of actor,
+        has ticketer of ticketer,
+        name = "Regal Theatre".
+        
+initialization historicalsociety:
+    select [1] character as curator:
+        is curator at historicalsociety,
+        is employee at historicalsociety,
+    :where
+        age = [45:80],
+        not employee at Location,
+        is scholar;
+        
+    select [4:8] character as contributer:
+        is contributer at historicalsociety,
+        is member at historicalsociety,
+    :where
+        age = [40:80],
+        is traditionalist,
+        is scholar,
+        not member at Location;
+
+    create [1] location as historicalsociety:
+        location_type = "historicalsociety",
+        has curator of curator,
+        has contributer of contributer,
+        name = "Arkham Historical Society".
+        
+initialization bank:
+    select [1] character as banker:
+        is banker at bank,
+        is employee at bank,
+    :where
+        not employee at Location,
+        is rich,
+        age = [40:60];
+        
+    select [2] character as clerk:
+        is clerk at bank,
+        is employee at bank,
+    :where
+        not employee at Location,
+        age = [25:60];
+    
+    create [1] location as bank:
+        has banker of banker,
+        has clerk of clerk,
+        location_type = "bank",
+        name = "Arkham Central Bank".
+        
+initialization graveyard:
+    select [1] character as gravedigger:
+        is gravedigger at graveyard,
+        is employee at graveyard,
+    :where
+        not employee at Location,
+        is poor;
+        
+    create [1] location as graveyard:
+        location_type = "graveyard",
+        has gravedigger of gravedigger,
+        name = "[East Ipswich|Arkham|Old Greene|Hyde|Christchurch] [Cemetery|Graveyard|Hill]".
+        
+initialization jailhouse:
+    select [1] character as sheriff:
+        is sheriff at jailhouse,
+        is employee at jailhouse,
+    :where
+        age = [40:55],
+        not employee at Location,
+        is political,
+        not rich;
+        
+    select [3] character as police:
+        is police at jailhouse,
+        is employee at jailhouse,
+    :where
+        age = [25:55],
+        not employee at Location,
+        not rich;
+
+    create [1] location as jailhouse:
+        has sheriff of sheriff,
+        has police of police,
+        location_type = "jailhouse",
+        name = "Arkham County Jail". //TODO: better name
+        
+initialization postoffice:
+    select [1] character as worker:
+        is worker at postoffice,
+        is employee at postoffice,
+    :where
+        age = [22:65],
+        not employee at Location,
+        is poor;
+        
+    create [1] location as postoffice:
+        has worker of worker,
+        location_type = "postoffice",
+        name = "[Kingston|Sefton|Dunwich|Ipswich|Arkham] Post".
+        
+initialization newspaper:
+    select [1] character as editor:
+        is editor at newspaper,
+        is employee at newspaper,
+        is owner at newspaper
+    :where
+        age = [40:60],
+        is political,
+        not employee at Location;
+        
+    select [1] character as reporter:
+        is reporter at newspaper,
+        is employee at newspaper,
+    :where
+        not employee at Location;
+        
+    select [1] character as writer:
+        is writer at newspaper,
+        is member at newspaper,
+    :where
+        not member at Location;
+        
+    create [1] location as newspaper:
+        location_type = "newspaper",
+        has editor of editor,
+        has reporter of reporter,
+        has writer of writer,
+        name = "[Arkham|Ipswich|Dunwich|Miskatonic] [Gazette|Journal|Paper|Press|Reader|News]".
+        
+initialization hospital:
+    select [1] character as doctor:
+        is doctor at hospital,
+        is employee at hospital,
+    :where
+        age = [28:65],
+        not employee at Location,
+        is rich;
+        
+    select [2] character as nurse:
+        is nurse at hospital,
+        is employee at hospital,
+    :where
+        age = [25:65],
+        not employee at Location,
+        not rich;
+
+    create [1] location as hospital:
+        has doctor of doctor,
+        has nurse of nurse,
+        location_type = "hospital",
+        name = "Sefton Hospital". //TODO: better name
+        
+initialization library:
+    select [1] character as librarian:
+        is librarian at library,
+        is employee at library,
+    :where
+        age = [35:70],
+        not employee at Location,
+        is scholar;
+        
+    select [1:2] character as clerk:
+        is clerk at library,
+        is employee at library,
+    :where
+        not employee at Location,
+        is poor;
+        
+    select [2:3] character as volunteer:
+        is volunteer at library,
+        is member of library,
+    :where
+        age = [25:80],
+        not member at Location;
+
+    create [1] location as library:
+        location_type = "library",
+        has librarian of librarian,
+        has clerk of clerk,
+        has volunteer of volunteer,
+        name = "Miskatonic Library". //TODO: better name
+        
+initialization slaughterhouse:
+    select [2:4] character as butcher:
+        is butcher at slaughterhouse,
+        is employee at slaughterhouse,
+        is unionized,
+    :where
+        age = [18:50],
+        not employee of Location,
+        is poor;
+        
+    select [1] character as owner:
+        is owner at slaughterhouse,
+        is employee at slaughterhouse,
+    :where
+        age = [40:65],
+        not employee of Location,
+        is rich;
+        
+    create [1] location as slaughterhouse:
+        location_type = "slaughterhouse",
+        has owner of owner,
+        has butcher of butcher,
+        name = "Slaughterhouse". //TODO: better name
+        
+initialization baitshop:
+    select [1] character as owner:
+        is owner of baitshop,
+        is employee of baitshop,
+    :where
+        age = [25:70],
+        is poor,
+        not employee of Location;
+    
+    create [1] location as baitshop:
+        has owner of owner,
+        location_type = "baitshop",
+        name = "The Baitshop". //TODO: better name
+        
+initialization grocer:
+    select [1] character as owner:
+        is owner of grocer,
+        is employee of grocer,
+    :where
+        age = [35:70],
+        is poor,
+        not employee of Location;
+        
+    select [2:3] character as clerk:
+        is clerk of grocer,
+        is employee of grocer,
+    :where
+        age = [18:26],
+        is poor,
+        not employee of Location;
+        
+    create [1] location as grocer:
+        has owner of owner,
+        has clerk of clerk,
+        location_type = "grocer",
+        name = "Local Grocer". //TODO: better name
+        
+initialization generalstore:
+    select [1] character as owner:
+        is owner of generalstore,
+        is employee of generalstore,
+    :where
+        age = [35:70],
+        is poor,
+        not employee of Location;
+        
+    select [2:3] character as clerk:
+        is clerk of generalstore,
+        is employee of generalstore,
+    :where
+        age = [18:26],
+        is poor,
+        not employee of Location;
+        
+    create [1] location as generalstore:
+        has owner of owner,
+        has clerk of clerk,
+        location_type = "generalstore",
+        name = "General Goods". //TODO: better name
+        
+initialization artgallery:
+    select [1] character as owner:
+        is owner of artgallery,
+        is employee of artgallery,
+    :where
+        age = [45:70],
+        is rich,
+        not employee of Location;
+        
+    select [1] character as residentartist:
+        is residentartist of artgallery,
+        is employee of artgallery,
+    :where
+        is artistic,
+        not employee of Location;
+        
+    select [1:2] character as patron:
+        is patron of artgallery,
+        is member of artgallery,
+    :where
+        age = [30:70],
+        is rich,
+        is artistic,
+        not member of Location;
+        
+    select [2:4] character as regular:
+        is regular of artgallery,
+    :where
+        age = [25:80],
+        is rich,
+        not regular of Location;
+        
+    create [1] location as artgallery:
+        has owner of owner,
+        has residentartist of residentartist,
+        has patron of patron,
+        has regular of regular,
+        location_type = "artgallery",
+        name = "Art Gallery". //TODO: better name
+        
+initialization diner:
+    select [1] character as owner:
+        is owner of diner,
+        is employee of diner,
+    :where
+        age = [30:70],
+        not rich,
+        not employee of Location;
+        
+    select [2] character as cook:
+        is cook at diner,
+        is employee at diner,
+    :where
+        age = [25:50],
+        is poor,
+        not employee of Location;
+        
+    select [2:4] character as server:
+        is server at diner,
+        is employee at diner,
+    :where
+        age = [18:55],
+        is poor,
+        not employee of Location;
+        
+    select [1:3] character as regular:
+        is regular at diner,
+    :where
+        age = [30:70],
+        not regular of Location;
+        
+    create [1] location as diner:
+        has owner of owner,
+        has cook of cook,
+        has server of server,
+        has regular of regular,
+        location_type = "diner",
+        name = "The Local Diner". //TODO: better name
+        
+initialization cafe:
+    select [1] character as owner:
+        is owner of cafe,
+        is employee of cafe,
+    :where
+        age = [25:60],
+        not rich,
+        not employee of Location;
+        
+    select [4] character as regular:
+        is regular of cafe,
+    :where
+        age = [18:26],
+        is scholar;
+
+    create [1] location as cafe:
+        has owner of owner,
+        has regular of regular,
+        location_type = "cafe",
+        name = "Cafe". //TODO: better name
+        
+initialization hotel:
+    select [1] character as owner:
+        is owner of hotel,
+        is employee of hotel,
+    :where
+        age = [30:50],
+        is rich,
+        not employee of Location;
+        
+    select [2] character as receptionist:
+        is receptionist of hotel,
+        is employee of hotel,
+    :where
+        age = [20:35],
+        not employee of Location;
+        
+    select [2:3] character as cleaner:
+        is cleaner at hotel,
+        is employee at hotel,
+    :where
+        age = [20:50],
+        is poor,
+        not employee at Location;
+        
+    select [4:8] character as guest:
+        is guest at hotel,
+        is resident at hotel, 
+        //is employee at outsidetown, //HOW TO?
+    :where
+        not poor,
+        not resident at Location,
+        not employee at Location,
+        not married,
+        not parent,
+        not child;
+        
+    create [1] location as hotel:
+        has owner of owner,
+        has receptionist of receptionist,
+        has cleaner of cleaner,
+        has guest of guest,
+        location_type = "hotel",
+        name = "Hotel". //TODO: better name
+        
+initialization townhall:
+    select [1] character as mayor:
+        is mayor at townhall,
+        is employee at townhall,
+    :where
+        age = [35:50],
+        not poor,
+        is political,
+        not employee at Location;
+        
+    select [2] character as clerk:
+        is clerk at townhall,
+        is employee at townhall,
+    :where
+        age = [35:50],
+        not rich,
+        not employee at Location;
+        
+    select [1:3] character as regular:
+        is regular at townhall,
+    :where
+        is political;
+        
+    create [1] location as townhall:
+        has mayor of mayor,
+        has clerk of clerk,
+        has regular of regular,
+        location_type = "townhall",
+        name = "Town Hall". //TODO: better name
+        
+initialization butchershop:
+    select [1] character as butcher:
+        is butcher at butchershop,
+        is owner at butchershop,
+        is employee at butchershop,
+    :where
+        age = [30:55],
+        not employee at Location,
+        not rich;
+        
+    create [1] location as butchershop:
+        has butcher of butcher,
+        location_type = "butchershop",
+        name = "The Butcher Shoppe". //TODO: better name
+        
+initialization bakery:
+    select [1] character as baker:
+        is baker at bakery,
+        is owner at bakery,
+        is employee at bakery,
+    :where
+        age = [30:55],
+        not employee at Location,
+        not rich;
+    
+    create [1] location as bakery:
+        has baker of baker,
+        location_type = "bakery",
+        name = "Bakery". //TODO: better name
+        
+initialization masoniclodge:
+    select [1] character as grandmaster:
+        is grandmaster of masoniclodge,
+        is member of masoniclodge,
+    :where
+        age = [50:65],
+        is rich,
+        is political,
+        is traditionalist,
+        not member of Location;
+        
+    select [5:10] character as freemason:
+        is freemason of masoniclodge,
+        is member of masoniclodge,
+    :where
+        age = [30:70],
+        is rich,
+        is political,
+        is traditionalist,
+        not member of Location;
+        
+    create [1] location as masoniclodge:
+        has freemason of freemason,
+        has grandmaster of grandmaster,
+        location_type = "masoniclodge",
+        name = "Masonic Lodge". //TODO: better name
+
+initialization gentlemensclub:
+    select [4:6] character as member:
+        is member of gentlemensclub,
+    :where
+        age = [30:60],
+        not poor, //or just for the rich?
+        not member of Location;
+    create [1] location as gentlemensclub:
+        has member of member,
+        location_type = "gentlemensclub",
+        name = "Gentlemen's Club". //TODO: better name
+        
+initialization socialparlour:
+    select [4:6] character as member:
+        is member of socialparlour,
+    :where
+        age = [26:50],
+        not poor, //or just for the rich?
+        not member of Location;
+        
+    create [1] location as socialparlour:
+        has member of member,
+        location_type = "socialparlour",
+        name = "Ladies Social Parlour". //TODO: better name
+        
+initialization union:
+    select [12] character as member:
+        is member of union,
+    :where
+        is unionized,
+        not member of Location;
+        
+    create [1] location as union:
+        has member of member,
+        location_type = "union",
+        name = "Union HQ". //TODO: better name
+        
+initialization apothecary:
+    select [1] character as owner:
+        is owner of apothecary,
+        is employee of apothecary,
+    :where
+        age = [50:70],
+        not employee of Location;
+    
+    create [1] location as apothecary:
+        has owner of owner,
+        location_type = "apothecary",
+        name = "Apothecary". //TODO: better name
+        
+initialization funeralhome:
+    select [1] character as mortician:
+        is mortician at funeralhome,
+        is owner of funeralhome,
+        is employee of funeralhome,
+    :where
+        age = [50:70],
+        not employee at Location;
+    
+    create [1] location as funeralhome:
+        has mortician of mortician,
+        location_type = "funeralhome",
+        name = "Funeral Home and Mortuary".
+        
+initialization charityhouse:
+    select [4] character as volunteer:
+        is volunteer at charityhouse,
+        is member of charityhouse,
+    :where
+        age = [25:70],
+        is gregarious,
+        not poor;
+        
+    select [6] character as resident:
+        is resident of charityhouse,
+        is destitute,
+    :where
+        age = [18:30],
+        is poor,
+        not resident of Location;
+        
+    create [1] location as charityhouse:
+        has volunteer of volunteer,
+        has resident of resident,
+        location_type = "charityhouse",
+        name = "Charity House". //TODO: better name
+        
+initialization veteranshome:
+    select [4] character as resident:
+        is resident of veteranshome,
+        is veteranOfWWI,
+    :where
+        age = [35:50],
+        is poor,
+        not resident of Location;
+
+    create [1] location as veteranshome:
+        has resident of resident,        
+        location_type = "veteranshome",
+        name = "Veteran's Home". //TODO: better name
+        
+initialization businessassociation:
+    select [5] character as member:
+        is member of businessassociation,
+    :where
+        not poor,
+        is owner,
+        not member of Location;
+        
+    select [10] character as associate:
+        is associate of businessassociation,
+    :where
+        is owner;
+    
+    create [1] location as businessassociation:
+        has member of member,
+        has associate of associate,
+        location_type = "businessassociation",
+        name = "Ispwich Business Association". //TODO: better name
+        
+initialization university:
+    select [1] character as provost:
+        is provost of university,
+        is employee of university,
+    :where
+        age = [50:60],
+        is scholar,
+        is rich,
+        not employee of Location;
+        
+    select [2] character as clerk:
+        is clerk of university,
+        is employee of university,
+    :where
+        age = [25:50],
+        not rich,
+        not employee of Location;
+        
+    select [1] character as janitor:
+        is janitor of university,
+        is employee of university,
+    :where
+        is poor,
+        not employee of Location;
+        
+    select [1] character as professor_of_medievalmetaphysics:
+        is professor at university,
+        is professor_of_medievalmetaphysics at university,
+        is employee at university,
+    :where
+        age = [40:60],
+        is scholar,
+        not employee of Location;
+        
+    select [0:2] character as student_of_medievalmetaphysics:
+        is student at university,
+        is student_of_medievalmetaphysics at university,
+        is employee at university,
+    :where
+        age = [18:26],
+        is scholar,
+        not employee of Location;
+        
+    select [1] character as professor_of_archaeology:
+        is professor at university,
+        is professor_of_archaeology at university,
+        is employee at university,
+    :where
+        age = [40:60],
+        is scholar,
+        not employee of Location;
+        
+    select [0:2] character as student_of_archaeology:
+        is student at university,
+        is student_of_archaeology at university,
+        is employee at university,
+    :where
+        age = [18:26],
+        is scholar,
+        not employee of Location;
+        
+    select [1] character as professor_of_anthropology:
+        is professor at university,
+        is professor_of_anthropology at university,
+        is employee at university,
+    :where
+        age = [40:60],
+        is scholar,
+        not employee of Location;
+        
+    select [0:2] character as student_of_anthropology:
+        is student at university,
+        is student_of_anthropology at university,
+        is employee at university,
+    :where
+        age = [18:26],
+        is scholar,
+        not employee of Location;
+        
+    select [1] character as professor_of_linguistics:
+        is professor at university,
+        is professor_of_linguistics at university,
+        is employee at university,
+    :where
+        age = [40:60],
+        is scholar,
+        not employee of Location;
+        
+    select [0:2] character as student_of_linguistics:
+        is student at university,
+        is student_of_linguistics at university,
+        is employee at university,
+    :where
+        age = [18:26],
+        is scholar,
+        not employee of Location;
+        
+    select [1] character as professor_of_history:
+        is professor at university,
+        is professor_of_history at university,
+        is employee at university,
+    :where
+        age = [40:60],
+        is scholar,
+        not employee of Location;
+        
+    select [0:2] character as student_of_history:
+        is student at university,
+        is student_of_history at university,
+        is employee at university,
+    :where
+        age = [18:26],
+        is scholar,
+        not employee of Location;
+
+    select [1] character as professor_of_psychology:
+        is professor at university,
+        is professor_of_psychology at university,
+        is employee at university,
+    :where
+        age = [40:60],
+        is scholar,
+        not employee of Location;        
+    
+    select [0:2] character as student_of_psychology:
+        is student at university,
+        is student_of_psychology at university,
+        is employee at university,
+    :where
+        age = [18:26],
+        is scholar,
+        not employee of Location;
+    
+    select [1] character as professor_of_science:
+        is professor at university,
+        is professor_of_science at university,
+        is employee at university,
+    :where
+        age = [40:60],
+        is scholar,
+        not employee of Location;  
+        
+    select [0:2] character as student_of_science:
+        is student at university,
+        is student_of_science at university,
+        is employee at university,
+    :where
+        age = [18:26],
+        is scholar,
+        not employee of Location;
+
+    create [1] location as university:
+        has provost of provost,
+        has clerk of clerk,
+        has janitor of janitor,
+        has professor_of_medievalmetaphysics of professor_of_medievalmetaphysics,
+        has student_of_medievalmetaphysics of student_of_medievalmetaphysics,
+        has professor_of_archaeology of professor_of_archaeology,
+        has student_of_archaeology of student_of_archaeology,
+        has professor_of_anthropology of professor_of_anthropology,
+        has student_of_anthropology of student_of_anthropology,
+        has professor_of_linguistics of professor_of_linguistics,
+        has student_of_linguistics of student_of_linguistics,
+        has professor_of_history of professor_of_history,
+        has student_of_history of student_of_history,
+        has professor_of_psychology of professor_of_psychology,
+        has student_of_psychology of student_of_psychology,
+        has professor_of_science of professor_of_science,
+        has student_of_science of student_of_science,
+        location_type = "university",
+        name = "University". //TODO: better name
+        
+////////////////////////////////////////////////////////
+//  PLACES TO LIVE
+////////////////////////////////////////////////////////
+
+initialization studentapartment:
+    select [1] character as resident:
+        is resident of studentapartment,
+    :where
+        age = [18:26],
+        is student,
+        not resident of Location;
+        
+    create [1] location as studentapartment:
+        has resident of resident,
+        location_type = "studentapartment",
+        name = "Student Apartments". //TODO: better name
+        
+initialization tenement_housing:
+    select [1] character as resident:
+        is resident of tenement_housing,
+    :where
+        not resident of Location,
+        is poor;
+    
+    create [1] location as tenementhousing:
+        has resident of resident,
+        location_type = "tenementhousing",
+        name = "Tenement Housing". //TODO: better name
+        
+////////////////////////////////////////////////////////
+//  PLACES AS CONCEPTS
+////////////////////////////////////////////////////////
+
+initialization outsidetown:
+    create [1] location as outsidetown:
+        is outsidetown,
+        location_type = "outsidetown",
+        name = "Outside Town".
+        
+initialization nowhere:
+    create [1] location as nowhere:
+        is nowhere,
+        location_type = "nowhere",
+        name = "Nowhere".
+
+//student apartments: each has 1-4 students, single, roommates
+//tenements (destitute): 1-4 people, single, roommates
+//transient shelter: 1-4 people, single, roommates
+//lower class apartments: x10
+//lower class homes: x10
+//middle class apartments: x10
+//middle class single houses: x10
+//upper class houses: x10
+//upper class mansion: x5
+
+
+
+
+
+
+
+//TODO: one-off people
+//  * psychotherapist
+//  * occultist
+//  * private detective
+//  * novelist
+//  * poet
+//  * art collector
+//  * book collector
+//  * artifacts collector
+//  * scholar
+//  * socialite
+//  * 
+
+//rotary club
+//athletics association
+//drug store
+//curios & antiques
+//goldsmith & jeweler
+//confectionary & candy store
+//church (abandoned)
+//cinema
+//wax museum
+//penny arcade
+//loan agency
+//gas station
+//bus station
+//train station
+//lumber yard
+//construction & supply
+//law firm
+//billards hall
+//speakeasy
+//music hall
+//school of dance
+//fire department
+//police department
+//courthouse
+//Pump house & water tower
+//sanitarium
+//newstand
+//brickyard
+//credit agency
+//chemical supply
+//bathhouse
+//nursing home
+//construction site
+//demolition site
+//tenement
+//restaurant
+//spa
+//gym
+//finishing/etiquette school
+//specific trade school
+//barbershop & hairdresser
+//gift shop
+//print shop
+//clothiers
+//blacksmith
+//locksmith
+//supply store for props/theater
+//market
+//furniture & carpets
+//glassblower
+//music store
+//toy & train shop
+//flower shop
+//office supplies
+//department store
+//ice cream parlour
+//auto lot
+//stamps & coins
+//boutique shop
+//ice house
+//hardware store
+//timepieces & clocks/watches
+//beauty parlor
+//laundry
+//pet shop
+//haberdashery
+//tattoo shop
+//radio center
+//shoe store
+//Dimestore
+//electric company (edison)
+//phone company (bell)
+//transformer station
+//railroad properties
+//FREELANCERS or work from own office
+//therapist
+//surgeon
+//doctor
+//midwife
+//jumker
+//private investigator
+//consulting architect, bibliophile, academic, etc.
+//taxidermist
+//tobacconist
+//
+
+default character: 
+	last_name = "#lastNames#",
+	first_name = "#firstNames#",
+	age = [18:60],
+	traits = [1:3] traits.
+
+initialize:
+	//create [1] character;
+	create [4] family_couple_young;
+	create [4] family_couple_midlife;
+	create [4] family_couple_old;
+	create [4] family_couple_elderly;
+	create [4] family_young;
+	create [4] family_midlife;
+	create [4] family_old;
+	create [4] family_elderly;
+	create [1] church;
+	create [1] school;
+	create [1] boarding_house;
+	create [1] bookstore;
+	create [1] town_square;
+	create [1] wharf;
+	create [1] warehouse;
+	create [1] theater;
+	create [1] historicalsociety;
+	create [1] bank;
+	create [1] graveyard;
+	create [1] jailhouse;
+	create [1] postoffice;
+	create [1] newspaper;
+	create [1] hospital;
+	create [1] library;
+	create [1] slaughterhouse;
+	create [1] baitshop;
+	create [1] grocer;
+	create [1] generalstore;
+	create [1] artgallery;
+	create [1] diner;
+	create [1] cafe;
+	create [1] hotel;
+	create [1] townhall;
+	create [1] butchershop;
+	create [1] bakery;
+	create [1] masoniclodge;
+	create [1] gentlemensclub;
+	create [1] socialparlour;
+	create [1] union;
+	create [1] apothecary;
+	create [1] funeralhome;
+	create [1] charityhouse;
+	create [1] veteranshome;
+	create [1] businessassociation;
+	create [1] university;
+	create [5] studentapartment;
+	create [1] outsidetown;
+	create [1] nowhere.

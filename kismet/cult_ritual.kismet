@@ -1,0 +1,205 @@
+
+location church:
+    supports: [100] cultist;
+    each_turn:
+        cast cultist.
+        
+location narthex:
+    supports: [100] cultist;
+    each_turn:
+        cast cultist.
+        
+location sanctuary:
+    supports: [100] cultist;
+    each_turn:
+        cast cultist.
+        
+location altar:
+    supports: [100] cultist;
+    each_turn:
+        cast cultist.
+        
+location crypt:
+    supports: [100] cultist;
+    each_turn:
+        cast cultist.
+        
+location nave:
+    supports: [100] cultist;
+    each_turn:
+        cast cultist.
+        
+location chapel:
+    supports: [100] cultist;
+    each_turn:
+        cast cultist.
+    
+    
+    
+pattern romantic_rivals(>Me, >Rival, >Subject)
+    "Me and Rival compete for the love of Subject":
+    if Me likes Rival <= -5,
+        Rival likes Me <= -5,
+        Me likes Subject >= 10,
+        Rival likes Subject >= 10.
+
+pattern nemesis(>Me, >Nemesis)
+    "Me and Nemesis are arch rivals who hate each other":
+    if Me likes Nemesis <= -10,
+        Nemesis likes Me <= -10.
+
+pattern mutual_dislike(>Me, >Rival)
+    "Me and Rival share a mutual dislike for each other.":
+    if Me likes Rival <= -5, Rival likes Me <= -5.
+    
+////////////////////////////////////////////////////////////
+//  ACTIONS
+////////////////////////////////////////////////////////////
+
+//action exist(>Person)
+//"Person exists here.":.
+
+//CHURCH
+action pray_alone(>Churchgoer:patron)
+"Churchgoer prays.":
+    location: church(Churchgoer).
+    
+action sermon(>Deacon:deacon)
+"Deacon conducts a sermon.":
+    tags: employment;
+    location: church(Deacon).
+    
+action study_religion(>Priest:priest)
+"Priest studies from holy manuscripts.":
+    tags: employment;
+    location: church(Priest).
+    
+//BOARDING HOUSE
+action boarding_house_maintenance(>Owner:owner)
+"Owner does some maintenance on the building.":
+    tags: employment;
+    location: boarding_house(Owner).
+    
+action housekeeping(>Housekeeper:housekeeper)
+"Housekeeper launders the beds.":
+    tags: employment;
+    location: boarding_house(Housekeeper).
+    
+action boarder_lounge(>Boarder:boarder)
+"Boarder lounges in their room.":
+    location: boarding_house(Boarder).
+    
+action boarding_house_visitor(>Visitor:visitor)
+"Visitor visits the boarding house.":
+    location: boarding_house(Visitor).
+    
+//TOWN SQUARE
+action loiterer(>Loiterer)
+"Loiterer loiters.":
+    location: town_square(Loiterer).
+    
+//SCHOOL
+action student_learning(>Student:student)
+"Student learns.":
+    location: school(Student).
+    
+action headmaster_teaches(>Headmaster:headmaster)
+"Headmaster teaches.":
+    tags: employment;
+    location: school(Headmaster).
+    
+//BOOKSTORE
+action bookstore_owner(>Owner:owner)
+"Owner orders books.":
+    tags: employment;
+    location: bookstore(Owner).
+    
+action bookstore_clerk(>Clerk:clerk)
+"Clerk stocks shelves.":
+    tags: employment;
+    location: bookstore(Clerk).
+    
+action bookstore_regular(>Regular:regular)
+"Regular requests a special order.":
+    location: bookstore(Regular).
+    
+action bookstore_customer(>Customer:customer)
+"Customer browses the books.":
+    location: bookstore(Customer).
+    
+//WHARF
+action wharf_work(>Worker:dockworker)
+"Worker unloads cargo.":
+    tags: employment;
+    location: wharf(Worker).
+    
+action fish(>Fisherman:fisherman)
+"Fisherman fishes.":
+    location: wharf(Fisherman).
+    
+action sailor_loiter(>Sailor:sailor)
+"Sailor lounges aboard.":
+    location: wharf(Sailor).
+    
+action wharf_loiter(>Loiterer)
+"Loiterer looks out over the sea.":
+    location: wharf(Loiterer).
+    
+//WAREHOUSE
+action warehouse_owner(>Owner:owner)
+"Owner balances the accounts.":
+    tags: employment;
+    location: warehouse(Owner).
+    
+action warehouse_union_rep(>Union:unionrep)
+"Union organizes the workers.":
+    tags: employment;
+    location: warehouse(Union).
+    
+action warehouse_foreman(>Foreman:foreman)
+"Foreman oversees the workers.":
+    tags: employment;
+    location: warehouse(Foreman).
+    
+action warehouse_worker(>Worker:worker)
+"Worker labours.":
+    tags: employment;
+    location: warehouse(Worker).
+    
+//BAR
+action bar_generic(>Self)
+"Self drinks.":
+    location: bar(Self).
+
+///////////////////////////////////////////////////////////////
+//  STATUS
+//////////////////////////////////////////////////////////////
+ 
+status scalar likes/like/liked(>Self,<Other):.
+
+/////////////////////////////////////////////////////////////
+//  TRAITS
+/////////////////////////////////////////////////////////////
+
+trait gregarious(>Self) opposes narcissistic:
+    +++(gregarious).
+    
+trait narcissistic(>Self) opposes gregarious:
+    +++(narcissistic).
+    
+trait traditionalist(>Self) opposes reformist:
+    +++(traditionalist).
+    
+trait reformist (>Self):
+    +++(reformist).
+
+trait skeptic(>Self) opposes believer:
+    +++(skeptic).
+    
+trait believer (>Self):
+    +++(believer).
+    
+
+default trait workers_go_to_work(>Self,@Location):
+    ++++++@if Self is employee of Location@.       
+

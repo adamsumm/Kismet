@@ -1,0 +1,5 @@
+load cult.kismet with tracery ../tracery/edwardian.tracery;
+
+initialize kismet_CultTown.init;
+
+run  20 steps;

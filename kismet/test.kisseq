@@ -1,0 +1,33 @@
+load gosford_history.kismet with ../tracery/edwardian.tracery;
+
+initialize gosford_history.init;
+
+run until 5+ characters in pattern hate_each_other /2, 2 characters in pattern star_crossed_love /2, steps > 10
+    or 20 steps;
+
+run until > 6 characters in pattern hate_each_other /2, < 3  characters in pattern star_crossed_love /2
+    or 20 steps;
+    
+run until >= 10  characters in pattern hate_each_other /2, <= 12 characters in pattern star_crossed_love /2
+    or 20 steps;
+    
+run 10 steps;
+
+load gosford_manor.kismet  with ..\tracery\edwardian.tracery;
+
+   
+initialize gosford_manor.init:
+keeping characters where
+    in pattern hate_each_other /2, age > 15, and is wealthy
+    or
+    in pattern relative_of /2 with character in pattern hate_each_other /2
+    or
+    in pattern relative_of /2 with character in kept:
+keeping locations with
+    is warehouse, is public
+    or 
+    is public, is religious;
+    
+run until 1 character is dead 
+    or 1+ character is murdered /2 
+    or >3 character hatred > 5;

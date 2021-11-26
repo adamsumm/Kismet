@@ -1,0 +1,98 @@
+default location:.
+
+default character: 
+	last_name = "#lastNames#",
+	first_name = "#firstNames#",
+	age = [18:50],
+	traits = [1:2] traits.
+    
+initialization city:
+    create [1] location as city:
+        name = "[[New |][Bruns|Dun|Young|Carl|Colum|Ash|Bed|Rivers|Summer|Samuel|England|Ryan][ton|wick|ford|ville|bus|bine|shire]|[San|Santa] [Clara|Anita|Cruz|Carlos]|[Los|Las|Monte|Vista Del] [Mar|Prado|Rio]]",
+        location_type = "city",
+        is urban.
+
+initialization town:
+    create [1] location as town:
+        name = "[[New |][Bruns|Dun|Young|Carl|Colum|Ash|Bed|Rivers|Summer|Samuel|England|Ryan][ton|wick|ford|ville|bus|bine|shire]|[San|Santa] [Clara|Anita|Cruz|Carlos]|[Los|Las|Monte|Vista Del] [Mar|Prado|Rio]]",
+        location_type = "town",
+        is suburban.
+
+initialization farmland:
+    create [1] location as farmland:
+        name = "[[New |][Bruns|Dun|Young|Carl|Colum|Ash|Bed|Rivers|Summer|Samuel|England|Ryan][ton|wick|ford|ville|bus|bine|shire]|[San|Santa] [Clara|Anita|Cruz|Carlos]|[Los|Las|Monte|Vista Del] [Mar|Prado|Rio]]",
+        location_type = "farmland",
+        is rural.
+
+
+initialization urban_family:
+    let FamilyName = "#lastNames#";
+    
+    select [1] location as hometown:
+        :where
+        is urban;
+    
+    create [1:2] character as parent:
+        is parent of child,
+        is spouse of parent,
+        is resident of hometown,
+        last_name = FamilyName,
+        age = [30:40];
+    
+    create [1:6] character as child:
+        is child of parent,
+        is sibling of child,
+        is resident of hometown,
+        last_name = FamilyName,
+        age = [1:10].
+        
+initialization suburban_family:
+    let FamilyName = "#lastNames#";
+    
+    select [1] location as hometown:
+        :where
+        is suburban;
+    
+    create [1:2] character as parent:
+        is parent of child,
+        is spouse of parent,
+        is resident of hometown,
+        last_name = FamilyName,
+        age = [30:40];
+    
+    create [1:6] character as child:
+        is child of parent,
+        is sibling of child,
+        is resident of hometown,
+        last_name = FamilyName,
+        age = [1:10].
+                
+initialization rural_family:
+    let FamilyName = "#lastNames#";
+    
+    select [1] location as hometown:
+        :where
+        is rural;
+    
+    create [1:2] character as parent:
+        is parent of child,
+        is spouse of parent,
+        is resident of hometown,
+        last_name = FamilyName,
+        age = [30:40];
+    
+    create [1:6] character as child:
+        is child of parent,
+        is sibling of child,
+        is resident of hometown,
+        last_name = FamilyName,
+        age = [1:10].
+
+initialize:
+    create [10] farmland;
+    create [1] city;
+    create [1] town;
+	create [20] urban_family;
+    create [20] suburban_family;
+    create [20] rural_family
+.
