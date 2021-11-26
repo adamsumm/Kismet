@@ -14,6 +14,41 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#time.
+    def visitTime(self, ctx:kismetParser.TimeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#num_range.
+    def visitNum_range(self, ctx:kismetParser.Num_rangeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#time_statement.
+    def visitTime_statement(self, ctx:kismetParser.Time_statementContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#time_start_modifier.
+    def visitTime_start_modifier(self, ctx:kismetParser.Time_start_modifierContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#time_iteration_modifier.
+    def visitTime_iteration_modifier(self, ctx:kismetParser.Time_iteration_modifierContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#list_range.
+    def visitList_range(self, ctx:kismetParser.List_rangeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#time_type.
+    def visitTime_type(self, ctx:kismetParser.Time_typeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#pattern.
     def visitPattern(self, ctx:kismetParser.PatternContext):
         return self.visitChildren(ctx)

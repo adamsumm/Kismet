@@ -17,6 +17,69 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#time.
+    def enterTime(self, ctx:kismetParser.TimeContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#time.
+    def exitTime(self, ctx:kismetParser.TimeContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#num_range.
+    def enterNum_range(self, ctx:kismetParser.Num_rangeContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#num_range.
+    def exitNum_range(self, ctx:kismetParser.Num_rangeContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#time_statement.
+    def enterTime_statement(self, ctx:kismetParser.Time_statementContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#time_statement.
+    def exitTime_statement(self, ctx:kismetParser.Time_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#time_start_modifier.
+    def enterTime_start_modifier(self, ctx:kismetParser.Time_start_modifierContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#time_start_modifier.
+    def exitTime_start_modifier(self, ctx:kismetParser.Time_start_modifierContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#time_iteration_modifier.
+    def enterTime_iteration_modifier(self, ctx:kismetParser.Time_iteration_modifierContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#time_iteration_modifier.
+    def exitTime_iteration_modifier(self, ctx:kismetParser.Time_iteration_modifierContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#list_range.
+    def enterList_range(self, ctx:kismetParser.List_rangeContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#list_range.
+    def exitList_range(self, ctx:kismetParser.List_rangeContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#time_type.
+    def enterTime_type(self, ctx:kismetParser.Time_typeContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#time_type.
+    def exitTime_type(self, ctx:kismetParser.Time_typeContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#pattern.
     def enterPattern(self, ctx:kismetParser.PatternContext):
         pass
