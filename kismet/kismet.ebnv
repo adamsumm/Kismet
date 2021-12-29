@@ -1,9 +1,43 @@
 grammar kismet;
 
 world:
- (location|role|action|trait|pattern)+ EOF
+ (location|role|action|trait|pattern|time)+ EOF
  ;
+
+OPEN: '[';
+CLOSE: ']';
+
+time:
+    'time'  time_statement+ '.';
  
+num_range:
+	'[' num ']' | 
+	'[' num ':' num ']' ( pdf )? ;
+    
+
+
+time_statement:
+    name ':' time_start_modifier? time_type time_iteration_modifier?;
+
+time_start_modifier: '?';
+
+time_iteration_modifier:    '+' |
+                            '*' |
+                            '?' |
+                            '+' num |
+                            '+' num_range |
+                            '*' num |
+                            '*' num_range;
+                            
+                            
+    
+
+list_range: '[' (name|var) ('|' (name|var))*  ']';
+
+time_type:
+    num_range |
+    list_range;
+
 pattern:
     'pattern'  name '(' arg (',' arg)* ')' random_text? ':' comparison '.';
 
@@ -124,7 +158,7 @@ knowledge:
 	'did'		|
 	'received'	;
 
-condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern;
+condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern | condTimeHistory | condTimePersonal | condTimePersonalAssignment;
 
 cond8: arg ('\'s'|'s') name operator num;
 cond3: arg knowledge arg;
@@ -137,6 +171,11 @@ cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator nu
 cond6: arg  inversion? ('have'|'has'|'is')* name ('of'|'to'|'with' | 'at')* arg (operator num)?;
 cond7: arg name arg comparator num;
 condpattern: 'pattern' '(' name  (',' arg)* ')';
+condTimeHistory: 'now' ('is')? comparator num name 'since' arg;
+condTimePersonal: 'now' ('is')? comparator num name 'since' arg '\'s' name;
+condTimePersonalAssignment: 'now' 'is' arg '\'s' name |
+                            arg '\'s' name 'is' 'now';
+
 tag_compare: 'is missing' | 'is not' | 'is' | 'isn\'t' | 'isnt' | 'aint' | 'missing';
 
 operator: (MINUS|PLUS|EQUALS);
@@ -147,7 +186,7 @@ EQUALS: ('=');
 
 location:
 	'location' name ':'
-        (supports|each_turn|tags) (';' (supports|each_turn|tags))* '.';
+        ((supports|each_turn|tags) (';' (supports|each_turn|tags))*)? '.';
 
 each_turn:
 	'each_turn' ':' cast;

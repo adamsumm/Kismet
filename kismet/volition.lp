@@ -1,4 +1,4 @@
-#show likelihood/2.
+%#show likelihood/2.
 
 binding(person(INITIATOR),person(TARGET),person(SUBJECT),event(ACTION),location(LOCATION)) :- action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION).
 

@@ -1,3 +1,5 @@
+a(1,2,3).
+a(10,11,12).
+b(a(X,Y,Z)) :- a(X,Y,Z).
 
-%%%%BAAAAD BAD BAD BAD
-at(Person,the_void) :- person(Person).
+c(A) :- b(A), a(X,Y,Z) = A, X > 5.

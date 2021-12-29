@@ -59,27 +59,26 @@ action mingle(>Person, <Other)
        tags: talk;
        result: Other likes Person += 1.
 
+
 action mingle_loudly(>Person, <Other)
-"Person and Other mingle loudly with each other":
+"Person talks loudly at Other mingle loudly with each other":
        location: (Person, Other);
        if Person is extroverted;
        tags: talk;
-       result: Other likes Person += 1.
+       result: Person likes Other += 1,
+               Other likes Person -= 1.
        
-action gossip_about(>Gossiper, <Gossipee, ^GossipedAbout,*GossipedAction ):
-       location: (Gossiper, Gossipee) ?(GossipedAbout);
+action humble_brag_about(>Gossiper, <Gossipee, *GossipedAction ):
+       location: (Gossiper, Gossipee);
        tags: talk;
        visibility++;
        if 
-	  Gossipee  doesn't know GossipedAction,
-	  GossipedAbout did GossipedAction,
-	  GossipedAbout saw GossipedAction,
-	  GossipedAbout received GossipedAction,
-	  GossipedAbout heard GossipedAction,
-       	  Gossiper knows GossipedAction;
+          Gossipee  doesn't know GossipedAction,
+          Gossiper did GossipedAction,
+          GossipedAction is cool;
        result:
-       	       Gossipee likes Gossiper += 1,
-	       Gossipee heard GossipedAction.
+       	     Gossipee likes Gossiper += 1,
+	         Gossipee heard GossipedAction.
 
 action dominate_conversation(>Person, <Other) 
     "Person talks to Other and dominates the conversation":
@@ -96,6 +95,16 @@ action flirt(>Person, <Other) extends mingle(>Person, <Other)
        result:
        	       Person likes Other += 1.
 
+action shy_flirt(>Person, <Other) extends mingle(>Person, <Other)
+"Person overcomes their fear of talking to bashfully flirts with Other":
+       location: (Person, Other);
+       tags: talk, romance;
+       if Person is quiet_romantic;
+       visibility++;
+       result:
+       	       Person likes Other += 1.
+               
+               
 action flirt_unsuccessfully(>Person, <Other) extends mingle(>Person, <Other)
 "Person flirts with Other":
        location: (Person, Other);
@@ -109,12 +118,19 @@ action sulk(>Person) costs 1:
        tags: sad;
        if Person's sadness > 5.
 
+
+
+pattern quiet_romantic(>QuietRomantic):
+  if QuietRomantic is introverted, QuietRomantic is romantic.
+
 //COMMENTS!
 action slap(>Slapper, <Slapped, *UnwantedRomance)
 "Slapper [slaps|hits|strikes] Slapped in the face":  
     tags: violent;
+    
     // Slapped did UnwantedRomance to Slapper -- ADD THIS
     // Slapped did UnwantedRomance with Slapper -- ADD THIS
+    
     if Slapped did UnwantedRomance,
        UnwantedRomance is romance,
        Slapper received UnwantedRomance,
@@ -122,7 +138,13 @@ action slap(>Slapper, <Slapped, *UnwantedRomance)
     visibility++++;
     result: Slapped likes Slapper -= 5,
             Slapped is hurt.
-  
+ 
+trait romantic(>Self):
+    ++++(romance).
+
+trait religous(>Self, <Other):
+    +++(religious),
+    ---(romance if Other isnt religious).
 
 status hurt(>Self):
     +++(selfcare).

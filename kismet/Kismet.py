@@ -33,6 +33,7 @@ import re
 import shutil
 import functools
 module_singleton = None
+import platform
 
 def process_nesting(text,count=0):
     start = -1
@@ -105,6 +106,8 @@ def solve(args,clingo_exe='clingo'):
         
     with open('dump.lp', 'w') as outfile:
         result = json.loads(out)
+        if len( result['Call'][0]) == 0:
+            print('ERROR', ' '.join(print_args))
         witness = result['Call'][0]['Witnesses'][-1]['Value']
         for atom in sorted(witness):
             outfile.write(atom + '\n')
@@ -260,7 +263,7 @@ class KismetVisitor(ParseTreeVisitor):
         
         return ('Valence',ctx.getText())
 
-
+    
     # Visit a parse tree produced by kismetParser#action.
     def visitAction(self, ctx:kismetParser.ActionContext):
         return ('Action',self.visitChildren(ctx))
@@ -444,6 +447,20 @@ class KismetVisitor(ParseTreeVisitor):
     def visitCond10(self, ctx:kismetParser.Cond7Context):
         children = self.visitChildren(ctx)
         return ('DualCompareRelations',children)
+    
+    
+    # Visit a parse tree produced by kismetParser#condTimeHistory.
+    def visitCondTimeHistory(self, ctx:kismetParser.CondTimeHistoryContext):
+        return ('TimeHistory', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#condTimePersonal.
+    def visitCondTimePersonal(self, ctx:kismetParser.CondTimePersonalContext):
+        return ('TimePersonal', self.visitChildren(ctx))
+
+    # Visit a parse tree produced by kismetParser#condTimePersonal.
+    def visitCondTimePersonalAssignment(self, ctx:kismetParser.CondTimePersonalAssignmentContext):
+        return ('TimePersonalAssignment', self.visitChildren(ctx))
     # Visit a parse tree produced by kismetParser#operator.
     def visitOperator(self, ctx:kismetParser.OperatorContext):
         
@@ -804,8 +821,30 @@ def parseConditional(conditional,conditional_type='Conditional'):
         name = arguments[0][1]
         args = [name] + [arg[1][1] for arg in arguments[1:]]
         text = f'pattern({",".join(args)})'
+    elif cond_type == 'TimeHistory':
+        comparator = arguments[0][1]
+        num = arguments[1][1]
+        time_unit = arguments[2][1]
+        event = arguments[3][1][1]
+        text = f'time_since(T_{event},{time_unit},N_{event}), N_{event} {comparator} {num}, {event} = action(_,_,_,_,_,_,T_{event})'
+        
+    elif cond_type == 'TimePersonal':
+        comparator = arguments[0][1]
+        num = arguments[1][1]
+        time_unit = arguments[2][1]
+        character = arguments[3][1][1]
+        event = arguments[4][1]
+        uniq = f'{character}_{event}'.lower()
+        text = f'time_since(T_{uniq},{time_unit},N_{uniq}), N_{uniq} {comparator} {num}, is({character},{event},T_{uniq})'
+        print(comparator,num,time_unit,character,event,text)
+    elif cond_type == 'TimePersonalAssignment':
+        character = arguments[0][1][1]
+        event = arguments[1][1]
+        uniq = f'{character}_{event}'.lower()
+        text = [f'update({character},{event},Now) :- now(Now),']
+        print('TimePersonalAssignment',text)
     else:
-        print(f'UH OH --- Unknown Conditional Type -- missing "{cond_type}"')
+        raise Exception(f'UH OH --- Unknown Conditional Type -- missing "{cond_type}"')
     return text
 
 def get_unique_name(name):
@@ -1426,8 +1465,7 @@ class Time:
         diffs = [ (l-e)*cd for l,e,cd in zip(later_indices, earlier_indices,self.common_denominator)]
         d = functools.reduce(lambda x,y: x+y, diffs)
         diffs = [d//cd for cd in self.common_denominator]
-        return diffs
-    
+        return diffs, [(loop.name, delta) for loop, delta in zip(self.time_loops,diffs)] 
     
 def parseTime(raw):
     raw = raw['TimeStatement']
@@ -1503,9 +1541,14 @@ class KismetModule():
                 default_cost = 3,
                 clingo_exe='./clingo',
                 base_folder=''):
+        
+        
         global module_singleton
         module_singleton = self
             
+        if platform.system() == 'Windows':
+            clingo_exe = 'clingo'
+
                                 
                     
         self.path = os.path.abspath(os.path.dirname(__file__))
@@ -1589,6 +1632,8 @@ class KismetModule():
             things[thing[0]][name] = thing2dict(thing[1])
             
         self.time = parseTime(list(things['Time'].values())[0])
+        self.current_time = self.time()
+        
         self.actions = {action:parseAction(things['Action'][action],action) for action in things['Action']}
         for name,action in self.actions.items():
             if action.cost <= 0:
@@ -1649,7 +1694,6 @@ class KismetModule():
         
         
         for name in self.actions:
-
             constraints = self.actions[name].constraints
             tags = self.actions[name].tags
             characters = self.actions[name].characters
@@ -2164,7 +2208,8 @@ class KismetModule():
         
         return [{'likelihood':possible_actions}]
     def calculate_action_results(self):
-        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+       
         return action_results
     
     def calculate_observability(self):
@@ -2173,9 +2218,17 @@ class KismetModule():
     
     def knowledge2asp(self):        
         with open(os.path.join(self.path,f'{self.module_file}_history.lp'),'w') as history_file:
+            history_file.write(f'now(time({",".join([str(t[1]) for t in self.current_time])})).\n')
             for time, phase in zip(self.times,self.history[-self.history_cutoff:]):
+                _, category_deltas =  self.time.delta(time,self.current_time)
+                time = [str(t[1]) for t in time]
+                for label, delta in category_deltas:
+                    time_since = f'time_since(time({",".join(time)}), {label}, {delta}).'
+                    history_file.write(f'{time_since}\n')
+                    
                 for step in phase:
                     for action in step:
+                        action = action + [f'time({",".join(time)})']
                         history_file.write(f'did({action[1]},action({",".join(action)})).\n')
                         history_file.write(f'received({action[2]},action({",".join(action)})).\n')
     
@@ -2557,12 +2610,22 @@ class KismetModule():
             location_file.write('is(Actor,Role,RoleLocation) :- cast(RoleLocation, Role, Actor).\n')
         self.location_history.append({actor:location for actor, (location, role) in chosen_locations})
         
-            
+    def json2asp(self,json):
+        print(json)
+        predicate = json['predicate']
+        if 'terms' in json:
+            print('terms',json["terms"])
+            return f'{predicate}({", ".join([self.json2asp(term) for term in json["terms"]])})'
+        else:
+            return predicate
+        
     def step_actions(self):
         self.timestep += 1
         self.tempstep += 1
         self.current_time = self.time()
         print(self.current_time)
+        simple_time = [str(t[1]) for t in self.current_time]
+        asp_time = f'time({",".join(simple_time)})' 
         self.history.append([])
         self.times.append(self.current_time)
         
@@ -2611,12 +2674,17 @@ class KismetModule():
                 result_key = tuple(result[1:])
                 if result_key in character['status']:
                     del character['status'][result_key]
-
+            
             for result in action_results['update']:
+                raw_result = result
                 result = [term['predicate'] for term in  result[0]['terms']]
                 character = self.population[result[0]]
                 result_key = tuple(result[1:-1])
-                val = int(result[-1])
+                #If it isn't a number, treat it as an ASP predicate
+                if result[-1][0] in 'abcdefghijklmnopqrstuvwxyz_':
+                    val = self.json2asp(raw_result[0]['terms'][-1])
+                else:
+                    val = int(result[-1])
                 character['status'][result_key] = val
 
 
@@ -2625,7 +2693,7 @@ class KismetModule():
             for observability in visibility_results[0]['observability']:
                 terms = [term['predicate'] for term in observability[0]['terms']]
 
-                action = tuple(terms[:5])
+                action = tuple(terms[:5] + [asp_time])
                 observer = terms[6]
                 location = terms[7]
                 observability = int(terms[8])

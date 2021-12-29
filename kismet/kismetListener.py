@@ -458,6 +458,33 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#condTimeHistory.
+    def enterCondTimeHistory(self, ctx:kismetParser.CondTimeHistoryContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#condTimeHistory.
+    def exitCondTimeHistory(self, ctx:kismetParser.CondTimeHistoryContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#condTimePersonal.
+    def enterCondTimePersonal(self, ctx:kismetParser.CondTimePersonalContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#condTimePersonal.
+    def exitCondTimePersonal(self, ctx:kismetParser.CondTimePersonalContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#condTimePersonalAssignment.
+    def enterCondTimePersonalAssignment(self, ctx:kismetParser.CondTimePersonalAssignmentContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#condTimePersonalAssignment.
+    def exitCondTimePersonalAssignment(self, ctx:kismetParser.CondTimePersonalAssignmentContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#tag_compare.
     def enterTag_compare(self, ctx:kismetParser.Tag_compareContext):
         pass

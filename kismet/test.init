@@ -1,480 +1,63 @@
-default location.
+default location:.
 
-initialization church:
-
-	select [1] character as deacon:
-		is deacon of church,
-        is employee at church,
-        is resident of church
-	:where 
-		age = [60:80],
-		not employee of Location,
-		is traditionalist,	
-		is believer;
-		
-	select [1:2] character as priest:
-		is priest of church,
-        is employee at church
-	:where 
-		age = [30:70],
-		not employee of Location,
-		is believer;
-        
-    create [1] location as church:
-		location_type = "church",
-        has deacon of deacon,
-        has priest of priest,
-		name = "[The [Temple|Church] of [Starry|Everlasting|Loving|Immortal] [Wisdom|Truth|Revelation]]".
-		
-initialization boarding_house:
-    let FamilyName = "#lastNames#";
-
-    select [1] character as owner:
-        is owner of boarding_house,
-        is employee at boarding_house,
-        is resident at boarding_house,
-        last_name = FamilyName,
-        is married to housekeeper
-        //likes housekeeper = [10],
-    :where
-        age = [50:70],
-        not employee of Location,
-        not resident of Location,
-        not married;
-        
-    select [1] character as housekeeper:
-        is housekeeper of boarding_house,
-        is employee at boarding_house,
-        is resident at boarding_house,
-        last_name = FamilyName,
-        is married to owner
-        //likes owner = [10],
-    :where
-        age = [50:70],
-        not employee of Location,
-        not resident of Location,
-        not married;
-        
-    select [1:2] character as boarder:
-        is boarder at boarding_house,
-        is resident of boarding_house
-    :where
-        age = [22:30],
-        not resident of Location;
-        
-    create [1] location as boarding_house:
-        location_type = "boarding_house",
-        has owner of owner,
-        has housekeeper of housekeeper,
-        has boarder of boarder,
-        name = "[[#FamilyName#]'s [Boarding House|House]|[#FamilyName#] [House|Apartment]]".
-        
-initialization school:
-    select [1] character as headmaster:
-        is headmaster at school,
-        is employee at school
-    :where
-        age = [45:70],
-        not employee at Location;
-        
-    create [6:8] character as student:
-        is student at school,
-        is employee at school,
-        age = [6:16],
-        is child;
-        
-    create [1] location as school:
-        location_type = "school",
-        has headmaster of headmaster,
-        has student of student,
-        name = "[Arkham|Barnard|East|Providence|ArlingtonWest Armitage|High Lane|Northside|Saltonstall|Pickman] [Public|Private] School".
-
-initialization bookstore:
-    let OwnerName = "#lastNames#",
-        RandomName = "#lastNames#";
-    
-    select [1] character as owner:
-        is owner of bookstore,
-        is employee of bookstore,
-        last_name = OwnerName
-    :where
-        age = [35:80],
-        not employee at Location;
-        
-    select [2:3] character as clerk:
-        is clerk of bookstore,
-        is employee of bookstore
-    :where
-        age = [20:25],
-        not employee at Location;
-        
-    select [1:3] character as regular:
-        is regular of bookstore
-    :where
-        age = [40:60];
-
-    create [1] location as bookstore:
-        location_type = "bookstore",
-        has owner of owner,
-        has clerk of clerk,
-        has regular of regular,
-        name = "[[[#OwnerName#]'s [Books|Book Store|Used Books|Rare Books|Rare Books & Maps]]|[[#RandomName#]'s [Books|Book Store|Used Books|Rare Books|Rare Books & Maps]]|[[Seekers|Wanderer's|Mindful] Books]]".
-        
-    //question: can I have sublocations? like a basement or back room?
-        
-initialization town_square:
-    create [1] location as town_square:
-        location_type = "town_square",
-        name = "The Town Square".
-
-        
-initialization wharf:
-    select [4] character as dockworker:
-        is dockworker of wharf,
-        is employee at wharf,
-    :where
-        age = [30:50],
-        not employee at Location;
-        
-    select [4] character as fisherman:
-        is fisherman of wharf,
-        is employee at wharf,
-    :where
-        age = [30:70],
-        not employee at Location;
-    
-    select [1] character as sailor:
-        is sailor of wharf,
-        is employee at wharf,
-    :where
-        not employee at Location;
-
-    create [1] location as wharf:
-        location_type = "wharf",
-        has dockworker of dockworker,
-        has fisherman of fisherman,
-        has sailor of sailor,
-        name = "The Wharf".
-        
-initialization warehouse:
-    let OwnerName = "#lastNames#";
-    
-    select [6:8] character as worker:
-        is worker of warehouse,
-        is employee at warehouse,
-    :where
-        age = [18:50],
-        not employee at Location;
-        
-    select [1] character as unionrep:
-        //is worker at warehouse,
-        is employee at warehouse,
-        is unionrep of warehouse,
-    :where
-        age = [35:50],
-        not employee at Location;
-        
-    select [1] character as foreman:
-        is foreman of warehouse,
-        is employee at warehouse,
-    :where
-        age = [35:50],
-        not employee at Location;
-        
-    select [1] character as owner:
-        is owner of warehouse,
-        is employee at warehouse,
-        last_name = OwnerName,
-    :where
-        not employee at Location;
-
-    create [1] location as warehouse:
-        location_type = "warehouse",
-        has worker of worker,
-        has unionrep of unionrep,
-        has foreman of foreman,
-        has owner of owner,
-        name = "[[[#OwnerName#]'s [Warehouses|Factory|Properties|Depot|Stockpile|Imports]]|[[Easterly|Westside|Waterfront|Seaside] [Warehouses|Imports]]|[The Stockyard]]".
-        
-initialization theater:
-    select [1] character as owner:
-        is owner of theater,
-        is employee at theater,
-    :where
-        age = [30:80],
-        not employee at Location;
-        
-    select [1] character as usher:
-        is usher at theater,
-        is employee at theater,
-    :where
-        age = [16:24],
-        not employee at Location;
-        
-    select [1] character as playwright:
-        is playwright at theater,
-        is employee at theater,
-    :where
-        age = [25:65],
-        not employee at Location;
-        
-    select [1] character as director:
-        is director at theater,
-        is employee at theater,
-    :where
-        age = [35:50],
-        not employee at Location;
-        
-    select [1] character as stagehand:
-        is stangehand at theater,
-        is employee at theater,
-    :where
-        age = [18:25],
-        not employee at Location;
-        
-    select [1] character as ticketer:
-        is ticketer at theater,
-        is employee at theater,
-    :where
-        age = [16:25],
-        not employee at Location;
-        
-    select [6] character as actor:
-        is actor at theater,
-        is member at theater,
-    :where
-        not member at Location;
-        
-    create [1] location as theater:
-        location_type = "theater",
-        has owner of owner,
-        has usher of usher,
-        has stagehand of stagehand,
-        has director of director,
-        has playwright of playwright,
-        has actor of actor,
-        has ticketer of ticketer,
-        name = "Regal Theatre".
-        
-initialization historicalsociety:
-    select [1] character as curator:
-        is curator at historicalsociety,
-        is employee at historicalsociety,
-    :where
-        age = [45:80],
-        not employee at Location;
-        
-    select [4:8] character as contributer:
-        is contributer at historicalsociety,
-        is member at historicalsociety,
-    :where
-        age = [40:80],
-        is traditionalist,
-        not member at Location;
-
-    create [1] location as historicalsociety:
-        location_type = "historicalsociety",
-        has curator of curator,
-        has contributer of contributer,
-        name = "Arkham Historical Society".
-        
-initialization bank:
-    create [1] location as bank:
-        location_type = "bank".
-        
-initialization graveyard:
-    create [1] location as graveyard:
-        location_type = "graveyard".
-        
-initialization jailhouse:
-    create [1] location as jailhouse:
-        location_type = "jailhouse".
-        
-initialization postoffice:
-    create [1] location as postoffice:
-        location_type = "postoffice".
-        
-initialization newspaper:
-    create [1] location as newspaper:
-        location_type = "newspaper".
-        
-initialization hospital:
-    create [1] location as hospital:
-        location_type = "hospital".
-        
-initialization library:
-    create [1] location as library:
-        location_type = "library".
-        
-initialization slaughterhouse:
-    create [1] location as slaughterhouse:
-        location_type = "slaughterhouse".
-        
-initialization baitshop:
-    create [1] location as baitshop:
-        location_type = "baitshop".
-        
-initialization grocer:
-    create [1] location as grocer:
-        location_type = "grocer".
-        
-initialization generalstore:
-    create [1] location as generalstore:
-        location_type = "generalstore".
-
-//high priority:        
-//art gallery
-//diner
-//cafe
-//hotel
-//town hall
-//butcher shop
-//bakery
-//masonic lodge
-//gentleman's club
-//social parlour
-//rotary club
-//union headquarters
-//athletics association
-//apothecary
-//drug store
-//general store
-//curios & antiques
-//goldsmith & jeweler
-//confectionary & candy store
-//funeral home & mortuary
-//veteran's home
-//charity house
-//church (abandoned)
-//cinema
-//wax museum
-//penny arcade
-//street cafe
-//chamber of commerce
-//loan agency
-//gas station
-//bus station
-//train station
-//lumber yard
-//construction & supply
-//law firm
-//billards hall
-//speakeasy
-//music hall
-//school of dance
-//fire department
-//police department
-//courthouse
-//Pump house & water tower
-//sanitarium
-//newstand
-//brickyard
-//credit agency
-//funeral parlor
-//chemical supply
-//bathhouse
-//nursing home
-//construction site
-//demolition site
-//tenement
-//restaurant
-//spa
-//gym
-//finishing/etiquette school
-//specific trade school
-//university campus:
-    //residence/dormitory/hall
-    //science building
-    //bell tower
-    //administration building
-    //"x Hall"
-    //liberal arts
-    //school of medicine
-    //university library
-//barbershop & hairdresser
-//gift shop
-//print shop
-//clothiers
-//blacksmith
-//locksmith
-//supply store for props/theater
-//market
-//furniture & carpets
-//glassblower
-//music store
-//toy & train shop
-//flower shop
-//office supplies
-//department store
-//ice cream parlour
-//auto lot
-//stamps & coins
-//boutique shop
-//ice house
-//hardware store
-//timepieces & clocks/watches
-//beauty parlor
-//laundry
-//pet shop
-//haberdashery
-//tattoo shop
-//radio center
-//shoe store
-//Dimestore
-//electric company (edison)
-//phone company (bell)
-//transformer station
-//railroad properties
-//FREELANCERS or work from own office
-//therapist
-//surgeon
-//doctor
-//midwife
-//jumker
-//private investigator
-//consulting architect, bibliophile, academic, etc.
-//taxidermist
-//tobacconist
-//
-
-
-
-        
-        
 initialization bar:
-    create [1] location as bar:
-        location_type = "bar".
-        
-    //character: owner
-    //character: server
-    //character: patrons
-
+	let OwnerLastName = ownerChar's last_name,
+		OwnerFirstName = ownerChar's first_name;
+		
+	select [1] character as ownerChar:
+		is owner of barA,
+        is drunkard,
+		
+	:where 
+		age = [28:70],
+		not employee of Location,
+		not teetotaler;	
+		
+	create [1] location as barA:
+		location_type = "bar",
+		name = "[#OwnerLastName#|#OwnerFirstName#]'s [place|bar|tap|public house]".
+		
 default character: 
 	last_name = "#lastNames#",
 	first_name = "#firstNames#",
-	age = [18:60],
-	traits = [1:2] traits.
-
+	age = [18:50],
+	traits = [3:5] traits.
+	
+initialization family:
+	let FamilyName = "#lastNames#",
+	ParentATraits = [3:5] traits,
+	ParentBTraits = [3:5] traits;
+	
+	select [1] character as parentA:
+		age = [20:50],
+		last_name = FamilyName,
+		traits = ParentATraits,
+		is married to parentB,
+		is parent to child,
+        is old,
+        is angry = [2:4],
+        likes parentB = [5],
+		:where 
+        is not parent, 
+        is not married;
+		
+	select [1] character as parentB:
+		age = [20:50],
+		last_name = FamilyName,
+		traits = ParentBTraits,
+		is married to parentA,
+		is parent to child
+		:where is not parent, is not married;
+	
+	create [1:5] character as child:
+		age = [1:15],
+		last_name = FamilyName,
+		traits = [1:2] traits + [0:2] ParentBTraits + [0:2] ParentATraits,
+        is young,
+		is child to parentA,
+		is child to parentB.
+	
 initialize:
 	create [1] character;
-	create [1] church;
-	create [1] school;
-	create [1] boarding_house;
-	create [1] bookstore;
-	create [1] town_square;
-	create [1] wharf;
-	create [1] warehouse;
-	create [1] theater;
-	create [1] historicalsociety;
-	create [1] bank;
-	create [1] graveyard;
-	create [1] jailhouse;
-	create [1] postoffice;
-	create [1] newspaper;
-	create [1] hospital;
-	create [1] library;
-	create [1] slaughterhouse;
-	create [1] baitshop;
-	create [1] grocer;
-	create [1] generalstore;
+	create [3:5] family;
 	create [1] bar.
