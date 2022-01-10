@@ -179,6 +179,24 @@ class kismet_initializationListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismet_initializationParser#now.
+    def enterNow(self, ctx:kismet_initializationParser.NowContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#now.
+    def exitNow(self, ctx:kismet_initializationParser.NowContext):
+        pass
+
+
+    # Enter a parse tree produced by kismet_initializationParser#plus_minus.
+    def enterPlus_minus(self, ctx:kismet_initializationParser.Plus_minusContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#plus_minus.
+    def exitPlus_minus(self, ctx:kismet_initializationParser.Plus_minusContext):
+        pass
+
+
     # Enter a parse tree produced by kismet_initializationParser#deferred_assignment.
     def enterDeferred_assignment(self, ctx:kismet_initializationParser.Deferred_assignmentContext):
         pass

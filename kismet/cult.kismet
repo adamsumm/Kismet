@@ -309,7 +309,7 @@ action sermon(>Deacon:deacon)
 action study_religion(>Priest:priest)
 "Priest studies from holy manuscripts.":
     location: church(Priest).
-
+/*
 default trait do_debug(>Person):
     +++++(debug).
 
@@ -323,10 +323,15 @@ action debug_personal_time_check(>Person):
     tags: debug;
     if now is >= 1 day since Person's birthday.
 
-action debug_personal_time_assignment(>Person):
+*/
+
+event birthday(>Person):
     tags: debug;
-    result: now is Person's birthday.
+    if now is >= 1 year since Person's birthday;
+    result: Person's birthday year += 1.
+
     
+
 action humble_brag_about(>Gossiper, <Gossipee, *GossipedAction ):
        location: (Gossiper, Gossipee);
        tags: talk;

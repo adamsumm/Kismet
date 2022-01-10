@@ -104,6 +104,16 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismet_initializationParser#now.
+    def visitNow(self, ctx:kismet_initializationParser.NowContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#plus_minus.
+    def visitPlus_minus(self, ctx:kismet_initializationParser.Plus_minusContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismet_initializationParser#deferred_assignment.
     def visitDeferred_assignment(self, ctx:kismet_initializationParser.Deferred_assignmentContext):
         return self.visitChildren(ctx)

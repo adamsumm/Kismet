@@ -1318,6 +1318,16 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         return ('Init',self.visitChildren(ctx))
 
 
+    # Visit a parse tree produced by kismet_initializationParser#now.
+    def visitNow(self, ctx:kismet_initializationParser.NowContext):
+        return ('Now',)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#plus_minus.
+    def visitPlus_minus(self, ctx:kismet_initializationParser.Plus_minusContext):
+        return ('PlusMinus',ctx.getText())
+
+
     # Visit a parse tree produced by kismet_initializationParser#name.
     def visitName(self, ctx:kismet_initializationParser.NameContext):
         #print(inspect.currentframe().f_code.co_name,ctx.getText())
@@ -1502,7 +1512,7 @@ class RandomText:
         
         return final_rules
 
-    def __call__(self,initializations,selections,creations):
+    def __call__(self,initializations,selections,creations,module):
         rules = {**self.text, **mod.tracery_grammar}
         
         for selection_key, selection_values in selections.items():
@@ -1604,7 +1614,7 @@ class NumChoice:
     distribution: Distribution
     def __repr__(self):
         return f'NumChoice({self.variable},{str(self.distribution)})'
-    def __call__(self,initializations,selections,creations):
+    def __call__(self,initializations,selections,creations,module):
         if self.variable == 'traits':            
          
             traits = []
@@ -1633,7 +1643,7 @@ class NumChoice:
             num_to_make = self.distribution()
             new_instantiations = []
             for _ in range(num_to_make):
-                initialized = initializations[self.variable](initializations,selections,creations)
+                initialized = initializations[self.variable](initializations,selections,creations,module)
                 if isinstance(initialized,list):
                     new_instantiations += initialized
                 else:
@@ -1669,7 +1679,7 @@ class NumRange:
     def __repr__(self):
         return f'NumRange({self.distribution})'
     
-    def __call__(self,ignored,ignored2,creations):
+    def __call__(self,ignored,ignored2,creations,module):
         return self.distribution()
     
 def parseNumRange(choice):    
@@ -1719,7 +1729,7 @@ class Assignment:
 class Lookup:
     name:str
         
-    def __call__(self,initializations,selections,creations):
+    def __call__(self,initializations,selections,creations,module):
         if self.name in initializations:
             return initializations[self.name]
         elif self.name in selections:
@@ -1739,10 +1749,32 @@ def parse_assign_val(assign_val):
         return  Lookup(assign_val[1])
     else:
         print(f'Uh Oh -- assignment value "{assign_val}" is unrecognized')
+
+@dataclass
+class TimeAssignment:
+    direction: str
+    num_range: NumChoice
+        
+    def __call__(self,initializations,selections,creations,module):
+        time_unit = self.num_range.variable
+        amount =  self.num_range.distribution()
+       
+        offset_time = module.time.offset(self.direction,{time_unit:amount})
+        #raise Exception('STOP')
+        return f'time({",".join([str(t[1]) for t in offset_time])})'
         
 def parse_assignment(assignment):
     assigned_to = assignment[1][0]
-    assigned_val = [parse_assign_val(assigned) for assigned in assignment[1][1:]]
+    if assignment[1][1][0] == 'Now':
+        if len(assignment[1]) > 2:
+            plus_minus = assignment[1][2][1]
+            num_choice = parseNumChoice(assignment[1][3])
+        else:
+            plus_minus = ''
+            num_choice = NumChoice('',NumRange(Distribution(f'0',makeDistribution(0,0,'-'),0,0)))
+        assigned_val = [TimeAssignment(plus_minus,num_choice)]
+    else:
+        assigned_val = [parse_assign_val(assigned) for assigned in assignment[1][1:]]
     
     return Assignment(assignment[1][0] == 'Var',
                       assigned_to[1],
@@ -1843,13 +1875,13 @@ class Creation():
     num: int
     name: str
     options: list
-    def __call__(self,initializations,selections,creations):
-        to_create = self.num(initializations,selections,creations)
+    def __call__(self,initializations,selections,creations,module):
+        to_create = self.num(initializations,selections,creations,module)
         relationships = []
         for creation in to_create:
             for option in self.options:
                 if isinstance(option,Assignment):
-                    creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+                    creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
                 elif isinstance(option,Relationship):
                     relationships.append((self.name,option))
                     
@@ -1896,12 +1928,12 @@ class Selection():
     name: str
     options: list
     conditions: list
-    def __call__(self,initializations,selections,creations,used):
+    def __call__(self,initializations,selections,creations,used,module):
         satisfactory = set([get_name(creation) for creation in creations]) - used
         for condition in self.conditions:
             satisfactory &= condition.is_satisfied(creations)
         
-        to_select = self.num(initializations,selections,creations)
+        to_select = self.num(initializations,selections,creations,module)
         if len(to_select) == 0:
             return [], [], []
             
@@ -1920,7 +1952,7 @@ class Selection():
         for creation in to_select:
             for option in self.options:
                 if isinstance(option,Assignment):
-                    creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+                    creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
                 elif isinstance(option,Relationship):
                     relationships.append((self.name,option))
                     
@@ -1931,7 +1963,7 @@ class Selection():
             for condition in self.conditions:
                 if len(condition.is_satisfied([creation])) == 0:
                     if isinstance(condition,Assignment):
-                        creation[condition.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in condition.assigned_val])
+                        creation[condition.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in condition.assigned_val])
                     elif isinstance(condition,Relationship):
                         relationships.append((self.name,condition))
 
@@ -1968,10 +2000,10 @@ class Initialization:
     deferred_lets: list  = field(default_factory=list)
     creates: list = field(default_factory=list)
     selects: list = field(default_factory=list)
-    def __call__(self,initializations,selections,creations):
+    def __call__(self,initializations,selections,creations,module):
         instantiated_lets = {}
         for let in self.lets:
-            instantiated_lets[let.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in let.assigned_val])
+            instantiated_lets[let.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in let.assigned_val])
             selections[let.assigned_to] = instantiated_lets[let.assigned_to]
         
         deferred_lets = {}
@@ -1987,7 +2019,7 @@ class Initialization:
         
         used = set()
         for select in self.selects:
-            created_objects,selected_objects, relationships = select(initializations,selections,creations,used)
+            created_objects,selected_objects, relationships = select(initializations,selections,creations,used,module)
             created[select.name] = created_objects
             used |= set([get_name(selected) for selected in selected_objects])
             all_objects[select.name] = created_objects+selected_objects
@@ -1999,7 +2031,7 @@ class Initialization:
                 
                 
         for create in self.creates:
-            created_objects, relationships = create(initializations,selections,creations)
+            created_objects, relationships = create(initializations,selections,creations,module)
             created[create.name] = created_objects
             all_objects[create.name] = created_objects
             all_relationships += relationships
@@ -2032,6 +2064,7 @@ class Initialization:
         for cat in created.values():
             flattened += cat
         return flattened
+    
 def parse_initialization(initialization):
     initialization = initialization[1]
     lets = []
@@ -2056,10 +2089,10 @@ def parse_initialization(initialization):
 @dataclass
 class Initialize:
     creates: list = field(default_factory=list)
-    def __call__(self,initializations,selections,creations):
+    def __call__(self,initializations,selections,creations,module):
         creations = []
         for create in self.creates:
-            created = create.num(initializations,selections,creations)
+            created = create.num(initializations,selections,creations,module)
             creations += created
         
         return creations
@@ -2079,12 +2112,18 @@ class Default:
     name:str
     options:list
     counter = 0
-    def __call__(self,initializations,selections,creations):
+    def __call__(self,initializations,selections,creations,module):
         constructed = {'type':self.name,'status':{},'id':Default.counter}
         Default.counter += 1
         for option in self.options:
             if isinstance(option,Assignment):
-                constructed[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations) for assigned_val in option.assigned_val])
+                
+                
+                if option.assigned_to not in set(['first_name','last_name','age','traits']):                
+                    constructed['status'][(option.assigned_to,)] = option.assigned_val[0]
+                    
+                else:
+                    constructed[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
             else:
                 
                 constructed['status'][(option.name,)] = option.value
@@ -2141,7 +2180,7 @@ class KismetInitialization():
 
         creations = []
         for initialize in self.all_things['Initialize']:
-            creations += parse_initialize(initialize)(initializations,{'traits':self.module.selectable_traits},creations)
+            creations += parse_initialize(initialize)(initializations,{'traits':self.module.selectable_traits},creations,self.module)
             
         #for creation in creations:
         #    print(creation)

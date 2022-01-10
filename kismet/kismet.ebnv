@@ -1,7 +1,7 @@
 grammar kismet;
 
 world:
- (location|role|action|trait|pattern|time)+ EOF
+ (location|role|action|trait|pattern|time|event)+ EOF
  ;
 
 OPEN: '[';
@@ -75,6 +75,13 @@ valence
 action: (response)? 'action' name '(' arg (',' arg)* ')' cost? extension? random_text? ':'
 	(action_item)? (';' (action_item))* '.'
 	;
+
+randomized: 'random' | 'stochastic' | 'randomized';
+    
+event: (randomized)? 'event' name '(' arg (',' arg)* ')'  extension? random_text? ':'
+	(action_item)? (';' (action_item))* '.'
+	;
+    
 cost: 'costs'  num;
 
 response: 'response';
@@ -158,7 +165,7 @@ knowledge:
 	'did'		|
 	'received'	;
 
-condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern | condTimeHistory | condTimePersonal | condTimePersonalAssignment;
+condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern | condTimeHistory | condTimePersonal | condTimePersonalAssignment | condTimePersonalRelativeAssignment;
 
 cond8: arg ('\'s'|'s') name operator num;
 cond3: arg knowledge arg;
@@ -175,6 +182,7 @@ condTimeHistory: 'now' ('is')? comparator num name 'since' arg;
 condTimePersonal: 'now' ('is')? comparator num name 'since' arg '\'s' name;
 condTimePersonalAssignment: 'now' 'is' arg '\'s' name |
                             arg '\'s' name 'is' 'now';
+condTimePersonalRelativeAssignment: arg '\'s' name name operator num;
 
 tag_compare: 'is missing' | 'is not' | 'is' | 'isn\'t' | 'isnt' | 'aint' | 'missing';
 
@@ -237,3 +245,7 @@ num_choice
 	:  '[' num ']' name
 	|   '[' num ':' num ']' ( pdf )? name ;
 pdf :  ('^'|'-'|'.'|'_')+ ;
+
+BlockComment 
+    : '/*' .*? '*/' -> skip
+    ;

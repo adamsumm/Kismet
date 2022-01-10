@@ -1455,6 +1455,7 @@ default character:
 	last_name = "#lastNames#",
 	first_name = "#firstNames#",
 	age = [18:60],
+    birthday = now - [0:365] day,
 	traits = [1:3] traits.
 
 initialize:

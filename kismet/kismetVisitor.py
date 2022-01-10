@@ -109,6 +109,16 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#randomized.
+    def visitRandomized(self, ctx:kismetParser.RandomizedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#event.
+    def visitEvent(self, ctx:kismetParser.EventContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#cost.
     def visitCost(self, ctx:kismetParser.CostContext):
         return self.visitChildren(ctx)
@@ -271,6 +281,11 @@ class kismetVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismetParser#condTimePersonalAssignment.
     def visitCondTimePersonalAssignment(self, ctx:kismetParser.CondTimePersonalAssignmentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#condTimePersonalRelativeAssignment.
+    def visitCondTimePersonalRelativeAssignment(self, ctx:kismetParser.CondTimePersonalRelativeAssignmentContext):
         return self.visitChildren(ctx)
 
 

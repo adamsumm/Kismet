@@ -1,5 +1,1 @@
-a(1,2,3).
-a(10,11,12).
-b(a(X,Y,Z)) :- a(X,Y,Z).
-
-c(A) :- b(A), a(X,Y,Z) = A, X > 5.
+#show to_occur/6.

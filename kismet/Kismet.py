@@ -257,6 +257,15 @@ class KismetVisitor(ParseTreeVisitor):
     def visitGoto(self, ctx:kismetParser.GotoContext):
         return ('GoToPropensity',self.visitChildren(ctx))
 
+    # Visit a parse tree produced by kismetParser#randomized.
+    def visitRandomized(self, ctx:kismetParser.RandomizedContext):
+        return ('Randomized',self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#event.
+    def visitEvent(self, ctx:kismetParser.EventContext):
+        return ('Event',self.visitChildren(ctx))
+
 
     # Visit a parse tree produced by kismetParser#valence.
     def visitValence(self, ctx:kismetParser.ValenceContext):
@@ -461,6 +470,10 @@ class KismetVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by kismetParser#condTimePersonal.
     def visitCondTimePersonalAssignment(self, ctx:kismetParser.CondTimePersonalAssignmentContext):
         return ('TimePersonalAssignment', self.visitChildren(ctx))
+    
+    def visitCondTimePersonalRelativeAssignment(self, ctx:kismetParser.CondTimePersonalRelativeAssignmentContext):
+        return ('TimePersonalRelativeAssignment',self.visitChildren(ctx))
+    
     # Visit a parse tree produced by kismetParser#operator.
     def visitOperator(self, ctx:kismetParser.OperatorContext):
         
@@ -672,7 +685,10 @@ def parseConditional(conditional,conditional_type='Conditional'):
         'forgets':'forget(',
         'forgot':'forget(',
         'forget':'forget('}
-    }             
+    }    
+    operator_mapping = {'+=':'plus',
+                        '-=':'minus',
+                        '=':'eq'}
     conditional = conditional[1]
     cond_type = conditional[0]
     
@@ -836,13 +852,21 @@ def parseConditional(conditional,conditional_type='Conditional'):
         event = arguments[4][1]
         uniq = f'{character}_{event}'.lower()
         text = f'time_since(T_{uniq},{time_unit},N_{uniq}), N_{uniq} {comparator} {num}, is({character},{event},T_{uniq})'
-        print(comparator,num,time_unit,character,event,text)
     elif cond_type == 'TimePersonalAssignment':
         character = arguments[0][1][1]
         event = arguments[1][1]
         uniq = f'{character}_{event}'.lower()
         text = [f'update({character},{event},Now) :- now(Now),']
-        print('TimePersonalAssignment',text)
+    elif cond_type == 'TimePersonalRelativeAssignment':
+        character = arguments[0][1][1]
+        event = arguments[1][1]
+        uniq = f'{character}_{event}'.lower()
+        
+        variable = arguments[2][1]
+        operator = operator_mapping[arguments[3]]
+        offset = arguments[4][1]
+            
+        text = [f'update_date({character},{event},{variable},{operator},{offset}) :- ']
     else:
         raise Exception(f'UH OH --- Unknown Conditional Type -- missing "{cond_type}"')
     return text
@@ -929,7 +953,19 @@ class Action:
     is_cast: bool
     cost: int
     
-def parseAction(action,action_name):
+@dataclass
+class Event:
+    constraints: str
+    tags: str
+    characters: str
+    results: str
+    text: str
+    visibility: str
+    extensions: str
+    arguments: str
+    randomized: bool
+        
+def parseActionOrEvent(action,action_name,is_event=False):
     text = ''
     constraints = []
     initiator = None
@@ -940,6 +976,10 @@ def parseAction(action,action_name):
     cost = -100
 
     characters, constraints, arguments = parseArguments(action)
+    randomized = False
+    if is_event:
+        randomized = 'Randomized' in action
+        
     allLocations = []
     wildLocations = []
     namedLocations = set()
@@ -1027,11 +1067,19 @@ def parseAction(action,action_name):
     else:
         visibility = 0
     extension = parseExtension(action)
-    return Action(constraints, tags,
-                  characters,results,
-                  randomText,visibility,
-                  extension,arguments,
-                  free,response,False,cost)
+    if is_event:
+        return Event(constraints, tags,
+                      characters,results,
+                      randomText,visibility,
+                      extension,arguments,
+                      randomized)
+    else:
+        return Action(constraints, tags,
+                      characters,results,
+                      randomText,visibility,
+                      extension,arguments,
+                      free,response,False,cost)
+
 
 Role = namedtuple('Role',['characters','constraints','extension','tags','arguments'])
 def parseRole(role,rolename):
@@ -1319,15 +1367,26 @@ class TimeLoop:
     iterationModifier: list
     time:list
     
+    @staticmethod
+    def sanitize(label):
+        if type(label) is str:
+            label = label.strip().rstrip()  
+            if label.isnumeric():
+                return int(label)
+            else:
+                return label
+        else:
+            return label
+    
     def init(self):
         if self.startModifier:
             self.time()
-    
+        self.time.loop_type, _ = self.iterationModifier()
     def __call__(self):
         return self.time.step(self.iterationModifier)
     
     def get_counter(self,label):
-        return self.time.get_counter(label)
+        return self.time.get_counter(TimeLoop.sanitize(label))
     
     def __len__(self):
         return len(self.time)
@@ -1348,7 +1407,10 @@ class TimeRange:
         return self.current
     
     def get_counter(self, label):
-        return label-self.lower+1
+        if self.loop_type == '*':
+            return label-self.lower+1
+        else:
+            return label
     
     def __len__(self):
         return self.upper-self.lower+1
@@ -1357,11 +1419,34 @@ class TimeRange:
         loop_type, step = step_function()
         self.current += step
         loops = 0
-        if loop_type == '*':
-            while  self.current > self.upper:
-                loops += 1
-                self.current -= self.upper
+        if self.loop_type == '*':
+            if loop_type == '*':
+                while  self.current > self.upper:
+                    loops += 1
+                    self.current -= (self.upper-self.lower)
         return loops
+    
+    
+    def increment(self):
+        self.current += 1
+        loops = 0
+        
+        if self.loop_type == '*':
+            while  self.current >  self.upper:
+                loops += 1
+                self.current -= (self.upper-self.lower)
+        return loops
+    
+    def reverse_increment(self):
+        self.current -= 1
+        loops = 0
+        
+        if self.loop_type == '*':
+            if self.current < self.lower:
+                loops += 1
+                self.current += (self.upper-self.lower)
+        return loops
+    
 @dataclass 
 class TimeList:
     members: list
@@ -1391,6 +1476,23 @@ class TimeList:
             self.current -= len(self.members)
         return loops
     
+    
+    def increment(self):
+        self.current += 1
+        loops = 0
+        while  self.current >= len(self.members):
+            loops += 1
+            self.current -= len(self.members)
+            
+        return loops
+    def reverse_increment(self):
+        self.current -= 1
+        loops = 0
+        if self.current < 0:
+            loops += 1
+            self.current += len(self.members)
+        return loops
+            
 def parseTimeLoop(statement):
     name = ''
     startModifier = None
@@ -1454,6 +1556,85 @@ class Time:
             
         return self.current_time
     
+    
+    def offset_other(self,other,direction, offsets):
+        
+        originals = [loop.time.current for loop in self.time_loops]
+        for o, loop in zip(other,self.time_loops):
+            loop.time.current =loop.time.get_counter(o)
+        
+        if direction == '+':
+            previous_loops = 0
+            for loop in self.time_loops:
+                looped = 0
+                if loop.name in offsets:
+                    for _ in range(offsets[loop.name]+previous_loops):
+                        looped += loop.time.increment()
+                elif previous_loops != 0:
+                    for _ in range(previous_loops):
+                        looped += loop.time.increment()
+                    
+                previous_loops = looped
+        elif direction == '-':
+            previous_loops = 0
+            for loop in self.time_loops:
+                looped = 0
+                if loop.name in offsets:
+                    for _ in range(offsets[loop.name]+previous_loops):
+                        looped += loop.time.reverse_increment()
+                elif previous_loops != 0:
+                    for _ in range(previous_loops):
+                        looped += loop.time.reverse_increment()
+                    
+                previous_loops = looped
+        else:
+            pass
+        
+        offset_time =  [(loop.name, loop.get()) for loop in self.time_loops]
+        
+        for original, loop in zip(originals,self.time_loops):
+            loop.time.current = original
+        return offset_time 
+    
+        
+        
+    
+    def offset(self,direction,offsets):
+        
+        originals = [loop.time.current for loop in self.time_loops]
+        
+        if direction == '+':
+            previous_loops = 0
+            for loop in self.time_loops:
+                looped = 0
+                if loop.name in offsets:
+                    for _ in range(offsets[loop.name]+previous_loops):
+                        looped += loop.time.increment()
+                elif previous_loops != 0:
+                    for _ in range(previous_loops):
+                        looped += loop.time.increment()
+                    
+                previous_loops = looped
+        elif direction == '-':
+            previous_loops = 0
+            for loop in self.time_loops:
+                looped = 0
+                if loop.name in offsets:
+                    for _ in range(offsets[loop.name]+previous_loops):
+                        looped += loop.time.reverse_increment()
+                elif previous_loops != 0:
+                    for _ in range(previous_loops):
+                        looped += loop.time.reverse_increment()
+                    
+                previous_loops = looped
+        else:
+            pass
+        
+        offset_time =  [(loop.name, loop.get()) for loop in self.time_loops]
+        
+        for original, loop in zip(originals,self.time_loops):
+            loop.time.current = original
+        return offset_time
     def delta(self, earlier, later):
         earlier_indices =  [loop.get_counter(label[1]) for loop, label in zip(self.time_loops,earlier)]
         later_indices =  [loop.get_counter(label[1]) for loop, label in zip(self.time_loops,later)]
@@ -1517,9 +1698,12 @@ def patternToASP(pattern,pattern_name):
     characters, constraints, arguments = parseArguments(pattern)    
     pattern_name = get_common_name(pattern_name)
     asp_string = f'pattern({pattern_name},' + ', '.join(arg[1] for arg in arguments) + ') :-\n\t'
+    
+    
+    #for arg1,arg2 in itertools.combinations(arguments,2):
+    #    conditions.append(f'different({arg1[1]},{arg2[1]})')
     for arg1,arg2 in itertools.combinations(arguments,2):
-        conditions.append(f'different({arg1[1]},{arg2[1]})')
-        
+        conditions.append(f'{arg1[1]} != {arg2[1]}')
     asp_string += ',\n\t'.join(conditions)     
     asp_string += '.'
     if 'RandomText' in pattern:
@@ -1571,6 +1755,7 @@ class KismetModule():
         self.history_cutoff = history_cutoff
         self.action_budget = action_budget
         self.history = []
+        self.event_history = []
         self.times = []
         self.location_history = []
         self.character_knowledge = []
@@ -1611,7 +1796,8 @@ class KismetModule():
                     'Role':{},
                     'Trait':{},
                     'Pattern':{},
-                    'Time':{}}
+                    'Time':{},
+                    'Event':{}}
         uniq_id = 0
         self.name2uniq = {}
         self.uniq2name = {}
@@ -1634,7 +1820,8 @@ class KismetModule():
         self.time = parseTime(list(things['Time'].values())[0])
         self.current_time = self.time()
         
-        self.actions = {action:parseAction(things['Action'][action],action) for action in things['Action']}
+        self.actions = {action:parseActionOrEvent(things['Action'][action],action) for action in things['Action']}
+        self.events = {event:parseActionOrEvent(things['Event'][event],event,is_event=True) for event in things['Event']}
         for name,action in self.actions.items():
             if action.cost <= 0:
                 action.cost = self.default_cost
@@ -1688,11 +1875,178 @@ class KismetModule():
                 extension = extension[0]
             self.extension_graph[name] = extension
         
+        for name in self.events:
+            extension = self.events[name].extensions
+            if extension:
+                extension = extension[0]
+            self.extension_graph[name] = extension
+           
+        self.traitASP = []
+        for trait in self.traits:
+            self.traitASP += self.traits[trait].propensityASP
+
+            trait_type = 'trait'
+            if self.traits[trait].is_status:
+                trait_type = 'status'
+            self.traitASP.append(f'{trait_type}({get_common_name(trait)}).')
+        self.locationASP = []
+        
+        for location in self.locations:
+            supported_roles = self.locations[location].supports
+            tags = self.locations[location].tags
+            for role in supported_roles:
+                self.locationASP.append(f'castable({get_common_name(role)},{get_common_name(location)}).')
+            for tag in tags:                
+                self.locationASP.append(f'is({get_common_name(location)},{tag}).')
+        
+        self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
+        
+        self.actions2rules()
+        with open(os.path.join(self.path,f'{self.module_file}_rules.lp'), 'w') as asp_file:
+            text = '\n\n'.join(self.locationASP+self.actionASP+self.traitASP+self.patternASP)
+            options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
+                       ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
+                       (',',','),(', ',','),(', ',' ,'),(',',' ,'),
+                       (',',')'),(', ',')'),(', ',' )'),(',',' )')]
+
+            for name in self.alternative_names:
+                for alt in self.alternative_names[name]:
+                    for option in options:
+                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
+            asp_file.write(text)
+            
+            
+        ####################### EVENTS ##############################
+        self.events2rules()
+        
+        with open(os.path.join(self.path,f'{self.module_file}_event_rules.lp'), 'w') as asp_file:
+            text = '\n\n'.join(self.locationASP+self.eventASP+self.traitASP+self.patternASP)
+            options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
+                       ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
+                       (',',','),(', ',','),(', ',' ,'),(',',' ,'),
+                       (',',')'),(', ',')'),(', ',' )'),(',',' )')]
+
+            for name in self.alternative_names:
+                for alt in self.alternative_names[name]:
+                    for option in options:
+                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
+            asp_file.write(text)
+            
+       
+        self.sanity_check()    
+    
+    def events2rules(self):
+        self.eventASP = []
+        
+        for name in self.events:
+            constraints = self.events[name].constraints
+            tags = self.events[name].tags
+            characters = self.events[name].characters
+            results = self.events[name].results
+            randomText = self.events[name].text
+            visibility = self.events[name].visibility
+            arguments = self.events[name].arguments
+            randomized = self.events[name].randomized
+            
+            ancestors = []
+            
+            #Here we go through and follow the extensions
+            ancestor = self.extension_graph[name]
+            if ancestor:
+                current = name
+                while ancestor:
+                    ancestors.append(ancestor)
+                    current = ancestor
+                    current = self.name2uniq[current][0]
+                    ancestor = self.extension_graph[current]
+
+                extension_arguments = extension[1]
+                tags = set(tags)
+                prev_arguments = arguments
+                mappings = []
+
+                for ancestor in ancestors:
+                    ancestor = self.name2uniq[ancestor][0]
+                    a_constraints = self.events[ancestor].constraints
+                    a_tags = self.events[ancestor].tags
+                    a_characters = self.events[ancestor].characters
+                    a_results = self.events[ancestor].results
+                    a_arguments = self.events[ancestor].arguments
+                    
+                    mapping = {p:c for p, c in zip(prev_arguments,a_arguments)}
+                    r_mapping = {c:p for p, c in zip(prev_arguments,a_arguments)}
+                    mappings.append((mapping,r_mapping))
+
+                    converted_constraints = []
+                    converted_results = []
+                    if a_constraints:
+                        for thing in a_constraints:
+                            if 'mode' in thing:
+                                continue
+                            converted_thing = thing
+                            for mapping in reversed(mappings):
+                                for i, (c,p) in enumerate(mapping[1].items()):
+                                    converted_thing = converted_thing.replace(c[1],'!@'*(i+1))
+                                for i, (c,p) in reversed(list(enumerate(mapping[1].items()))):
+                                    converted_thing = converted_thing.replace('!@'*(i+1),p[1])
+                            converted_constraints.append(converted_thing)
+
+                    if a_results:
+                        for thing in a_results:
+                            converted_thing = thing
+                            for mapping in reversed(mappings):
+                                for i, (c,p) in enumerate(mapping[1].items()):
+                                    converted_thing = converted_thing.replace(c[1],'!@'*(i+1))
+                                for i, (c,p) in reversed(list(enumerate(mapping[1].items()))):
+                                    converted_thing = converted_thing.replace('!@'*(i+1),p[1])
+                            converted_results.append(converted_thing)
+                    if not results:
+                        results = []
+                    results += converted_results
+                    constraints += converted_constraints
+                    tags |= set(a_tags)
+
+            results = set(results)
+            constraints = set(constraints)
+            arguments = simpleDictify(arguments)
+            arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}                
+            asp_args = ', '.join([arguments.get(arg_type,'null')   for arg_type in ['>','<','^','*','@']])
+
+            head = f'to_occur({get_common_name(name)}, {asp_args})'
+
+            premises = [','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] )]
+            premises += constraints
+            if arguments["<"] != 'null':
+                premises.append(f'{arguments[">"]} != {arguments["<"]}')
+            if arguments["^"] != 'null':
+                premises.append(f'{arguments[">"]} != {arguments["^"]}')
+            if arguments["<"] != 'null' and arguments["^"] != 'null':
+                premises.append(f'{arguments["<"]} != {arguments["^"]}')
                 
-        
+            for argument in ['>','<','^']:
+                if arguments[argument] != 'null':
+                    premises.append(f'{arguments[argument]} != null')
+
+
+            if randomized:
+                premises.append(f'mode(randomized)')
+            premise = '\t\t'+',\n\t\t'.join(premises)
+
+            self.eventASP.append(head +':-\n'+ premise + '.')
+
+            at_location = ''
+          
+            for result in results:
+                self.eventASP.append(result + at_location +f'occurred({head}).')
+
+            for tag in tags:
+                self.eventASP.append(f'is({get_common_name(name)}, {tag}).')
+                
+            self.eventASP.append(f'visibility({get_common_name(name)},{visibility}).')
+            
+    
+    def actions2rules(self):
         self.actionASP = []
-        
-        
         for name in self.actions:
             constraints = self.actions[name].constraints
             tags = self.actions[name].tags
@@ -1776,7 +2130,14 @@ class KismetModule():
 
             premises = [','.join([f'{arg2type[arg_type]}({arguments[arg_type]})' for arg_type in ['>','<','^','*','@']] )]
             premises += constraints
-            premises += [f'different({arguments[">"]},{arguments["<"]})',f'different({arguments[">"]},{arguments["^"]})',f'different({arguments["<"]},{arguments["^"]})']
+            #premises += [f'different({arguments[">"]},{arguments["<"]})',f'different({arguments[">"]},{arguments["^"]})',f'different({arguments["<"]},{arguments["^"]})']
+            
+            if arguments["<"] != 'null':
+                premises.append(f'{arguments[">"]} != {arguments["<"]}')
+            if arguments["^"] != 'null':
+                premises.append(f'{arguments[">"]} != {arguments["^"]}')
+            if arguments["<"] != 'null' and arguments["^"] != 'null':
+                premises.append(f'{arguments["<"]} != {arguments["^"]}')
             for argument in ['>','<','^']:
                 if arguments[argument] != 'null':
                     premises.append(f'{arguments[argument]} != null')
@@ -1799,45 +2160,7 @@ class KismetModule():
             for tag in tags:
                 self.actionASP.append(f'is({get_common_name(name)}, {tag}).')
             self.actionASP.append(f'visibility({get_common_name(name)},{visibility}).')
-
-        self.traitASP = []
-        for trait in self.traits:
-            self.traitASP += self.traits[trait].propensityASP
-
-            trait_type = 'trait'
-            if self.traits[trait].is_status:
-                trait_type = 'status'
-            self.traitASP.append(f'{trait_type}({get_common_name(trait)}).')
-        self.locationASP = []
-        
-        for location in self.locations:
-            supported_roles = self.locations[location].supports
-            tags = self.locations[location].tags
-            for role in supported_roles:
-                self.locationASP.append(f'castable({get_common_name(role)},{get_common_name(location)}).')
-            for tag in tags:                
-                self.locationASP.append(f'is({get_common_name(location)},{tag}).')
-        
-        self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
-        
-        with open(os.path.join(self.path,f'{self.module_file}_rules.lp'), 'w') as asp_file:
-            text = '\n\n'.join(self.locationASP+self.actionASP+self.traitASP+self.patternASP)
-            options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
-                       ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
-                       (',',','),(', ',','),(', ',' ,'),(',',' ,'),
-                       (',',')'),(', ',')'),(', ',' )'),(',',' )')]
-
-            for name in self.alternative_names:
-                for alt in self.alternative_names[name]:
-                    for option in options:
-                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
-            asp_file.write(text)
-            
-            
-        
-        
-        
-        self.sanity_check()    
+    
     def strip_constraint(self,constraint):
         current = ''
         parts = []
@@ -1873,6 +2196,7 @@ class KismetModule():
                 current_constraint['args'] = [t.strip() for t in next_thing]
                 all_constraints.append(current_constraint)
         return all_constraints
+    
     
     def mark_time(self):
         self.tempstep = 0
@@ -1957,7 +2281,7 @@ class KismetModule():
                         result_parts = self.strip_constraint(result_piece)
 
                         for result in result_parts:
-                            if result['name'] in ['add','update','is','del']:
+                            if result['name'] in ['add','update','is','del','update_date']:
                                 var_name = result['args'][0]
                                 tag = result['args'][1]
                                 if var_name not in mentions:
@@ -2099,7 +2423,7 @@ class KismetModule():
                 name = KismetInitialization.get_name(thing)
                 asp_name = self.aspify_name(name)
                 status = thing.get('status',{})
-                status = {name:None if val is None else val(None,None,None) for name,val in status.items()}
+                status = {name:None if val is None else val(None,None,None,self) for name,val in status.items()}
                 
                 person = {'name':name,'asp_name':asp_name}
                 self.population[asp_name] = person
@@ -2137,6 +2461,7 @@ class KismetModule():
         
                         
     def population2asp(self):
+        important_times = set()
         with open(os.path.join(self.path,f'{self.module_file}_population.lp'),'w') as population:
             for name in self.population:
                 character = self.population[name]
@@ -2147,6 +2472,17 @@ class KismetModule():
                 
                 for combo in character['status']:
                     val = character["status"][combo]
+                    if type(val) is str:
+                        if 'time' in val:
+                            times = val.split('(')[1].split(')')[0].split(',')
+                            times = [('',int(t)) if t.isnumeric() else ('',t) for t in times]
+
+                            _, category_deltas =  self.time.delta(times,self.current_time)
+                            time = [str(t[1]) for t in times]
+                            for label, delta in category_deltas:
+                                time_since = f'time_since(time({",".join(time)}), {label}, {delta}).'
+                                population.write(f'{time_since}\n')
+                            
                     combo = tuple([c for c in combo])
                     if val is not None:
                         population.write(f'is({name},{",".join(combo)},{val}).\n')
@@ -2183,13 +2519,64 @@ class KismetModule():
             for action in actions:
                 action_str += f'occurred(action({",".join(action)})).\n'
                 action_file.write(f'occurred(action({",".join(action)})).\n')
-                     
-    def calculate_volitions(self):
+    def calculate_events(self):
+        events = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         
+        events = [[parse_predicate(pred) for pred in event[0]['terms']] for event in  events[0]['to_occur']]
+        self.event_history.append(events)
         
+        with open(os.path.join(self.path,f'{self.module_file}_occurred_events.lp'),'w') as event_file:
+            
+            for event in events:
+                event_file.write(f'occurred(to_occur({",".join(event)})).\n')
+        
+        updates = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_occurred_events.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)[0]
+        for result in updates['add']:
+
+            result = [term['predicate'] for term in  result[0]['terms']]
+            character = self.population[result[0]]
+            result_key = tuple(result[1:])
+            character['status'][result_key] = None
+
+        for result in updates['del']:
+            result = [term['predicate'] for term in  result[0]['terms']]            
+            character = self.population[result[0]]
+            result_key = tuple(result[1:])
+            if result_key in character['status']:
+                del character['status'][result_key]
+
+        for result in updates['update']:
+            raw_result = result
+            result = [term['predicate'] for term in  result[0]['terms']]
+            character = self.population[result[0]]
+            result_key = tuple(result[1:-1])
+            #If it isn't a number, treat it as an ASP predicate
+            if result[-1][0] in 'abcdefghijklmnopqrstuvwxyz_':
+                val = self.json2asp(raw_result[0]['terms'][-1])
+            else:
+                val = int(result[-1])
+            character['status'][result_key] = val
+            
+        for result in updates['update_date']:
+            raw_result = result
+            result = [term['predicate'] for term in  result[0]['terms']]
+            character = self.population[result[0]]
+            result_key = (result[1],)
+            time_variable = result[2]
+            direction = result[3]
+            amount = int(result[4])
+            
+            original_time = character['status'][result_key]
+            original_time = original_time.split('(')[1].split(')')[0].split(',')
+            original_time = [TimeLoop.sanitize(o) for o in original_time]
+            direction = '+' if direction == 'plus' else '-'
+            new_time = self.time.offset_other(original_time,direction,{time_variable:amount})
+            new_time = f'time({",".join([str(t[1]) for t in new_time])})'
+              
+            character['status'][result_key] = new_time
+            
+    def calculate_volitions(self):        
         #print(' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp']]))
-        
-        
         
         volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         
@@ -2219,13 +2606,18 @@ class KismetModule():
     def knowledge2asp(self):        
         with open(os.path.join(self.path,f'{self.module_file}_history.lp'),'w') as history_file:
             history_file.write(f'now(time({",".join([str(t[1]) for t in self.current_time])})).\n')
-            for time, phase in zip(self.times,self.history[-self.history_cutoff:]):
+           
+            for time in self.times:
                 _, category_deltas =  self.time.delta(time,self.current_time)
                 time = [str(t[1]) for t in time]
                 for label, delta in category_deltas:
                     time_since = f'time_since(time({",".join(time)}), {label}, {delta}).'
                     history_file.write(f'{time_since}\n')
+            for time, phase in zip(self.times[-self.history_cutoff:],self.history[-self.history_cutoff:]):
+                
                     
+                _, category_deltas =  self.time.delta(time,self.current_time)
+                time = [str(t[1]) for t in time]
                 for step in phase:
                     for action in step:
                         action = action + [f'time({",".join(time)})']
@@ -2611,10 +3003,8 @@ class KismetModule():
         self.location_history.append({actor:location for actor, (location, role) in chosen_locations})
         
     def json2asp(self,json):
-        print(json)
         predicate = json['predicate']
         if 'terms' in json:
-            print('terms',json["terms"])
             return f'{predicate}({", ".join([self.json2asp(term) for term in json["terms"]])})'
         else:
             return predicate
@@ -2634,6 +3024,9 @@ class KismetModule():
         self.determine_character_locations()
         
         character_action_budget = {name:self.action_budget for name in self.population}
+        
+        self.calculate_events()
+        
         while len(character_action_budget) > 0:
             self.knowledge2asp()
             self.population2asp()

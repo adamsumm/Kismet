@@ -77,7 +77,13 @@ assignment:
 	(name|var) '=' num_range|
 	(name|var) '=' num_choice ('+' num_choice)* |
 	(name|var) '=' var |
-	(name|var) '=' random_text;
+	(name|var) '=' random_text |
+    (name) '=' now | 
+    (name) '=' now plus_minus num_choice;
+
+now: 'now';
+
+plus_minus: '+' | '-';
 
 deferred_assignment:
     var '=' name '\'s' name |

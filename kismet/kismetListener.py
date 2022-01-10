@@ -188,6 +188,24 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#randomized.
+    def enterRandomized(self, ctx:kismetParser.RandomizedContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#randomized.
+    def exitRandomized(self, ctx:kismetParser.RandomizedContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#event.
+    def enterEvent(self, ctx:kismetParser.EventContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#event.
+    def exitEvent(self, ctx:kismetParser.EventContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#cost.
     def enterCost(self, ctx:kismetParser.CostContext):
         pass
@@ -482,6 +500,15 @@ class kismetListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismetParser#condTimePersonalAssignment.
     def exitCondTimePersonalAssignment(self, ctx:kismetParser.CondTimePersonalAssignmentContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#condTimePersonalRelativeAssignment.
+    def enterCondTimePersonalRelativeAssignment(self, ctx:kismetParser.CondTimePersonalRelativeAssignmentContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#condTimePersonalRelativeAssignment.
+    def exitCondTimePersonalRelativeAssignment(self, ctx:kismetParser.CondTimePersonalRelativeAssignmentContext):
         pass
 
 
