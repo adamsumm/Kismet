@@ -269,6 +269,16 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#condTime.
+    def visitCondTime(self, ctx:kismetParser.CondTimeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#condTimeComparator.
+    def visitCondTimeComparator(self, ctx:kismetParser.CondTimeComparatorContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#condTimeHistory.
     def visitCondTimeHistory(self, ctx:kismetParser.CondTimeHistoryContext):
         return self.visitChildren(ctx)

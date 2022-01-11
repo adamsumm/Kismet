@@ -39,7 +39,7 @@ time_type:
     list_range;
 
 pattern:
-    'pattern'  name '(' arg (',' arg)* ')' random_text? ':' comparison '.';
+    'pattern'  name '(' arg? (',' arg)* ')' random_text? ':' comparison '.';
 
 
 opposition:
@@ -165,7 +165,7 @@ knowledge:
 	'did'		|
 	'received'	;
 
-condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern | condTimeHistory | condTimePersonal | condTimePersonalAssignment | condTimePersonalRelativeAssignment;
+condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern | condTimeHistory | condTimePersonal | condTimePersonalAssignment | condTimePersonalRelativeAssignment | condTime | condTimeComparator;
 
 cond8: arg ('\'s'|'s') name operator num;
 cond3: arg knowledge arg;
@@ -178,6 +178,8 @@ cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator nu
 cond6: arg  inversion? ('have'|'has'|'is')* name ('of'|'to'|'with' | 'at')* arg (operator num)?;
 cond7: arg name arg comparator num;
 condpattern: 'pattern' '(' name  (',' arg)* ')';
+condTime: ('now'|'now\'s'|'current') name 'is' (num|name);
+condTimeComparator: ('now'|'now\'s'|'current') name comparator num;
 condTimeHistory: 'now' ('is')? comparator num name 'since' arg;
 condTimePersonal: 'now' ('is')? comparator num name 'since' arg '\'s' name;
 condTimePersonalAssignment: 'now' 'is' arg '\'s' name |

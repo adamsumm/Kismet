@@ -326,11 +326,22 @@ action debug_personal_time_check(>Person):
 */
 
 event birthday(>Person):
-    tags: debug;
     if now is >= 1 year since Person's birthday;
-    result: Person's birthday year += 1.
+    result: Person's birthday year += 1,
+            Person's age += 1.
 
-    
+pattern is_fall():
+    if current month is sep.
+pattern is_fall():
+    if current month is oct.
+pattern is_fall():
+    if current month is nov.
+
+pattern is_centennial():
+    if current year is 1900.
+
+pattern pre_war():
+    if current year <= 1914.
 
 action humble_brag_about(>Gossiper, <Gossipee, *GossipedAction ):
        location: (Gossiper, Gossipee);
@@ -344,6 +355,7 @@ action humble_brag_about(>Gossiper, <Gossipee, *GossipedAction ):
        result:
        	     Gossipee likes Gossiper += 1,
 	         Gossipee heard GossipedAction.
+      
 //BOARDING HOUSE
 action boarding_house_maintenance(>Owner:owner)
 "Owner does some maintenance on the building.":

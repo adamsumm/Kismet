@@ -457,6 +457,14 @@ class KismetVisitor(ParseTreeVisitor):
         children = self.visitChildren(ctx)
         return ('DualCompareRelations',children)
     
+    # Visit a parse tree produced by kismetParser#condTime.
+    def visitCondTime(self, ctx:kismetParser.CondTimeContext):
+        return ('Time', self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismetParser#condTimeComparator.
+    def visitCondTimeComparator(self, ctx:kismetParser.CondTimeComparatorContext):
+        return ('TimeCompare', self.visitChildren(ctx))
     
     # Visit a parse tree produced by kismetParser#condTimeHistory.
     def visitCondTimeHistory(self, ctx:kismetParser.CondTimeHistoryContext):
@@ -837,6 +845,30 @@ def parseConditional(conditional,conditional_type='Conditional'):
         name = arguments[0][1]
         args = [name] + [arg[1][1] for arg in arguments[1:]]
         text = f'pattern({",".join(args)})'
+    elif cond_type == 'Time':
+        timeVar = arguments[0][1]
+        timeVal = arguments[1][1]
+        
+        args = []
+        for loop in module_singleton.time.time_loops:
+            if loop.name == timeVar:
+                args.append(f'T_{timeVar}')
+            else:
+                args.append('_')
+        text = f'now(time({",".join(args)})), T_{timeVar} = {timeVal}'
+        
+    elif cond_type == 'TimeCompare':
+        timeVar = arguments[0][1]
+        comparator = arguments[1][1]
+        timeVal = arguments[2][1]
+        
+        args = []
+        for loop in module_singleton.time.time_loops:
+            if loop.name == timeVar:
+                args.append(f'T_{timeVar}')
+            else:
+                args.append('_')
+        text = f'now(time({",".join(args)})), T_{timeVar} {comparator} {timeVal}'
     elif cond_type == 'TimeHistory':
         comparator = arguments[0][1]
         num = arguments[1][1]
@@ -887,7 +919,8 @@ def parseArguments(thing):
     constraints = []
     characters = []
     arguments = []
-    for argument in thing['Arguments']:
+    
+    for argument in thing.get('Arguments',[]):
         argument = simpleDictify(unsqueeze(argument))
         argType = argument['ArgType']
         character = argument['Var']
@@ -1697,7 +1730,10 @@ def patternToASP(pattern,pattern_name):
     conditions = parseConditions(pattern['Conditions'])
     characters, constraints, arguments = parseArguments(pattern)    
     pattern_name = get_common_name(pattern_name)
-    asp_string = f'pattern({pattern_name},' + ', '.join(arg[1] for arg in arguments) + ') :-\n\t'
+    if len(arguments) > 0:
+        asp_string = f'pattern({pattern_name},' + ', '.join(arg[1] for arg in arguments) + ') :-\n\t'
+    else:
+        asp_string = f'pattern({pattern_name}) :-\n\t'
     
     
     #for arg1,arg2 in itertools.combinations(arguments,2):
@@ -2843,7 +2879,7 @@ class KismetModule():
         for pattern in pattern_filter:
             lengths.add(len(self.patterns[pattern].arguments)+1)
             args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
-            pattern_filter_text.append(f'display_pattern({get_common_name(pattern)},{",".join(args)}) :- pattern({get_common_name(pattern)},{",".join(args)}).')
+            pattern_filter_text.append(f'display_pattern({",".join([get_common_name(pattern)] + args)}) :- pattern({",".join([get_common_name(pattern)] + args)}).')
         for length in sorted(lengths):
             pattern_filter_text.append(f'#show display_pattern\\{length}.')
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
