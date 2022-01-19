@@ -1,7 +1,7 @@
 grammar kismet;
 
 world:
- (location|role|action|trait|pattern|time|event)+ EOF
+ (location|role|action|trait|pattern|time|event|death_trait)+ EOF
  ;
 
 OPEN: '[';
@@ -44,6 +44,8 @@ pattern:
 
 opposition:
 	('opposes' name ('/' name)*);
+
+death_trait: 'removal_status' name '.';
 
 trait: default? trait_type is_num? name ('/' name)* '(' arg (',' arg)* ')' opposition? ':'
        propensity? (',' propensity)* '.';

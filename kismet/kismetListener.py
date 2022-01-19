@@ -98,6 +98,15 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#death_trait.
+    def enterDeath_trait(self, ctx:kismetParser.Death_traitContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#death_trait.
+    def exitDeath_trait(self, ctx:kismetParser.Death_traitContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#trait.
     def enterTrait(self, ctx:kismetParser.TraitContext):
         pass

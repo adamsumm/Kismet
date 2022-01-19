@@ -221,10 +221,14 @@ class KismetVisitor(ParseTreeVisitor):
 
 
     # Visit a parse tree produced by kismetParser#trait.
+    def visitDeath_trait(self, ctx:kismetParser.TraitContext):
+        
+        return ('RemovalTrait',self.visitChildren(ctx))
+
+    # Visit a parse tree produced by kismetParser#trait.
     def visitTrait(self, ctx:kismetParser.TraitContext):
         
         return ('Trait',self.visitChildren(ctx))
-
 
     # Visit a parse tree produced by kismetParser#trait_type.
     def visitTrait_type(self, ctx:kismetParser.Trait_typeContext):
@@ -588,7 +592,8 @@ class KismetVisitor(ParseTreeVisitor):
 def thing2dict(thing):
     id = 0
     if len(thing) == 1 and (type(thing) is tuple or type(thing) is list):
-        return thing2dict(thing[0])
+        return {thing[0][0]:thing[0][1]}
+        #return thing2dict(thing[0])
     elif len(thing) == 1 or not (type(thing) is tuple or type(thing) is list):
         return thing
     output = {}
@@ -1079,7 +1084,20 @@ def parseActionOrEvent(action,action_name,is_event=False):
     if 'Conditions' in action:
         conditions = action['Conditions']
         constraints += parseConditions(conditions)
-        
+    
+    removal_found = set()
+    for constraint in constraints:
+        if constraint[:2] == 'is':
+            args = constraint[3:-1].split(',')
+            var, status = args[:2]
+            if status in module_singleton.removal_traits:
+                removal_found.add(var)
+    for role, character in characters:
+        if role in '><':
+            if character not in removal_found:
+                for  status in module_singleton.removal_traits:
+                    constraints.append(f'not is({character},{status})')
+    
     tags = parseTags(action)
     results = []
     if 'Results' in action:
@@ -1830,6 +1848,7 @@ class KismetModule():
                     'Action':{},
                     'Location':{},
                     'Role':{},
+                    'RemovalTrait':{},
                     'Trait':{},
                     'Pattern':{},
                     'Time':{},
@@ -1852,7 +1871,8 @@ class KismetModule():
             self.uniq2name[uniq_name] = name
             name = uniq_name
             things[thing[0]][name] = thing2dict(thing[1])
-            
+        self.removal_traits = {removal_trait['Name'] for n,removal_trait in things['RemovalTrait'].items()}
+       
         self.time = parseTime(list(things['Time'].values())[0])
         self.current_time = self.time()
         
@@ -1925,6 +1945,10 @@ class KismetModule():
             if self.traits[trait].is_status:
                 trait_type = 'status'
             self.traitASP.append(f'{trait_type}({get_common_name(trait)}).')
+            
+        for trait in self.removal_traits:
+            self.traitASP.append(f'status({trait}).')
+            
         self.locationASP = []
         
         for location in self.locations:

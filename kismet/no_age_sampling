@@ -4,15 +4,17 @@
 #const families = 5.
 #const characters = 100.
 #const factories = 1.
-
+#const family_mod = 19.
 1 {family_count(M) } 1  :- M =families..families.
 family(I) :- I = 1..M, family_count(M).
 
 1 {character_count(M)} 1 :- M =characters..characters.
 character(I) :- I = 1..M, character_count(M).
 
+#show is/3.
 
 %%%%Trait Stuff
+
 traits(extrovert;introvert;manic_depressive;happy_go_lucky;generous;selfish;gregarious;cantankerous).
 
 2 {is(character(Character),Trait) : traits(Trait)} 5 :- character(Character).
@@ -45,7 +47,7 @@ exclusive_trait(wealth, (rich;poor;middleclass)).
 
 2 {assigned(family(FamilyID), parent, character(CharacterID)): 
     character(CharacterID),
-    (CharacterID+FamilyID) \  (characters/(4*families)) = 0
+    (CharacterID+FamilyID) \ family_mod  < 1
     }2 :- family(FamilyID).
 
 :- assigned(Family, parent, Character), #sum {2**Bit:age_bits(Character, Bit)} < 20.
@@ -62,7 +64,7 @@ is(Character,married,Other)  :- assigned(Family, parent, Character), assigned(Fa
 
 1 {assigned(family(FamilyID), child, character(CharacterID)):  
     character(CharacterID),
-    (CharacterID+FamilyID) \ (characters/(10*families)) = 0
+    (CharacterID+FamilyID+1) \ family_mod < 1
     } 5 :- family(FamilyID).
 
 :- 2 {assigned(Family, child, Character)}, character(Character).

@@ -1,1 +1,0 @@
-#show to_occur/6.

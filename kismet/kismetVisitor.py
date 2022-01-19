@@ -59,6 +59,11 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#death_trait.
+    def visitDeath_trait(self, ctx:kismetParser.Death_traitContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#trait.
     def visitTrait(self, ctx:kismetParser.TraitContext):
         return self.visitChildren(ctx)
