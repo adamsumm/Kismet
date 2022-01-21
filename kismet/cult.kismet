@@ -6,6 +6,7 @@
 //randomly start somewhere in spring 1900-1910
 //time year: ?[1900:1910] season: [spring|summer|fall|winter]*.1910
 time year: ?[1900:1910] month: [jan|feb|march|apr|may|jun|jul|aug|sep|oct|nov|dec]* day: [1:30]*[5:10].
+
 ////////////////////////////////////////////////////////////
 // New from-scratch system
 // CULT TOWN
@@ -269,6 +270,8 @@ location nowhere:
     
     
 removal_status dead.
+removal_status exile.
+
 
 ////////////////////////////////////////////////////////////
 //  PATTERNS
@@ -328,8 +331,16 @@ action debug_personal_time_check(>Person):
 
 event birthday(>Person):
     if now is >= 1 year since Person's birthday;
-    result: Person's birthday year += 1,
+    result: Person's birthday is now,
             Person's age += 1.
+
+event transform_into_werewolf(>Person):
+    if Person is lycan, now is >= 1 month since Person's last_transformation;
+    result: Person is werewolf, Person's last_transformation is now.
+    
+event transform_into_human(>Person):
+    if Person is werewolf, now is >= 1 day since Person's last_transformation;
+    result: Person is not werewolf.
 
 pattern is_fall():
     if current month is sep.
@@ -337,6 +348,11 @@ pattern is_fall():
     if current month is oct.
 pattern is_fall():
     if current month is nov.
+
+
+pattern is_fall():
+    if current month >= 9, current month <= 11.
+    
 
 pattern is_centennial():
     if current year is 1900.

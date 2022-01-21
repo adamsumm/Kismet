@@ -207,7 +207,8 @@ default character:
 	last_name = "#lastNames#",
 	first_name = "#firstNames#",
 	age = [18:50],
-    birthday = now - [0:365] day,
+    last_birthday = now - [0:365] day,
+    day_of_prophecy = now + 25 year,
 	traits = [1:2] traits.
 
 initialize:

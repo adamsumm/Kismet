@@ -2980,7 +2980,62 @@ class KismetModule():
                 found_patterns[pattern_name]['reified'].append(renamed_args)
         return found_patterns
     
-    
+    def apply_status_or_relationship(self,character_or_characters,status_or_statuses,relation_subject_or_subjects=None):
+        if type(character_or_characters) is list:
+            pass
+        else:
+            character_or_characters = [character_or_characters]
+        if type(status_or_statuses) is list:
+            pass
+        else:
+            status_or_statuses = [status_or_statuses]
+        
+        if relation_subject_or_subjects is None:
+            pass
+        elif type(relation_subject_or_subjects) is list:
+            pass
+        else:
+            relation_subject_or_subjects = [relation_subject_or_subjects]
+        
+        for character in character_or_characters:
+            for status in status_or_statuses:
+                if type(status) is tuple:
+                    status, val = status
+                else:
+                    val = None
+                if relation_subject_or_subjects is None: 
+                    self.population[character]['status'][(status,)] = val
+                else:
+                    for relation in relation_subject_or_subjects:
+                        self.population[character][(status,relation)] = val
+                        
+        
+    def remove_status_or_relationship(self,character_or_characters,status_or_statuses,relation_subject_or_subjects=None):
+        if type(character_or_characters) is list:
+            pass
+        else:
+            character_or_characters = [character_or_characters]
+        if type(status_or_statuses) is list:
+            pass
+        else:
+            status_or_statuses = [status_or_statuses]
+        if relation_subject_or_subjects is None:
+            pass
+        elif type(relation_subject_or_subjects) is list:
+            pass
+        else:
+            relation_subject_or_subjects = [relation_subject_or_subjects]
+        for character in character_or_characters:
+            for status in status_or_statuses:
+                if relation_subject_or_subjects is None: 
+                    if (status,) in self.population[character]['status']:
+                        del self.population[character]['status'][(status,)]
+                else:
+                    for relation in relation_subject_or_subjects:
+                        if (status,relation) in self.population[character]:
+                            del self.population[character][(status,relation)]
+                    
+        
     def determine_character_locations(self):
         shuffled = [name for name in self.population]
         random.shuffle(shuffled)
