@@ -232,9 +232,9 @@ NEG: '-';
   
 
 name : NAME;
-NAME   : [a-z][a-zA-Z_]* ;
+NAME   : [a-z][a-zA-Z_0-9]* ;
 var : VAR;
-VAR : [A-Z][a-zA-Z_!]*;
+VAR : [A-Z][a-zA-Z_!0-9]*;
 
 comparator:  '=' |
 	    '==' |

@@ -206,6 +206,15 @@ class kismet_initializationListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismet_initializationParser#deferred_option.
+    def enterDeferred_option(self, ctx:kismet_initializationParser.Deferred_optionContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#deferred_option.
+    def exitDeferred_option(self, ctx:kismet_initializationParser.Deferred_optionContext):
+        pass
+
+
     # Enter a parse tree produced by kismet_initializationParser#negative.
     def enterNegative(self, ctx:kismet_initializationParser.NegativeContext):
         pass

@@ -86,8 +86,13 @@ now: 'now';
 plus_minus: '+' | '-';
 
 deferred_assignment:
-    var '=' name '\'s' name |
-    var '=' name '.' name;
+    var '=' deferred_option? name '\'s' name |
+    var '=' deferred_option? name '.' name;
+deferred_option:
+    'random' |
+    'first' |
+    'last' | 
+    'hashed' ;
     
 negative:
     'not' |

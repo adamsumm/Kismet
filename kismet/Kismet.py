@@ -26,6 +26,7 @@ import collections
 import subprocess
 import random
 import sys
+import time
 import numpy as np
 from dataclasses import dataclass
 from sys import exit
@@ -88,6 +89,7 @@ def solve(args,clingo_exe='clingo'):
     print_args = [clingo_exe] + list(args) + [' | tr [:space:] \\\\n | sort ']
     args = [clingo_exe, '--outf=2'] + args # + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))] #No randomness here
     #print(' '.join(args))
+    start = time.time()
     with subprocess.Popen(
         ' '.join(args),
         stdout=subprocess.PIPE,
@@ -97,7 +99,7 @@ def solve(args,clingo_exe='clingo'):
         outb, err = clingo.communicate()
     #if err:
     #    print('ERROR',err)
-        
+    
     out = outb.decode("utf-8")
     if len(out) == 0:
         print(f'Command "{" ".join(args)}" failed.')
@@ -106,12 +108,13 @@ def solve(args,clingo_exe='clingo'):
         
     with open('dump.lp', 'w') as outfile:
         result = json.loads(out)
-        if len( result['Call'][0]) == 0:
+        if len( result['Call'][0]) == 0 or 'Witnesses' not in result['Call'][0]:
             print('ERROR', ' '.join(print_args))
         witness = result['Call'][0]['Witnesses'][-1]['Value']
         for atom in sorted(witness):
             outfile.write(atom + '\n')
     return parse_json_result(out)   
+
 
 def parse_terms(arguments):
     terms = []
@@ -119,6 +122,7 @@ def parse_terms(arguments):
         l_paren = arguments.find('(')
         r_paren = arguments.find(')')
         comma = arguments.find(',')
+                
         if l_paren < 0:
             l_paren = len(arguments) - 1
         if r_paren < 0:
@@ -149,6 +153,9 @@ def parse_terms(arguments):
     return terms, ''
 
 
+class identitydefaultdict(collections.defaultdict):
+    def __missing__(self, key):
+        return key
 def parse_json_result(out):
     """Parse the provided JSON text and extract a dict
     representing the predicates described in the first solver result."""
@@ -161,17 +168,14 @@ def parse_json_result(out):
     for id in ids[:]:
         witness = result['Call'][0]['Witnesses'][id]['Value']
 
-        class identitydefaultdict(collections.defaultdict):
-            def __missing__(self, key):
-                return key
 
         preds = collections.defaultdict(list)
         env = identitydefaultdict()
-
         for atom in witness:
             parsed, dummy = parse_terms(atom)
             preds[parsed[0]['predicate']].append(parsed)
         all_preds.append(preds)
+        
     return all_preds
 
 class MyErrorListener( ErrorListener ):
@@ -2475,7 +2479,6 @@ class KismetModule():
     def make_population(self,initialization):
         
         population = initialization.run_initialization()
-        
         self.population = {}
         self.created_locations = {}
         for thing in population:
@@ -2483,26 +2486,27 @@ class KismetModule():
                 name = KismetInitialization.get_name(thing)
                 asp_name = self.aspify_name(name)
                 status = thing.get('status',{})
-                status = {name:None if val is None else val(None,None,None,self) for name,val in status.items()}
                 
-                person = {'name':name,'asp_name':asp_name}
-                self.population[asp_name] = person
+                #status = {name:None if val is None else val(None,None,None,self) for name,val in status.items()}
+                
+                person = {'id':thing['id'],'name':name,'asp_name':asp_name}
+                self.population[thing['id']] = person
                 relation_pairs = {(r[0], self.aspify_name(r[1])):None for r in thing.get('relationships',{}) if len(r) == 2}
                 relation_triples = {(r[0], self.aspify_name(r[1])):r[2](None,None,None) for r in thing.get('relationships',{}) if len(r) == 3}
                 person['traits'] = set( [trait.alternative_names[0] for trait in thing['traits']])
                 for trait in self.default_traits:
                     person['traits'].add(trait.alternative_names[0])
                 person['status'] = {**status, 
-                                    **relation_pairs,
-                                    **relation_triples,
                                     **{('age',):thing['age'][0]}}
+                person['relationships'] = {**relation_pairs,
+                                            **relation_triples}
             elif thing['type'] == 'location':
                 location_type = thing['location_type'][0]
                 
                 name = thing.get('name',[location_type])[0]
-                asp_name = self.aspify_name(name)
+                l_id = thing['id']
                 uniq_name =get_unique_name(location_type)
-                self.created_locations[asp_name] = {'name':name,
+                self.created_locations[l_id] = {'id':l_id,'name':name,
                                                     'location_type':location_type,
                                                     'relationships':thing.get('relationships',[])}
             else:
@@ -2516,8 +2520,9 @@ class KismetModule():
                         status_args += 1
                 for args in itertools.product(self.population.keys(), repeat=status_args):
                     key = tuple([status.alternative_names[0]]+list(args))
-                    if key not in person['status']:
-                        person['status'][key] = 0
+                    #REMOVING DEFAULT VALUE
+                    #if key not in person['status']:
+                    #    person['status'][key] = 0
         
                         
     def population2asp(self):
@@ -2766,8 +2771,39 @@ class KismetModule():
                 print(self.population[person]['name'] + ':\n\t' + \
                       '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']) + '\n\t' + \
                       '\n\t'.join([trait_name for trait_name in self.population[person]['traits']]))
+      
+    def display_relationships(self,person_filter=None):
+        if person_filter is None:
+            person_filter =  self.population
+            default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
+        for person in person_filter:
+            if person not in self.population:
+                print(f'Could not find person with id="{person}"')
+            else:
+                print(self.population[person]['name'] + ':') 
+                relations = {}
+                for relation in self.population[person]['relationships']:
+                    if len(relation) > 1:
+                        source = self.population[person]['name']
+                        target = self.to_pretty_name([relation[1]])[0]
+                        relation_name = get_common_name(relation[0])
+                        
+                        if relation_name not in relations:
+                            relations[relation_name] = []
+                        if self.population[person]['relationships'][relation] is not None:
+                
+                            val = self.population[person]['relationships'][relation]
+                            if val != 0:
+                                relations[relation_name].append([source,target,val])
+                        else:
+                            relations[relation_name].append([source,target])
+                for relation_name in relations:
+                    if len(relations[relation_name]) > 0:
+                        print(f'\t{relation_name}:')
+                        for _, target in relations[relation_name]:
+                            print(f'\t\t{target}')
     
-    
+
     def from_json_file(self,json_file):
         with open(json_file) as in_file:
             kismet_module = json.load(in_file)
@@ -2779,7 +2815,6 @@ class KismetModule():
         locations = kismet_module['locations']
         history = kismet_module['history']
         location_history = kismet_module['location_history']
-        
         self.population = {}
         for character in characters:
             name = character['name']
@@ -2794,26 +2829,27 @@ class KismetModule():
             character_dictionary = {'name':name,
                                     'asp_name':asp_name,
                                     'traits':set(character['traits']),
-                                    'status':statuses}
-            self.population[asp_name] = character_dictionary
+                                    'status':statuses,
+                                   'relationships':character['relationships'],
+                                   'id':character['id']}
+            self.population[character['id']] = character_dictionary
             
-        for relation_type, all_relations in relations.items():
-            for relation in all_relations:
-                source_asp = self.aspify_name(relation[0])
-                target_asp = self.aspify_name(relation[1])
-                val = None
-                if len(relation) > 2:
-                    val = relation[-1]
-                self.population[source_asp][(relation_type,target_asp)] = val
-        
         self.created_locations = {}
         for location in locations:
-            asp_name = self.aspify_name(location['name'])
-            self.created_locations[asp_name] = location
-        
+            #asp_name = self.aspify_name(location['name'])
+            l_id = location['id']
+            self.created_locations[l_id] = location
         self.history = [ [[[self.aspify_name(binding) for binding in action] + ['null']*(5-len(action)) for action in step]] for step in history]
         self.times = kismet_module['times']
         self.location_history = []
+        
+        for relation_type, all_relations in relations.items():
+            for relation in all_relations:
+                source_id,target_id = relation
+                val = None
+                if len(relation) > 2:
+                    val = relation[-1]
+                self.population[source_id][ 'relationships'][(relation_type,target_id)] = val
         
         for step in location_history:
             locations_at_step = {}
@@ -2825,7 +2861,12 @@ class KismetModule():
             
         self.knowledge2asp()
         self.population2asp()
-            
+    def get_object(self, id):
+        if 'location' in id:
+            return self.created_locations[id]
+        else:
+            return self.population[id]
+        
     def to_json(self,person_filter=None):         
         if person_filter is None:
             person_filter =  self.population
@@ -2859,11 +2900,15 @@ class KismetModule():
             if person not in self.population:
                 print(f'Could not find person with id="{person}"')
             else:
-                source = self.population[person]['name']
+                source = self.population[person]['id']
+                source_name = self.population[person]['name']
                 
-                characters[source] = {'name':source,
+                characters[source] = {'name':source_name,
                                       'traits':[],
-                                      'statuses':[]}
+                                      'statuses':[],
+                                     'relationships':{},
+                                     'id':source}
+                
                 for trait in self.population[person]['traits']:
                     if trait not in default_traits:
                         characters[source]['traits'].append(get_common_name(trait))
@@ -2879,8 +2924,8 @@ class KismetModule():
                             characters[source]['statuses'].append([relation_name,[]])
                             
                     elif len(relation) > 1:
-                        source = self.population[person]['name']
-                        target = self.to_pretty_name([relation[1]])[0]
+                        source = self.population[person]['id']
+                        target =  self.get_object(relation[1])['id']
                         relation_name = get_common_name(relation[0])
                         
                         if relation_name not in relations:
@@ -2891,6 +2936,32 @@ class KismetModule():
                             relations[relation_name].append([source,target,val])
                         else:
                             relations[relation_name].append([source,target])
+                for relation in self.population[person]['relationships']:
+                    if len(relation) == 1:
+                        relation_name  = get_common_name(relation[0])
+                        if self.population[person]['relationships'][relation] is not None:
+                            val = self.population[person]['relationships'][relation]
+                            #print('Adding status', [relation_name,val])
+                            characters[source]['relationships'].append([relation_name,[val]])
+                        else:
+                            #print('Adding status', [relation_name])
+                            characters[source]['relationships'].append([relation_name,[]])
+                            
+                    elif len(relation) > 1:
+                        source = self.population[person]['id']
+                        
+                        target =  self.get_object(relation[1])['id']
+                        relation_name = get_common_name(relation[0])
+                        
+                        if relation_name not in relations:
+                            relations[relation_name] = []
+                        if self.population[person]['relationships'][relation] is not None:
+                
+                            val = self.population[person]['relationships'][relation]
+                            relations[relation_name].append([source,target,val])
+                        else:
+                            relations[relation_name].append([source,target])
+        
         return {'characters':list(characters.values()),'relations':relations,
                 'locations':locations,'history':history,'location_history':location_history,'times':self.times}
                             

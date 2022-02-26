@@ -119,6 +119,11 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismet_initializationParser#deferred_option.
+    def visitDeferred_option(self, ctx:kismet_initializationParser.Deferred_optionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismet_initializationParser#negative.
     def visitNegative(self, ctx:kismet_initializationParser.NegativeContext):
         return self.visitChildren(ctx)

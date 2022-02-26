@@ -287,7 +287,6 @@ class Initialize:
 #                     kept.append(character)
 #             return {'characters':kept}
         module.make_population(KismetInitialization.KismetInitialization(self.filename,module))
-        
         new_state = module.to_json()
         
         for category in ['characters','locations']:
@@ -686,8 +685,8 @@ class KismetSequence():
     
     def __call__(self):
         print(f'Running Kismet Sequence from "{self.sequence_file}"')
-        active_module = None
-        state = {'characters':[],
+        self.active_module = None
+        self.state = {'characters':[],
                  'relations':{},
                  'locations':[],
                  'history':[],
@@ -697,6 +696,5 @@ class KismetSequence():
         for action in self.actions:
             
             print(f'Starting New Step: {action}')
-            active_module, state = action(active_module,state)
-        self.active_module = active_module
-        self.state = state
+            self.active_module, self.state = action(self.active_module,self.state)
+        

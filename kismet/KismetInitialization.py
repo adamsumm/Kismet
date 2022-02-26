@@ -1444,6 +1444,11 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         return ('Assignment', self.visitChildren(ctx))
 
     # Visit a parse tree produced by kismet_initializationParser#assignment.
+    def visitDeferred_option(self, ctx:kismet_initializationParser.AssignmentContext):
+        
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('DeferredOption', ctx.getText())
+    # Visit a parse tree produced by kismet_initializationParser#assignment.
     def visitDeferred_assignment(self, ctx:kismet_initializationParser.AssignmentContext):
         
         #print(inspect.currentframe().f_code.co_name, ctx.getText())
@@ -1514,16 +1519,19 @@ class RandomText:
 
     def __call__(self,initializations,selections,creations,module):
         rules = {**self.text, **mod.tracery_grammar}
-        
-        for selection_key, selection_values in selections.items():
-            assigned = []
-            for thing in selection_values:
-                if isinstance(thing,str):
-                    assigned.append(thing)
-            if len(assigned) > 0:
-                rules[selection_key] = assigned
-        grammar = tracery.Grammar(rules)
-        return grammar.flatten('#0#')
+        if selections is None:
+            grammar = tracery.Grammar(rules)
+            return grammar.flatten('#0#')
+        else:
+            for selection_key, selection_values in selections.items():
+                assigned = []
+                for thing in selection_values:
+                    if isinstance(thing,str):
+                        assigned.append(thing)
+                if len(assigned) > 0:
+                    rules[selection_key] = assigned
+            grammar = tracery.Grammar(rules)
+            return grammar.flatten('#0#')
     
 
 @dataclass 
@@ -1650,7 +1658,7 @@ class NumChoice:
                     new_instantiations.append(initialized)
             return new_instantiations
         else:
-            print(f'Uh oh -- trying to randomly create some number of {self.variable} -- but it is unknown')
+            raise Exception(f'Uh oh -- trying to randomly create some number of {self.variable} -- but it is unknown')
     
 def parseNumChoice(choice):    
     # [a-b] pdf name
@@ -1705,13 +1713,15 @@ class DeferredAssignment:
     
     assigned_to: str
     assigned_source: str
-    assigned_val: ABC     
+    assigned_val: ABC    
+    assignment_type: str = None
 
 @dataclass 
 class Assignment:
     is_var: bool
     assigned_to: str
-    assigned_val: ABC     
+    assigned_val: ABC    
+    assignment_type: str = None 
     
     def is_satisfied(self, creations):
         satisfactory = set()
@@ -1726,7 +1736,7 @@ class Assignment:
                     satisfactory.add(get_name(creation))
         return satisfactory
 @dataclass
-class Lookup:
+class Lookup:  
     name:str
         
     def __call__(self,initializations,selections,creations,module):
@@ -1735,7 +1745,7 @@ class Lookup:
         elif self.name in selections:
             return selections[self.name]
         else:
-            print(f'Uh oh -- trying to lookup {self.name}, but it cant be found')
+            raise Exception(f'Uh oh -- trying to lookup {self.name}, but it cant be found')
 def parse_assign_val(assign_val):
     if assign_val[0] == 'num_choice':
         return parseNumChoice(assign_val)
@@ -1781,13 +1791,19 @@ def parse_assignment(assignment):
                         assigned_val)
         
 def parse_deferred_assignment(assignment):
-
-    assigned_to = assignment[1][0]
-    #assigned_val = [parse_assign_val(assigned) for assigned in assignment[1][1:]]
     
-    return DeferredAssignment(assigned_to[1],
-                        assignment[1][1][1],
-                        assignment[1][2][1])
+    print(assignment)
+    assigned_to = assignment[1][0]
+    if assignment[1][1][0] == 'DeferredOption':
+        return DeferredAssignment(assigned_to[1],
+                            assignment[1][2][1],
+                            assignment[1][3][1],
+                            assignment[1][1][1])
+        
+    else:
+        return DeferredAssignment(assigned_to[1],
+                            assignment[1][1][1],
+                            assignment[1][2][1])
 
 @dataclass
 class DescTrait:
@@ -1950,9 +1966,20 @@ class Selection():
             to_create = to_select
         relationships = []
         for creation in to_select:
+            if 'status' not in creation:
+                creation['status'] = {}
             for option in self.options:
                 if isinstance(option,Assignment):
-                    creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
+                    
+                    if option.assigned_to in ['last_name','first_name','name','traits','age']:
+                        try:
+                            creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
+                        except:
+                            print(f'Could not find {option.assigned_val} -- most likely this is due to a circular reference or trying to access something that hasnt been assigned yet.')
+                            
+                    else:
+                        creation['status'][(option.assigned_to,)] = random.choice(flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val]))
+                        
                 elif isinstance(option,Relationship):
                     relationships.append((self.name,option))
                     
@@ -1968,8 +1995,6 @@ class Selection():
                         relationships.append((self.name,condition))
 
                     elif isinstance(condition,DescTrait):
-                        if 'status' not in creation:
-                            creation['status'] = {}
                         creation['status'][(condition.name,)] = condition.value
                         creation['traits'] = [trait for trait in creation.get('traits',[]) if trait.opposition != condition.name]
         if to_create == to_select:
@@ -2016,19 +2041,32 @@ class Initialization:
         all_relationships = []
         all_objects = {}
         
-        
+        print(deferred_lets)
         used = set()
         for select in self.selects:
             created_objects,selected_objects, relationships = select(initializations,selections,creations,used,module)
             created[select.name] = created_objects
-            used |= set([get_name(selected) for selected in selected_objects])
+            used |= set([selected['id'] for selected in selected_objects])
             all_objects[select.name] = created_objects+selected_objects
             all_relationships += relationships
             if select.name in deferred_lets:
                 for let in deferred_lets[select.name]:
-                    instantiated_lets[let.assigned_to] = flatten_list([thing[let.assigned_val] for thing in all_objects[select.name]])
-                    selections[let.assigned_to] = instantiated_lets[let.assigned_to]
-                
+                    instantiated_lets[let.assigned_to] = flatten_list([thing[let.assigned_val] for thing in all_objects[select.name] if let.assigned_val in thing]) + flatten_list([thing['status'][(let.assigned_val,)] for thing in all_objects[select.name] if (let.assigned_val,) in thing['status']])
+                    
+                    if let.assignment_type:
+                        if let.assignment_type == 'first':
+                            print('first',instantiated_lets[let.assigned_to])
+                            selections[let.assigned_to] = [instantiated_lets[let.assigned_to][0]]
+                        elif let.assignment_type == 'last':
+                            selections[let.assigned_to] = [instantiated_lets[let.assigned_to][-1]]
+                        elif let.assignment_type == 'random':
+                            selections[let.assigned_to] = instantiated_lets[let.assigned_to]
+                        elif let.assignment_type == 'hashed':
+                            index = hash(tuple(instantiated_lets[let.assigned_to])) 
+                            index = index % len(instantiated_lets[let.assigned_to])
+                            selections[let.assigned_to] = [instantiated_lets[let.assigned_to][index]]
+                    else:
+                        selections[let.assigned_to] = instantiated_lets[let.assigned_to]
                 
         for create in self.creates:
             created_objects, relationships = create(initializations,selections,creations,module)
@@ -2042,22 +2080,20 @@ class Initialization:
             target = relationship.target
             name = relationship.name
             val = relationship.value
-            
             for source_char in all_objects[source]:
-                source_name = source_char.get('name',source_char.get('first_name',[''])[0] + ' ' + source_char.get('last_name',[''])[0])
-                    
+                s_id = source_char['id']
                 if 'relationships' not in source_char:
                     source_char['relationships'] = []
                 if target in all_objects:
                     for target_char in all_objects[target]:
-                        target_name = target_char.get('name',target_char.get('first_name',[''])[0] + ' ' + target_char.get('last_name',[''])[0])
-
-                        if len(target_name) == 1:
-                            target_name = target_name[0]
+                        t_id = target_char['id']
+                        if s_id == t_id:
+                            continue
                         if val is not None:
-                            source_char['relationships'].append((name,target_name,val))
+                            source_char['relationships'].append((name,t_id,val))
                         else:
-                            source_char['relationships'].append((name,target_name))
+                            source_char['relationships'].append((name,t_id))
+                            
                 else:
                     print(f'MISSING: {target} in {relationship}')
         flattened = []
@@ -2106,22 +2142,29 @@ def parse_initialize(initialize):
         else:
             print(f'Uh Oh -- {thing[0]} is not recognized for an initialize command' )
     return Initialize(creates)
-
+@dataclass
+class RandomChoice:
+    choices:list
+    def __call__(self,initializations,selections,creations,module):
+        return  random.choice(self.choices)
+    
 @dataclass
 class Default:
     name:str
     options:list
     counter = 0
     def __call__(self,initializations,selections,creations,module):
-        constructed = {'type':self.name,'status':{},'id':Default.counter}
+        constructed = {'type':self.name,'status':{},'id':f'{self.name}{Default.counter}'}
         Default.counter += 1
         for option in self.options:
             if isinstance(option,Assignment):
                 
                 
-                if option.assigned_to not in set(['first_name','last_name','age','traits']):                
-                    constructed['status'][(option.assigned_to,)] = option.assigned_val[0]
+                if option.assigned_to not in set(['name','first_name','last_name','age','traits']):      
                     
+                    possibilities = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
+                    
+                    constructed['status'][(option.assigned_to,)] = random.choice(possibilities)
                 else:
                     constructed[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
             else:
@@ -2182,6 +2225,4 @@ class KismetInitialization():
         for initialize in self.all_things['Initialize']:
             creations += parse_initialize(initialize)(initializations,{'traits':self.module.selectable_traits},creations,self.module)
             
-        #for creation in creations:
-        #    print(creation)
         return creations
