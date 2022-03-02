@@ -1997,9 +1997,9 @@ class Selection():
                     elif isinstance(condition,DescTrait):
                         creation['status'][(condition.name,)] = condition.value
                         creation['traits'] = [trait for trait in creation.get('traits',[]) if trait.opposition != condition.name]
-        if to_create == to_select:
-            to_select = []
-        return to_create,to_select,list(set(relationships))
+            if to_create == to_select:
+                to_select = []
+            yield to_create,to_select,list(set(relationships))
     
 def parse_select(creation):
     num = None
@@ -2027,47 +2027,49 @@ class Initialization:
     selects: list = field(default_factory=list)
     def __call__(self,initializations,selections,creations,module):
         instantiated_lets = {}
+        
+        new_selections = set()
         for let in self.lets:
             instantiated_lets[let.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in let.assigned_val])
             selections[let.assigned_to] = instantiated_lets[let.assigned_to]
-        
+            new_selections.add(let.assigned_to)
         deferred_lets = {}
         for let in self.deferred_lets:
-            #DeferredAssignment(assigned_to='OwnerLastName', assigned_source='owner', assigned_val='last_name')
             if let.assigned_source not in deferred_lets:
                 deferred_lets[let.assigned_source] = []
             deferred_lets[let.assigned_source].append(let)
         created = {}
         all_relationships = []
         all_objects = {}
-        
-        print(deferred_lets)
         used = set()
         for select in self.selects:
-            created_objects,selected_objects, relationships = select(initializations,selections,creations,used,module)
-            created[select.name] = created_objects
-            used |= set([selected['id'] for selected in selected_objects])
-            all_objects[select.name] = created_objects+selected_objects
-            all_relationships += relationships
-            if select.name in deferred_lets:
-                for let in deferred_lets[select.name]:
-                    instantiated_lets[let.assigned_to] = flatten_list([thing[let.assigned_val] for thing in all_objects[select.name] if let.assigned_val in thing]) + flatten_list([thing['status'][(let.assigned_val,)] for thing in all_objects[select.name] if (let.assigned_val,) in thing['status']])
-                    
-                    if let.assignment_type:
-                        if let.assignment_type == 'first':
-                            print('first',instantiated_lets[let.assigned_to])
-                            selections[let.assigned_to] = [instantiated_lets[let.assigned_to][0]]
-                        elif let.assignment_type == 'last':
-                            selections[let.assigned_to] = [instantiated_lets[let.assigned_to][-1]]
-                        elif let.assignment_type == 'random':
+            for created_objects,selected_objects, relationships in select(initializations,selections,creations,used,module):
+                print('HERE?')
+                created[select.name] = created_objects
+                used |= set([selected['id'] for selected in selected_objects])
+                all_objects[select.name] = created_objects+selected_objects
+                all_relationships += relationships
+                if select.name in deferred_lets:
+                    for let in deferred_lets[select.name]:
+
+                        instantiated_lets[let.assigned_to] = flatten_list([thing[let.assigned_val] for thing in all_objects[select.name] if let.assigned_val in thing]) + flatten_list([thing['status'][(let.assigned_val,)] for thing in all_objects[select.name] if (let.assigned_val,) in thing['status']])
+
+                        new_selections.add(let.assigned_to)
+                        if let.assignment_type:
+                            if let.assignment_type == 'first':
+                                selections[let.assigned_to] = [instantiated_lets[let.assigned_to][0]]
+                            elif let.assignment_type == 'last':
+                                selections[let.assigned_to] = [instantiated_lets[let.assigned_to][-1]]
+                            elif let.assignment_type == 'random':
+                                selections[let.assigned_to] = instantiated_lets[let.assigned_to]
+                            elif let.assignment_type == 'hashed':
+                                index = hash(tuple(instantiated_lets[let.assigned_to])) 
+                                index = index % len(instantiated_lets[let.assigned_to])
+                                selections[let.assigned_to] = [instantiated_lets[let.assigned_to][index]]
+                        else:
                             selections[let.assigned_to] = instantiated_lets[let.assigned_to]
-                        elif let.assignment_type == 'hashed':
-                            index = hash(tuple(instantiated_lets[let.assigned_to])) 
-                            index = index % len(instantiated_lets[let.assigned_to])
-                            selections[let.assigned_to] = [instantiated_lets[let.assigned_to][index]]
-                    else:
-                        selections[let.assigned_to] = instantiated_lets[let.assigned_to]
-                
+        
+        
         for create in self.creates:
             created_objects, relationships = create(initializations,selections,creations,module)
             created[create.name] = created_objects
@@ -2099,6 +2101,9 @@ class Initialization:
         flattened = []
         for cat in created.values():
             flattened += cat
+            
+        for selection in new_selections:
+            del selections[selection]
         return flattened
     
 def parse_initialization(initialization):

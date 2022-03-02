@@ -2289,6 +2289,8 @@ class KismetModule():
         
         name_to_type = {}
         
+        actions_to_tags = {}
+        tags_to_actions = {}
         for name, action in self.actions.items():
             location_vars = set()
             people_vars = set()
@@ -2298,6 +2300,12 @@ class KismetModule():
             action_to_requirement[name] = set()
             action_to_found[name] = set()
             found_tags |= set(action.tags)
+            actions_to_tags[name] = list(sorted(action.tags))
+            for tag in action.tags:
+                if tag not in tags_to_actions:
+                    tags_to_actions[tag] = []
+                tags_to_actions[tag].append(name)
+                    
             for argtype,arg_name in action.arguments:
                 
                 if argtype in '><^':
@@ -2367,19 +2375,28 @@ class KismetModule():
         for location in self.locations:
             found_locations.add(get_common_name(location))
             
+        traits_to_tags = {}
+        tags_to_traits = {}
         for name,  trait in self.traits.items():    
             name =get_common_name(name)
             
             name_to_type[name] = 'Trait'
             trait_to_requirement[name] = set()
-            found_traits.add(get_common_name(name))            
+            found_traits.add(get_common_name(name))  
+            tags = set()
             for propensity in trait.propensities:
+                tags |=  set(propensity.modified_tags)
                 if propensity.is_goto:
                     required_locations |= set(propensity.modified_tags)
                     trait_to_requirement[name] |=  set(propensity.modified_tags)
                 else:
                     required_tags |= set(propensity.modified_tags)
                     trait_to_requirement[name] |=  set(propensity.modified_tags)
+            traits_to_tags[name] = list(sorted(tags))
+            for tag in tags:
+                if tag not in tags_to_traits:
+                    tags_to_traits[tag] = []
+                tags_to_traits[tag].append(name)
             
         for t in found_traits:
             name_to_type[t] = 'Trait' 
@@ -2408,7 +2425,11 @@ class KismetModule():
         
         p_f_r= found_patterns-required_patterns
         p_r_f= required_patterns-found_patterns
-        
+        with open('RulesDump.json','w') as dumpfile:
+            dumpfile.write(json.dumps({'actions_to_tags':actions_to_tags,
+                                        'tags_to_actions':tags_to_actions,
+                                        'traits_to_tags':traits_to_tags,
+                                        'tags_to_traits':tags_to_traits}, sort_keys=True, indent=4))
         all_kinds = [('Locations: Not referenced in actions or traits', l_f_r),
                      ('Locations: Referenced but not found', l_r_f),
                      ('Tags: Not referenced in traits', t_f_r),
