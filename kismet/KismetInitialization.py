@@ -7,7 +7,7 @@ from itertools import *
 import os
 from antlr4 import *
 import json
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import random 
 import itertools
 import collections
@@ -1740,6 +1740,7 @@ class Lookup:
     name:str
         
     def __call__(self,initializations,selections,creations,module):
+        
         if self.name in initializations:
             return initializations[self.name]
         elif self.name in selections:
@@ -1895,6 +1896,7 @@ class Creation():
         to_create = self.num(initializations,selections,creations,module)
         relationships = []
         for creation in to_create:
+            print(self.name,self.options)
             for option in self.options:
                 if isinstance(option,Assignment):
                     creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
@@ -1925,7 +1927,7 @@ def parse_create(creation):
     num = None
     creation_type = None
     name = None
-    options = None
+    options = []
     for thing in creation:
         if thing[0] == 'num_choice':
             num = parseNumChoice(thing)
@@ -1978,7 +1980,10 @@ class Selection():
                             print(f'Could not find {option.assigned_val} -- most likely this is due to a circular reference or trying to access something that hasnt been assigned yet.')
                             
                     else:
-                        creation['status'][(option.assigned_to,)] = random.choice(flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val]))
+                        try:
+                            creation['status'][(option.assigned_to,)] = random.choice(flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val]))
+                        except Exception as err:
+                            print('Skipping ',err)
                         
                 elif isinstance(option,Relationship):
                     relationships.append((self.name,option))
@@ -2038,16 +2043,16 @@ class Initialization:
             if let.assigned_source not in deferred_lets:
                 deferred_lets[let.assigned_source] = []
             deferred_lets[let.assigned_source].append(let)
-        created = {}
+        created = defaultdict(list)
         all_relationships = []
-        all_objects = {}
+        all_objects = defaultdict(list)
         used = set()
         for select in self.selects:
             for created_objects,selected_objects, relationships in select(initializations,selections,creations,used,module):
-                print('HERE?')
-                created[select.name] = created_objects
+                
+                created[select.name] += created_objects
                 used |= set([selected['id'] for selected in selected_objects])
-                all_objects[select.name] = created_objects+selected_objects
+                all_objects[select.name] += created_objects+selected_objects
                 all_relationships += relationships
                 if select.name in deferred_lets:
                     for let in deferred_lets[select.name]:
@@ -2072,8 +2077,8 @@ class Initialization:
         
         for create in self.creates:
             created_objects, relationships = create(initializations,selections,creations,module)
-            created[create.name] = created_objects
-            all_objects[create.name] = created_objects
+            created[create.name] += created_objects
+            all_objects[create.name] += created_objects
             all_relationships += relationships
             
         for relationship in all_relationships:
