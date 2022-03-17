@@ -35,6 +35,24 @@ class kismet_initializationListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismet_initializationParser#filter_out.
+    def enterFilter_out(self, ctx:kismet_initializationParser.Filter_outContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#filter_out.
+    def exitFilter_out(self, ctx:kismet_initializationParser.Filter_outContext):
+        pass
+
+
+    # Enter a parse tree produced by kismet_initializationParser#unique_count.
+    def enterUnique_count(self, ctx:kismet_initializationParser.Unique_countContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#unique_count.
+    def exitUnique_count(self, ctx:kismet_initializationParser.Unique_countContext):
+        pass
+
+
     # Enter a parse tree produced by kismet_initializationParser#comparator.
     def enterComparator(self, ctx:kismet_initializationParser.ComparatorContext):
         pass
@@ -167,6 +185,15 @@ class kismet_initializationListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismet_initializationParser#option.
     def exitOption(self, ctx:kismet_initializationParser.OptionContext):
+        pass
+
+
+    # Enter a parse tree produced by kismet_initializationParser#optional_check.
+    def enterOptional_check(self, ctx:kismet_initializationParser.Optional_checkContext):
+        pass
+
+    # Exit a parse tree produced by kismet_initializationParser#optional_check.
+    def exitOptional_check(self, ctx:kismet_initializationParser.Optional_checkContext):
         pass
 
 

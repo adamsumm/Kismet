@@ -1322,7 +1322,15 @@ class kismet_initializationVisitor(ParseTreeVisitor):
     def visitNow(self, ctx:kismet_initializationParser.NowContext):
         return ('Now',)
 
+    # Visit a parse tree produced by kismet_initializationParser#name.
+    def visitFilter_out(self, ctx):
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Filter', self.visitChildren(ctx)) 
 
+    def visitUnique_count(self, ctx):
+        #print(inspect.currentframe().f_code.co_name,ctx.getText())
+        return ('Uniq', self.visitChildren(ctx)) 
+    
     # Visit a parse tree produced by kismet_initializationParser#plus_minus.
     def visitPlus_minus(self, ctx:kismet_initializationParser.Plus_minusContext):
         return ('PlusMinus',ctx.getText())
@@ -1461,6 +1469,11 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         #print(inspect.currentframe().f_code.co_name, ctx.getText())
         return ('Description', self.visitChildren(ctx))
     
+    # Visit a parse tree produced by kismet_initializationParser#description.
+    def visitOptional_check(self, ctx):
+        
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('Optional_check', self.visitChildren(ctx))
 
     # Visit a parse tree produced by kismet_initializationParser#initialize.
     def visitInitialize(self, ctx:kismet_initializationParser.InitializeContext):
@@ -1545,6 +1558,9 @@ class Distribution:
     
     def __str__(self):
         return self.string
+    def __hash__(self):
+        return hash(self.string)
+
     
 def makeDistribution(low,high,pdf):
     pdf2num = {'_':0,
@@ -1622,6 +1638,9 @@ class NumChoice:
     distribution: Distribution
     def __repr__(self):
         return f'NumChoice({self.variable},{str(self.distribution)})'
+    def __hash__(self):
+        return hash((self.variable, self. distribution))
+
     def __call__(self,initializations,selections,creations,module):
         if self.variable == 'traits':            
          
@@ -1690,6 +1709,9 @@ class NumRange:
     def __call__(self,ignored,ignored2,creations,module):
         return self.distribution()
     
+    def __hash__(self):
+        return hash(self.distribution)
+
 def parseNumRange(choice):    
     # [a-b] pdf name
     choice = choice[1]
@@ -1723,7 +1745,7 @@ class Assignment:
     assigned_val: ABC    
     assignment_type: str = None 
     
-    def is_satisfied(self, creations):
+    def is_satisfied(self, creations,initializations,selections):
         satisfactory = set()
         for creation in creations:
             if self.assigned_to != 'age':
@@ -1793,7 +1815,6 @@ def parse_assignment(assignment):
         
 def parse_deferred_assignment(assignment):
     
-    print(assignment)
     assigned_to = assignment[1][0]
     if assignment[1][1][0] == 'DeferredOption':
         return DeferredAssignment(assigned_to[1],
@@ -1812,10 +1833,10 @@ class DescTrait:
     value: int = None
     negation:bool = False
     
-    def is_satisfied(self, creations):
+    def is_satisfied(self, creations,initializations,selections):
         satisfies = set()
         for creation in creations:
-            relationships = creation.get('relationships',[])
+            relationships = creation.get('relationships',set())
             found = False
             for relationship in relationships:
                 if relationship[0] == self.name:
@@ -1824,13 +1845,13 @@ class DescTrait:
                         
                     else:
                         print('ERROR: Relationships with values can not be used in selections at this point of time --', self.name, self.target, self.value)
+            
             for trait in creation.get('traits',[]):
-                if trait == self.name:
+                if self.name in trait.alternative_names[0]:
                     found = True
             for trait in creation.get('status',[]):
                 if trait[0] == self.name:
                     found = True
-        
             if found != self.negation:
                 satisfies.add(get_name(creation))
         return satisfies    
@@ -1843,10 +1864,10 @@ class Relationship:
     def __hash__(self):
         return hash(self.name+self.target+str(self.negation))
     
-    def is_satisfied(self, creations):
+    def is_satisfied(self, creations,initializations,selections):
         satisfies = set()
         for creation in creations:
-            relationships = creation.get('relationships',[])
+            relationships = creation.get('relationships',set())
             found = False
             for relationship in relationships:
                 if relationship[0] == self.name:
@@ -1879,6 +1900,33 @@ def parse_description(description):
             
     else:
         print(f'UH OH -- description "{description}" does not match any known patterns')
+
+@dataclass
+class OptionalCheck:
+    name: str
+    var: str
+    def is_satisfied(self, creations,initializations,selections):
+        satisfies = set()
+        name = (self.name,)
+        for creation in creations:
+            if name not in creation['status']:
+                satisfies.add(get_name(creation))
+            else:
+                var = self.var
+                if var in initializations:
+                    var = initializations[var]
+                elif self.var in selections:
+                    var = selections[var]
+                if creation["status"][name] in var:
+                    satisfies.add(get_name(creation))
+        return satisfies
+            
+def parse_optional_check(description):
+    
+    description = description[1]
+
+    return OptionalCheck(description[0][1],description[1][1])
+        
 def flatten_list(listed):
     flattened = []
     for thing in listed:
@@ -1894,21 +1942,20 @@ class Creation():
     options: list
     def __call__(self,initializations,selections,creations,module):
         to_create = self.num(initializations,selections,creations,module)
-        relationships = []
+        relationships = set()
         for creation in to_create:
-            print(self.name,self.options)
             for option in self.options:
                 if isinstance(option,Assignment):
                     creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
                 elif isinstance(option,Relationship):
-                    relationships.append((self.name,option))
+                    relationships.add((self.name,option))
                     
                 elif isinstance(option,DescTrait):
                     if 'status' not in creation:
                         creation['status'] = {}
                     creation['status'][(option.name,)] = option.value
                     creation['traits'] = [trait for trait in creation.get('traits',[]) if trait.opposition != option.name]
-        return to_create,list(set(relationships))
+        return to_create,relationships
     
 def parse_options(all_options):
     
@@ -1919,8 +1966,10 @@ def parse_options(all_options):
             options.append(parse_assignment(option))
         elif option[0] == 'Description':
             options.append(parse_description(option))
+        elif option[0] == 'Optional_check':
+            options.append(parse_optional_check(option))
         else:
-            print('UH OH',option)
+            raise Exception('Unknown Option:',option)
     return options
 
 def parse_create(creation):
@@ -1949,8 +1998,8 @@ class Selection():
     def __call__(self,initializations,selections,creations,used,module):
         satisfactory = set([get_name(creation) for creation in creations]) - used
         for condition in self.conditions:
-            satisfactory &= condition.is_satisfied(creations)
-        
+            l_pre = len(satisfactory)
+            satisfactory &= condition.is_satisfied(creations,initializations,selections)
         to_select = self.num(initializations,selections,creations,module)
         if len(to_select) == 0:
             return [], [], []
@@ -1960,13 +2009,15 @@ class Selection():
         satisfactory = {get_name(character) for character in creations if get_name(character) in satisfactory and character['type'] == selection_type}
         
        
-        if len(satisfactory) >= len(to_select):
-            to_select = random.sample(satisfactory,len(to_select))
+        if len(satisfactory) >= self.num.distribution.lower:#len(to_select):
+            
+            to_select = random.sample(satisfactory,min(self.num.distribution.lower,len(to_select)))
             to_select = [character for character in creations if get_name(character) in to_select]
             to_create = []
         else:
             to_create = to_select
-        relationships = []
+            
+        relationships = set()
         for creation in to_select:
             if 'status' not in creation:
                 creation['status'] = {}
@@ -1977,7 +2028,8 @@ class Selection():
                         try:
                             creation[option.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val])
                         except:
-                            print(f'Could not find {option.assigned_val} -- most likely this is due to a circular reference or trying to access something that hasnt been assigned yet.')
+                            pass
+                            #print(f'Could not find {option.assigned_val} -- most likely this is due to a circular reference or trying to access something that hasnt been assigned yet.')
                             
                     else:
                         try:
@@ -1986,25 +2038,25 @@ class Selection():
                             print('Skipping ',err)
                         
                 elif isinstance(option,Relationship):
-                    relationships.append((self.name,option))
+                    relationships.add((self.name,option))
                     
                 elif isinstance(option,DescTrait):
                     if 'status' not in creation:
                         creation['status'] = {}
                     creation['status'][(option.name,)] = option.value
             for condition in self.conditions:
-                if len(condition.is_satisfied([creation])) == 0:
+                if len(condition.is_satisfied([creation],initializations,selections)) == 0:
                     if isinstance(condition,Assignment):
                         creation[condition.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in condition.assigned_val])
                     elif isinstance(condition,Relationship):
-                        relationships.append((self.name,condition))
+                        relationships.add((self.name,condition))
 
                     elif isinstance(condition,DescTrait):
                         creation['status'][(condition.name,)] = condition.value
                         creation['traits'] = [trait for trait in creation.get('traits',[]) if trait.opposition != condition.name]
             if to_create == to_select:
                 to_select = []
-            yield to_create,to_select,list(set(relationships))
+            yield to_create,to_select,relationships
     
 def parse_select(creation):
     num = None
@@ -2032,7 +2084,6 @@ class Initialization:
     selects: list = field(default_factory=list)
     def __call__(self,initializations,selections,creations,module):
         instantiated_lets = {}
-        
         new_selections = set()
         for let in self.lets:
             instantiated_lets[let.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in let.assigned_val])
@@ -2044,7 +2095,7 @@ class Initialization:
                 deferred_lets[let.assigned_source] = []
             deferred_lets[let.assigned_source].append(let)
         created = defaultdict(list)
-        all_relationships = []
+        all_relationships = set()
         all_objects = defaultdict(list)
         used = set()
         for select in self.selects:
@@ -2053,12 +2104,12 @@ class Initialization:
                 created[select.name] += created_objects
                 used |= set([selected['id'] for selected in selected_objects])
                 all_objects[select.name] += created_objects+selected_objects
-                all_relationships += relationships
+                all_relationships |= relationships
                 if select.name in deferred_lets:
                     for let in deferred_lets[select.name]:
 
                         instantiated_lets[let.assigned_to] = flatten_list([thing[let.assigned_val] for thing in all_objects[select.name] if let.assigned_val in thing]) + flatten_list([thing['status'][(let.assigned_val,)] for thing in all_objects[select.name] if (let.assigned_val,) in thing['status']])
-
+                       
                         new_selections.add(let.assigned_to)
                         if let.assignment_type:
                             if let.assignment_type == 'first':
@@ -2073,13 +2124,13 @@ class Initialization:
                                 selections[let.assigned_to] = [instantiated_lets[let.assigned_to][index]]
                         else:
                             selections[let.assigned_to] = instantiated_lets[let.assigned_to]
-        
+                        
         
         for create in self.creates:
             created_objects, relationships = create(initializations,selections,creations,module)
             created[create.name] += created_objects
             all_objects[create.name] += created_objects
-            all_relationships += relationships
+            all_relationships |= relationships
             
         for relationship in all_relationships:
             source = relationship[0]
@@ -2090,19 +2141,20 @@ class Initialization:
             for source_char in all_objects[source]:
                 s_id = source_char['id']
                 if 'relationships' not in source_char:
-                    source_char['relationships'] = []
+                    source_char['relationships'] = set()
                 if target in all_objects:
                     for target_char in all_objects[target]:
                         t_id = target_char['id']
                         if s_id == t_id:
                             continue
                         if val is not None:
-                            source_char['relationships'].append((name,t_id,val))
+                            source_char['relationships'].add((name,t_id,val))
                         else:
-                            source_char['relationships'].append((name,t_id))
+                            source_char['relationships'].add((name,t_id))
                             
                 else:
-                    print(f'MISSING: {target} in {relationship}')
+                    pass
+                    #print(f'MISSING: {target} in {relationship}')
         flattened = []
         for cat in created.values():
             flattened += cat
@@ -2192,8 +2244,65 @@ def parse_default(default):
         elif thing[0] == 'Options':
             options = parse_options(thing)
     return Default(name,options)
+comparators = {
+    '==': lambda x,y: x==y,
+    '=': lambda x,y: x==y,
+    '!=': lambda x,y: x!=y,
+    '<=': lambda x,y: x<=y,
+    '>=': lambda x,y: x>=y,
+    '>': lambda x,y: x>y,
+    '<': lambda x,y: x<y}
 
-
+@dataclass
+class Filter:
+    category: str
+    comparator: str
+    num: int
+    uniq: bool
+    particular: str = None
+    
+    def __call__(self,creation):
+        
+        category = creation.get(self.category,[])
+        if self.uniq:
+            if particular is None:
+                kinds = set()
+                for thing in category:
+                    kinds.add(thing[0])
+                    
+                return comparators[self.comparator](len(kinds),self.num)
+            else:
+                kinds = set()
+                for thing in category:
+                    if thing[0] == self.particular:
+                        kinds.add(thing)
+                    
+                return comparators[self.comparator](len(kinds),self.num)
+                
+            
+        else:
+            return comparators[self.comparator](len(category),self.num)
+        
+    
+    
+def parse_filter(filter_text):
+    filter_text = filter_text[1]
+    if len(filter_text) == 3:
+        uniq = filter_text[0][0] == 'Uniq'
+        category = filter_text[0][1]
+        comparator = filter_text[1][1]
+        num = int(filter_text[2][1])
+        particular = None
+    elif len(filter_text) == 4:
+        uniq = True
+        category = filter_text[0][1]
+        particular = filter_text[1][1]
+        comparator = filter_text[2][1]
+        num = int(filter_text[3][1])
+    else:
+        raise Exception(f'Unknown # of arguments for filter: {filter_text}')
+    
+    return Filter(category,comparator,num,uniq,particular)
 class KismetInitialization():
     def __init__(self,initialization_file,kismet_module):
         self.module = kismet_module
@@ -2234,5 +2343,16 @@ class KismetInitialization():
         creations = []
         for initialize in self.all_things['Initialize']:
             creations += parse_initialize(initialize)(initializations,{'traits':self.module.selectable_traits},creations,self.module)
-            
+        
+        eliminated = set()
+        for filter_text in self.all_things.get('Filter',[]):
+            filter = parse_filter(filter_text)
+            for creation in creations:
+                if filter(creation): 
+                    eliminated.add(get_name(creation))
+        kept = []
+        for creation in creations:
+            if get_name(creation) not in eliminated:
+                kept.append(creation)
+        creations = kept
         return creations

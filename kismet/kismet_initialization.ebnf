@@ -2,13 +2,21 @@ grammar kismet_initialization;
 
 
 init:
- (initialization|initialize|default)+ EOF
+ (initialization|initialize|default|filter_out)+ EOF
  ;
 
 name : NAME;
 NAME   : [a-z][a-zA-Z_]* ;
 var : VAR;
 VAR : [A-Z][a-zA-Z_!]*;
+
+filter_out:
+    'filter' name comparator num '.'|
+    'filter' unique_count comparator num '.' |
+    'filter' name name comparator num '.';
+    
+unique_count:
+    '{' name '}';
 
 comparator:  '=' |
 	    '==' |
@@ -71,7 +79,11 @@ default:
 	
 option:
 	assignment |
-	description;
+	description |
+    optional_check;
+
+optional_check:
+    name '?=' var;
 
 assignment:
 	(name|var) '=' num_range|
@@ -88,6 +100,7 @@ plus_minus: '+' | '-';
 deferred_assignment:
     var '=' deferred_option? name '\'s' name |
     var '=' deferred_option? name '.' name;
+    
 deferred_option:
     'random' |
     'first' |

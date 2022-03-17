@@ -24,6 +24,16 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismet_initializationParser#filter_out.
+    def visitFilter_out(self, ctx:kismet_initializationParser.Filter_outContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#unique_count.
+    def visitUnique_count(self, ctx:kismet_initializationParser.Unique_countContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismet_initializationParser#comparator.
     def visitComparator(self, ctx:kismet_initializationParser.ComparatorContext):
         return self.visitChildren(ctx)
@@ -96,6 +106,11 @@ class kismet_initializationVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismet_initializationParser#option.
     def visitOption(self, ctx:kismet_initializationParser.OptionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_initializationParser#optional_check.
+    def visitOptional_check(self, ctx:kismet_initializationParser.Optional_checkContext):
         return self.visitChildren(ctx)
 
 
