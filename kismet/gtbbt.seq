@@ -1,0 +1,5 @@
+load fantasy_broad.kismet with tracery ../tracery/fantasy.tracery;
+
+initialize fantasy_setting.init;
+
+run  1 steps;
