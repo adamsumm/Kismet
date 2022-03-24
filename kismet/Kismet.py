@@ -2637,7 +2637,6 @@ class KismetModule():
                                 population.write(f'{time_since}\n')
                             
                     combo = tuple([self.aspify_name(c) for c in combo])
-                    print(val)
                     if val is not None:
                         population.write(f'is({name},{",".join(combo)},{val}).\n')
                     else:

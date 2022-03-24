@@ -157,7 +157,11 @@ trait skeptic(>Self) opposes believer:
   
 trait curious(>Self) opposes cautious:
     +++(risky).
-    
+
+trait bully(>Self) opposes carer:
+    +++(mean),
+    ---(kind).
+
 trait scholar(>Self) opposes ignoramus:
     +++(scholarly).
     
@@ -224,8 +228,31 @@ default trait family_ties(>Self, <Other):
     -(mean if Self is related_to Other),
     +(critical if Self is related_to Other),
     -----(romance if Self is related_to Other).
+
+default trait mean_to_people_you_dislike1(>Self, <Other):
+    +(mean if Self likes Other <= -1).
     
+default trait mean_to_people_you_dislike2(>Self, <Other):
+    ++(mean if Self likes Other <= -3).
     
+default trait mean_to_people_you_dislike3(>Self, <Other):
+    +++(mean if Self likes Other <= -5).
+    
+default trait nice_to_people_you_like1(>Self, <Other):
+    -(mean if Self likes Other >= 1).
+    
+default trait mean_to_people_you_dislike2(>Self, <Other):
+    --(mean if Self likes Other >= 3).
+    
+default trait mean_to_people_you_dislike3(>Self, <Other):
+    ---(mean if Self likes Other >= 5).
+
+default trait people_are_usually_serious(>Self):
+    -(silly).
+
+default trait people_joke_with_joker(>Self, <Other):
+    +(silly if Other is comic).
+
 //RELATIONSHIP SCALARS
 status scalar likes/like/liked(>Self,<Other):.
 status scalar loves/love/loved(>Self,<Other):.
@@ -250,3 +277,134 @@ status scalar self_worth(>Self):.
 action chit_chat(>Self, <Other):
     tags: talk;
     result: Self and Other like each other += 1.
+    
+    
+action complain_to_and_make_annoyed(>Self, <Other):
+    tags: talk, critical;
+    if Other is not compassionate;
+    result: Self likes Other +=1,
+        Other like Self -= 1.
+
+action complain_to_compassionate(>Self, <Other):
+    tags: talk, critical;
+    if Other is not compassionate;
+    result: Self and Other like each other += 1,
+            Self's self_worth += 1,
+            Other's self_worth += 1.
+
+action flirt_at(>Self, <Other):
+    tags: talk, romance;
+    result: Self loves Other +=1,
+        Other likes Self -= 1.
+        
+action flirt_with(>Self, <Other):
+    tags: talk, romance;
+    result: Self and Other love each other += 1,
+            Self and Other like each other += 1.
+
+action make_out_with(>Self, <Other):
+    tags: talk, romance;
+    if Self love Other >= 3, 
+		Other love Self >= 3;
+    result: Self and Other love each other += 1,
+            Self and Other like each other += 1.
+
+action blowup_love_triangle(>Self, <Other, ^ThirdWheel):
+    tags: talk, romance, angry;
+    if Self love Other >= 3, 
+ Other love Self >= 3,
+       Other love ThirdWheel >= 3, 
+ ThirdWheel love Other >= 3;
+    result: Self and Other love each other -= 5,
+            Self and Other like each other -= 5,
+            Self and ThirdWheel like each other -= 5,
+            Self and ThirdWheel love each other -= 5.
+
+action plot_about_sabotaging_romantic_rival(>Self, <Other, ^ThirdWheel):
+    location: ?(Self, Other, ThirdWheel);
+    tags: talk, romance, angry;
+    if Self love Other >= 3, 
+ Other love Self >= 3,
+       Other love ThirdWheel >= 3, 
+ ThirdWheel love Other >= 3;
+    result: Self likes ThirdWheel -= 2,
+            Self loves ThirdWheel -= 2.
+
+action reject_romance(>Self, <Other):
+    tags: talk;
+    if Other loves Self >= 5,
+       Self likes Other <= 0;
+    result: Other loves Self -= 5,
+            Other likes Self -= 5,
+            Other's shame += 1,
+            Other's self_worth -=1.
+
+action insult_as_bully(>Self, <Other):
+    tags: talk, mean;
+    if Self is bully;
+    result: Self's self_worth += 1,
+        Other likes Self -= 3.
+                
+action insult(>Self, <Other):
+    tags: talk, mean;
+    if Self is not bully;
+    result: Self's self_worth -= 1,
+        Other likes Self -= 3.
+
+action sulk(>Self):
+    tags: worry;
+    if Self's self_worth <= -3.
+
+action have_catharsis(>Self):
+    tags: thoughtful;
+    if Self's self_worth <= -3;
+    result: Self's self_worth += 1.
+
+action try_to_help_struggling_friend(>Self, <Other):
+    tags: thoughtful;
+    if Other's self_worth <= -3,
+        Self likes Other >= 3,
+        Other likes Self >= 3;
+    result: Self and Other like each other += 1.
+    
+action help_struggling_friend(>Self, <Other):
+    tags: kind, thoughtful;
+    if Other's self_worth <= -3,
+        Self like Other >= 3, 
+		Other like Self >= 3;
+    result: Self and Other like each other += 1,
+            Self's self_worth += 1.
+
+action help_really_struggling_person(>Self, <Other):
+    tags: kind, thoughtful;
+    if Other's self_worth <= -5;
+    result: Self and Other like each other += 1,
+            Self's self_worth += 1.
+
+action joke_around_with(>Self, <Other):
+    tags: talk, silly;
+    result: Self and Other like each other += 2.
+    
+action joke_around_with_the_wrong_person(>Self, <Other):
+    tags: talk, silly;
+    if pattern(non_joker,Other);
+    result: Other likes Self -= 2.
+
+action criticize(>Self, <Other):
+    tags: talk, critical;
+    result: Other likes Self -= 1.
+    
+action provide_critical_feedback(>Self, <Other):
+    tags: talk, critical;
+    if Other is agreeable;
+    result: Self and Other like each other += 1.
+
+pattern non_joker(>Character):
+    if Character is critical.
+pattern non_joker(>Character):
+    if Character is stern.
+pattern non_joker(>Character):
+    if Character is gruff.
+    
+
+    
