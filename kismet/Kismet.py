@@ -1088,8 +1088,8 @@ def parseActionOrEvent(action,action_name,is_event=False):
     
     if 'Conditions' in action:
         conditions = action['Conditions']
-        constraints += parseConditions(conditions)
-    
+        conditions = [unsqueeze(c) for c in parseConditions(conditions)]
+        constraints += conditions
     removal_found = set()
     for constraint in constraints:
         if constraint[:2] == 'is':

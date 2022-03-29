@@ -10,6 +10,7 @@ location docks:
         [3:4] visitor;
     each_turn:
         cast visitor.
+        
 location auction_house:
 	supports:
 		[3] curator,
@@ -151,9 +152,6 @@ location garden:
   
 trait introvert(>Self) opposes extrovert:
     ---(talk).
-    
-trait skeptic(>Self) opposes believer:
-    ---(religious).
   
 trait curious(>Self) opposes cautious:
     +++(risky).
@@ -208,6 +206,8 @@ trait comic(>Self) opposes stern:
     
 //DEFAULT TRAITS
 
+default trait do_more_specific_things(>Self):
+    +++(specific).
 
 default trait stay_in_confinement(>Self,@Location):
     ++++++@if Self is confined of Location@.
@@ -217,7 +217,9 @@ default trait visiting_places_you_like(>Self,@Location):
       
 default trait visiting_as_regular(>Self,@Location):
       +++@if Self is regular of Location@.
-      
+
+default trait romantic_towards_crush(>Self, <Other):
+    +++(romance if Self crushing_on Other).
       
 default trait stay_at_hometown(>Self,@Location):
       +++@if Self's hometown == Location's hometown@.
@@ -302,14 +304,45 @@ action flirt_with(>Self, <Other):
     result: Self and Other love each other += 1,
             Self and Other like each other += 1.
 
+action use_humor_to_spark_love(>Self, <Other):
+    tags: talk, silly, romance;
+    result: Other is crushing_on Self,
+            Self and Other love each other += 1,
+            Self and Other like each other += 1.
+
+action be_open_about_crush(>Self, <Other):
+    tags: romance, bold, specific;
+    if Self is crushing_on Other,
+       Other loves Self >= 1;
+   result:
+       Self and Other love each other += 2,
+       Self and Other like each other += 2.
+
+action be_open_about_crush_and_burn(>Self, <Other):
+    tags: romance, bold, specific;
+    if Self is crushing_on Other,
+       Other loves Self <= 0;
+   result:
+       Self doesn't have crushing_on Other,
+       Self's self_worth -= 2.
+       
+action develop_crush(>Self,<Other):
+    tags: romance;
+    result: Self is crushing_on Other.
+
+action pine_over(>Self,<Other):
+    tags: romance;
+    result: Self loves Other += 1.
+    
+
 action make_out_with(>Self, <Other):
-    tags: talk, romance;
+    tags:  romance;
     if Self love Other >= 3, 
 		Other love Self >= 3;
     result: Self and Other love each other += 1,
             Self and Other like each other += 1.
 
-action blowup_love_triangle(>Self, <Other, ^ThirdWheel):
+action blow_up_love_triangle(>Self, <Other, ^ThirdWheel):
     tags: talk, romance, angry;
     if Self love Other >= 3, 
  Other love Self >= 3,
@@ -323,10 +356,11 @@ action blowup_love_triangle(>Self, <Other, ^ThirdWheel):
 action plot_about_sabotaging_romantic_rival(>Self, <Other, ^ThirdWheel):
     location: ?(Self, Other, ThirdWheel);
     tags: talk, romance, angry;
-    if Self love Other >= 3, 
- Other love Self >= 3,
-       Other love ThirdWheel >= 3, 
- ThirdWheel love Other >= 3;
+    if 
+        Self love Other >= 3, 
+        Other love Self >= 3,
+        Other love ThirdWheel >= 3, 
+        ThirdWheel love Other >= 3;
     result: Self likes ThirdWheel -= 2,
             Self loves ThirdWheel -= 2.
 
@@ -340,7 +374,7 @@ action reject_romance(>Self, <Other):
             Other's self_worth -=1.
 
 action insult_as_bully(>Self, <Other):
-    tags: talk, mean;
+    tags: talk, mean,specific;
     if Self is bully;
     result: Self's self_worth += 1,
         Other likes Self -= 3.
@@ -368,7 +402,7 @@ action try_to_help_struggling_friend(>Self, <Other):
     result: Self and Other like each other += 1.
     
 action help_struggling_friend(>Self, <Other):
-    tags: kind, thoughtful;
+    tags: kind, thoughtful,specific;
     if Other's self_worth <= -3,
         Self like Other >= 3, 
 		Other like Self >= 3;
@@ -386,7 +420,7 @@ action joke_around_with(>Self, <Other):
     result: Self and Other like each other += 2.
     
 action joke_around_with_the_wrong_person(>Self, <Other):
-    tags: talk, silly;
+    tags: talk, silly,specific;
     if pattern(non_joker,Other);
     result: Other likes Self -= 2.
 
@@ -395,9 +429,39 @@ action criticize(>Self, <Other):
     result: Other likes Self -= 1.
     
 action provide_critical_feedback(>Self, <Other):
-    tags: talk, critical;
+    tags: talk, critical,specific;
     if Other is agreeable;
     result: Self and Other like each other += 1.
+
+action get_into_argument(>Self, <Other):
+    tags: talk, critical;
+    if Self likes Other <= -1,
+        Other likes Self <= -1;
+    result: Self and Other like each other -= 1. 
+
+action stand_up_for_friend_and_persuade(>Self, <Other,^Friend):
+    location: (Self, Other) ?(Friend);
+    tags: talk, bold;
+    if pattern(dislikes_friend,Self,Other,Friend);
+    result: 
+        Friend likes Self += 1,
+        Self's self_worth += 1,
+        Disliker likes Friend += 1,
+        Disliker likes Self += 1.
+        
+action stand_up_for_friend_and_fail(>Self, <Other,^Friend):
+    location: (Self, Other) ?(Friend);
+    tags: talk, bold;
+    if pattern(dislikes_friend,Self,Other,Friend);
+    result: 
+        Friend likes Self += 1,
+        Self's self_worth += 1,
+        Disliker likes Friend -= 1,
+        Disliker likes Self -= 1.
+        
+pattern dislikes_friend(>Self, <Disliker, ^Friend):
+    if Self likes Friend >= 3,
+        Disliker likes Friend <= -3.
 
 pattern non_joker(>Character):
     if Character is critical.
