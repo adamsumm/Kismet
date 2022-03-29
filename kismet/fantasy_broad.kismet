@@ -205,6 +205,8 @@ trait comic(>Self) opposes stern:
     -(thoughtful).
     
 //DEFAULT TRAITS
+default trait rare_things_rare(>Self):
+    --(rare).
 
 default trait do_more_specific_things(>Self):
     +++(specific).
@@ -251,6 +253,12 @@ default trait mean_to_people_you_dislike3(>Self, <Other):
 
 default trait people_are_usually_serious(>Self):
     -(silly).
+    
+default trait fail_when_interactin_with_person_who_dislikes_you1(>Self, <Other):
+    +(failure if Other likes Self <= -1).
+    
+default trait fail_when_interactin_with_person_who_dislikes_you2(>Self, <Other):
+    ++(failure if Other likes Self <= -3).
 
 default trait people_joke_with_joker(>Self, <Other):
     +(silly if Other is comic).
@@ -258,7 +266,7 @@ default trait people_joke_with_joker(>Self, <Other):
 //RELATIONSHIP SCALARS
 status scalar likes/like/liked(>Self,<Other):.
 status scalar loves/love/loved(>Self,<Other):.
-status scalar respect_towards(>Self,<Other):.
+status scalar respects/respect_towards(>Self,<Other):.
 status scalar rivalry(>Self,<Other):.
 
 //RELATIONSHIPS
@@ -282,7 +290,7 @@ action chit_chat(>Self, <Other):
     
     
 action complain_to_and_make_annoyed(>Self, <Other):
-    tags: talk, critical;
+    tags: talk, critical, failure;
     if Other is not compassionate;
     result: Self likes Other +=1,
         Other like Self -= 1.
@@ -295,7 +303,7 @@ action complain_to_compassionate(>Self, <Other):
             Other's self_worth += 1.
 
 action flirt_at(>Self, <Other):
-    tags: talk, romance;
+    tags: talk, romance, failure;
     result: Self loves Other +=1,
         Other likes Self -= 1.
         
@@ -319,7 +327,7 @@ action be_open_about_crush(>Self, <Other):
        Self and Other like each other += 2.
 
 action be_open_about_crush_and_burn(>Self, <Other):
-    tags: romance, bold, specific;
+    tags: romance, bold, specific, failure;
     if Self is crushing_on Other,
        Other loves Self <= 0;
    result:
@@ -409,6 +417,12 @@ action help_struggling_friend(>Self, <Other):
     result: Self and Other like each other += 1,
             Self's self_worth += 1.
 
+action share_personal_info(>Self, <Other):
+    tags: talk, bold, thoughtful;
+    result: Self and Other like each other += 1,
+            Other knows_personal_info_about Self.
+
+
 action help_really_struggling_person(>Self, <Other):
     tags: kind, thoughtful;
     if Other's self_worth <= -5;
@@ -418,9 +432,10 @@ action help_really_struggling_person(>Self, <Other):
 action joke_around_with(>Self, <Other):
     tags: talk, silly;
     result: Self and Other like each other += 2.
-    
+
+
 action joke_around_with_the_wrong_person(>Self, <Other):
-    tags: talk, silly,specific;
+    tags: talk, silly,specific, failure;
     if pattern(non_joker,Other);
     result: Other likes Self -= 2.
 
@@ -439,6 +454,16 @@ action get_into_argument(>Self, <Other):
         Other likes Self <= -1;
     result: Self and Other like each other -= 1. 
 
+action impress(>Self, <Other):
+    tags: talk, bold;
+    result: Self's self_worth += 1,
+            Self and Other like each other += 1.
+            
+action try_to_impress_and_fail(>Self, <Other):
+    tags: talk, bold, failure;
+    result: Self's self_worth -= 1,
+            Self and Other like each other -= 1.
+
 action stand_up_for_friend_and_persuade(>Self, <Other,^Friend):
     location: (Self, Other) ?(Friend);
     tags: talk, bold;
@@ -451,7 +476,7 @@ action stand_up_for_friend_and_persuade(>Self, <Other,^Friend):
         
 action stand_up_for_friend_and_fail(>Self, <Other,^Friend):
     location: (Self, Other) ?(Friend);
-    tags: talk, bold;
+    tags: talk, bold, failure;
     if pattern(dislikes_friend,Self,Other,Friend);
     result: 
         Friend likes Self += 1,
@@ -470,5 +495,108 @@ pattern non_joker(>Character):
 pattern non_joker(>Character):
     if Character is gruff.
     
-
+action pray(>Monk:monk):
+    tags: religious;
+    result: Monk's devotion += 1.
     
+action perform_ritual(>Monk:monk, <Other:monk):
+    tags: religious;
+    result: Monk's devotion += 2,
+            Other's devotion += 2.
+            
+action screw_up_ritual(>Monk:monk, <Other:monk):
+    tags: religious, failure;
+    result: Monk's devotion -= 1,
+            Other's devotion -= 1,
+            Other likes Monk -= 2.
+            
+action have_crisis_of_faith(>Monk:monk):
+    tags: religious, worry;
+    result: Monk's devotion -=2,
+            Monk's self_worth -=1.
+            
+action manage_mine(>Foreman:foreman):
+    tags: work.
+    
+action boss_miner_around(>Foreman:foreman, <Miner:miner):
+    tags: work, critical;
+    result: Miner likes Foreman -= 1.
+    
+action manage_dispute_between_miners(>Foreman:foreman, <Miner:miner, ^Miner2:miner):
+    tags: work, thoughtful, kind;
+    if Miner likes Miner2 <= -1,
+        Miner2 likes Miner <= -1;
+    result: Miner and Miner2 like each other += 1,
+            Miner respects Foreman += 1,
+            Miner2 respects Foreman += 1.
+            
+action endanger_miners(>Foreman:foreman, <Miner:miner, ^Miner2:miner):  
+    tags: work, risky;
+    result: Miner likes Foreman -= 2,
+            Miner2 likes Foreman -= 2,
+            Miner respects Foreman -= 2,
+            Miner2 respects Foreman -= 2.
+    
+action strike_motherlode(>Foreman:foreman, <Miner:miner, ^Miner2:miner):  
+    tags: work, risky, rare;
+    result: Foreman's self_worth +=2,
+            Miner likes Foreman += 2,
+            Miner2 likes Foreman += 2,
+            Miner respects Foreman += 2,
+            Miner2 respects Foreman += 2.
+            
+action curate_collection(>Curator:curator):
+    tags: work.
+    
+action acquire_artifacts(>Curator:curator):
+    tags: work, bold;
+    result: Curator's self_worth += 1.
+    
+action discuss_collection(>Curator:curator, <Other):
+    tags: work, talk;
+    result: Other respects Curator += 1.
+    
+action sell_wares(>Vendor:vendor, <Other):
+    tags: work;
+    result: Vendor likes Other += 1.
+    
+action give_deal_to(>Vendor:vendor, <Other):
+    tags: work, kind, talk;
+    if Vendor likes Other >= 3;
+    result: Other likes Vendor += 2.
+
+action hustle(>Vendor: vendor, <Other):
+    tags: work, bold, mean, risky;
+    if Vendor likes Other <= 0;
+    result: Vendor's self_worth += 1,
+            Other likes Vendor -= 1.
+
+action commiserate_with_fellow_vendor(>Vendor:vendor, <OtherVendor:vendor):
+    tags: work, talk, thoughtful, kind;
+    result: Vendor and OtherVendor like each other += 1.
+
+action undercut(>Vendor:vendor, <OtherVendor:vendor):
+    tags: work, bold, mean;
+    if Vendor likes OtherVendor <= 0;
+    result: Vendor's self_worth += 1,
+            OtherVendor likes Vendor -= 1.
+
+action standup_to_enforcer_together(>Vendor:vendor, <OtherVendor:vendor, ^Enforcer):
+    tags: work, bold;
+    if Vendor fears Enforcer >= 6,
+        OtherVendor fears Enforcer >= 6;
+    result: Vendor and OtherVendor like each other += 5,
+        Vendor fears Enforcer -= 3,
+        OtherVendor fears Enforcer -= 3,
+        Enforcer likes Vendor -= 3,
+        Enforcer likes OtherVendor -=3.
+       
+
+action collect_protection_fees(>Enforcer:enforcer, <Vendor:vendor):
+    tags: work, mean, risky, criminal;
+    result: Vendor likes Enforcer -= 1.
+
+action rough_up(>Enforcer:enforcer, <Vendor:vendor):
+    tags: work, mean, risky, criminal;
+    result: Vendor likes Enforcer -= 2,
+            Vendor fears Enforcer += 2.
