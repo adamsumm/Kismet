@@ -294,7 +294,16 @@ initialization royal_country:
         hometown ?= Location,
         age = [20:60],
         is scholar;
-    
+        
+    create [1] location as throne_room:
+        name = "Throne Room of #Location#",
+        location_type = "throne_room",
+        hometown = Location,
+        has monarch of monarch,
+        has royalty of monarchling,
+        has royalty of monarch_spouse,
+        has chancellor of chancellor;
+        
    
     create [1] location as castle_library:
         name = "Royal Library of #Location#",
@@ -635,7 +644,7 @@ initialization ancient_city:
        
     select [3:4] character as archaelogist:
         is archaelogist of ruins,
-        is rival of treasure_hunt,
+        is rival of treasure_hunter,
         hometown = Location,
         is vocation,
         :where

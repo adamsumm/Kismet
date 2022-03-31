@@ -1,6 +1,14 @@
 
 time year: ?[1000:1100] season: [winter|spring|summer|fall]* .
 
+location throne_room:
+	supports:
+		[1] monarch,
+		[1] chancellor,
+		[10] royalty,
+        [10] citizen;
+	each_turn:
+		cast citizen.
 
 location docks:
     supports: [1:2]  foreman,
@@ -173,7 +181,8 @@ trait agreeable(>Self) opposes critical:
   
 trait compassionate(>Self) opposes indifferent:
     +++(thoughtful),
-    +++(kind).
+    +++(kind),
+    ---(mean).
     
 trait neurotic(>Self) opposes confident:
     +++(worry),
@@ -226,12 +235,15 @@ default trait romantic_towards_crush(>Self, <Other):
 default trait stay_at_hometown(>Self,@Location):
       +++@if Self's hometown == Location's hometown@.
       
+default trait no_pedophilia(>Self, <Other):
+    -------(romance if Self's age >= 18, Other's age <= 17).
+    
 default trait family_ties(>Self, <Other):
     +(thoughtful if Self is related_to Other),
     +(kind if Self is related_to Other),
     -(mean if Self is related_to Other),
     +(critical if Self is related_to Other),
-    -----(romance if Self is related_to Other).
+    -------(romance if Self is related_to Other).
 
 default trait mean_to_people_you_dislike1(>Self, <Other):
     +(mean if Self likes Other <= -1).
@@ -278,6 +290,10 @@ status friends_with(>Self, <Other):.
 
 
 //SELF WORTH
+status scalar happiness(>Self):.
+status scalar anger(>Self):.
+status scalar tiredness(>Self):.
+status scalar sadness(>Self):.
 status scalar guilt(>Self):.
 status scalar shame(>Self):.
 status scalar self_worth(>Self):.
@@ -600,3 +616,308 @@ action rough_up(>Enforcer:enforcer, <Vendor:vendor):
     tags: work, mean, risky, criminal;
     result: Vendor likes Enforcer -= 2,
             Vendor fears Enforcer += 2.
+
+action load_cargo(>Dockworker:dockworker):
+    tags: work;
+    result: Dockworker's tiredness += 1.
+
+action fight_seagull(>Dockworker:dockworker):
+    tags: angry, rare;
+    result: Dockworker's anger += 1.
+    
+//LIBRARIAN  
+action stock_books(>Librarian:librarian):
+    tags: work, scholarly;
+    result: Librarian's tiredness += 1.
+    
+action shush_patron(>Librarian:librarian, <Patron:guest):
+    tags: work, mean, bold;
+    result: Patron likes Librarian -= 1,
+            Patron's shame += 1.
+            
+action assist_research(>Librarian:librarian, <Researcher:researcher):
+    tags: work, scholarly;
+    result: Librarian and Researcher like each other += 1,
+            Librarian's self_worth += 1.
+
+
+action assist_research(>Librarian:librarian, <Researcher:guest):
+    tags: work, scholarly;
+    if Researcher is scholar;
+    result: Librarian and Researcher like each other += 1,
+            Librarian's self_worth += 1.
+
+
+action assist_student(>Librarian:librarian, <Researcher:student):
+    tags: work, scholarly;
+    result: Librarian and Researcher like each other += 1,
+            Librarian's self_worth += 1.
+   
+//CHEF   
+action acquire_ingredients(>Chef, <ShopOwner:vendor):
+    tags: work;
+    if Chef is chef;
+    result: 
+        Chef and ShopOwner like each other += 1.
+        
+action develop_recipe(>Chef:chef):
+    tags: work;
+    result: Chef's self_worth += 1.
+    
+action boss_cooks_around(>Chef:chef,<Cook:worker):
+    tags: work, mean;
+    result: 
+    Cook likes Chef -= 1.
+
+action mentor_cook(>Chef:chef,<Cook:worker):
+    tags: work, kind;
+    result: 
+    Cook likes Chef += 1.
+    
+action create_culinary_masterpiece(>Chef:chef,<Guest:guest):
+    tags: work, rare;
+    result:
+        Chef's self_worth += 2,
+        Guest respects Chef += 3,
+        Guest's happiness += 2.
+        
+//GENERIC EMPLOYEE STUFF
+action bitch_about_boss(>Worker, <Coworker, ^Boss):
+    location: (Worker,Coworker) ?(Boss);
+    tags: work, mean;
+    if Worker is coworker of Coworker,
+        Worker is employee of Boss;
+    result: Worker and Coworker like each other +=1,
+        Coworker likes Boss -= 1.
+        
+action bitch_about_boss_to_resistance(>Worker, <Coworker, ^Boss):
+    location: (Worker,Coworker) ?(Boss);
+    tags: work, mean, failure;
+    if Coworker likes Boss >= 3,
+        Worker is coworker of Coworker,
+        Worker is employee of Boss;
+    result: Worker and Coworker like each other -=1.
+        
+action praise_boss(>Worker, <Coworker, ^Boss):
+    location: (Worker,Coworker) ?(Boss);
+    tags: work, kind;
+    if Worker likes Boss >= 3,
+        Worker is coworker of Coworker,
+        Worker is employee of Boss;
+    result: Worker and Coworker like each other +=1,
+        Coworker likes Boss += 1.
+        
+action praise_boss_to_resistance(>Worker, <Coworker, ^Boss):
+    location: (Worker,Coworker) ?(Boss);
+    tags: work, kind;
+    if Worker likes Boss >= 3,
+        Coworker likes Boss <= -1,
+        Worker is coworker of Coworker,
+        Worker is employee of Boss;
+    result: Worker and Coworker like each other -=1.
+
+//Treasure Hunter
+action search_for_treasure(>TreasureHunter:treasure_hunter):
+    tags: work, bold, criminal;
+    result: TreasureHunter's tiredness += 1.
+    
+action find_treasure(>TreasureHunter:treasure_hunter):
+    tags: work, bold, criminal, rare;
+    result: TreasureHunter's self_worth += 5,
+            TreasureHunter is rich.
+            
+            
+action investigate_ruins(>TreasureHunter:treasure_hunter):
+    tags: work, scholarly, thoughtful.
+    
+action trigger_trap(>TreasureHunter:treasure_hunter):
+    tags: work, careless;
+    result: TreasureHunter's self_worth -= 1.
+    
+action sabotage_rival_treasure_hunter(>TreasureHunter:treasure_hunter,<OtherTH:treasure_hunter):
+    tags: work, mean, bold;
+    if TreasureHunter is rival of OtherTH;
+    result: 
+        OtherTH likes TreasureHunter -= 1,
+        OtherTH respects TreasureHunter += 1.
+        
+action overcome_rivalry_to_work_together(>TreasureHunter:treasure_hunter,<OtherTH:treasure_hunter):
+    tags: work, kind, bold;
+    if TreasureHunter is rival of OtherTH;
+    result: 
+        TreasureHunter and OtherTH like each other += 1.
+
+// Archaelogist
+
+action investigate_ruins(>Archaelogist:archaelogist):
+    tags: work, scholarly, thoughtful.
+
+action catalog_findings(>Archaelogist:archaelogist):
+    tags: work, scholarly, thoughtful.
+    
+action argue_with_treasure_hunter(>Archaelogist:archaelogist, <TreasureHunter:treasure_hunter):
+    tags: talk, critical;
+    if Archaelogist is rival of TreasureHunter;
+    result: Archaelogist and TreasureHunter like each other -= 1.
+    
+action develop_begrudging_respect_towards(>Archaelogist:archaelogist, <TreasureHunter:treasure_hunter):
+    tags: talk, kind;
+    if Archaelogist is rival of TreasureHunter;
+    result: Archaelogist and TreasureHunter like each other += 1.
+    
+// Bard
+
+action perform_to_no_effect(>Bard:bard):
+    tags: work;
+    result: Bard's tiredness += 1.
+    
+action amuse_with_performance(>Bard:bard, <Tourist:tourist):
+    tags: work;
+    result: Bard's self_worth += 1,
+            Tourist likes Bard += 1.
+
+action grouse_backstage(>Bard:bard, <Other:bard):
+    tags: work, criticial;
+    result: Bard and Other like each other -= 1.
+
+action encourage_fellow_performer(>Bard:bard, <Other:bard):
+    tags: work, kind;
+    result: Bard and Other like each other += 1.
+
+action annoy_diva_for_laughs(>Bard:bard, <Diva:diva, ^Other:bard):
+    tags: work, mean, silly;
+    if Other likes Diva <= -1;
+    result: Bard's self_worth += 1,
+            Diva likes Bard -= 1,
+            Bard and Other like each other += 1.
+
+// Tourist
+
+action become_annoyed_with_bard(>Tourist:tourist, <Bard:bard):
+    tags: critical;
+    result: Tourist likes Bard -= 1.
+    
+action be_amused_by_bard(>Tourist:tourist, <Bard:bard):
+    tags: silly;
+    result: Tourist likes Bard += 1.
+    
+// Monarch
+
+action make_judicious_decree(>Monarch:monarch,<O1,^O2):
+    tags: work, thoughtful;
+    if Monarch is monarch,
+        O1 has fealty to Monarch,
+       O2 has fealty to Monarch;
+   result: O1 likes Monarch += 1,
+           O2 likes Monarch += 1.
+           
+action make_imprudent_decree(>Monarch:monarch,<O1,^O2):
+    tags: work, careless;
+    if Monarch is monarch,
+        O1 has fealty to Monarch,
+       O2 has fealty to Monarch;
+   result: O1 likes Monarch -= 1,
+           O2 likes Monarch -= 1.
+    
+           
+action make_callous_decree(>Monarch:monarch,<O1,^O2):
+    tags: work, mean;
+    if Monarch is monarch,
+        O1 has fealty to Monarch,
+       O2 has fealty to Monarch;
+   result: O1 likes Monarch -= 1,
+           O2 likes Monarch -= 1.
+           
+action make_benevolent_decree(>Monarch:monarch,<O1,^O2):
+    tags: work, kind;
+    if Monarch is monarch,
+        O1 has fealty to Monarch,
+       O2 has fealty to Monarch;
+   result: O1 likes Monarch += 1,
+           O2 likes Monarch += 1.
+           
+action banish_monarchling(>Monarch:monarch, <Child):
+    tags: mean, rare;
+    if Monarch is monarch,
+        Monarch likes Child <= -5,
+        Child is child of Monarch,
+        Child's age >= 16,
+        Child is royalty;
+    result: Child is not royalty,
+        Child is ex_royalty,
+        Child is missing hometown,
+        Child likes Monarch -= 10.
+
+action consult_with_chancellor(>Monarch:monarch, <Chancellor:chancellor):
+    tags: work, thoughtful;
+    result: Monarch and Chancellor like each other += 1.
+    
+action sway_monarch_to_kindness(>Chancellor:chancellor, <Monarch:monarch):
+    tags: kind, talk, bold, rare;
+    result: Monarch is compassionate,
+            Monarch is not indifferent.
+    
+action sway_monarch_to_indifference(>Chancellor:chancellor, <Monarch:monarch):
+    tags: mean, talk, bold, rare;
+    result: Monarch is not compassionate,
+            Monarch is  indifferent.
+
+action support_banished_sibling(>Monarchling, <ExMonarchling):
+    tags: kind, free;
+    if Monarchling is royalty, ExMonarchling is ex_royalty, 
+            Monarchling is sibling of ExMonarchling;
+    result: Monarchling and ExMonarchling like each other +=1.
+    
+action shun_banished_sibling(>Monarchling, <ExMonarchling):
+    tags: mean, duty;
+    if Monarchling is royalty, ExMonarchling is ex_royalty, 
+            Monarchling is sibling of ExMonarchling;
+    result: Monarchling and ExMonarchling like each other -=1.
+
+// Childish things for Childlings
+action play(>Child):
+    tags: silly;
+    if Child's age <= 15;
+    result: Child's happiness += 1.
+    
+action play_together(>Child, <OtherChild):
+    tags: silly, kind, talk;
+    if Child's age <= 15,
+        OtherChild's age <= 15;
+    result: Child's happiness += 1,
+        OtherChild's happiness += 1,
+        Child and OtherChild like each other += 1.
+        
+action argue_with_playmate(>Child, <OtherChild):
+    tags: critical, mean;
+    if Child's age <= 15,
+        OtherChild's age <= 15;
+    result: Child's happiness -= 1,
+        OtherChild's happiness -= 1,
+        Child and OtherChild like each other -= 1.
+            
+// Adultish things
+action worry_about_future(>Adult):
+    tags: critical, worry;
+    if Adult's age >= 35;
+    result: Adult's tiredness += 1.
+    
+action worry_about_mortality(>Adult):
+    tags: critical, worry;
+    if Adult's age >= 55;
+    result: Adult's tiredness += 1,
+        Adult's happiness -= 1.
+        
+//Personality Clashes
+
+action argue_about_duty(>Dutybound, <Free):
+    tags: critical;
+    if Dutybound is duty_bound, Free is free_sprited;
+    result: Dutybound and Free like each other -= 1.
+    
+action convince_importance_of_duty(>Dutybound, <Free):
+    tags: thoughtful;
+    if Dutybound is duty_bound, Free is free_sprited;
+    result: Dutybound and Free like each other += 1.
+    
+    
