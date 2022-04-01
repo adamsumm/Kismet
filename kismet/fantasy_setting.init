@@ -121,6 +121,7 @@ initialization marketplace:
         hometown = Location,
         is criminal,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -231,6 +232,7 @@ initialization royal_country:
         is spouse to monarch_spouse,
         is parent to monarchlings,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -244,6 +246,7 @@ initialization royal_country:
         last_name = Royal_name,
         is parent to monarchlings,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -256,6 +259,7 @@ initialization royal_country:
         is child to monarch,
         is sibling to monarchlings,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -390,6 +394,7 @@ initialization mining_town:
         is boss of miner,
         hometown = Location,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -432,6 +437,7 @@ initialization port_town:
         is boss of ship_builder,
         hometown = Location,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -521,6 +527,7 @@ initialization port_town:
         is captain of boat,
         is boss of sailor,
         is mariner,
+        is important,
         hometown = Location,
         is vocation,
         :where
@@ -595,6 +602,7 @@ initialization thieves_town:
     select [1] character as master_thief:
         is thief,
         is criminal,
+        is important,
         is boss of thief,
         is boss of spy_master,
         is boss of spy,
@@ -702,6 +710,7 @@ initialization merchant_city:
         is parent of baronling,
         is patron of auction_house,
         is patron of opera_house,
+        is important,
         is vocation,
         last_name = Baron,
         hometown = Location,
@@ -720,6 +729,7 @@ initialization merchant_city:
         is patron of opera_house,
         is spouse of baron,
         is parent of baronling,
+        is important,
         is vocation,
         hometown = Location,
         last_name = Baron,
@@ -738,6 +748,7 @@ initialization merchant_city:
         is patron of opera_house,
         is child of baron,
         is child of baronling,
+        is important,
         last_name = Baron,
         hometown = Location,
         is vocation,
@@ -887,6 +898,7 @@ initialization merchant_city:
         is auctioneer of auction_house,
         is boss of curator,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -908,6 +920,17 @@ initialization merchant_city:
         has auctioneer of auctioneer,
         hometown = Location,
         has curator of curator;
+        
+    select [1] character as impresario:
+        is boss of bard,
+        is boss of diva,
+        is impresario of opera_house,
+        is important,
+        is vocation,
+        :where
+        is not vocation,
+        hometown ?= Location,
+        age = [40:70];
     
     select [4:7] character as bard:
         is bard of opera_house,
@@ -1022,6 +1045,7 @@ initialization scholar_town:
     select [2:3] character as dean:
         hometown = Location,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -1052,6 +1076,7 @@ initialization magic_town:
         is vocation,
         is boss of priest,
         is boss of monk,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
@@ -1107,6 +1132,7 @@ initialization townie_town:
         is elder of elders_house,
         hometown = Location,
         is vocation,
+        is important,
         :where
         is not vocation,
         hometown ?= Location,
