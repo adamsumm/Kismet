@@ -14,6 +14,7 @@ import collections
 import subprocess
 import random
 import sys
+import time
 import numpy as np
 from dataclasses import dataclass
 from sys import exit
@@ -1245,13 +1246,14 @@ class KismetModule():
         world = vis.visit(tree)
 
         things = {  
-                    'Action':{},
                     'Location':{},
                     'Role':{},
                     'Trait':{},
                     'Pattern':{}}
         for thing in world:
             name = ''
+            if thing[0] not in things:
+                continue
             for t in thing[1]:
                 if t[0] == 'Name':
                     name = t[1]
@@ -2082,6 +2084,7 @@ class Initialization:
     deferred_lets: list  = field(default_factory=list)
     creates: list = field(default_factory=list)
     selects: list = field(default_factory=list)
+        
     def __call__(self,initializations,selections,creations,module):
         instantiated_lets = {}
         new_selections = set()
@@ -2090,10 +2093,14 @@ class Initialization:
             selections[let.assigned_to] = instantiated_lets[let.assigned_to]
             new_selections.add(let.assigned_to)
         deferred_lets = {}
+        
+        
         for let in self.deferred_lets:
             if let.assigned_source not in deferred_lets:
                 deferred_lets[let.assigned_source] = []
             deferred_lets[let.assigned_source].append(let)
+        
+        
         created = defaultdict(list)
         all_relationships = set()
         all_objects = defaultdict(list)
@@ -2131,6 +2138,13 @@ class Initialization:
             created[create.name] += created_objects
             all_objects[create.name] += created_objects
             all_relationships |= relationships
+        
+        for object_type in all_objects:
+            uniq = {}
+            for obj in all_objects[object_type]:
+                uniq[obj['id']] = obj
+            all_objects[object_type] = list(uniq.values())
+     
             
         for relationship in all_relationships:
             source = relationship[0]
@@ -2142,11 +2156,15 @@ class Initialization:
                 s_id = source_char['id']
                 if 'relationships' not in source_char:
                     source_char['relationships'] = set()
+                    
+                t_count = 0
                 if target in all_objects:
                     for target_char in all_objects[target]:
                         t_id = target_char['id']
+                        
                         if s_id == t_id:
                             continue
+                        t_count += 1
                         if val is not None:
                             source_char['relationships'].add((name,t_id,val))
                         else:
@@ -2155,12 +2173,14 @@ class Initialization:
                 else:
                     pass
                     #print(f'MISSING: {target} in {relationship}')
+        
         flattened = []
         for cat in created.values():
             flattened += cat
             
         for selection in new_selections:
             del selections[selection]
+        
         return flattened
     
 def parse_initialization(initialization):

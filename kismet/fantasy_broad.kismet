@@ -585,7 +585,29 @@ role miner(>Worker) extends ur_job(>Worker):
 action mine(>Miner:miner):
     tags: work;
     result: Miner's tiredness += 1.
-     
+
+
+////////////////////////////AUCTIONEER
+
+      
+action hold_auction(>Auctioneer:auctioneer, <P1:patron, ^P2:patron):
+    tags: work, bold, talk;   
+    result: 
+        P1's self_worth += 1,
+        Auctioneer's self_worth += 1.
+    
+      
+action discuss_collection(>Auctioneer:auctioneer, <Curator:curator):
+    tags: work,  talk, thoughtful;   
+    result: 
+        Auctioneer and Curator like each other += 1.
+
+action demand_a_new_piece(>Auctioneer:auctioneer, <Curator:curator):
+    tags: work,  talk, mean;   
+    result: 
+        Auctioneer and Curator like each other -=2.
+        
+
 ////////////////////////////CURATOR
 
 role curator(>Worker) extends ur_job(>Worker):
@@ -657,6 +679,10 @@ action rough_up(>Enforcer:enforcer, <Vendor:vendor):
     result: Vendor likes Enforcer -= 2,
             Vendor fears Enforcer += 2.
 
+
+role dockworker(>Worker) extends ur_job(>Worker):
+    tags: mariner.
+    
 action load_cargo(>Dockworker:dockworker):
     tags: work;
     result: Dockworker's tiredness += 1.
