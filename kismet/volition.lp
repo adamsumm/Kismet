@@ -9,7 +9,12 @@ likelihood(action(NAME, INITIATOR,null,null,ACTION,LOCATION),N) :-
   N =  #sum{ C,Tag :
           is(NAME,Tag) ,
           propensity(Tag, C, _, INITIATOR,null,null,ACTION,LOCATION )}, action(NAME, INITIATOR,null,null,ACTION,LOCATION), INITIATOR != null, not non_null(INITIATOR).
-          
+
+likelihood(action(NAME, INITIATOR,null,null,ACTION,LOCATION),N) :-
+  N =  #sum{ C,Tag :
+          is(NAME,Tag) ,
+          propensity(Tag, C, _, INITIATOR,null,null,ACTION,LOCATION )}, action(NAME, INITIATOR,null,null,ACTION,LOCATION), INITIATOR != null, is(NAME,role_specific).
+
 likelihood(action(NAME, INITIATOR,null,SUBJECT,ACTION,LOCATION),N) :-
   N =  #sum{ C,Tag :
           is(NAME,Tag) ,

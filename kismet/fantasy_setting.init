@@ -21,6 +21,7 @@ initialization tavern:
     select [1] character as tavern_owner:
         is owner of tavern,
         is boss of barkeep,
+        is connected of tavern,
         hometown = Location,
         is vocation,
         is drinker
@@ -31,6 +32,7 @@ initialization tavern:
     
     select [2:3] character as barkeep:
         is barkeep of tavern,
+        is connected of tavern,
         is employee of tavern_owner,
         hometown = Location,
         is vocation,
@@ -43,6 +45,7 @@ initialization tavern:
         
     select [5:6] character as regular:
         hometown = Location,
+        is connected of tavern,
         is regular of tavern,
         is drinker
         :where
@@ -61,6 +64,7 @@ initialization  smith_shop:
     
     select [1] character as smithy:
         is smithy of blacksmith,
+        is connected of blacksmith,
         is boss of smith_apprentice,
         hometown = Location,
         is vocation,
@@ -72,6 +76,7 @@ initialization  smith_shop:
     select [2:3] character as smith_apprentice:
         is smith_apprentice of blacksmith,
         is employee of smithy,
+        is connected of blacksmith,
         hometown = Location,
         is coworker of smith_apprentice,
         is vocation,
@@ -90,6 +95,7 @@ initialization marketplace:
 
     select [5:6] character as vendor:
         is vendor of marketplace,
+        is connected of marketplace,
         is scared of enforcer,
         is scared of racketeer,
         is victim of enforcer,
@@ -108,6 +114,7 @@ initialization marketplace:
     select [2:3] character as enforcer:
         is enforcer of marketplace,
         is employee of racketeer,
+        is connected of marketplace,
         hometown = Location,
         is criminal,
         is vocation,
@@ -119,6 +126,7 @@ initialization marketplace:
     
     select [1] character as racketeer:
         is boss of enforcer,
+        is connected of marketplace,
         hometown = Location,
         is criminal,
         is vocation,
@@ -130,6 +138,7 @@ initialization marketplace:
   
     select [1:2] character as pickpocket:
         is pickpocket of marketplace,
+        is connected of marketplace,
         is thief,
         is criminal,
         hometown = Location,
@@ -230,6 +239,7 @@ initialization royal_country:
         last_name = Royal_name,
         is royalty,
         is spouse,
+        is connected of throne_room,
         is spouse to monarch_spouse,
         is parent to monarchlings,
         is vocation,
@@ -242,6 +252,7 @@ initialization royal_country:
     select [1] character as monarch_spouse:
         hometown = Location,
         is royalty,
+        is connected of throne_room,
         is spouse to monarch,
         is spouse,
         last_name = Royal_name,
@@ -257,6 +268,8 @@ initialization royal_country:
         hometown = Location,
         is royalty,
         last_name = Royal_name,
+        is connected of castle_library,
+        is connected of throne_room,
         is child to monarch,
         is sibling to monarchlings,
         is vocation,
@@ -269,6 +282,7 @@ initialization royal_country:
     select [2] character as librarian:
         is librarian of castle_library,
         is fealty to monarch,
+        is connected of castle_library,
         hometown = Location,
         is vocation,
         :where
@@ -279,6 +293,7 @@ initialization royal_country:
     
     select [1] character as royal_tutor:
         is tutor of castle_library,
+        is connected of castle_library,
         is tutor to monarchlings,
         hometown = Location,
         is fealty to monarch,
@@ -292,6 +307,7 @@ initialization royal_country:
     select [1] character as chancellor:
         is chancellor to monarch,
         is fealty to monarch,
+        is connected of throne_room,
         hometown = Location,
         is vocation,
         :where
@@ -320,6 +336,7 @@ initialization royal_country:
     
     select [1:2] character as chef:  
         is chef of castle_kitchen,
+        is connected of castle_kitchen,
         is boss of kitchen_worker,
         is fealty to monarch,
         hometown = Location,
@@ -331,6 +348,7 @@ initialization royal_country:
     
     select [3:4] character as kitchen_worker:
         is employee to chef,
+        is connected of castle_kitchen,
         is fealty to monarch,
         hometown = Location,
         is worker of castle_kitchen,
@@ -355,6 +373,7 @@ initialization royal_country:
         is fealty to monarch,
         hometown = Location,
         is guard of dungeon,
+        is connected of dungeon,
         is guard to prisoner,
         is vocation,
         is coworker of guard,
@@ -393,6 +412,7 @@ initialization mining_town:
     select [1] character as foreman:
         is foreman of mine,
         is boss of miner,
+        is connected of mine,
         hometown = Location,
         is vocation,
         is important,
@@ -403,6 +423,7 @@ initialization mining_town:
     
     select [7:10] character as miner:
         is miner of mine,
+        is connected of mine,
         is worker of mine,
         is employee of foreman,
         hometown = Location,
@@ -435,6 +456,7 @@ initialization port_town:
     select [1] character as shipwright_owner:
         is owner of shipyard,
         is boss of engineer,
+        is connected of shipyard,
         is boss of ship_builder,
         hometown = Location,
         is vocation,
@@ -448,6 +470,7 @@ initialization port_town:
         is engineer of shipyard,
         is employee of shipwright_owner,
         is boss of ship_builder,
+        is connected of shipyard,
         hometown = Location,
         is vocation,
         :where
@@ -459,6 +482,7 @@ initialization port_town:
         is ship_builder of shipyard,
         is employee of shipwright_owner,
         is employee of engineer,
+        is connected of shipyard,
         hometown = Location,
         is coworker of ship_builder,
         is vocation,
@@ -479,6 +503,7 @@ initialization port_town:
     select [1] character as foreman:
         is foreman of docks,
         is boss of dockworker,
+        is connected of docks,
         hometown = Location,
         is vocation,
         :where
@@ -491,6 +516,7 @@ initialization port_town:
         is dockworker of docks,
         is employee of foreman,
         hometown = Location,
+        is connected of docks,
         is coworker of dockworker,
         is vocation,
         :where
@@ -502,6 +528,7 @@ initialization port_town:
         is prostitute of docks,
         hometown = Location,
         is vocation,
+        is connected of docks,
         :where
         is not vocation,
         hometown ?= Location,
@@ -510,6 +537,7 @@ initialization port_town:
     select [2:3] character as fisher:
         is fisher of docks,
         hometown = Location,
+        is connected of docks,
         :where
         hometown ?= Location,
         age = [40:70];
@@ -527,6 +555,7 @@ initialization port_town:
     select [1] character as captain:
         is captain of boat,
         is boss of sailor,
+        is connected of boat,
         is mariner,
         is important,
         hometown = Location,
@@ -539,6 +568,7 @@ initialization port_town:
     
     select [4:6] character as sailor:
         is sailor of boat,
+        is connected of boat,
         is employee of captain,
         hometown = Location,
         is mariner,
@@ -578,6 +608,7 @@ initialization thieves_town:
     select [5:8] character as thief:
         is thief,
         is criminal,
+        is connected of thieves_den,
         is employee of master_thief,
         is thief of thieves_den,
         hometown = Location,
@@ -592,6 +623,7 @@ initialization thieves_town:
         is criminal,
         is employee of spy_master,
         is spy of thieves_den,
+        is connected of thieves_den,
         hometown = Location,
         is vocation,
         is coworker of spy,
@@ -604,6 +636,7 @@ initialization thieves_town:
         is thief,
         is criminal,
         is important,
+        is connected of thieves_den,
         is boss of thief,
         is boss of spy_master,
         is boss of spy,
@@ -618,6 +651,7 @@ initialization thieves_town:
     select [1] character as spy_master:
         is thief,
         is criminal,
+        is connected of thieves_den,
         is spy_master of thieves_den,
         is boss of spy,
         is spy_master of thieves_den,
@@ -644,6 +678,7 @@ initialization ancient_city:
     select [2:3] character as treasure_hunter:
         is treasure_hunter of ruins,
         is rival of treasure_hunter,
+        is connected of ruins,
         hometown = Location,
         is vocation,
         :where
@@ -654,6 +689,7 @@ initialization ancient_city:
     select [3:4] character as archaelogist:
         is archaelogist of ruins,
         is rival of treasure_hunter,
+        is connected of ruins,
         hometown = Location,
         is vocation,
         :where
@@ -670,6 +706,7 @@ initialization ancient_city:
     
     select [4:7] character as bard:
         is bard of ruins,
+        is connected of ruins,
         is coworker of bard,
         hometown = Location,
         is vocation,
@@ -707,6 +744,10 @@ initialization merchant_city:
         is owner of manor_ballroom,
         is owner of manor_garden,
         is owner of manor_gallery,
+        is connected of manor_library,
+        is connected of manor_ballroom,
+        is connected of manor_garden,
+        is connected of manor_gallery,
         is spouse of baron_spouse,
         is parent of baronling,
         is patron of auction_house,
@@ -726,6 +767,10 @@ initialization merchant_city:
         is guest of manor_ballroom,
         is guest of manor_garden,
         is guest of manor_gallery,
+        is connected of manor_library,
+        is connected of manor_ballroom,
+        is connected of manor_garden,
+        is connected of manor_gallery,
         is patron of auction_house,
         is patron of opera_house,
         is spouse of baron,
@@ -745,6 +790,10 @@ initialization merchant_city:
         is guest of manor_ballroom,
         is guest of manor_garden,
         is guest of manor_gallery,
+        is connected of manor_library,
+        is connected of manor_ballroom,
+        is connected of manor_garden,
+        is connected of manor_gallery,
         is patron of auction_house,
         is patron of opera_house,
         is child of baron,
@@ -764,6 +813,12 @@ initialization merchant_city:
         is guest of manor_ballroom,
         is guest of manor_garden,
         is guest of manor_gallery,
+        is connected of manor_library,
+        is connected of manor_ballroom,
+        is connected of manor_garden,
+        is connected of manor_gallery,
+        is connected of auction_house,
+        is connected of opera_house,
         is patron of auction_house,
         is patron of opera_house,
         hometown = Location,
@@ -779,6 +834,7 @@ initialization merchant_city:
         is librarian of manor_library,
         is employee of majordomo,
         is employee of butler,
+        is connected of manor_library,
         is servant of baron,
         hometown = Location,
         is vocation,
@@ -790,6 +846,7 @@ initialization merchant_city:
     
     select [1:2] character as tutor:
         is tutor of manor_library,
+        is connected of manor_library,
         is tutor to baronlings,
         is employee of majordomo,
         is employee of butler,
@@ -814,6 +871,7 @@ initialization merchant_city:
     select [1] character as chef:  
         is chef of manor_kitchen,
         is boss of kitchen_worker,
+        is connected of manor_kitchen,
         is employee of majordomo,
         is employee of butler,
         is servant of baron,
@@ -828,6 +886,7 @@ initialization merchant_city:
         hometown = Location,
         is worker of manor_garden,
         is vocation,
+        is connected of manor_garden,
         is coworker of gardener,
         is employee of majordomo,
         is employee of butler,
@@ -874,6 +933,7 @@ initialization merchant_city:
         
     select [2:3] character as artist:
         is artist of manor_gallery,
+        is connected of manor_gallery,
         is vocation,
         hometown = Location,
         is employee of majordomo,
@@ -897,6 +957,7 @@ initialization merchant_city:
     
     select [1:2] character as auctioneer:
         is auctioneer of auction_house,
+        is connected of auction_house,
         is boss of curator,
         is vocation,
         is important,
@@ -907,6 +968,7 @@ initialization merchant_city:
     
     select [3:4] character as curator:
         is curator of auction_house,
+        is connected of auction_house,
         is vocation,
         is employee of auctioneer,
         is coworker of curator,
@@ -925,6 +987,7 @@ initialization merchant_city:
     select [1] character as impresario:
         is boss of bard,
         is boss of diva,
+        is connected of opera_house,
         is impresario of opera_house,
         is important,
         is vocation,
@@ -937,6 +1000,7 @@ initialization merchant_city:
         is bard of opera_house,
         is vocation,
         is employee of impresario,
+        is connected of opera_house,
         is coworker of bard,
         is employee of diva,
         :where
@@ -947,6 +1011,7 @@ initialization merchant_city:
     select [2] character as diva:
         is diva of opera_house,
         is vocation,
+        is connected of opera_house,
         is employee of impresario,
         is coworker of diva,
         is boss of  bard,
@@ -985,6 +1050,7 @@ initialization scholar_town:
     //librarian & researcher & student
     select [2:4] character as librarian:
         is librarian of library,
+        is connected of library,
         hometown = Location,
         is vocation,
         :where
@@ -995,6 +1061,7 @@ initialization scholar_town:
     
     select [3:4] character as researcher:
         is researcher of library,
+        is connected of library,
         hometown = Location,
         is vocation,
         :where
@@ -1006,6 +1073,8 @@ initialization scholar_town:
     select [10:15] character as student:
         is student of library,
         is student of classroom,
+        is connected of library,
+        is connected of classroom,
         hometown = Location,
         is vocation,
         :where
@@ -1025,6 +1094,7 @@ initialization scholar_town:
     
     select [3:4] character as professor:
         is professor of classroom,
+        is connected of classroom,
         hometown = Location,
         is vocation,
         :where
@@ -1073,6 +1143,7 @@ initialization magic_town:
     
     select [1] character as high_priest:
         is high_priest of temple,
+        is connected of temple,
         hometown = Location,
         is vocation,
         is boss of priest,
@@ -1086,6 +1157,7 @@ initialization magic_town:
 
     select [3:4] character as priest:
         is priest of temple,
+        is connected of temple,
         hometown = Location,
         is vocation,
         is employee of high_priest,
@@ -1097,6 +1169,7 @@ initialization magic_town:
         
     select [7:10] character as monk:
         is monk of temple,
+        is connected of temple,
         hometown = Location,
         is vocation,
         is employee of high_priest,
@@ -1108,6 +1181,7 @@ initialization magic_town:
     
     select [20:50] character as follower:
         is follower of temple,
+        is connected of temple,
         :where 
         is believer;
     
@@ -1131,6 +1205,7 @@ initialization townie_town:
     
     select [1] character as town_elder:
         is elder of elders_house,
+        is connected of elders_house,
         hometown = Location,
         is vocation,
         is important,

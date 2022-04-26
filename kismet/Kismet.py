@@ -2684,6 +2684,25 @@ class KismetModule():
                         population.write(f'is({name},{",".join(combo)},{val}).\n')
                     else:
                         population.write(f'is({name},{",".join(combo)}).\n')
+                
+                for combo in character['relationships']:
+                    val = self.aspify_name(character["relationships"][combo])
+                    if type(val) is str:
+                        if 'time' in val:
+                            times = val.split('(')[1].split(')')[0].split(',')
+                            times = [('',int(t)) if t.isnumeric() else ('',t) for t in times]
+
+                            _, category_deltas =  self.time.delta(times,self.current_time)
+                            time = [str(t[1]) for t in times]
+                            for label, delta in category_deltas:
+                                time_since = f'time_since(time({",".join(time)}), {label}, {delta}).'
+                                population.write(f'{time_since}\n')
+                            
+                    combo = tuple([self.aspify_name(c) for c in combo])
+                    if val is not None:
+                        population.write(f'is({name},{",".join(combo)},{val}).\n')
+                    else:
+                        population.write(f'is({name},{",".join(combo)}).\n')
             population.write('\n')
             for name in self.created_locations:
                 location = self.created_locations[name]
@@ -2715,6 +2734,7 @@ class KismetModule():
             volitions_by_actor[actor][1].append(action)
         chosen_actions = []
         for actor in volitions_by_actor:
+            #print("VOLITIONS BY ACTOR", list(zip(*volitions_by_actor[actor])))
             logits = np.array(volitions_by_actor[actor][0])
             logits = np.exp(logits/self.temperature)
             probs = logits/np.sum(logits)
@@ -3308,7 +3328,7 @@ class KismetModule():
             available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
             available_locations |= {location for location in location_assignments.get(actor,[])}  
             volitions_by_actor[actor] = [(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations]
-            
+            #print("LOCATION VOLITIONS", [ (v, self.created_locations[l]['location_type']) for v,l in sorted(volitions_by_actor[actor],reverse=True)])
             if len(volitions_by_actor[actor]) == 0:
                 chosen_locations.append((actor, (actor,'by_themself')))
             else :   

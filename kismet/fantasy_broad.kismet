@@ -236,6 +236,12 @@ default trait romantic_towards_crush(>Self, <Other):
 default trait stay_at_hometown(>Self,@Location):
       +++@if Self's hometown == Location's hometown@.
       
+default trait do_role_specific_actions(>Self):
+    ++++(role_specific).
+    
+default trait go_to_locations_you_have_connection_with(>Self,@Location):
+    +++++@if Self is connected of Location @.
+    
 default trait no_pedophilia(>Self, <Other):
     -------(romance if Self's age >= 18, Other's age <= 17).
     
@@ -522,22 +528,22 @@ role monk(>Worker) extends ur_job(>Worker):
     tags: religious.
 
 action pray(>Monk:monk):
-    tags: religious;
+    tags: religious, role_specific;
     result: Monk's devotion += 1.
     
 action perform_ritual(>Monk:monk, <Other:monk):
-    tags: religious;
+    tags: religious, role_specific;
     result: Monk's devotion += 2,
             Other's devotion += 2.
             
 action screw_up_ritual(>Monk:monk, <Other:monk):
-    tags: religious, failure;
+    tags: religious, failure, role_specific;
     result: Monk's devotion -= 1,
             Other's devotion -= 1,
             Other likes Monk -= 2.
             
 action have_crisis_of_faith(>Monk:monk):
-    tags: religious, worry;
+    tags: religious, worry, role_specific;
     result: Monk's devotion -=2,
             Monk's self_worth -=1.
 
@@ -547,14 +553,14 @@ role foreman(>Worker) extends ur_job(>Worker):
     tags: talk, critical.
           
 action manage_mine(>Foreman:foreman):
-    tags: work.
+    tags: work, role_specific.
     
 action boss_miner_around(>Foreman:foreman, <Miner:miner):
-    tags: work, critical;
+    tags: work, critical, role_specific;
     result: Miner likes Foreman -= 1.
     
 action manage_dispute_between_miners(>Foreman:foreman, <Miner:miner, ^Miner2:miner):
-    tags: work, thoughtful, kind;
+    tags: work, thoughtful, kind, role_specific;
     if Miner likes Miner2 <= -1,
         Miner2 likes Miner <= -1;
     result: Miner and Miner2 like each other += 1,
@@ -562,14 +568,14 @@ action manage_dispute_between_miners(>Foreman:foreman, <Miner:miner, ^Miner2:min
             Miner2 respects Foreman += 1.
             
 action endanger_miners(>Foreman:foreman, <Miner:miner, ^Miner2:miner):  
-    tags: work, risky;
+    tags: work, risky, role_specific;
     result: Miner likes Foreman -= 2,
             Miner2 likes Foreman -= 2,
             Miner respects Foreman -= 2,
             Miner2 respects Foreman -= 2.
     
 action strike_motherlode(>Foreman:foreman, <Miner:miner, ^Miner2:miner):  
-    tags: work, risky, rare;
+    tags: work, risky, rare, role_specific;
     result: Foreman's self_worth +=2,
             Miner likes Foreman += 2,
             Miner2 likes Foreman += 2,
@@ -583,7 +589,7 @@ role miner(>Worker) extends ur_job(>Worker):
     tags: bold.
     
 action work_at_mine(>Miner:miner):
-    tags: work;
+    tags: work, role_specific;
     result: Miner's tiredness += 1.
 
 
@@ -591,14 +597,14 @@ action work_at_mine(>Miner:miner):
 
       
 action hold_auction(>Auctioneer:auctioneer, <P1:patron, ^P2:patron):
-    tags: work, bold, talk;   
+    tags: work, bold, talk, role_specific;   
     result: 
         P1's self_worth += 1,
         Auctioneer's self_worth += 1.
     
       
 action discuss_collection(>Auctioneer:auctioneer, <Curator:curator):
-    tags: work,  talk, thoughtful;   
+    tags: work,  talk, thoughtful, role_specific;   
     result: 
         Auctioneer and Curator like each other += 1.
 
@@ -614,14 +620,14 @@ role curator(>Worker) extends ur_job(>Worker):
     tags: scholarly.
                      
 action curate_collection(>Curator:curator):
-    tags: work.
+    tags: work, role_specific.
     
 action acquire_artifacts(>Curator:curator):
-    tags: work, bold;
+    tags: work, bold, role_specific;
     result: Curator's self_worth += 1.
     
 action discuss_collection(>Curator:curator, <Other):
-    tags: work, talk;
+    tags: work, talk, role_specific;
     result: Other respects Curator += 1.
     
 ////////////////////////////VENDOR
@@ -630,32 +636,32 @@ role vendor(>Worker) extends ur_job(>Worker):
     tags: talk.
     
 action sell_wares(>Vendor:vendor, <Other):
-    tags: work;
+    tags: work, role_specific;
     result: Vendor likes Other += 1.
     
 action give_deal_to(>Vendor:vendor, <Other):
-    tags: work, kind, talk;
+    tags: work, kind, talk, role_specific;
     if Vendor likes Other >= 3;
     result: Other likes Vendor += 2.
 
 action hustle(>Vendor: vendor, <Other):
-    tags: work, bold, mean, risky;
+    tags: work, bold, mean, risky, role_specific;
     if Vendor likes Other <= 0;
     result: Vendor's self_worth += 1,
             Other likes Vendor -= 1.
 
 action commiserate_with_fellow_vendor(>Vendor:vendor, <OtherVendor:vendor):
-    tags: work, talk, thoughtful, kind;
+    tags: work, talk, thoughtful, kind, role_specific;
     result: Vendor and OtherVendor like each other += 1.
 
 action undercut(>Vendor:vendor, <OtherVendor:vendor):
-    tags: work, bold, mean;
+    tags: work, bold, mean, role_specific;
     if Vendor likes OtherVendor <= 0;
     result: Vendor's self_worth += 1,
             OtherVendor likes Vendor -= 1.
 
 action standup_to_enforcer_together(>Vendor:vendor, <OtherVendor:vendor, ^Enforcer):
-    tags: work, bold;
+    tags: work, bold, role_specific;
     if Vendor fears Enforcer >= 6,
         OtherVendor fears Enforcer >= 6;
     result: Vendor and OtherVendor like each other += 5,
@@ -671,11 +677,11 @@ role enforcer(>Worker) extends ur_job(>Worker):
     tags: risky, mean, criminal.
     
 action collect_protection_fees(>Enforcer:enforcer, <Vendor:vendor):
-    tags: work, mean, risky, criminal;
+    tags: work, mean, risky, criminal, role_specific;
     result: Vendor likes Enforcer -= 1.
 
 action rough_up(>Enforcer:enforcer, <Vendor:vendor):
-    tags: work, mean, risky, criminal;
+    tags: work, mean, risky, criminal, role_specific;
     result: Vendor likes Enforcer -= 2,
             Vendor fears Enforcer += 2.
 
@@ -684,11 +690,11 @@ role dockworker(>Worker) extends ur_job(>Worker):
     tags: mariner.
     
 action load_cargo(>Dockworker:dockworker):
-    tags: work;
+    tags: work, role_specific;
     result: Dockworker's tiredness += 1.
 
 action fight_seagull(>Dockworker:dockworker):
-    tags: angry, rare;
+    tags: angry, rare, role_specific;
     result: Dockworker's anger += 1.
  
 ////////////////////////////LIBRARIAN
@@ -697,29 +703,29 @@ role librarian(>Worker) extends ur_job(>Worker):
     tags: scholarly.
     
 action stock_books(>Librarian:librarian):
-    tags: work, scholarly;
+    tags: work, scholarly, role_specific;
     result: Librarian's tiredness += 1.
     
 action shush_patron(>Librarian:librarian, <Patron:guest):
-    tags: work, mean, bold;
+    tags: work, mean, bold, role_specific;
     result: Patron likes Librarian -= 1,
             Patron's shame += 1.
             
 action assist_research(>Librarian:librarian, <Researcher:researcher):
-    tags: work, scholarly;
+    tags: work, scholarly, role_specific;
     result: Librarian and Researcher like each other += 1,
             Librarian's self_worth += 1.
 
 
 action assist_research(>Librarian:librarian, <Researcher:guest):
-    tags: work, scholarly;
+    tags: work, scholarly, role_specific;
     if Researcher is scholar;
     result: Librarian and Researcher like each other += 1,
             Librarian's self_worth += 1.
 
 
 action assist_student(>Librarian:librarian, <Researcher:student):
-    tags: work, scholarly;
+    tags: work, scholarly, role_specific;
     result: Librarian and Researcher like each other += 1,
             Librarian's self_worth += 1.
    
@@ -730,27 +736,27 @@ role chef(>Worker) extends ur_job(>Worker):
     tags: talk.  
     
 action acquire_ingredients(>Chef, <ShopOwner:vendor):
-    tags: work;
+    tags: work, role_specific;
     if Chef is chef;
     result: 
         Chef and ShopOwner like each other += 1.
         
 action develop_recipe(>Chef:chef):
-    tags: work;
+    tags: work, role_specific;
     result: Chef's self_worth += 1.
     
 action boss_cooks_around(>Chef:chef,<Cook:worker):
-    tags: work, mean;
+    tags: work, mean, role_specific;
     result: 
     Cook likes Chef -= 1.
 
 action mentor_cook(>Chef:chef,<Cook:worker):
-    tags: work, kind;
+    tags: work, kind, role_specific;
     result: 
     Cook likes Chef += 1.
     
 action create_culinary_masterpiece(>Chef:chef,<Guest:guest):
-    tags: work, rare;
+    tags: work, rare, role_specific;
     result:
         Chef's self_worth += 2,
         Guest respects Chef += 3,
@@ -759,7 +765,7 @@ action create_culinary_masterpiece(>Chef:chef,<Guest:guest):
 //GENERIC EMPLOYEE STUFF
 action bitch_about_boss(>Worker, <Coworker, ^Boss):
     location: (Worker,Coworker) ?(Boss);
-    tags: work, mean;
+    tags: work, mean, role_specific;
     if Worker is coworker of Coworker,
         Worker is employee of Boss;
     result: Worker and Coworker like each other +=1,
@@ -767,7 +773,7 @@ action bitch_about_boss(>Worker, <Coworker, ^Boss):
         
 action bitch_about_boss_to_resistance(>Worker, <Coworker, ^Boss):
     location: (Worker,Coworker) ?(Boss);
-    tags: work, mean, failure;
+    tags: work, mean, failure, role_specific;
     if Coworker likes Boss >= 3,
         Worker is coworker of Coworker,
         Worker is employee of Boss;
@@ -775,7 +781,7 @@ action bitch_about_boss_to_resistance(>Worker, <Coworker, ^Boss):
         
 action praise_boss(>Worker, <Coworker, ^Boss):
     location: (Worker,Coworker) ?(Boss);
-    tags: work, kind;
+    tags: work, kind, role_specific;
     if Worker likes Boss >= 3,
         Worker is coworker of Coworker,
         Worker is employee of Boss;
@@ -784,7 +790,7 @@ action praise_boss(>Worker, <Coworker, ^Boss):
         
 action praise_boss_to_resistance(>Worker, <Coworker, ^Boss):
     location: (Worker,Coworker) ?(Boss);
-    tags: work, kind;
+    tags: work, kind, role_specific;
     if Worker likes Boss >= 3,
         Coworker likes Boss <= -1,
         Worker is coworker of Coworker,
@@ -798,31 +804,31 @@ role treasure_hunter(>Worker) extends ur_job(>Worker):
     tags: bold, criminal, risky.
     
 action search_for_treasure(>TreasureHunter:treasure_hunter):
-    tags: work, bold, criminal;
+    tags: work, bold, criminal, role_specific;
     result: TreasureHunter's tiredness += 1.
     
 action find_treasure(>TreasureHunter:treasure_hunter):
-    tags: work, bold, criminal, rare;
+    tags: work, bold, criminal, rare, role_specific;
     result: TreasureHunter's self_worth += 5,
             TreasureHunter is rich.
             
             
 action investigate_ruins(>TreasureHunter:treasure_hunter):
-    tags: work, scholarly, thoughtful.
+    tags: work, scholarly, thoughtful, role_specific.
     
 action trigger_trap(>TreasureHunter:treasure_hunter):
-    tags: work, careless;
+    tags: work, careless, role_specific;
     result: TreasureHunter's self_worth -= 1.
     
 action sabotage_rival_treasure_hunter(>TreasureHunter:treasure_hunter,<OtherTH:treasure_hunter):
-    tags: work, mean, bold;
+    tags: work, mean, bold, role_specific;
     if TreasureHunter is rival of OtherTH;
     result: 
         OtherTH likes TreasureHunter -= 1,
         OtherTH respects TreasureHunter += 1.
         
 action overcome_rivalry_to_work_together(>TreasureHunter:treasure_hunter,<OtherTH:treasure_hunter):
-    tags: work, kind, bold;
+    tags: work, kind, bold, role_specific;
     if TreasureHunter is rival of OtherTH;
     result: 
         TreasureHunter and OtherTH like each other += 1.
@@ -834,18 +840,18 @@ role archaelogist(>Worker) extends ur_job(>Worker):
     tags: scholarly, thoughtful.
     
 action investigate_ruins(>Archaelogist:archaelogist):
-    tags: work, scholarly, thoughtful.
+    tags: work, scholarly, thoughtful, role_specific.
 
 action catalog_findings(>Archaelogist:archaelogist):
-    tags: work, scholarly, thoughtful.
+    tags: work, scholarly, thoughtful, role_specific.
     
 action argue_with_treasure_hunter(>Archaelogist:archaelogist, <TreasureHunter:treasure_hunter):
-    tags: talk, critical;
+    tags: talk, critical, role_specific;
     if Archaelogist is rival of TreasureHunter;
     result: Archaelogist and TreasureHunter like each other -= 1.
     
 action develop_begrudging_respect_towards(>Archaelogist:archaelogist, <TreasureHunter:treasure_hunter):
-    tags: talk, kind;
+    tags: talk, kind, role_specific;
     if Archaelogist is rival of TreasureHunter;
     result: Archaelogist and TreasureHunter like each other += 1.
     
@@ -857,16 +863,16 @@ role bard(>Worker) extends ur_job(>Worker):
     tags: talk, silly.
     
 action perform_to_no_effect(>Bard:bard):
-    tags: work, talk;
+    tags: work, talk, role_specific;
     result: Bard's tiredness += 1.
     
 action amuse_with_performance(>Bard:bard, <Tourist:tourist):
-    tags: work, talk;
+    tags: work, talk, role_specific;
     result: Bard's self_worth += 1,
             Tourist likes Bard += 1.
 
 action grouse_backstage(>Bard:bard, <Other:bard):
-    tags: work, criticial;
+    tags: work, criticial, role_specific;
     result: Bard and Other like each other -= 1.
 
 action encourage_fellow_performer(>Bard:bard, <Other:bard):
@@ -874,7 +880,7 @@ action encourage_fellow_performer(>Bard:bard, <Other:bard):
     result: Bard and Other like each other += 1.
 
 action annoy_diva_for_laughs(>Bard:bard, <Diva:diva, ^Other:bard):
-    tags: work, mean, silly;
+    tags: work, mean, silly, role_specific;
     if Other likes Diva <= -1;
     result: Bard's self_worth += 1,
             Diva likes Bard -= 1,
@@ -883,11 +889,11 @@ action annoy_diva_for_laughs(>Bard:bard, <Diva:diva, ^Other:bard):
 // Tourist
 
 action become_annoyed_with_bard(>Tourist:tourist, <Bard:bard):
-    tags: critical;
+    tags: critical, role_specific;
     result: Tourist likes Bard -= 1.
     
 action be_amused_by_bard(>Tourist:tourist, <Bard:bard):
-    tags: silly;
+    tags: silly, role_specific;
     result: Tourist likes Bard += 1.
     
 
@@ -897,7 +903,7 @@ role monarch(>Worker) extends ur_job(>Worker):
     tags:  bold, critical.
     
 action make_judicious_decree(>Monarch:monarch,<O1,^O2):
-    tags: work, thoughtful;
+    tags: work, thoughtful, role_specific;
     if Monarch is monarch,
         O1 has fealty to Monarch,
        O2 has fealty to Monarch;
@@ -905,7 +911,7 @@ action make_judicious_decree(>Monarch:monarch,<O1,^O2):
            O2 likes Monarch += 1.
            
 action make_imprudent_decree(>Monarch:monarch,<O1,^O2):
-    tags: work, careless;
+    tags: work, careless, role_specific;
     if Monarch is monarch,
         O1 has fealty to Monarch,
        O2 has fealty to Monarch;
@@ -914,7 +920,7 @@ action make_imprudent_decree(>Monarch:monarch,<O1,^O2):
     
            
 action make_callous_decree(>Monarch:monarch,<O1,^O2):
-    tags: work, mean;
+    tags: work, mean, role_specific;
     if Monarch is monarch,
         O1 has fealty to Monarch,
        O2 has fealty to Monarch;
@@ -922,7 +928,7 @@ action make_callous_decree(>Monarch:monarch,<O1,^O2):
            O2 likes Monarch -= 1.
            
 action make_benevolent_decree(>Monarch:monarch,<O1,^O2):
-    tags: work, kind;
+    tags: work, kind, role_specific;
     if Monarch is monarch,
         O1 has fealty to Monarch,
        O2 has fealty to Monarch;
@@ -930,7 +936,7 @@ action make_benevolent_decree(>Monarch:monarch,<O1,^O2):
            O2 likes Monarch += 1.
            
 action banish_monarchling(>Monarch:monarch, <Child):
-    tags: mean, rare;
+    tags: mean, rare, role_specific;
     if Monarch is monarch,
         Monarch likes Child <= -5,
         Child is child of Monarch,
@@ -942,7 +948,7 @@ action banish_monarchling(>Monarch:monarch, <Child):
         Child likes Monarch -= 10.
 
 action consult_with_chancellor(>Monarch:monarch, <Chancellor:chancellor):
-    tags: work, thoughtful;
+    tags: work, thoughtful, role_specific;
     result: Monarch and Chancellor like each other += 1.
  
 ////////////////////////////CHANCELLOR
@@ -950,23 +956,23 @@ role chancellor(>Worker) extends ur_job(>Worker):
     tags:  talk, critical.  
     
 action sway_monarch_to_kindness(>Chancellor:chancellor, <Monarch:monarch):
-    tags: kind, talk, bold, rare;
+    tags: kind, talk, bold, rare, role_specific;
     result: Monarch is compassionate,
             Monarch is not indifferent.
     
 action sway_monarch_to_indifference(>Chancellor:chancellor, <Monarch:monarch):
-    tags: mean, talk, bold, rare;
+    tags: mean, talk, bold, rare, role_specific;
     result: Monarch is not compassionate,
             Monarch is  indifferent.
 
 action support_banished_sibling(>Monarchling, <ExMonarchling):
-    tags: kind, free;
+    tags: kind, free, role_specific;
     if Monarchling is royalty, ExMonarchling is ex_royalty, 
             Monarchling is sibling of ExMonarchling;
     result: Monarchling and ExMonarchling like each other +=1.
     
 action shun_banished_sibling(>Monarchling, <ExMonarchling):
-    tags: mean, duty;
+    tags: mean, duty, role_specific;
     if Monarchling is royalty, ExMonarchling is ex_royalty, 
             Monarchling is sibling of ExMonarchling;
     result: Monarchling and ExMonarchling like each other -=1.
@@ -1024,20 +1030,20 @@ role professor(>Worker) extends ur_job(>Worker):
     
 
 action hold_lecture(>Professor:professor, <Student:student):
-    tags: work, scholarly;
+    tags: work, scholarly, role_specific;
     result:
         Student likes Professor += 1,
         Professor's self_worth += 1.
 
 
 action hold_boring_lecture(>Professor:professor, <Student:student):
-    tags: work, scholarly,failure;
+    tags: work, scholarly,failure, role_specific;
     result:
         Student likes Professor -= 1,
         Professor's self_worth -= 1.
         
 action perform_research(>Professor:professor):
-    tags: work, scholarly;
+    tags: work, scholarly, role_specific;
     result:
         Professor's self_worth += 1.
 
@@ -1047,7 +1053,7 @@ role spy_master(>Worker) extends ur_job(>Worker):
     tags:  risky, critical.
     
 action conspire_against(>SpyMaster:spy_master, <Target):
-    tags: rare, mean;
+    tags: rare, mean, role_specific;
     location: (SpyMaster) ?(Target);
     if Target is important;
     result: SpyMaster likes Target -= 1,
@@ -1055,7 +1061,7 @@ action conspire_against(>SpyMaster:spy_master, <Target):
             
             
 action send_underlings(>SpyMaster:spy_master, <Spy:spy, ^Target):
-    tags: work;
+    tags: work, role_specific;
     location: (SpyMaster) ?(Target);
     if SpyMaster plotting_against Target >= 1;
     result: SpyMaster is plotting_against Target -= 1,
