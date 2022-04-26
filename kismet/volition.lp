@@ -2,7 +2,6 @@
 
 #const single_null = 1000.
 #const no_null = 200.
-
 non_null(INITIATOR) :- action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION), TARGET != null.
 
 likelihood(action(NAME, INITIATOR,null,null,ACTION,LOCATION),N) :-

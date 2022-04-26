@@ -498,8 +498,8 @@ action stand_up_for_friend_and_persuade(>Self, <Other,^Friend):
     result: 
         Friend likes Self += 1,
         Self's self_worth += 1,
-        Disliker likes Friend += 1,
-        Disliker likes Self += 1.
+        Other likes Friend += 1,
+        Other likes Self += 1.
         
 action stand_up_for_friend_and_fail(>Self, <Other,^Friend):
     location: (Self, Other) ?(Friend);
@@ -508,8 +508,8 @@ action stand_up_for_friend_and_fail(>Self, <Other,^Friend):
     result: 
         Friend likes Self += 1,
         Self's self_worth += 1,
-        Disliker likes Friend -= 1,
-        Disliker likes Self -= 1.
+        Other likes Friend -= 1,
+        Other likes Self -= 1.
         
 pattern dislikes_friend(>Self, <Disliker, ^Friend):
     if Self likes Friend >= 3,

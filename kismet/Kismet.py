@@ -740,9 +740,14 @@ def parseConditional(conditional,conditional_type='Conditional'):
             val = arguments[4][1]
             if len(operation) == 2:
                 operator_text = f'X {operation[0]} {val} = Y'
+                missing_text = f'{val}'
+                if operation[0] == '-':
+                    missing_text = f'-{val}'
             else:
                 operator_text = f'{val} = Y'
-            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), {operator_text}, ']
+                missing_text = f'{val}'
+            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), {operator_text}, ',
+                    f'update({char1},{rel},{char2},{missing_text}) :- not is({char1},{rel},{char2},_), ']
         else:
             
             char1 = arguments[0][1][1]
@@ -784,11 +789,17 @@ def parseConditional(conditional,conditional_type='Conditional'):
             
             if len(operation) == 2:
                 operator_text = f'X {operation[0]} {val} = Y'
+                missing_text = f'{val}'
+                if operation[0] == '-':
+                    missing_text = f'-{val}'
             else:
                 operator_text = f'{val} = Y'
+                missing_text = f'{val}'
             
-            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), {operator_text},',    
-                    f'update({char2},{rel},{char1},Y) :- is({char2},{rel},{char1},X), {operator_text},']
+            text = [f'update({char1},{rel},{char2},Y) :- is({char1},{rel},{char2},X), {operator_text},',
+                    f'update({char1},{rel},{char2},{missing_text}) :- not is({char1},{rel},{char2},_), ',    
+                    f'update({char2},{rel},{char1},Y) :- is({char2},{rel},{char1},X), {operator_text},',
+                    f'update({char2},{rel},{char1},{missing_text}) :- not is({char2},{rel},{char1},_), ']
         else:
             text = [f'{comparisonMapping[conditional_type][inv]}{char1},{rel},{char2}) :- ',
                     f'{comparisonMapping[conditional_type][inv]}{char2},{rel},{char1}) :- ']
@@ -845,11 +856,16 @@ def parseConditional(conditional,conditional_type='Conditional'):
         
         if len(operator) == 2:
             operator_text = f'X {operator[0]} {val} = Y'
+            missing_text = f'{val}'
+            if operator[0] == '-':
+                missing_text = f'-{val}'
         else:
             operator_text = f'{val} = Y'
-            
+            missing_text = f'{val}'
+
         
-        text = [f'update({char1},{stat},Y) :- is({char1},{stat},X), {operator_text}, ']
+        text = [f'update({char1},{stat},Y) :- is({char1},{stat},X), {operator_text}, ',
+                f'update({char1},{stat},{missing_text}) :- not is({char1},{stat},_), ']
     elif cond_type == 'CondPattern':
         name = arguments[0][1]
         args = [name] + [arg[1][1] for arg in arguments[1:]]
@@ -1950,7 +1966,15 @@ class KismetModule():
             if self.traits[trait].is_status:
                 trait_type = 'status'
             self.traitASP.append(f'{trait_type}({get_common_name(trait)}).')
-            
+            if self.traits[trait].is_num:
+                if 'DEFAULT' not in self.traits[trait].arguments.get('<','DEFAULT'):
+                    self.traitASP.append(f'is(Person,{get_common_name(trait)},Other,0) :- person(Person), person(Other), Person != Other, not is(Person,{get_common_name(trait)},Other,N), non_zero(N).')
+                elif 'DEFAULT' not in self.traits[trait].arguments.get('@','DEFAULT'):
+                    self.traitASP.append(f'is(Person,{get_common_name(trait)},Other,0) :- person(Person), location(Other), not is(Person,{get_common_name(trait)},Other,N), non_zero(N).')
+                else:
+                    self.traitASP.append(f'is(Person,{get_common_name(trait)},0) :- person(Person), not is(Person,{get_common_name(trait)},N), non_zero(N).')
+                
+            print('TRAIT', trait, self.traits[trait])
         for trait in self.removal_traits:
             self.traitASP.append(f'status({trait}).')
             
