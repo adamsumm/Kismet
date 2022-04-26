@@ -582,7 +582,7 @@ action strike_motherlode(>Foreman:foreman, <Miner:miner, ^Miner2:miner):
 role miner(>Worker) extends ur_job(>Worker):
     tags: bold.
     
-action mine(>Miner:miner):
+action work_at_mine(>Miner:miner):
     tags: work;
     result: Miner's tiredness += 1.
 

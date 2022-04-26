@@ -1957,18 +1957,51 @@ class KismetModule():
         self.locationASP = []
         
         for location in self.locations:
+            
             supported_roles = self.locations[location].supports
             tags = self.locations[location].tags
             for role in supported_roles:
                 self.locationASP.append(f'castable({get_common_name(role)},{get_common_name(location)}).')
             for tag in tags:                
                 self.locationASP.append(f'is({get_common_name(location)},{tag}).')
-        
+            
+            self.locationASP.append(f'hashed({get_common_name(location)},{hash(get_common_name(location))&0xFFFFFFFF}).')
         self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
         
         self.actions2rules()
-        with open(os.path.join(self.path,f'{self.module_file}_rules.lp'), 'w') as asp_file:
-            text = '\n\n'.join(self.locationASP+self.actionASP+self.traitASP+self.patternASP)
+        
+        
+        
+            
+        with open(os.path.join(self.path,f'{self.module_file}_pattern_rules.lp'), 'w') as asp_file:
+            text = '\n\n'.join(self.patternASP)
+            
+            options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
+                       ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
+                       (',',','),(', ',','),(', ',' ,'),(',',' ,'),
+                       (',',')'),(', ',')'),(', ',' )'),(',',' )')]
+
+            for name in self.alternative_names:
+                for alt in self.alternative_names[name]:
+                    for option in options:
+                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
+            asp_file.write(text)
+            
+        with open(os.path.join(self.path,f'{self.module_file}_action_rules.lp'), 'w') as asp_file:
+            text = '\n\n'.join([line for line in self.locationASP+self.actionASP+self.traitASP if 'go_to_propensity' not in line])
+            options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
+                       ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
+                       (',',','),(', ',','),(', ',' ,'),(',',' ,'),
+                       (',',')'),(', ',')'),(', ',' )'),(',',' )')]
+
+            for name in self.alternative_names:
+                for alt in self.alternative_names[name]:
+                    for option in options:
+                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
+            asp_file.write(text)
+            
+        with open(os.path.join(self.path,f'{self.module_file}_location_rules.lp'), 'w') as asp_file:
+            text = '\n\n'.join([line for line in self.locationASP+self.traitASP if line.find('propensity') != 0])
             options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
                        ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
                        (',',','),(', ',','),(', ',' ,'),(',',' ,'),
@@ -2215,7 +2248,7 @@ class KismetModule():
             premise = '\t\t'+',\n\t\t'.join(premises)
 
             self.actionASP.append(head +':-\n'+ premise + '.')
-
+            self.actionASP.append(f'hashed({get_common_name(name)},{hash(get_common_name(name))&0xFFFFFFFF}).')
             at_location = ''
             if is_cast:
                 at_location = f'at({arguments[">"]}, Location), '
@@ -2534,9 +2567,11 @@ class KismetModule():
                 name = thing.get('name',[location_type])[0]
                 l_id = thing['id']
                 uniq_name =get_unique_name(location_type)
+                status = {(key,):value[0] for key,value in thing.items() if key not in set(['name','relationships','type','id','status','location_type'])}
                 self.created_locations[l_id] = {'id':l_id,'name':name,
                                                     'location_type':location_type,
-                                                    'relationships':thing.get('relationships',[])}
+                                                    'relationships':thing.get('relationships',[]),
+                                                   'status':status}
             else:
                 print(f'Unknown Object Type {thing["type"]} for {thing}')
         for name in self.population:
@@ -2616,9 +2651,17 @@ class KismetModule():
     def population2asp(self):
         important_times = set()
         with open(os.path.join(self.path,f'{self.module_file}_population.lp'),'w') as population:
+            population.write(f'hashed(time,{hash(tuple(self.current_time))&0xFFFFFFFF}).\n')
+            population.write(f'hashed(null,{hash("KISMET_JRASBS")&0xFFFFFFFF}).\n')
+            population.write(f'hashed_1(null,{hash("KISMET")&0xFFFFFFFF}).\n')
+            population.write(f'hashed_2(null,{hash("KISMET_JAB")&0xFFFFFFFF}).\n')
+            population.write(f'hashed_3(null,{hash("KISMET_RSS")&0xFFFFFFFF}).\n')
             for name in self.population:
                 character = self.population[name]
                 population.write(f'person({name}).\n')
+                population.write(f'hashed_1({name},{hash((name,"james_ryan"))&0xFFFFFFFF}).\n')
+                population.write(f'hashed_2({name},{hash((name,"adam_summerville",name,"kismet"))&0xFFFFFFFF}).\n')
+                population.write(f'hashed_3({name},{hash((name,"ben_samuel",name))&0xFFFFFFFF}).\n')
                 for trait in character['traits']:
                     population.write(f'is({name},{trait}).\n')
                 population.write('\n')
@@ -2643,12 +2686,24 @@ class KismetModule():
                         population.write(f'is({name},{",".join(combo)}).\n')
             population.write('\n')
             for name in self.created_locations:
+                location = self.created_locations[name]
                 population.write(f'location({name}).\n')
-                population.write(f'is({name},{self.created_locations[name]["location_type"]}).\n')
+                population.write(f'hashed({name},{hash(name)&0xFFFFFFFF}).\n')
+                population.write(f'is({name},{location["location_type"]}).\n')
+                   
+                for combo in location['status']:
+                    val = self.aspify_name(location["status"][combo])
+                    
+                    combo = tuple([self.aspify_name(c) for c in combo])
+                    if val is not None:
+                        population.write(f'is({name},{",".join(combo)},{val}).\n')
+                    else:
+                        population.write(f'is({name},{",".join(combo)}).\n')
+                    
                 for relationship in self.created_locations[name]['relationships']:
                     role, char_name = relationship
                     char_name = self.aspify_name(char_name)
-                    population.write(f'cast({name},{role},{char_name}).\n')
+                    population.write(f'is({char_name},{role},{name}).\n')
                 population.write('\n')
     def compute_actions(self,volitions):
         volitions_by_actor = {}
@@ -2731,7 +2786,7 @@ class KismetModule():
     def calculate_volitions(self):        
         #print(' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp']]))
         
-        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         
         #Only select one of a given Actor, Action Type pair -- this is to stop combinatorics from dominating the likelihood
         volitions_by_actor = {}
@@ -2745,15 +2800,15 @@ class KismetModule():
         possible_actions = []
         for action_key in volitions_by_actor:
             possible_actions.append(random.choice(volitions_by_actor[action_key]))
-        
+            
         return [{'likelihood':possible_actions}]
     def calculate_action_results(self):
-        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
        
         return action_results
     
     def calculate_observability(self):
-        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
         return visibility_results
     
     def knowledge2asp(self):        
@@ -2858,7 +2913,7 @@ class KismetModule():
             else:
                 print(self.population[person]['name'] + ':\n\t' + \
                       '\n\t'.join(' '.join(self.to_pretty_name(trait_name)) + self.print_status(self.population[person]['status'][trait_name])  for trait_name in self.population[person]['status']) + '\n\t' + \
-                      '\n\t'.join([trait_name for trait_name in self.population[person]['traits']]))
+                      '\n\t'.join([trait_name for trait_name in self.population[person]['traits'] if trait_name not in default_traits]))
       
     def display_relationships(self,person_filter=None):
         if person_filter is None:
@@ -3001,8 +3056,7 @@ class KismetModule():
                                      'id':source}
                 
                 for trait in self.population[person]['traits']:
-                    if trait not in default_traits:
-                        characters[source]['traits'].append(get_common_name(trait))
+                    characters[source]['traits'].append(get_common_name(trait))
                 for relation in self.population[person]['status']:
                     if len(relation) == 1:
                         relation_name  = get_common_name(relation[0])
@@ -3237,7 +3291,7 @@ class KismetModule():
                 available_slots[(location,role)] = role_slots[role]
                 
         #print('LOCATION VOLITION', ' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]))       
-        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp',  f'{self.module_file}_pattern_rules.lp',f'{self.module_file}_population.lp','location_volition.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
                 
         volitions_by_actor = {}
         for volition in goto_volitions[0]['go_to']:
@@ -3252,8 +3306,7 @@ class KismetModule():
         chosen_locations = []    
         for actor in shuffled:
             available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
-            available_locations |= {location for location in location_assignments.get(actor,[])}
-                
+            available_locations |= {location for location in location_assignments.get(actor,[])}  
             volitions_by_actor[actor] = [(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations]
             
             if len(volitions_by_actor[actor]) == 0:
@@ -3300,6 +3353,8 @@ class KismetModule():
         
         self.knowledge2asp()
         self.population2asp()
+        
+        #raise Exception("STOP HERE")
         self.determine_character_locations()
         
         character_action_budget = {name:self.action_budget for name in self.population}

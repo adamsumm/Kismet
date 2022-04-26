@@ -51,6 +51,7 @@ initialization tavern:
     
     create [1] location as tavern:
         location_type = "tavern",
+        hometown = Location,
         name = "[The[ Old | ][Red|Blue|Green|Lusty|Sullen|Happy|Insatiable|Naughty|Poisoned|Reveling|Rusty|Silly|Broken|Golden|Laughing|Lonely|Prancing|Silver|Sign of the|Sleepy|Wistful] [Goblin|Boggart|Fae|Unicorn|Dragon|Wolf|Troll|Bear|Badger|Lion|Horse|Skunk|Aardvark|Civet|Dog|Eagle|Ghost|Imp|Jackal|Kobold|Manticore|Gnoll|Octopus|Parrot|Quail|Rusalka|Serpent|Tapir|Vulture|Wendigo|Yak|Zebra][| Inn| Tavern]|[Old |][#TavernLastName#|#TavernFirstName#]'s [Tavern|Inn]]",
         has owner of tavern_owner,
         has barkeep of barkeep,
