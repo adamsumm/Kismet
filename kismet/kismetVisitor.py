@@ -234,6 +234,11 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#cond6.
+    def visitCond6(self, ctx:kismetParser.Cond6Context):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#cond4.
     def visitCond4(self, ctx:kismetParser.Cond4Context):
         return self.visitChildren(ctx)
@@ -256,11 +261,6 @@ class kismetVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismetParser#cond5.
     def visitCond5(self, ctx:kismetParser.Cond5Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by kismetParser#cond6.
-    def visitCond6(self, ctx:kismetParser.Cond6Context):
         return self.visitChildren(ctx)
 
 

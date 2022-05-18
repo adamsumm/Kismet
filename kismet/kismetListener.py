@@ -413,6 +413,15 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#cond6.
+    def enterCond6(self, ctx:kismetParser.Cond6Context):
+        pass
+
+    # Exit a parse tree produced by kismetParser#cond6.
+    def exitCond6(self, ctx:kismetParser.Cond6Context):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#cond4.
     def enterCond4(self, ctx:kismetParser.Cond4Context):
         pass
@@ -455,15 +464,6 @@ class kismetListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismetParser#cond5.
     def exitCond5(self, ctx:kismetParser.Cond5Context):
-        pass
-
-
-    # Enter a parse tree produced by kismetParser#cond6.
-    def enterCond6(self, ctx:kismetParser.Cond6Context):
-        pass
-
-    # Exit a parse tree produced by kismetParser#cond6.
-    def exitCond6(self, ctx:kismetParser.Cond6Context):
         pass
 
 

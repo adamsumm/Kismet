@@ -30,7 +30,7 @@ initialization tavern:
         hometown ?= Location,
         age = [30:80];
     
-    select [2:3] character as barkeep:
+    select [1:2] character as barkeep:
         is barkeep of tavern,
         is connected of tavern,
         is employee of tavern_owner,
@@ -49,7 +49,7 @@ initialization tavern:
         is regular of tavern,
         is drinker
         :where
-        hometown ?= Location,
+        hometown = Location,
         age = [20:80];
     
     create [1] location as tavern:
@@ -73,7 +73,7 @@ initialization  smith_shop:
         hometown ?= Location,
         age = [40:70];
     
-    select [2:3] character as smith_apprentice:
+    select [1:2] character as smith_apprentice:
         is smith_apprentice of blacksmith,
         is employee of smithy,
         is connected of blacksmith,
@@ -93,7 +93,7 @@ initialization  smith_shop:
         has smith_apprentice of smith_apprentice.
 initialization marketplace:
 
-    select [5:6] character as vendor:
+    select [2:3] character as vendor:
         is vendor of marketplace,
         is connected of marketplace,
         is scared of enforcer,
@@ -111,7 +111,7 @@ initialization marketplace:
         hometown ?= Location,
         age = [30:60];
         
-    select [2:3] character as enforcer:
+    select [1] character as enforcer:
         is enforcer of marketplace,
         is employee of racketeer,
         is connected of marketplace,
@@ -136,7 +136,7 @@ initialization marketplace:
         hometown ?= Location,
         age = [40:60];
   
-    select [1:2] character as pickpocket:
+    select [1] character as pickpocket:
         is pickpocket of marketplace,
         is connected of marketplace,
         is thief,
@@ -237,6 +237,7 @@ initialization royal_country:
         ruler = Location,
         hometown = Location,
         last_name = Royal_name,
+        is noteworthy,
         is royalty,
         is spouse,
         is connected of throne_room,
@@ -251,6 +252,7 @@ initialization royal_country:
     
     select [1] character as monarch_spouse:
         hometown = Location,
+        is noteworthy,
         is royalty,
         is connected of throne_room,
         is spouse to monarch,
@@ -266,6 +268,7 @@ initialization royal_country:
         
     select [0:2] character as monarchlings:
         hometown = Location,
+        is noteworthy,
         is royalty,
         last_name = Royal_name,
         is connected of castle_library,
@@ -279,7 +282,7 @@ initialization royal_country:
         hometown ?= Location,
         age = [1:10];
         
-    select [2] character as librarian:
+    select [1] character as librarian:
         is librarian of castle_library,
         is fealty to monarch,
         is connected of castle_library,
@@ -306,6 +309,7 @@ initialization royal_country:
     
     select [1] character as chancellor:
         is chancellor to monarch,
+        is noteworthy,
         is fealty to monarch,
         is connected of throne_room,
         hometown = Location,
@@ -334,7 +338,7 @@ initialization royal_country:
         has tutor of royal_tutor;
     
     
-    select [1:2] character as chef:  
+    select [1] character as chef:  
         is chef of castle_kitchen,
         is connected of castle_kitchen,
         is boss of kitchen_worker,
@@ -346,7 +350,7 @@ initialization royal_country:
         hometown ?= Location,
         age = [20:50];
     
-    select [3:4] character as kitchen_worker:
+    select [1:2] character as kitchen_worker:
         is employee to chef,
         is connected of castle_kitchen,
         is fealty to monarch,
@@ -369,7 +373,7 @@ initialization royal_country:
         has guest of monarch_spouse,
         has guest of monarchlings;
     
-    select [2:3] character as guard:
+    select [1:2] character as guard:
         is fealty to monarch,
         hometown = Location,
         is guard of dungeon,
@@ -382,7 +386,7 @@ initialization royal_country:
         hometown ?= Location,
         age = [20:50];
         
-    select [1:2] character as prisoner:
+    select [1] character as prisoner:
         is confined of dungeon,
         is criminal,
         is citizen,
@@ -400,8 +404,8 @@ initialization royal_country:
         has prisoner of prisoner;
         
         
-    create [3] old_family;
-    create [3] young_family.
+    create [1] old_family;
+    create [1] young_family.
     
 
 
@@ -421,7 +425,7 @@ initialization mining_town:
         hometown ?= Location,
         age = [30:60];
     
-    select [7:10] character as miner:
+    select [3:4] character as miner:
         is miner of mine,
         is connected of mine,
         is worker of mine,
@@ -442,12 +446,12 @@ initialization mining_town:
         has miner of miner
         ;     
         
-    create [1] tavern;
     create [1] smith_shop;
     
     
-    create [2] old_family;
-    create [2] young_family.
+    create [1] old_family;
+    create [1] young_family;
+    create [1] tavern.
 
 initialization port_town:
     let Location = "Ebrook";
@@ -455,6 +459,7 @@ initialization port_town:
     
     select [1] character as shipwright_owner:
         is owner of shipyard,
+        is noteworthy,
         is boss of engineer,
         is connected of shipyard,
         is boss of ship_builder,
@@ -466,7 +471,7 @@ initialization port_town:
         hometown ?= Location,
         age = [40:70];
         
-    select [2] character as engineer:
+    select [1] character as engineer:
         is engineer of shipyard,
         is employee of shipwright_owner,
         is boss of ship_builder,
@@ -478,7 +483,7 @@ initialization port_town:
         hometown ?= Location,
         age = [30:60];
         
-    select [3:5] character as ship_builder:
+    select [2:3] character as ship_builder:
         is ship_builder of shipyard,
         is employee of shipwright_owner,
         is employee of engineer,
@@ -501,7 +506,7 @@ initialization port_town:
     
     
     select [1] character as foreman:
-        is foreman of docks,
+        is shipping_foreman of docks,
         is boss of dockworker,
         is connected of docks,
         hometown = Location,
@@ -512,7 +517,7 @@ initialization port_town:
         age = [30:60];
     
     
-    select [4:7] character as dockworker:
+    select [2:3] character as dockworker:
         is dockworker of docks,
         is employee of foreman,
         hometown = Location,
@@ -524,7 +529,7 @@ initialization port_town:
         hometown ?= Location,
         age = [18:50];
     
-    select [2:3] character as prostitute:
+    select [1] character as prostitute:
         is prostitute of docks,
         hometown = Location,
         is vocation,
@@ -534,7 +539,7 @@ initialization port_town:
         hometown ?= Location,
         age = [18:35];
         
-    select [2:3] character as fisher:
+    select [1] character as fisher:
         is fisher of docks,
         hometown = Location,
         is connected of docks,
@@ -546,7 +551,7 @@ initialization port_town:
         hometown = Location,
         location_type = "docks",
         name = "the docks of #Location#",
-        has foreman of foreman,
+        has shipping_foreman of foreman,
         has dockworker of dockworker,
         has prostitute of prostitute,
         has fisher of fisher;
@@ -555,6 +560,7 @@ initialization port_town:
     select [1] character as captain:
         is captain of boat,
         is boss of sailor,
+        is noteworthy,
         is connected of boat,
         is mariner,
         is important,
@@ -566,7 +572,7 @@ initialization port_town:
         age = [30:60];
     
     
-    select [4:6] character as sailor:
+    select [3:4] character as sailor:
         is sailor of boat,
         is connected of boat,
         is employee of captain,
@@ -586,10 +592,10 @@ initialization port_town:
         has captain of captain,
         has sailor of sailor;
     
-    create [1] tavern;
     
-    create [2] old_family;
-    create [2] young_family.
+    create [1] old_family;
+    create [1] young_family;
+    create [1] tavern.
     
         
 initialization thieves_town:
@@ -634,6 +640,7 @@ initialization thieves_town:
         
     select [1] character as master_thief:
         is thief,
+        is noteworthy,
         is criminal,
         is important,
         is connected of thieves_den,
@@ -650,6 +657,7 @@ initialization thieves_town:
     
     select [1] character as spy_master:
         is thief,
+        is noteworthy,
         is criminal,
         is connected of thieves_den,
         is spy_master of thieves_den,
@@ -675,8 +683,9 @@ initialization thieves_town:
 initialization ancient_city:
     let Location = "Garitrea";
 
-    select [2:3] character as treasure_hunter:
+    select [1] character as treasure_hunter:
         is treasure_hunter of ruins,
+        is noteworthy,
         is rival of treasure_hunter,
         is connected of ruins,
         hometown = Location,
@@ -686,8 +695,9 @@ initialization ancient_city:
         hometown ?= Location,
         age = [20:50];
        
-    select [3:4] character as archaelogist:
+    select [1] character as archaelogist:
         is archaelogist of ruins,
+        is noteworthy,
         is rival of treasure_hunter,
         is connected of ruins,
         hometown = Location,
@@ -727,13 +737,12 @@ initialization ancient_city:
         has tourist of tourist,
         hometown = Location;
         
-    create [1] tavern;
     
-    create [1] marketplace;
     
-    create [2] old_family;
+    create [1] old_family;
     
-    create [2] young_family.
+    create [1] young_family;
+    create [1] tavern.
  
 initialization merchant_city:
     let Location = "Melamb",
@@ -741,6 +750,7 @@ initialization merchant_city:
     
     select [1] character as baron:
         is owner of manor_library,
+        is noteworthy,
         is owner of manor_ballroom,
         is owner of manor_garden,
         is owner of manor_gallery,
@@ -764,6 +774,7 @@ initialization merchant_city:
         
     select [1] character as baron_spouse:
         is guest of manor_library,
+        is noteworthy,
         is guest of manor_ballroom,
         is guest of manor_garden,
         is guest of manor_gallery,
@@ -787,6 +798,7 @@ initialization merchant_city:
         
     select [0:3] character as baronling:
         is guest of manor_library,
+        is noteworthy,
         is guest of manor_ballroom,
         is guest of manor_garden,
         is guest of manor_gallery,
@@ -830,7 +842,7 @@ initialization merchant_city:
         age = [2:20];
         
         
-    select [2:3] character as librarian:
+    select [1] character as librarian:
         is librarian of manor_library,
         is employee of majordomo,
         is employee of butler,
@@ -844,7 +856,7 @@ initialization merchant_city:
         age = [20:60],
         is scholar;
     
-    select [1:2] character as tutor:
+    select [1] character as tutor:
         is tutor of manor_library,
         is connected of manor_library,
         is tutor to baronlings,
@@ -882,7 +894,7 @@ initialization merchant_city:
         hometown ?= Location,
         age = [20:50];
     
-    select [3:4] character as gardener:
+    select [1:2] character as gardener:
         hometown = Location,
         is worker of manor_garden,
         is vocation,
@@ -931,8 +943,9 @@ initialization merchant_city:
         has guest of baronlings,
         has guest of hanger_on;
         
-    select [2:3] character as artist:
+    select [1] character as artist:
         is artist of manor_gallery,
+        is noteworthy,
         is connected of manor_gallery,
         is vocation,
         hometown = Location,
@@ -955,18 +968,19 @@ initialization merchant_city:
         has guest of baronlings,
         has guest of hanger_on;
     
-    select [1:2] character as auctioneer:
+    select [1] character as auctioneer:
         is auctioneer of auction_house,
         is connected of auction_house,
         is boss of curator,
         is vocation,
+        is noteworthy,
         is important,
         :where
         is not vocation,
         hometown ?= Location,
         age = [40:60];
     
-    select [3:4] character as curator:
+    select [1] character as curator:
         is curator of auction_house,
         is connected of auction_house,
         is vocation,
@@ -987,6 +1001,7 @@ initialization merchant_city:
     select [1] character as impresario:
         is boss of bard,
         is boss of diva,
+        is noteworthy,
         is connected of opera_house,
         is impresario of opera_house,
         is important,
@@ -1011,6 +1026,7 @@ initialization merchant_city:
     select [2] character as diva:
         is diva of opera_house,
         is vocation,
+        is noteworthy,
         is connected of opera_house,
         is employee of impresario,
         is coworker of diva,
@@ -1035,12 +1051,9 @@ initialization merchant_city:
         has diva of diva,
         has tourist of tourist;
     
-    create [1] tavern;
-    create [1] marketplace;
-    
-    
-    create [2] old_family; 
-    create [2] young_family
+    create [1] old_family; 
+    create [1] young_family;
+    create [1] tavern
     .
 
 initialization scholar_town:
@@ -1048,7 +1061,7 @@ initialization scholar_town:
         Academy = "[Gran |Grand |]#Location# Academy";
      
     //librarian & researcher & student
-    select [2:4] character as librarian:
+    select [1] character as librarian:
         is librarian of library,
         is connected of library,
         hometown = Location,
@@ -1059,7 +1072,7 @@ initialization scholar_town:
         age = [20:60],
         is scholar;
     
-    select [3:4] character as researcher:
+    select [1:2] character as researcher:
         is researcher of library,
         is connected of library,
         hometown = Location,
@@ -1070,7 +1083,7 @@ initialization scholar_town:
         age = [20:60],
         is scholar;
     
-    select [10:15] character as student:
+    select [3:8] character as student:
         is student of library,
         is student of classroom,
         is connected of library,
@@ -1092,8 +1105,9 @@ initialization scholar_town:
         has researcher of researcher,
         has student of student;
     
-    select [3:4] character as professor:
+    select [2:3] character as professor:
         is professor of classroom,
+        is noteworthy,
         is connected of classroom,
         hometown = Location,
         is vocation,
@@ -1113,9 +1127,10 @@ initialization scholar_town:
         has student of student;
  
     
-    select [2:3] character as dean:
+    select [1] character as dean:
         hometown = Location,
         is vocation,
+        is noteworthy,
         is important,
         :where
         is not vocation,
@@ -1133,10 +1148,10 @@ initialization scholar_town:
         has visitor of librarian
     ;
     
-    create [2] tavern;
     
-    create [3] old_family; 
-    create [3] young_family
+    create [1] old_family; 
+    create [1] young_family;
+    create [1] tavern
     .
 initialization magic_town:
     let Location = "Tenepo";
@@ -1146,6 +1161,7 @@ initialization magic_town:
         is connected of temple,
         hometown = Location,
         is vocation,
+        is noteworthy,
         is boss of priest,
         is boss of monk,
         is important,
@@ -1155,7 +1171,7 @@ initialization magic_town:
         age = [40:70],
         is believer;
 
-    select [3:4] character as priest:
+    select [1:2] character as priest:
         is priest of temple,
         is connected of temple,
         hometown = Location,
@@ -1167,7 +1183,7 @@ initialization magic_town:
         age = [30:60],
         is believer;
         
-    select [7:10] character as monk:
+    select [2:3] character as monk:
         is monk of temple,
         is connected of temple,
         hometown = Location,
@@ -1179,7 +1195,7 @@ initialization magic_town:
         age = [18:80],
         is believer;
     
-    select [20:50] character as follower:
+    select [10:20] character as follower:
         is follower of temple,
         is connected of temple,
         :where 
@@ -1195,9 +1211,8 @@ initialization magic_town:
         has follower of follower
     ;
     
-    create [1] marketplace;
-    create [3] old_family; 
-    create [3] young_family
+    create [1] old_family; 
+    create [1] young_family
     .
     
 initialization townie_town:
@@ -1205,6 +1220,7 @@ initialization townie_town:
     
     select [1] character as town_elder:
         is elder of elders_house,
+        is noteworthy,
         is connected of elders_house,
         hometown = Location,
         is vocation,
@@ -1221,14 +1237,14 @@ initialization townie_town:
         has elder of town_elder;
         
     create [1] smith_shop;
-    create [1] tavern;
     create [1] marketplace;
-    create [3] old_family; 
-    create [3] young_family
+    create [1] old_family; 
+    create [1] young_family;
+    create [1] tavern
     .
 
 initialize:
-	create [350] character;
+	create [150] character;
     create [1] royal_country;
     create [1] mining_town;
     create [1] port_town;

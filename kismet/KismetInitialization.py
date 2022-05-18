@@ -1751,7 +1751,13 @@ class Assignment:
         satisfactory = set()
         for creation in creations:
             if self.assigned_to != 'age':
-                print('WARNING: only age is allowed for numerical checking in selections at this point in time. Do not use "'+ self.assigned_to+'"')
+                if isinstance(self.assigned_val[0],Lookup):
+                    val = self.assigned_val[0](initializations,selections,creations,None)
+                    if creation['status'].get((self.assigned_to,),None) == val[0]:
+                        satisfactory.add(get_name(creation))
+                        
+                else:
+                    print('WARNING: Unsure of what to do with satisfaction condition "'+ self.assigned_to+'"')
             else:
                 if 'age' not in creation:
                     continue
@@ -2036,6 +2042,7 @@ class Selection():
                     else:
                         try:
                             creation['status'][(option.assigned_to,)] = random.choice(flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val]))
+                            
                         except Exception as err:
                             print('Skipping ',err)
                         
@@ -2114,7 +2121,6 @@ class Initialization:
                 all_relationships |= relationships
                 if select.name in deferred_lets:
                     for let in deferred_lets[select.name]:
-
                         instantiated_lets[let.assigned_to] = flatten_list([thing[let.assigned_val] for thing in all_objects[select.name] if let.assigned_val in thing]) + flatten_list([thing['status'][(let.assigned_val,)] for thing in all_objects[select.name] if (let.assigned_val,) in thing['status']])
                        
                         new_selections.add(let.assigned_to)

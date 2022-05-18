@@ -11,7 +11,7 @@ location throne_room:
 		cast citizen.
 
 location docks:
-    supports: [1:2]  foreman,
+    supports: [1:2]  shipping_foreman,
         [4:6] dockworker,
         [1:2] prostitute ,
         [1:2] fisher,
@@ -252,6 +252,10 @@ default trait family_ties(>Self, <Other):
     +(critical if Self is related_to Other),
     -------(romance if Self is related_to Other).
 
+default trait abusive_if_abusive(>Self, <Other):
+    +++(mean if Self's abusiveness >= 0),
+    +++(abusive if Self's abusivenss >= 0).
+
 default trait mean_to_people_you_dislike1(>Self, <Other):
     +(mean if Self likes Other <= -1).
     
@@ -297,6 +301,7 @@ status friends_with(>Self, <Other):.
 
 
 //SELF WORTH
+status scalar abusiveness(>Self):.
 status scalar happiness(>Self):.
 status scalar anger(>Self):.
 status scalar tiredness(>Self):.
@@ -531,6 +536,10 @@ action pray(>Monk:monk):
     tags: religious, role_specific;
     result: Monk's devotion += 1.
     
+action pray_with_follower(>Monk:monk, <Follower:follower):
+    tags: religious, role_specific;
+    result: Monk's devotion += 1, Follower's devotion += 1.
+    
 action perform_ritual(>Monk:monk, <Other:monk):
     tags: religious, role_specific;
     result: Monk's devotion += 2,
@@ -654,11 +663,11 @@ action commiserate_with_fellow_vendor(>Vendor:vendor, <OtherVendor:vendor):
     tags: work, talk, thoughtful, kind, role_specific;
     result: Vendor and OtherVendor like each other += 1.
 
-action undercut(>Vendor:vendor, <OtherVendor:vendor):
+action undercut(>Vendor:vendor, <Other:vendor):
     tags: work, bold, mean, role_specific;
-    if Vendor likes OtherVendor <= 0;
+    if Vendor likes Other <= 0;
     result: Vendor's self_worth += 1,
-            OtherVendor likes Vendor -= 1.
+            Other likes Vendor -= 1.
 
 action standup_to_enforcer_together(>Vendor:vendor, <OtherVendor:vendor, ^Enforcer):
     tags: work, bold, role_specific;
@@ -1014,12 +1023,22 @@ action worry_about_mortality(>Adult):
 //Personality Clashes
 
 action argue_about_duty(>Dutybound, <Free):
-    tags: critical;
+    tags: critical, role_specific;
     if Dutybound is duty_bound, Free is free_sprited;
     result: Dutybound and Free like each other -= 1.
     
 action convince_importance_of_duty(>Dutybound, <Free):
-    tags: thoughtful;
+    tags: thoughtful, role_specific;
+    if Dutybound is duty_bound, Free is free_sprited;
+    result: Dutybound and Free like each other += 1.
+    
+action argue_about_need_to_be_free(>Free, <Dutybound):
+    tags: critical, role_specific;
+    if Dutybound is duty_bound, Free is free_sprited;
+    result: Dutybound and Free like each other -= 1.
+    
+action convince_importance_of_duty(>Free, <Dutybound):
+    tags: thoughtful, role_specific;
     if Dutybound is duty_bound, Free is free_sprited;
     result: Dutybound and Free like each other += 1.
     
@@ -1036,7 +1055,8 @@ action hold_lecture(>Professor:professor, <Student:student):
         Professor's self_worth += 1.
 
 
-action hold_boring_lecture(>Professor:professor, <Student:student):
+action hold_boring_lecture(>Professor:professor, <Student:student)
+    "Professor holds a lecture that bores Student who grows to dislike Professor":
     tags: work, scholarly,failure, role_specific;
     result:
         Student likes Professor -= 1,
@@ -1067,5 +1087,665 @@ action send_underlings(>SpyMaster:spy_master, <Spy:spy, ^Target):
     result: SpyMaster is plotting_against Target -= 1,
         Spy  is plotting_against Target = 1.
         
+////////////////////////////sailor
 
+role sailor(>Worker) extends ur_job(>Worker):
+    tags:  physical.
     
+action ready_the_ship(>Sailor:sailor):
+    tags:  role_specific, work;
+    result: Sailor's tiredness += 1.
+
+action sing_shanty(>Sailor:sailor, <Other:sailor):
+    tags:  role_specific, talk, bold;
+    result: Sailor and Other like each other += 2,
+            Sailor's happiness += 1,
+            Other's happiness += 1.
+
+////////////////////////////auctioneer
+
+
+role auctioneer(>Worker) extends ur_job(>Worker):
+    tags:  bold, talk.
+    
+action prepare_auction(>Auctioneer:auctioneer):
+    tags:  role_specific, work;
+    result:  Auctioneer's readiness += 1.
+
+action prime_auction_goer(>Auctioneer:auctioneer, <Attendee):
+    tags: role_specific, work, talk;
+    if Attendee is rich;
+    result: 
+        Attendee likes Auctioneer += 1,
+        Attendee's auction_readiness += 1,
+        Auctioneer's readiness += 1.
+
+action hold_auction_with_bidding_war(>Auctioneer:auctioneer, <Bidder1, ^Bidder2):
+    tags: role_specific, work, talk, bold;
+    if Bidder1's auction_readiness >= 1,
+       Bidder2's auction_readiness >= 1,
+       Auctioneer's readiness >= 5;
+   result: 
+       Auctioneer's readiness = 0,
+       Bidder1's happiness += 5,
+       Bidder2's happiness -= 5,
+       Bidder1 and Bidder2 like each other -= 5.
+
+action hold_auction_with_no_results(>Auctioneer:auctioneer, <Bidder1, ^Bidder2):
+    tags: role_specific, work, talk, bold, failure;
+    if Auctioneer's readiness >= 5;
+   result: 
+       Auctioneer's readiness = 0,
+       Auctioneer's happiness -= 5.
+
+
+////////////////////////////artist 
+
+role artist(>Worker) extends ur_job(>Worker): 
+tags:  creative  . 
+
+action search_for_artistic_inspiration_at_location(>Self,@Location): 
+tags: role_specific, work;
+location: Location(Self);
+if Self is artist;
+result:
+    Self is inspired with Location.
+
+action find_muse(>Self, <Other): 
+tags: role_specific, work;
+if Self is artist;
+result:
+    Self is inspired with Other.
+    
+action produce_work_about_muse(>Self:artist,<Other):
+    tags: role_specific, work;
+    location: (Self) ?(Other);
+    if Self is inspired with Other;
+    result:
+        Self's self_worth += 1,
+        Self is has_art.
+        
+action produce_work_about_inspiration(>Self:artist,@Other):
+    tags: role_specific, work;
+    location: (Self);
+    if Self is inspired with Other;
+    result:
+        Self's self_worth += 1,
+        Self is has_art.
+  
+action lose_muse(>Self:artist,<Other):
+    tags: role_specific, work, failure;
+    location: (Self) ?(Other);
+    if Self is inspired with Other;
+    result:
+        Self's self_worth -= 3,
+        Self is not inspired with Other.
+        
+action lose_inspiration(>Self:artist,@Other):
+    tags: role_specific, work, failure;
+    location: (Self);
+    if Self is inspired with Other;
+    result:
+        Self's self_worth -= 3,
+        Self is not inspired with Other.
+
+action discuss_art(>Self:artist,<Other):
+    tags: role_specific, talk;
+    if Self has_art;
+    result:
+        Self and Other like each other += 2.
+    
+action give_art_to_benefactor(>Self:artist,<Baron):
+    tags: role_specific, talk;
+    if Self has_art,
+        Self is servant of Baron;
+    result:
+        Baron likes Self += 2.
+
+////////////////////////////spy 
+
+role spy(>Worker) extends ur_job(>Worker): 
+tags:    work, criminal. 
+
+action investigate_target(>Spy, ^Target): 
+    tags: role_specific, work; 
+    if Spy is spy,
+        Spy is plotting_against Target >= 1;
+    result: 
+        Spy knows_personal_info_about Target.
+
+action get_too_close_to_target(>Spy, ^Target): 
+    tags: role_specific, talk, kind; 
+    if Spy is spy,
+        Spy is plotting_against Target >= 1;
+    result: 
+        Spy and Target like each other += 2.
+        
+action report_back(>Spy:spy, <Spymaster:spy_master, ^Target): 
+    tags: role_specific, talk, kind;
+    location: (Spy, Spymaster) (Target);
+    if Spy knows_personal_info_about Target,
+        Spy is plotting_against Target >= 1;
+    result: 
+        Spymaster knows_personal_info_about Target,
+        Spymaster likes Spy += 1.
+
+action turn_against_spymaster(>Spy, <Target, ^Spymaster ): 
+    tags: role_specific, talk, kind; 
+    location: (Spy, Target) (Spymaster);
+    if Spy is spy,
+        Spymaster is spy_master,
+        Spy is plotting_against Target >= 1,
+        Spy likes Target >= 5;
+    result: 
+        Spy is plotting_against Target -= 10,
+        Spy likes Spymaster -= 10.
+
+////////////////////////////mariner 
+//TODO -- NOT SURE
+
+////////////////////////////tutor 
+
+role tutor(>Worker) extends ur_job(>Worker): 
+tags: work, scholarly. 
+
+
+action teach_student(>Tutor:tutor, <Student):
+    tags: work, scholarly, role_specific;
+    if Tutor is tutor to Student;
+    result:
+        Student likes Tutor += 1,
+        Tutor's self_worth += 1.
+
+
+action bore_student(>Tutor:tutor, <Student)
+    "Tutor bores Student who grows to dislike Tutor":
+    tags: work, scholarly,failure, role_specific;
+    if Tutor is tutor to Student;
+    result:
+        Student likes Tutor -= 1,
+        Tutor's self_worth -= 1.
+        
+////////////////////////////ship_builder 
+
+role ship_builder(>Worker) extends ur_job(>Worker): 
+        tags: work. 
+
+action build_ship(>Self:ship_builder): 
+    tags: role_specific, work; 
+    result: Self's tiredness += 1.
+
+
+action help_with_ship_building(>Self:ship_builder, <Other:ship_builder): 
+    tags: role_specific, work, kind; 
+    result: Self and Other like each other += 1.
+
+
+action argue_with_engineer(>Self:ship_builder, <Other:engineer): 
+    tags: role_specific, work, critical; 
+    result: Self and Other like each other -= 1.
+
+
+////////////////////////////prostitute 
+
+role prostitute(>Worker) extends ur_job(>Worker): 
+        tags: work. 
+
+action entice_customer(>Self:prostitute, <Other): 
+    tags: role_specific, work; 
+    result: Other likes Self += 1.
+
+
+////////////////////////////student 
+
+role student(>Worker) extends ur_job(>Worker): 
+    tags: work, scholarly. 
+
+action attend_class(>Self:student): 
+    tags: role_specific, scholarly; 
+    result: Self's tiredness += 1.
+
+
+action become_inspired_by_lecture(>Self:student, <Professor:professor): 
+    tags: role_specific, scholarly; 
+    result: Self likes Professor += 1,
+            Self's self_worth += 1.
+        
+action bond_over_study(>Student1, <Student2):
+    tags: role_specific, scholarly;
+    if Student1 is student,
+        Student2 is student;
+    result: Student1 and Student2 like each other += 2.
+
+action pull_all_nighter(>Student):
+    tags: role_specific, scholarly;
+    if Student1 is student;
+    result: Student's tiredness += 3.
+
+action hang_out_with_classmates_at_tavern(>Student1, <Student2):
+    tags: role_specific, free;
+    location: tavern(Student1, Student2);
+    if Student1 is student,
+        Student2 is student;
+    result: Student1 and Student2 like each other += 2,
+            Student1 is drunk,
+            Student2 is drunk.
+
+action have_fun_in_quad(>Student1, <Student2):
+    tags: role_specific, silly;
+    location: quad(Student1, Student2);
+    if Student1 is student,
+        Student2 is student;
+    result: Student1 and Student2 like each other += 2,
+            Student1's tiredness = 0,
+            Student2's tiredness = 0.
+
+action have_late_night_philosophical_argument(>Student1, <Student2):
+    tags: role_specific, talk, critical;
+    if Student1 is student,
+        Student2 is student;
+    result: Student1 and Student2 like each other -= 4.
+
+////////////////////////////smith_apprentice 
+
+role smith_apprentice(>Worker) extends ur_job(>Worker): 
+        tags: work. 
+
+action tend_the_forge(>Self:smith_apprentice): 
+    tags: role_specific, work; 
+    result: Self's tiredness += 1.
+
+////////////////////////////guard 
+
+role guard(>Worker) extends ur_job(>Worker): 
+        tags: work. 
+
+action guard_prison(>Self:guard): 
+    tags: role_specific, work; 
+    result: Self's tiredness += 1.
+
+action sneak_treat_to_prisoner(>Self:guard, <Prisoner:prisoner): 
+    tags: role_specific, work, kind; 
+    result: Prisoner likes Self += 2.
+
+action mistreat_prisoner(>Self:guard, <Prisoner:prisoner): 
+    tags: role_specific, work, mean; 
+    result: Prisoner likes Self -= 2.
+
+
+////////////////////////////shipping_foreman 
+role shipping_foreman(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action manage_docks(>Self:shipping_foreman): 
+tags: role_specific, work; 
+result: Self's tiredness += 1.
+
+
+////////////////////////////thief 
+
+role thief(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action steal_from_mark(>Self:thief, <Mark): 
+    tags: role_specific, work, criminal, bold; 
+    result: Self's self_worth += 1,
+            Mark's suspicion of Self += 1.
+
+action get_caught_stealing(>Self:thief, <Mark): 
+    tags: role_specific, work, criminal, bold, failure;
+    if Mark's suspicion of Self >= 2;
+    result: Mark likes Self -= 5,
+            Self's self_worth -=1,
+            Self is on_the_run.
+        
+action run_from_authorities(>Self, <Authority):
+    tags: role_specific, criminal;
+    if Self is on_the_run,
+       Authority is authority;
+    result: Self and Authority like each other -= 2.
+
+action evade_authorities(>Self):
+    tags: role_specific, criminal;
+    if Self is on_the_run;
+    result: Self is not on_the_run.
+
+action get_caught(>Self, @Dungeon):
+    tags: role_specific, criminal, failure, rare;
+    if Self is on_the_run,
+        Dungeon is dungeon;
+    result: Self is not on_the_run,
+            Self is confined of Dungeon,
+            Self is prisoner of Dungeon.
+
+
+////////////////////////////impresario 
+
+role impresario(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action assuage_benefactor(>Self:impresario, <Patron:patron): 
+    tags: role_specific, work, talk; 
+    result: Self likes Patron -= 1,
+            Patron likes Self += 1,
+            Patron's self_worth += 1.
+            
+action assuage_diva(>Self:impresario, <Diva:diva): 
+    tags: role_specific, work, talk; 
+    result: Self likes Diva -= 1,
+            Diva likes Self += 1,
+            Diva's self_worth += 1.
+
+action guide_cast_and_crew(>Self:impresario, <Bard:bad): 
+    tags: role_specific, work, talk, kind; 
+    result: Self and Bard like each other +=1.
+
+action fend_off_diva_pursuer(>Self:impresario, <Diva:diva, ^Pursuer):
+    tags: role_specific, kind;
+    if Pursuer crushing_on Diva;
+    result: Self and Pursuer like each other -= 5,
+            Self and Diva like each other += 3,
+            Pursuer is not crushing_on Diva.
+            
+
+////////////////////////////priest 
+
+role priest(>Worker) extends ur_job(>Worker): 
+        tags: work. 
+
+action pray_with_follower(>Priest:priest, <Follower:follower):
+    tags: religious, role_specific;
+    result: Priest's devotion += 1, Follower's devotion += 1.
+    
+action lead_ritual(>Priest:priest, <Other:monk):
+    tags: religious, role_specific;
+    result: Priest's devotion += 2,
+            Other's devotion += 2.
+
+action rationalize_abuse_of_power(>Priest:priest):
+    tags: religious, role_specific, mean;
+    if Priest's devotion >= 8;
+    result: Priest's abusiveness += 1.
+
+////////////////////////////high_priest 
+
+role high_priest(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action pray_with_follower(>Priest:high_priest, <Follower:follower):
+    tags: religious, role_specific;
+    result: Priest's devotion += 1, Follower's devotion += 1.
+    
+action lead_ritual(>Priest:high_priest, <Other:monk):
+    tags: religious, role_specific;
+    result: Priest's devotion += 2,
+            Other's devotion += 2.
+
+action rationalize_abuse_of_power(>Priest:high_priest):
+    tags: religious, role_specific, mean;
+    if Priest's devotion >= 8;
+    result: Priest's abusiveness += 1.
+    
+////////////////////////////pickpocket 
+
+role pickpocket(>Worker) extends ur_job(>Worker): 
+        tags: work. 
+
+action steal_from_mark(>Self:pickpocket, <Mark): 
+    tags: role_specific, work, criminal, bold; 
+    result: Self's self_worth += 1,
+            Mark's suspicion of Self += 1.
+
+action get_caught_stealing(>Self:pickpocket, <Mark): 
+    tags: role_specific, work, criminal, bold, failure;
+    if Mark's suspicion of Self >= 2;
+    result: Mark likes Self -= 5,
+            Self's self_worth -=1,
+            Self is on_the_run.
+
+////////////////////////////engineer 
+
+role engineer(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action design_ship(>Self:engineer): 
+    tags: role_specific, work; 
+    result: Self's tiredness += 1, Self's self_worth += 1.
+
+action guide_shipwrights(>Self:engineer, <ShipBuilder:ship_builder): 
+    tags: role_specific, work, kind; 
+    result: Self and ShipBuilder like each other += 1.
+
+////////////////////////////captain 
+
+role captain(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action inspire_crew(>Self:captain, <Sailor:sailor): 
+tags: role_specific, work; 
+result: Self's self_worth += 1,
+        Sailor's self_worth += 1,
+        Self and Sailor like each other += 2.
+
+////////////////////////////elder 
+
+role elder(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action provide_guidance(>Self:elder, <Other): 
+    tags: role_specific, thoughtful; 
+    result: Self and Other like each other += 2.
+
+////////////////////////////fisher 
+
+role fisher(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action fish(>Self:fisher): 
+    tags: role_specific, work; 
+    result: Self's tiredness += 1,
+            Self's self_worth += 1.
+
+action fight_seagull(>Self:fisher): 
+    tags: angry, rare, role_specific;
+    result: Self's anger += 1.
+
+
+////////////////////////////master_thief 
+
+role master_thief(>Worker) extends ur_job(>Worker): 
+    tags: criminal. 
+
+action command_underlings(>Self:master_thief, <Thief:thief): 
+    tags: role_specific, criminal; 
+    result: Self and Thief like each other += 1.
+
+action consult_spymaster(>Self:master_thief, <SpyMaster:spy_master): 
+    tags: role_specific, criminal, thoughtful; 
+    result: Self and SpyMaster like each other += 1.
+
+
+////////////////////////////patron 
+
+role patron(>Worker): 
+    tags: free. 
+
+action patronize(>Self:patron): 
+    tags: role_specific; 
+    result: Self's happiness += 1.
+
+
+action patronize_employee(>Self:patron, <Employee:employee): 
+    tags: role_specific, mean; 
+    result: Self's happiness += 1,
+            Employee likes Self -= 2.
+
+////////////////////////////smithy 
+
+role smithy(>Worker) extends ur_job(>Worker): 
+    tags: work. 
+
+action work_the_forge(>Self:smithy): 
+    tags: role_specific, work; 
+    result: Self's tiredness += 1.
+
+
+action craft_the_sacred_weapon(>Self:smithy): 
+    tags: role_specific, work, extremely_rare;
+    if Self is missing sacred_weapon;
+    result: Self's self_worth += 5,
+            Self has sacred_weapon,
+            Self knows_sacred_weapon,
+            Self is noteworthy.
+            
+action talk_about_sacred_weapon(>Talker,<Listener):
+    tags: rare, talk, open;
+    if Talker knows_sacred_weapon;
+    result: Listener knows_sacred_weapon.
+    
+////////////////////////////researcher 
+
+role researcher(>Worker) extends ur_job(>Worker): 
+    tags: work, scholarly. 
+
+action perform_research(>Self:researcher): 
+    tags: role_specific, work, scholarly; 
+    result: Self's tiredness += 1,
+            Self's self_worth += 1.
+
+action uncover_information_about_noteworthy_person(>Self:researcher,^Noteworthy): 
+    tags: role_specific, work, scholarly, rare; 
+    location: (Self) (Noteworthy);
+    if Noteworthy is noteworthy;
+    result: Self knows_personal_info_about Noteworthy.
+    
+
+action share_knowledge_about_noteworthy(>Self,<Listener,^Noteworthy):
+    tags: specific, talk, free;
+    location: (Self, Listener) (Noteworthy);
+    if Self knows_personal_info_about Noteworthy,
+       Noteworthy is noteworthy;
+    result: Listener knows_personal_info_about Noteworthy,
+            Self and Listener like each other += 1.
+ 
+
+////////////////////////////diva 
+
+role diva(>Worker) extends ur_job(>Worker): 
+    tags: work, talk. 
+
+action perform_for_tourist(>Self:diva, <Watcher:tourist): 
+    tags: role_specific, talk; 
+    result: Self's tiredness += 1,
+            Self's self_worth += 1,
+            Watcher likes Self += 2.
+
+
+action perform_for_tourist(>Self:diva, <Watcher:tourist): 
+    tags: role_specific, talk; 
+    result: Self's tiredness += 1,
+            Self's self_worth += 1,
+            Watcher likes Self += 2.
+
+
+action turn_fan_into_superfan(>Self:diva, <Watcher:tourist): 
+    tags: role_specific, talk; 
+    result: Watcher is crushing_on Self,
+            Watcher likes Self += 2.
+
+action turn_fan_into_superfan(>Self:diva, <Watcher:patron): 
+    tags: role_specific, talk; 
+    result: Watcher is crushing_on Self,
+            Watcher likes Self += 2.
+
+action belittle_other_performers(>Self:diva, <Performer:bard):
+    tags: role_specific, mean;
+    result: Self and Performer like each other -= 2.
+    
+action feud_with_diva(>Self:diva, <Other:diva):
+    tags: role_specific, mean;
+    result: Self and Other like each other -= 3.
+    
+action demand_more_of_impresario(>Self:diva, <Other:impresario):
+    tags: role_specific, mean;
+    result: Self likes Other += 1,
+            Other like Self -= 1.
+
+action deliver_stunning_perfomance(>Self:diva, <Patron:patron, ^Impresario:impresario):
+    tags: role_specific, talk, rare;
+    result: Patron likes Self += 5,
+            Patron likes Impresario += 5,
+            Impresario likes Self += 5,
+            Self's self_worth += 5.
+           
+
+////////////////////////////barkeep
+
+role barkeep(>Worker) extends ur_job(>Worker): 
+    tags: work, talk. 
+    
+action serve_patron(>Barkeep:barkeep, <Patron:patron):
+    tags: work, role_specific;
+    result: Patron is drunk,
+            Patron's tiredness = 0.
+    
+action chat_with_regular(>Barkeep:barkeep, <Regular:regular):
+    tags: role_specific, talk;
+    result: Regular is drunk,
+            Regular and Barkeep like each other += 1.
+            
+action breakup_barfight(>Barkeep:barkeep,<Fighter1,^Fighter2):
+    tags: role_specific,thoughtful;
+    if Fighter1 is drunk,
+        Fighter2 is drunk,
+        Fighter1 likes Fighter2  <= -3,
+        Fighter2 likes Fighter1 <= -3;
+    result:
+        Barkeep likes Fighter1 -= 3,
+        Barkeep likes Fighter2 -= 3,
+        Fighter1 and Fighter2 like each other -= 3.
+        
+action breakup_cathartic_barfight(>Barkeep:barkeep,<Fighter1,^Fighter2):
+    tags: role_specific,thoughtful;
+    if Fighter1 is drunk,
+        Fighter2 is drunk,
+        Fighter1 likes Fighter2  <= -3,
+        Fighter2 likes Fighter1 <= -3;
+    result:
+        Barkeep and Fighter2 like each other += 3,
+        Fighter1 and Barkeep like each other += 3,
+        Fighter1 and Fighter2 like each other += 3.
+
+action sober_up(>Drunk):
+    tags: specific;
+    if Drunk is drunk;
+    result: Drunk isn't drunk.
+    
+////////////////////////////guest
+////////////////////////////worker
+////////////////////////////drinker
+////////////////////////////scared
+////////////////////////////vocation
+////////////////////////////regular
+////////////////////////////sibling
+////////////////////////////spouse
+////////////////////////////fealty
+////////////////////////////rich
+////////////////////////////citizen
+////////////////////////////victim
+////////////////////////////hometown
+////////////////////////////confined
+////////////////////////////owner
+////////////////////////////important
+////////////////////////////tourist
+////////////////////////////rival
+////////////////////////////parent
+////////////////////////////criminal
+////////////////////////////last_birthday
+////////////////////////////coworker
+////////////////////////////child
+////////////////////////////boss
+////////////////////////////royalty
+////////////////////////////connected
+        
+ 

@@ -167,28 +167,29 @@ knowledge:
 	'did'		|
 	'received'	;
 
-condition: cond10 | cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond6 | cond7 |  condpattern | condTimeHistory | condTimePersonal | condTimePersonalAssignment | condTimePersonalRelativeAssignment | condTime | condTimeComparator;
+condition: cond10  | cond6| cond9 | cond8 | cond3 | cond1 | cond4 | cond5 | cond7 |  condpattern | condTimeHistory | condTimePersonal | condTimePersonalAssignment | condTimePersonalRelativeAssignment | condTime | condTimeComparator;
 
 cond8: arg ('\'s'|'s') name operator num;
 cond3: arg knowledge arg;
 cond1: arg tag_compare name;
+cond6: arg ('\'s'|'s')? inversion? ('have'|'has'|'is')? name ('of'|'to'|'with' | 'at')? arg (operator num)?;
 cond4: arg ('\'s'|'s') name comparator num;
 cond9: arg ('\'s'|'s') name comparator arg ('\'s'|'s') name;
 cond10: arg name arg comparator arg name arg;
-inversion: 'do not' | 'dont' | 'don\'t' |  'does not' | 'doesn\'t' | 'doesnt' ;
+inversion: 'is not' | 'isn\'t' | 'do not' | 'dont' | 'don\'t' |  'does not' | 'doesn\'t' | 'doesnt' ;
 cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator num)?;
-cond6: arg  inversion? ('have'|'has'|'is')* name ('of'|'to'|'with' | 'at')* arg (operator num)?;
-cond7: arg name arg comparator num;
+
+cond7: arg  ('\'s'|'s'|'is'|'has'|'have')? name ('of'|'to'|'with' | 'at')? arg comparator num;
 condpattern: 'pattern' '(' name  (',' arg)* ')';
 condTime: ('now'|'now\'s'|'current') name 'is' (num|name);
 condTimeComparator: ('now'|'now\'s'|'current') name comparator num;
-condTimeHistory: 'now' ('is')? comparator num name 'since' arg;
-condTimePersonal: 'now' ('is')? comparator num name 'since' arg '\'s' name;
+condTimeHistory: 'now' ('is'|'has'|'have')? comparator num name 'since' arg;
+condTimePersonal: 'now' ('is'|'has'|'have')? comparator num name 'since' arg '\'s' name;
 condTimePersonalAssignment: 'now' 'is' arg '\'s' name |
                             arg '\'s' name 'is' 'now';
 condTimePersonalRelativeAssignment: arg '\'s' name name operator num;
 
-tag_compare: 'is missing' | 'is not' | 'is' | 'isn\'t' | 'isnt' | 'aint' | 'missing';
+tag_compare: 'is missing' | 'is not' | 'is' | 'has'|'have' | 'hasn\'t' | 'haven\'t' | 'isn\'t' | 'isnt' | 'aint' | 'missing' | 'a'?;
 
 operator: (MINUS|PLUS|EQUALS);
 

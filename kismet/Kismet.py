@@ -649,6 +649,8 @@ def parseArg(argument):
 
 def parseConditional(conditional,conditional_type='Conditional'): 
     comparisonMapping =  {'Conditional':{
+        'has': 'is(',
+        '': 'is(',
         'is missing':'not is(',
         'is not':'not is(',
         'is':'is(',
@@ -683,6 +685,8 @@ def parseConditional(conditional,conditional_type='Conditional'):
 	'didn\'t receive':'not received('
     },
     'Result':{
+        '': 'add(',
+        'has': 'add(',
         'is missing':'del(',
         'is not':'del(',
         'is':'add(',
@@ -1974,7 +1978,6 @@ class KismetModule():
                 else:
                     self.traitASP.append(f'is(Person,{get_common_name(trait)},0) :- person(Person), not is(Person,{get_common_name(trait)},N), non_zero(N).')
                 
-            print('TRAIT', trait, self.traits[trait])
         for trait in self.removal_traits:
             self.traitASP.append(f'status({trait}).')
             
@@ -2245,7 +2248,8 @@ class KismetModule():
             results = set(results)
             constraints = set(constraints)
             arguments = simpleDictify(arguments)
-            arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}                
+            arguments = {arg_type:arguments.get(arg_type,'null') for arg_type in ['>','<','^','*','@']}     
+            
             asp_args = ', '.join([arguments.get(arg_type,'null')   for arg_type in ['>','<','^','*','@']])
 
             head = f'action({get_common_name(name)}, {asp_args})'
@@ -2848,7 +2852,6 @@ class KismetModule():
         return [{'likelihood':possible_actions}]
     def calculate_action_results(self):
         action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
-       
         return action_results
     
     def calculate_observability(self):
@@ -3025,6 +3028,7 @@ class KismetModule():
         for location in locations:
             #asp_name = self.aspify_name(location['name'])
             l_id = location['id']
+            location['status'] = {(key,):value for key,value in location['status'].items()}
             self.created_locations[l_id] = location
         self.history = [ [[[self.aspify_name(binding) for binding in action] + ['null']*(5-len(action)) for action in step]] for step in history]
         self.times = kismet_module['times']
@@ -3086,6 +3090,7 @@ class KismetModule():
         locations = list(self.created_locations.values())
         for location in locations:
             location['relationships'] = list(location['relationships'])
+            location['status'] = {key[0]:value for key,value in location['status'].items()}
         for person in person_filter:
             if person not in self.population:
                 print(f'Could not find person with id="{person}"')
@@ -3350,6 +3355,7 @@ class KismetModule():
         chosen_locations = []    
         for actor in shuffled:
             available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
+            #print('AVAILABLE LOCATIONS', available_locations)
             available_locations |= {location for location in location_assignments.get(actor,[])}  
             volitions_by_actor[actor] = [(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations]
             #print("LOCATION VOLITIONS", [ (v, self.created_locations[l]['location_type']) for v,l in sorted(volitions_by_actor[actor],reverse=True)])
@@ -3451,12 +3457,15 @@ class KismetModule():
                 result = [term['predicate'] for term in  result[0]['terms']]
                 character = self.population[result[0]]
                 result_key = tuple(result[1:-1])
+                category = 'status'
+                if len(result_key) > 1:
+                    category = 'relationships'
                 #If it isn't a number, treat it as an ASP predicate
                 if result[-1][0] in 'abcdefghijklmnopqrstuvwxyz_':
                     val = self.json2asp(raw_result[0]['terms'][-1])
                 else:
                     val = int(result[-1])
-                character['status'][result_key] = val
+                character[category][result_key] = val
 
 
             visibility_results = self.calculate_observability()

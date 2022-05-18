@@ -8,7 +8,9 @@ go_to(NAME,LOCATION,N) :-
           |HN + HTime + HL| \ 10 < 5.
           
           
-{go_to(NAME,LOCATION,0)} :- location(LOCATION), person(NAME), LOCATION != null.
+{go_to(NAME,LOCATION,0)} :- location(LOCATION), person(NAME), LOCATION != null,   
+          hashed_1(NAME,HN), hashed(time,HTime),hashed(LOCATION,HL),
+          |HN + HTime + HL| \ 10 < 5.
 
 :- 2 {go_to(NAME,LOCATION,_)},location(LOCATION), person(NAME).
 :-  {go_to(NAME,_,_)} 5, person(NAME), NAME != null.
