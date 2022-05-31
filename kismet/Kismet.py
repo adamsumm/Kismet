@@ -55,7 +55,13 @@ def process_nesting(text,count=0):
                 output += rules
                 count = new_count
     return output,count
-
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+    
 def random_text_to_tracery(text):
     rules,_ = process_nesting(text)
     rules.append((0,text))
@@ -167,8 +173,6 @@ def parse_json_result(out):
     random.shuffle(ids)
     for id in ids[:]:
         witness = result['Call'][0]['Witnesses'][id]['Value']
-
-
         preds = collections.defaultdict(list)
         env = identitydefaultdict()
         for atom in witness:
@@ -2280,6 +2284,7 @@ class KismetModule():
             at_location = ''
             if is_cast:
                 at_location = f'at({arguments[">"]}, Location), '
+            
             for result in results:
                 self.actionASP.append(result + at_location +f'occurred({head}).')
 
@@ -3012,10 +3017,15 @@ class KismetModule():
             asp_name = self.aspify_name(name)
             statuses = {}
             for status in character['statuses']:
-                if len(status[-1]) == 0:
-                    statuses[tuple(status[:-1])] = None
-                else:
-                    statuses[tuple(status[:-1])] = status[-1][0]
+                status_name = status['status_name']
+                val = status['status_value']
+                print(status)
+                if val == '':
+                    val = None
+                elif is_number(val):
+                    val = int(val)
+                statuses[(status_name,)] = val
+                    
             character_dictionary = {'name':name,
                                     'asp_name':asp_name,
                                     'traits':set(character['traits']),
@@ -3106,16 +3116,20 @@ class KismetModule():
                 
                 for trait in self.population[person]['traits']:
                     characters[source]['traits'].append(get_common_name(trait))
+                    
+                #MAKE STATUSES DICTIONARIES INSTEAD OF LISTS
                 for relation in self.population[person]['status']:
                     if len(relation) == 1:
                         relation_name  = get_common_name(relation[0])
                         if self.population[person]['status'][relation] is not None:
                             val = self.population[person]['status'][relation]
                             #print('Adding status', [relation_name,val])
-                            characters[source]['statuses'].append([relation_name,[val]])
+                            characters[source]['statuses'].append({'status_name':relation_name,
+                                                                   'status_value':str(val)})
                         else:
                             #print('Adding status', [relation_name])
-                            characters[source]['statuses'].append([relation_name,[]])
+                            characters[source]['statuses'].append({'status_name':relation_name,
+                                                                   'status_value':''})
                             
                     elif len(relation) > 1:
                         source = self.population[person]['id']
