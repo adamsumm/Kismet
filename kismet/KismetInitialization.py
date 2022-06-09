@@ -1756,7 +1756,12 @@ class Assignment:
                     if creation['status'].get((self.assigned_to,),None) == val[0]:
                         satisfactory.add(get_name(creation))
                         
+                elif isinstance(self.assigned_val[0],RandomText):
+                    val = self.assigned_val[0](initializations,selections,creations,None)
+                    if creation['status'].get((self.assigned_to,),None) == val[0]:
+                        satisfactory.add(get_name(creation))
                 else:
+                    print(self.assigned_val[0])
                     print('WARNING: Unsure of what to do with satisfaction condition "'+ self.assigned_to+'"')
             else:
                 if 'age' not in creation:
@@ -2042,7 +2047,6 @@ class Selection():
                     else:
                         try:
                             creation['status'][(option.assigned_to,)] = random.choice(flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in option.assigned_val]))
-                            
                         except Exception as err:
                             print('Skipping ',err)
                         
@@ -2056,7 +2060,11 @@ class Selection():
             for condition in self.conditions:
                 if len(condition.is_satisfied([creation],initializations,selections)) == 0:
                     if isinstance(condition,Assignment):
-                        creation[condition.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in condition.assigned_val])
+                        if condition.assigned_to in ['last_name','first_name','name','traits','age']:
+                            creation[condition.assigned_to] = flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in condition.assigned_val])
+                        else:
+                            creation['status'][(condition.assigned_to,)] = random.choice(flatten_list([assigned_val(initializations,selections,creations,module) for assigned_val in condition.assigned_val]))
+                            
                     elif isinstance(condition,Relationship):
                         relationships.add((self.name,condition))
 

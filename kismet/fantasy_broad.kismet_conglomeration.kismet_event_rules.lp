@@ -1,3 +1,13 @@
+castable(person,town).
+
+hashed(town,3800169534).
+
+castable(resident,house).
+
+castable(guest,house).
+
+hashed(house,1411520087).
+
 castable(monarch,throne_room).
 
 castable(chancellor,throne_room).
@@ -6,7 +16,7 @@ castable(royalty,throne_room).
 
 castable(citizen,throne_room).
 
-hashed(throne_room,1151859843).
+hashed(throne_room,1867351542).
 
 castable(shipping_foreman,docks).
 
@@ -18,7 +28,7 @@ castable(fisher,docks).
 
 castable(visitor,docks).
 
-hashed(docks,3488801281).
+hashed(docks,3084516114).
 
 castable(curator,auction_house).
 
@@ -26,7 +36,7 @@ castable(auctioneer,auction_house).
 
 castable(patron,auction_house).
 
-hashed(auction_house,2098318236).
+hashed(auction_house,1225024184).
 
 castable(guest,ballroom).
 
@@ -34,29 +44,29 @@ castable(owner,ballroom).
 
 castable(artist,ballroom).
 
-hashed(ballroom,4185941308).
+hashed(ballroom,1135972631).
 
 castable(visitor,quad).
 
-hashed(quad,1178793832).
+hashed(quad,3553595830).
 
 castable(miner,mine).
 
 castable(foreman,mine).
 
-hashed(mine,4202707991).
+hashed(mine,1322758650).
 
 castable(elder,elders_house).
 
 castable(visitor,elders_house).
 
-hashed(elders_house,1129166583).
+hashed(elders_house,369019926).
 
 castable(guard,dungeon).
 
 castable(prisoner,dungeon).
 
-hashed(dungeon,655486548).
+hashed(dungeon,2806081013).
 
 castable(impresario,opera_house).
 
@@ -68,7 +78,7 @@ castable(bard,opera_house).
 
 castable(patron,opera_house).
 
-hashed(opera_house,717817927).
+hashed(opera_house,29699353).
 
 castable(smith_apprentice,smith).
 
@@ -76,7 +86,7 @@ castable(smithy,smith).
 
 castable(patron,smith).
 
-hashed(smith,825564703).
+hashed(smith,718066303).
 
 castable(sailor,boat).
 
@@ -84,7 +94,7 @@ castable(captain,boat).
 
 castable(passenger,boat).
 
-hashed(boat,4198294352).
+hashed(boat,772218658).
 
 castable(spy,thieves_den).
 
@@ -94,7 +104,7 @@ castable(spy_master,thieves_den).
 
 castable(master_thief,thieves_den).
 
-hashed(thieves_den,1551725841).
+hashed(thieves_den,3750230703).
 
 castable(librarian,library).
 
@@ -106,7 +116,7 @@ castable(researcher,library).
 
 castable(visitor,library).
 
-hashed(library,8360774).
+hashed(library,3592829081).
 
 castable(guest,kitchen).
 
@@ -116,13 +126,13 @@ castable(worker,kitchen).
 
 castable(owner,kitchen).
 
-hashed(kitchen,1213312051).
+hashed(kitchen,2428697072).
 
 castable(tourist,amphitheatre).
 
 castable(bard,amphitheatre).
 
-hashed(amphitheatre,2634253136).
+hashed(amphitheatre,1860998799).
 
 castable(owner,shipyard).
 
@@ -132,7 +142,7 @@ castable(ship_builder,shipyard).
 
 castable(visitor,shipyard).
 
-hashed(shipyard,1582998607).
+hashed(shipyard,2855299008).
 
 castable(archaelogist,ruins).
 
@@ -140,7 +150,7 @@ castable(treasure_hunter,ruins).
 
 castable(visitor,ruins).
 
-hashed(ruins,4262036409).
+hashed(ruins,2324225451).
 
 castable(priest,temple).
 
@@ -152,7 +162,7 @@ castable(high_priest,temple).
 
 castable(parishioner,temple).
 
-hashed(temple,879915311).
+hashed(temple,4088116777).
 
 castable(vendor,marketplace).
 
@@ -164,7 +174,7 @@ castable(racketeer,marketplace).
 
 castable(patron,marketplace).
 
-hashed(marketplace,3230048862).
+hashed(marketplace,1140175054).
 
 castable(regular,tavern).
 
@@ -174,7 +184,7 @@ castable(barkeep,tavern).
 
 castable(patron,tavern).
 
-hashed(tavern,3315537531).
+hashed(tavern,4025344891).
 
 castable(student,classroom).
 
@@ -182,7 +192,7 @@ castable(professor,classroom).
 
 castable(dean,classroom).
 
-hashed(classroom,4155164408).
+hashed(classroom,4132379938).
 
 castable(guest,garden).
 
@@ -192,7 +202,7 @@ castable(owner,garden).
 
 castable(visitor,garden).
 
-hashed(garden,2187367946).
+hashed(garden,379377716).
 
 propensity(talk, -3, introvert,Self, DEFAULT_TARGET, DEFAULT_OBJECT, DEFAULT_ACTION, DEFAULT_LOCATION )  :- 
 		action(ACTION_NAME,Self,DEFAULT_TARGET,DEFAULT_OBJECT,DEFAULT_ACTION,DEFAULT_LOCATION),

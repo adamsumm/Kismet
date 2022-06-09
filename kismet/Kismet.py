@@ -3019,7 +3019,6 @@ class KismetModule():
             for status in character['statuses']:
                 status_name = status['status_name']
                 val = status['status_value']
-                print(status)
                 if val == '':
                     val = None
                 elif is_number(val):
@@ -3044,20 +3043,22 @@ class KismetModule():
         self.times = kismet_module['times']
         self.location_history = []
         
-        for relation_type, all_relations in relations.items():
-            for relation in all_relations:
-                if len(relation) == 2:
-                    source_id,target_id = relation
-                    val = None
-                else:
-                    source_id,target_id,val = relation
-                self.population[source_id][ 'relationships'][(relation_type,target_id)] = val
+        for relation in relations:
+            source = relation['source']
+            target = relation['target']
+            relation_type = relation['relation_name']
+            val = relation['value']
+            if val == '':
+                val = None
+            self.population[source][ 'relationships'][(relation_type,target)] = val
         
         for step in location_history:
             locations_at_step = {}
             for location in step:
-                asp_location = self.aspify_name(location)
-                for person in step[location]:
+                location_name = location['location_name']
+                characters = location['characters']
+                asp_location = self.aspify_name(location_name)
+                for person in characters:
                     locations_at_step[self.aspify_name(person)] = asp_location
             self.location_history.append(locations_at_step)
             
@@ -3065,6 +3066,8 @@ class KismetModule():
         self.population2asp()
     def get_object(self, id):
         if 'location' in id:
+            if (id not in self.created_locations):
+                print(self.created_locations)
             return self.created_locations[id]
         else:
             return self.population[id]
@@ -3073,19 +3076,21 @@ class KismetModule():
         if person_filter is None:
             person_filter =  self.population
             default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
-        relations = {}
+        relations = []
         characters = {}
         
         history = []
-        for ur_step in self.history:
+        for  ur_step, time in zip(self.history,self.times):
             actions = []
             for step in ur_step:
                 for action in step:
                     action_name = action[0]
-                    action_arguments = self.to_pretty_name([thing for thing in action[1:] if thing != 'null'])
-                    actions.append([action_name] + action_arguments)
-        
-            history.append(actions)
+                    action_arguments = [thing for thing in action[1:] if thing != 'null'] #self.to_pretty_name([thing for thing in action[1:] if thing != 'null'])
+                    actions.append({'action_name':action_name,
+                                    'arguments':action_arguments})
+            
+            history.append({'timestamp':time,
+                            'actions':actions})
         location_history = []
         for step in self.location_history:
             location_characters = {}
@@ -3094,7 +3099,10 @@ class KismetModule():
                 if location not in location_characters:
                     location_characters[location] = []
                 location_characters[location].append(person)
-            location_history.append(location_characters)
+            locations_at_time = []
+            for location, l_characters in location_characters.items():
+                locations_at_time.append({'location_name':location, 'characters':l_characters})
+            location_history.append({'locationsAtTime':locations_at_time})
         
         default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
         locations = list(self.created_locations.values())
@@ -3116,7 +3124,6 @@ class KismetModule():
                 
                 for trait in self.population[person]['traits']:
                     characters[source]['traits'].append(get_common_name(trait))
-                    
                 #MAKE STATUSES DICTIONARIES INSTEAD OF LISTS
                 for relation in self.population[person]['status']:
                     if len(relation) == 1:
@@ -3135,7 +3142,16 @@ class KismetModule():
                         source = self.population[person]['id']
                         target =  self.get_object(relation[1])['id']
                         relation_name = get_common_name(relation[0])
+                        val = ''
+                        if self.population[person]['status'][relation] is not None:
+
+                            val = self.population[person]['status'][relation]
+                        relations.append({'relation_name':relation_name,
+                                          'source':source,
+                                          'target':target,
+                                          'value':val})
                         
+                        '''
                         if relation_name not in relations:
                             relations[relation_name] = []
                         if self.population[person]['status'][relation] is not None:
@@ -3144,6 +3160,7 @@ class KismetModule():
                             relations[relation_name].append([source,target,val])
                         else:
                             relations[relation_name].append([source,target])
+                        '''
                 for relation in self.population[person]['relationships']:
                     if len(relation) == 1:
                         relation_name  = get_common_name(relation[0])
@@ -3160,15 +3177,15 @@ class KismetModule():
                         
                         target =  self.get_object(relation[1])['id']
                         relation_name = get_common_name(relation[0])
-                        
-                        if relation_name not in relations:
-                            relations[relation_name] = []
+                        val = ''
                         if self.population[person]['relationships'][relation] is not None:
                 
                             val = self.population[person]['relationships'][relation]
-                            relations[relation_name].append([source,target,val])
-                        else:
-                            relations[relation_name].append([source,target])
+                        relations.append({'relation_name':relation_name,
+                                          'source':source,
+                                          'target':target,
+                                          'value':val})
+                        
         
         for character in characters.values():
             character['relationships'] = list(character['relationships'])

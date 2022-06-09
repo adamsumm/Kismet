@@ -1,6 +1,18 @@
 
 time year: ?[1000:1100] season: [winter|spring|summer|fall]* .
 
+
+location town:
+    supports: [8] person;
+    each_turn:
+        cast person.
+
+location house:
+    supports: [10] resident,
+              [4] guest;
+    each_turn:
+        cast guest.
+
 location throne_room:
 	supports:
 		[1] monarch,

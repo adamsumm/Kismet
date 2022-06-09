@@ -1,348 +1,531 @@
-cast(location210,passenger,character69).
-at(character69,location210).
+at(character399,location403).
 
-at(character356,location363).
+at(character469,location470).
 
-at(character50,location333).
+at(character440,location441).
 
-at(character123,location240).
+at(character329,location391).
 
-at(character391,location393).
+at(character333,location434).
 
-at(character39,location271).
+at(character257,location263).
 
-at(character129,location209).
+cast(location386,visitor,character401).
+at(character401,location386).
 
-at(character34,location364).
+cast(location189,patron,character196).
+at(character196,location189).
 
-at(character294,location331).
+at(character244,location253).
 
-cast(location178,patron,character397).
-at(character397,location178).
+at(character197,location203).
 
-cast(location208,visitor,character380).
-at(character380,location208).
+at(character232,location238).
 
-at(character120,location271).
+at(character324,location350).
 
-at(character142,location240).
+at(character237,location238).
 
-at(character392,location393).
+at(character239,location253).
 
-at(character124,location174).
+at(character464,location470).
 
-at(character14,location248).
+at(character241,location253).
 
-at(character59,location286).
+at(character320,location346).
 
-at(character27,location163).
+at(character256,location263).
 
-at(character23,location226).
+at(character377,location386).
 
-at(character353,location364).
+cast(location225,guest,character259).
+at(character259,location225).
 
-at(character81,location160).
+at(character208,location220).
 
-at(character140,location334).
+at(character204,location220).
 
-cast(location178,patron,character417).
-at(character417,location178).
+cast(location308,patron,character269).
+at(character269,location308).
 
-cast(location328,visitor,character291).
-at(character291,location328).
+at(character371,location384).
 
-at(character114,location271).
+at(character328,location351).
 
-at(character132,location334).
+cast(location180,guest,character163).
+at(character163,location180).
 
-at(character63,location271).
+at(character245,location253).
 
-cast(location410,patron,character418).
-at(character418,location410).
+cast(location169,visitor,character167).
+at(character167,location169).
 
-at(character10,location208).
+at(character330,location437).
 
-at(character83,location248).
+at(character465,location470).
 
-at(character93,location208).
+at(character194,location195).
 
-at(character92,location348).
+cast(location294,guest,character307).
+at(character307,location294).
 
-cast(location209,visitor,character184).
-at(character184,location209).
+at(character155,location169).
 
-at(character91,location410).
+at(character150,location170).
 
-at(character82,location226).
+at(character303,location308).
 
-cast(location178,patron,character396).
-at(character396,location178).
+at(character143,location290).
 
-cast(location331,guest,character49).
-at(character49,location331).
+at(character439,location441).
 
-cast(location348,patron,character25).
-at(character25,location348).
+at(character411,location431).
 
-at(character385,location393).
+at(character443,location446).
 
-cast(location332,guest,character290).
-at(character290,location332).
+at(character209,location221).
 
-at(character379,location393).
+at(character380,location385).
 
-at(character300,location330).
+at(character321,location347).
 
-cast(location209,visitor,character100).
-at(character100,location209).
+cast(location189,patron,character181).
+at(character181,location189).
 
-at(character390,location393).
+at(character428,location431).
 
-at(character135,location208).
+at(character266,location290).
 
-cast(location270,visitor,character378).
-at(character378,location270).
+at(character160,location171).
 
-at(character18,location161).
+at(character178,location180).
 
-at(character15,location178).
+at(character373,location385).
 
-at(character42,location174).
+at(character313,location346).
 
-at(character47,location174).
+at(character326,location351).
 
-at(character144,location377).
+at(character402,location403).
 
-cast(location226,patron,character218).
-at(character218,location226).
+at(character200,location203).
 
-at(character118,location240).
+cast(location290,tourist,character293).
+at(character293,location290).
 
-at(character78,location334).
+cast(location230,guest,character21).
+at(character21,location230).
 
-at(character139,location174).
+at(character463,location470).
 
-cast(location208,visitor,character382).
-at(character382,location208).
+at(character53,location351).
 
-at(character147,location364).
+at(character408,location431).
 
-at(character0,location410).
+at(character236,location238).
 
-at(character104,location161).
+cast(location192,guest,character34).
+at(character34,location192).
 
-at(character149,location426).
+at(character367,location369).
 
-at(character31,location286).
+at(character455,location458).
 
-at(character137,location210).
+at(character397,location403).
 
-cast(location226,patron,character79).
-at(character79,location226).
+at(character297,location299).
 
-at(character98,location334).
+at(character365,location369).
 
-at(character96,location363).
+cast(location458,guest,character460).
+at(character460,location458).
 
-at(character113,location426).
+at(character229,location230).
 
-cast(location248,patron,character383).
-at(character383,location248).
+at(character215,location222).
 
-at(character45,location240).
+at(character262,location263).
 
-at(character29,location286).
+at(character459,location461).
 
-at(character12,location248).
+cast(location222,passenger,character407).
+at(character407,location222).
 
-at(character53,location426).
+at(character409,location431).
 
-at(character125,location240).
+at(character300,location308).
 
-at(character354,location364).
+cast(location308,patron,character265).
+at(character265,location308).
 
-cast(location377,patron,character368).
-at(character368,location377).
+at(character235,location238).
 
-at(character355,location363).
+at(character311,location349).
 
-at(character287,location329).
+at(character462,location470).
 
-at(character77,location286).
+cast(location384,visitor,character400).
+at(character400,location384).
 
-cast(location410,patron,character95).
-at(character95,location410).
+at(character417,location431).
 
-at(character121,location410).
+at(character395,location403).
 
-at(character58,location332).
+at(character406,location431).
 
-at(character130,location271).
+at(character429,location431).
 
-at(character24,location348).
+cast(location290,tourist,character291).
+at(character291,location290).
 
-at(character126,location178).
+at(character254,location263).
 
-at(character51,location270).
+at(character315,location347).
 
-cast(location160,citizen,character168).
-at(character168,location160).
+at(character355,location356).
 
-at(character28,location193).
+at(character184,location351).
 
-cast(location208,visitor,character389).
-at(character389,location208).
+at(character305,location308).
 
-cast(location362,visitor,character367).
-at(character367,location362).
+at(character210,location221).
 
-at(character105,location160).
+at(character144,location290).
 
-at(character110,location333).
+at(character317,location346).
 
-at(character141,location334).
+at(character449,location453).
 
-at(character299,location332).
+at(character26,location351).
 
-at(character43,location348).
+at(character415,location431).
 
-at(character65,location226).
+at(character228,location230).
 
-at(character136,location271).
+at(character193,location195).
 
-at(character297,location331).
+at(character372,location385).
 
-at(character44,location208).
+at(character202,location203).
 
-cast(location193,patron,character398).
-at(character398,location193).
+cast(location168,citizen,character152).
+at(character152,location168).
 
-cast(location178,patron,character74).
-at(character74,location178).
+at(character159,location170).
 
-at(character138,location364).
+at(character378,location384).
 
-at(character1,location193).
+at(character183,location290).
 
-cast(location193,patron,character128).
-at(character128,location193).
+at(character255,location263).
 
-at(character75,location334).
+at(character187,location189).
 
-at(character143,location271).
+at(character240,location253).
 
-at(character72,location334).
+at(character0,location351).
 
-at(character22,location193).
+at(character426,location431).
 
-at(character293,location331).
+cast(location356,guest,character364).
+at(character364,location356).
 
-at(character112,location271).
+cast(location225,guest,character421).
+at(character421,location225).
 
-cast(location270,visitor,character211).
-at(character211,location270).
+at(character381,location385).
 
-at(character3,location334).
+at(character270,location290).
 
-at(character387,location393).
+cast(location347,visitor,character361).
+at(character361,location347).
 
-cast(location160,citizen,character277).
-at(character277,location160).
+cast(location168,citizen,character173).
+at(character173,location168).
 
-cast(location161,visitor,character386).
-at(character386,location161).
+at(character379,location386).
 
-cast(location332,guest,character289).
-at(character289,location332).
+at(character323,location349).
 
-at(character134,location400).
+at(character199,location203).
 
-at(character48,location163).
+cast(location222,passenger,character422).
+at(character422,location222).
 
-at(character107,location160).
+at(character292,location294).
 
-at(character102,location162).
+at(character363,location369).
 
-at(character87,location286).
+at(character312,location349).
 
-at(character5,location334).
+cast(location221,visitor,character206).
+at(character206,location221).
 
-at(character109,location271).
+at(character217,location222).
 
-at(character46,location162).
+cast(location348,guest,character358).
+at(character358,location348).
 
-at(character13,location377).
+at(character468,location470).
 
-cast(location193,patron,character217).
-at(character217,location193).
+at(character179,location180).
 
-cast(location333,patron,character33).
-at(character33,location333).
+at(character157,location170).
 
-at(character357,location362).
+at(character247,location253).
 
-at(character68,location334).
+at(character331,location351).
 
-at(character122,location377).
+at(character366,location369).
 
-at(character351,location364).
+at(character4,location290).
 
-at(character292,location332).
+cast(location345,visitor,character352).
+at(character352,location345).
 
-cast(location161,visitor,character212).
-at(character212,location161).
+at(character316,location349).
 
-at(character145,location209).
+at(character216,location222).
 
-at(character37,location426).
+cast(location225,guest,character28).
+at(character28,location225).
 
-at(character108,location348).
+at(character121,location351).
 
-at(character6,location240).
+cast(location192,guest,character58).
+at(character58,location192).
 
-at(character131,location363).
+cast(location294,guest,character272).
+at(character272,location294).
 
-at(character66,location330).
+cast(location458,guest,character445).
+at(character445,location458).
 
-at(character11,location226).
+cast(location195,guest,character260).
+at(character260,location195).
 
-cast(location333,patron,character16).
-at(character16,location333).
+cast(location225,guest,character412).
+at(character412,location225).
 
-cast(location160,citizen,character381).
-at(character381,location160).
+at(character177,location180).
 
-at(character295,location330).
+at(character267,location290).
 
-cast(location193,patron,character133).
-at(character133,location193).
+cast(location461,guest,character450).
+at(character450,location461).
 
-at(character21,location240).
+at(character456,location458).
 
-at(character288,location332).
+cast(location299,guest,character271).
+at(character271,location299).
 
-cast(location270,visitor,character183).
-at(character183,location270).
+cast(location299,guest,character301).
+at(character301,location299).
 
-at(character298,location331).
+at(character318,location345).
 
-at(character148,location163).
+at(character295,location299).
 
-at(character296,location332).
+at(character425,location431).
 
-at(character388,location393).
+at(character304,location308).
 
-at(character352,location362).
+at(character325,location350).
 
-at(character26,location334).
+at(character207,location220).
 
-at(character119,location334).
+at(character357,location360).
 
-at(character76,location362).
+at(character427,location431).
 
-at(character384,location426).
+at(character368,location369).
 
-cast(location160,citizen,character85).
-at(character85,location160).
+at(character423,location431).
+
+at(character212,location221).
+
+cast(location230,guest,character233).
+at(character233,location230).
+
+at(character258,location263).
+
+at(character191,location192).
+
+at(character414,location431).
+
+at(character444,location446).
+
+cast(location294,guest,character298).
+at(character298,location294).
+
+at(character454,location458).
+
+at(character314,location346).
+
+at(character248,location253).
+
+at(character188,location189).
+
+at(character205,location220).
+
+at(character231,location238).
+
+at(character176,location180).
+
+at(character404,location431).
+
+at(character396,location403).
+
+cast(location220,visitor,character226).
+at(character226,location220).
+
+at(character162,location171).
+
+at(character214,location222).
+
+at(character161,location171).
+
+cast(location221,visitor,character447).
+at(character447,location221).
+
+at(character218,location222).
+
+at(character302,location308).
+
+at(character198,location203).
+
+at(character49,location221).
+
+at(character424,location431).
+
+at(character327,location351).
+
+at(character158,location170).
+
+at(character156,location168).
+
+at(character246,location253).
+
+cast(location220,visitor,character234).
+at(character234,location220).
+
+at(character61,location351).
+
+at(character319,location345).
+
+at(character268,location290).
+
+at(character264,location289).
+
+at(character182,location186).
+
+cast(location175,guest,character154).
+at(character154,location175).
+
+at(character418,location431).
+
+at(character310,location347).
+
+at(character353,location356).
+
+at(character405,location431).
+
+cast(location175,guest,character153).
+at(character153,location175).
+
+at(character296,location299).
+
+at(character227,location230).
+
+at(character374,location385).
+
+cast(location168,citizen,character164).
+at(character164,location168).
+
+at(character376,location384).
+
+at(character354,location356).
+
+at(character5,location351).
+
+cast(location175,guest,character166).
+at(character166,location175).
+
+at(character451,location453).
+
+at(character114,location351).
+
+at(character375,location385).
+
+at(character466,location470).
+
+at(character190,location192).
+
+at(character83,location290).
+
+at(character438,location441).
+
+at(character44,location290).
+
+at(character452,location453).
+
+at(character261,location263).
+
+cast(location168,citizen,character174).
+at(character174,location168).
+
+at(character151,location168).
+
+at(character201,location203).
+
+at(character322,location347).
+
+at(character211,location221).
+
+cast(location230,guest,character370).
+at(character370,location230).
+
+at(character467,location470).
+
+at(character359,location360).
+
+at(character413,location431).
+
+at(character242,location253).
+
+at(character362,location369).
+
+cast(location189,patron,character165).
+at(character165,location189).
+
+at(character457,location458).
+
+at(character243,location253).
+
+at(character42,location290).
+
+at(character419,location431).
+
+at(character398,location403).
+
+at(character448,location453).
+
+cast(location195,guest,character224).
+at(character224,location195).
+
+cast(location168,citizen,character416).
+at(character416,location168).
+
+at(character420,location431).
+
+at(character306,location308).
+
+at(character332,location351).
+
+at(character309,location348).
+
+at(character410,location431).
+
+at(character223,location225).
 
 is(Actor,Role,RoleLocation) :- cast(RoleLocation, Role, Actor).
