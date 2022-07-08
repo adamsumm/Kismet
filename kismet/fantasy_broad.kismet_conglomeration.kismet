@@ -244,12 +244,29 @@ default trait visiting_places_you_like(>Self,@Location):
 default trait visiting_as_regular(>Self,@Location):
       +++@if Self is regular of Location@.
 
+default trait thieves_go_around(>Self,@Location):
+      ---@if Self is thief of Location@.
+      
+default trait spies_go_around(>Self,@Location):
+      ---@if Self is spy of Location@.
+      
 default trait romantic_towards_crush(>Self, <Other):
     +++(romance if Self crushing_on Other).
       
 default trait stay_at_hometown(>Self,@Location):
       +++@if Self's hometown == Location's hometown@.
-      
+
+default trait make_chosen_one_connections_occur(>Self, <Other, @Location):
+    +++@if Self is chosen_one, Other is chosen_one, Other is connected of Location@.
+
+
+default trait go_where_people_you_like_go(>Self, <Other, @Location):
+    ++@if Self likes Other >= 1, Other is connected of Location@.
+
+
+default trait chosen_ones_are_connected(>Self, <Other):
+    ++++++++++++++++++++++++++++(if Self is chosen_one, Other is chosen_one).
+
 default trait do_role_specific_actions(>Self):
     ++++(role_specific).
     
@@ -1736,6 +1753,33 @@ action sober_up(>Drunk):
     if Drunk is drunk;
     result: Drunk isn't drunk.
     
+    
+pattern has_connection(>PersonA, <PersonB):
+    if PersonA likes PersonB != 0, PersonA is chosen_one, PersonB is chosen_one.
+
+pattern has_connection(>PersonA, <PersonB):
+    if PersonA loves PersonB != 0,PersonA is chosen_one, PersonB is chosen_one.
+    
+pattern has_connection(>PersonA, <PersonB):
+    if pattern(has_connection,PersonB, PersonA), PersonA is chosen_one, PersonB is chosen_one .
+    
+pattern lacking_connection(>PersonA, <PersonB):
+    if not pattern(has_connection, PersonA, PersonB), PersonA is chosen_one, PersonB is chosen_one.
+  
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_connection,PersonA, PersonB), pattern(has_connection,PersonB, PersonC).
+    
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_connection,PersonA, PersonB), pattern(has_path,PersonB, PersonC).
+    
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_path,PersonA, PersonB), pattern(has_connection,PersonB, PersonC).
+    
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_path,PersonA, PersonB), pattern(has_path,PersonB, PersonC).
+    
+pattern lacking_path(>PersonA, <PersonB):
+    if not pattern(has_path,PersonA, PersonB), PersonA is chosen_one, PersonB is chosen_one.
 ////////////////////////////guest
 ////////////////////////////worker
 ////////////////////////////drinker

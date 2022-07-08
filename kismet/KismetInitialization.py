@@ -852,8 +852,8 @@ def parseAction(action,action_name):
         namedLocations.add(name)
         for c in location:
             constraints.append(f'at({c},{name})')
-    namedLocations = [location for location in namedLocations if location[0].isupper()]
-    for locCombo in combinations(namedLocations, 2):
+    namedLocations = [location for location in sorted(namedLocations) if location[0].isupper()]
+    for locCombo in combinations(sorted(namedLocations), 2):
         constraints.append(f'{locCombo[0]} != {locCombo[1]}')
     
     if 'Conditions' in action:
@@ -1263,7 +1263,7 @@ class KismetModule():
         
         traits_ = {}
         self.alternative_names = {}
-        for trait in self.traits:
+        for trait in sorted(self.traits):
             for trait_ in self.traits[trait]:
                 names = trait_.alternative_names
                 self.alternative_names[names[0]] = names[1:]
@@ -1272,7 +1272,7 @@ class KismetModule():
         self.default_traits = []
         self.selectable_traits = []
         self.numerical_status = []
-        for name,trait in self.traits.items():
+        for name,trait in sorted(self.traits.items()):
             if trait.is_trait:
                 if trait.is_default:
                     self.default_traits.append(trait)
@@ -1477,6 +1477,11 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         #print(inspect.currentframe().f_code.co_name, ctx.getText())
         return ('Optional_check', self.visitChildren(ctx))
 
+    # Visit a parse tree produced by kismet_initializationParser#description.
+    def visitRequired_check(self, ctx):
+        
+        #print(inspect.currentframe().f_code.co_name, ctx.getText())
+        return ('Required_check', self.visitChildren(ctx))
     # Visit a parse tree produced by kismet_initializationParser#initialize.
     def visitInitialize(self, ctx:kismet_initializationParser.InitializeContext):
         
@@ -1534,19 +1539,18 @@ class RandomText:
 
     def __call__(self,initializations,selections,creations,module):
         rules = {**self.text, **mod.tracery_grammar}
-        if selections is None:
-            grammar = tracery.Grammar(rules)
-            return grammar.flatten('#0#')
-        else:
-            for selection_key, selection_values in selections.items():
+        if not (selections is None):
+            for selection_key, selection_values in sorted(selections.items()):
                 assigned = []
                 for thing in selection_values:
                     if isinstance(thing,str):
                         assigned.append(thing)
                 if len(assigned) > 0:
                     rules[selection_key] = assigned
-            grammar = tracery.Grammar(rules)
-            return grammar.flatten('#0#')
+        grammar = tracery.Grammar(rules)
+        generated_text = grammar.flatten('#0#')
+        #print('GENERATED TEXT', generated_text)
+        return generated_text
     
 
 @dataclass 
@@ -1877,6 +1881,9 @@ class Relationship:
     def __hash__(self):
         return hash(self.name+self.target+str(self.negation))
     
+    def __lt__(self,other):
+        return f'{self.name}{self.target}{self.value}{self.negation}' < f'{other.name}{other.target}{other.value}{other.negation}'
+    
     def is_satisfied(self, creations,initializations,selections):
         satisfies = set()
         for creation in creations:
@@ -1933,13 +1940,30 @@ class OptionalCheck:
                 if creation["status"][name] in var:
                     satisfies.add(get_name(creation))
         return satisfies
-            
+
+@dataclass
+class RequiredCheck:
+    name: str
+    def is_satisfied(self, creations,initializations,selections):
+        satisfies = set()
+        name = (self.name,)
+        for creation in creations:
+            if name in creation['status']:
+                satisfies.add(get_name(creation))
+        return satisfies      
+    
 def parse_optional_check(description):
     
     description = description[1]
 
     return OptionalCheck(description[0][1],description[1][1])
         
+def parse_required_check(description):
+    
+    description = description[1]
+
+    return RequiredCheck(description[0][1])
+
 def flatten_list(listed):
     flattened = []
     for thing in listed:
@@ -1981,6 +2005,8 @@ def parse_options(all_options):
             options.append(parse_description(option))
         elif option[0] == 'Optional_check':
             options.append(parse_optional_check(option))
+        elif option[0] == 'Required_check':
+            options.append(parse_required_check(option))
         else:
             raise Exception('Unknown Option:',option)
     return options
@@ -2024,7 +2050,7 @@ class Selection():
        
         if len(satisfactory) >= self.num.distribution.lower:#len(to_select):
             
-            to_select = random.sample(satisfactory,min(self.num.distribution.lower,len(to_select)))
+            to_select = random.sample(sorted(satisfactory),min(self.num.distribution.lower,len(to_select)))
             to_select = [character for character in creations if get_name(character) in to_select]
             to_create = []
         else:
@@ -2160,7 +2186,7 @@ class Initialization:
             all_objects[object_type] = list(uniq.values())
      
             
-        for relationship in all_relationships:
+        for relationship in sorted(all_relationships):
             source = relationship[0]
             relationship = relationship[1]
             target = relationship.target
@@ -2296,21 +2322,18 @@ class Filter:
     particular: str = None
     
     def __call__(self,creation):
-        
         category = creation.get(self.category,[])
         if self.uniq:
-            if particular is None:
+            if self.particular is None:
                 kinds = set()
                 for thing in category:
                     kinds.add(thing[0])
-                    
                 return comparators[self.comparator](len(kinds),self.num)
             else:
                 kinds = set()
                 for thing in category:
                     if thing[0] == self.particular:
                         kinds.add(thing)
-                    
                 return comparators[self.comparator](len(kinds),self.num)
                 
             
@@ -2378,15 +2401,32 @@ class KismetInitialization():
         for initialize in self.all_things['Initialize']:
             creations += parse_initialize(initialize)(initializations,{'traits':self.module.selectable_traits},creations,self.module)
         
-        eliminated = set()
-        for filter_text in self.all_things.get('Filter',[]):
-            filter = parse_filter(filter_text)
-            for creation in creations:
-                if filter(creation): 
-                    eliminated.add(get_name(creation))
+        found = set()
         kept = []
         for creation in creations:
-            if get_name(creation) not in eliminated:
+            if creation['id'] not in found:
+                found.add(creation['id'])
                 kept.append(creation)
         creations = kept
+        
+        eliminated = set()
+        initial_size = 0
+        
+        while initial_size != len(creations):
+            initial_size = len(creations)
+            print('CREATION SIZE', initial_size)
+            for filter_text in self.all_things.get('Filter',[]):
+                filter = parse_filter(filter_text)
+                for creation in creations:
+                    if filter(creation): 
+                        eliminated.add(creation['id'])
+            creations_ = []
+            for creation in creations:
+                if creation['id'] not in eliminated:
+                    creation['relationships'] = [relationship for relationship in creation['relationships'] if relationship[1] not in eliminated]
+                    creations_.append(creation)
+            creations = creations_
+        
+        
+        
         return creations

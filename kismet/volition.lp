@@ -1,8 +1,12 @@
 #show likelihood/2.
+%#show propensity/8.
 
 #const single_null = 100.
 #const no_null = 200.
+is(NAME,tag_agnostic) :- action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION).
+
 non_null(INITIATOR) :- action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION), TARGET != null.
+
 
 likelihood(action(NAME, INITIATOR,null,null,ACTION,LOCATION),N) :-
   N =  #sum{ C,Tag :
@@ -20,7 +24,12 @@ likelihood(action(NAME, INITIATOR,null,SUBJECT,ACTION,LOCATION),N) :-
 likelihood(action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION),N) :-
   N =  #sum{ C,Tag :
           is(NAME,Tag) ,
-          propensity(Tag, C, _, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION )}, action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION), INITIATOR != null,is(NAME,role_specific).    
+          propensity(Tag, C, _, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION )}, action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION), INITIATOR != null, is(NAME,role_specific).    
+       
+likelihood(action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION),N) :-
+  N =  #sum{ C,Tag :
+          is(NAME,Tag) ,
+          propensity(Tag, C, _, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION )}, action(NAME, INITIATOR,TARGET,SUBJECT,ACTION,LOCATION), INITIATOR != null, is(INITIATOR,connected_to,TARGET).   
           
 likelihood(action(NAME, INITIATOR,TARGET,null,ACTION,LOCATION),N) :-
   N =  #sum{ C,Tag :

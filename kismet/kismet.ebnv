@@ -58,11 +58,13 @@ trait_type:
 is_num:
 	'scalar';
 
-propensity: modifier | goto;
+propensity: tag_agnostic_modifier | modifier | goto;
 
 propensity_name: 'visibility' | name;
 
 modifier: valence '('propensity_name  (',' propensity_name)* comparison? ')';
+
+tag_agnostic_modifier: valence '('comparison')';
   
 goto:  valence '@' name (',' name)* comparison? '@'|
        valence '@' comparison  '@';
@@ -180,7 +182,7 @@ inversion: 'is not' | 'isn\'t' | 'do not' | 'dont' | 'don\'t' |  'does not' | 'd
 cond5: arg 'and' arg inversion? name ('each' 'other' | 'eachother') (operator num)?;
 
 cond7: arg  ('\'s'|'s'|'is'|'has'|'have')? name ('of'|'to'|'with' | 'at')? arg comparator num;
-condpattern: 'pattern' '(' name  (',' arg)* ')';
+condpattern: has_not? 'pattern' '(' name  (',' arg)* ')';
 condTime: ('now'|'now\'s'|'current') name 'is' (num|name);
 condTimeComparator: ('now'|'now\'s'|'current') name comparator num;
 condTimeHistory: 'now' ('is'|'has'|'have')? comparator num name 'since' arg;
@@ -192,6 +194,8 @@ condTimePersonalRelativeAssignment: arg '\'s' name name operator num;
 tag_compare: 'is missing' | 'is not' | 'is' | 'has'|'have' | 'hasn\'t' | 'haven\'t' | 'isn\'t' | 'isnt' | 'aint' | 'missing' | 'a'?;
 
 operator: (MINUS|PLUS|EQUALS);
+
+has_not: 'not';
 
 MINUS: ('-=');
 PLUS: ('+=');

@@ -99,6 +99,11 @@ class kismetVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismetParser#tag_agnostic_modifier.
+    def visitTag_agnostic_modifier(self, ctx:kismetParser.Tag_agnostic_modifierContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismetParser#goto.
     def visitGoto(self, ctx:kismetParser.GotoContext):
         return self.visitChildren(ctx)
@@ -311,6 +316,11 @@ class kismetVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by kismetParser#operator.
     def visitOperator(self, ctx:kismetParser.OperatorContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismetParser#has_not.
+    def visitHas_not(self, ctx:kismetParser.Has_notContext):
         return self.visitChildren(ctx)
 
 

@@ -554,7 +554,16 @@ class UntilClause:
     aux_pattern:str
         
     def passes(self,module):
-        return True
+        
+        #print("NEED TO CHECK")
+        #print(self.logic)
+        #print(self.aux_pattern)
+        code = [f'passes :- {self.logic}.', self.aux_pattern, f'#show passes/0.']
+        found_patterns = module.detect_patterns('\n'.join(code))[0]
+
+        module.display_patterns(pattern_filter=['lacking_path'])
+        
+        return len(found_patterns) > 0
     
     @staticmethod
     def parse(datum):
@@ -636,7 +645,7 @@ class WhileLoop:
     actions:list
         
     def __call__(self,module,state):  
-
+        raise Exception('ERROR: WhileLoop is not yet implemented')
         return module, module.to_json()
     
     @staticmethod

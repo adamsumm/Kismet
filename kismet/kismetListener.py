@@ -170,6 +170,15 @@ class kismetListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismetParser#tag_agnostic_modifier.
+    def enterTag_agnostic_modifier(self, ctx:kismetParser.Tag_agnostic_modifierContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#tag_agnostic_modifier.
+    def exitTag_agnostic_modifier(self, ctx:kismetParser.Tag_agnostic_modifierContext):
+        pass
+
+
     # Enter a parse tree produced by kismetParser#goto.
     def enterGoto(self, ctx:kismetParser.GotoContext):
         pass
@@ -554,6 +563,15 @@ class kismetListener(ParseTreeListener):
 
     # Exit a parse tree produced by kismetParser#operator.
     def exitOperator(self, ctx:kismetParser.OperatorContext):
+        pass
+
+
+    # Enter a parse tree produced by kismetParser#has_not.
+    def enterHas_not(self, ctx:kismetParser.Has_notContext):
+        pass
+
+    # Exit a parse tree produced by kismetParser#has_not.
+    def exitHas_not(self, ctx:kismetParser.Has_notContext):
         pass
 
 

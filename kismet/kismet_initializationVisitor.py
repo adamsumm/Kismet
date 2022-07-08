@@ -114,6 +114,11 @@ class kismet_initializationVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismet_initializationParser#required_check.
+    def visitRequired_check(self, ctx:kismet_initializationParser.Required_checkContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismet_initializationParser#assignment.
     def visitAssignment(self, ctx:kismet_initializationParser.AssignmentContext):
         return self.visitChildren(ctx)

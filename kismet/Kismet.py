@@ -35,6 +35,10 @@ import shutil
 import functools
 module_singleton = None
 import platform
+import hashlib
+
+def hash_(data):
+    return int(hashlib.md5(str(data).encode('utf-8')).hexdigest(),16)
 
 def process_nesting(text,count=0):
     start = -1
@@ -86,12 +90,13 @@ def parse_likelihood(likelihood):
         
         action = [parse_predicate(pred) for pred in likelihood[0]['terms'][0]['terms']]
         actor = action[1]
+       
         return logit,action,actor
 
 
 def solve(args,clingo_exe='clingo'):
     """Run clingo with the provided argument list and return the parsed JSON result."""
-
+    
     print_args = [clingo_exe] + list(args) + [' | tr [:space:] \\\\n | sort ']
     args = [clingo_exe, '--outf=2'] + args # + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))] #No randomness here
     #print(' '.join(args))
@@ -107,10 +112,12 @@ def solve(args,clingo_exe='clingo'):
     #    print('ERROR',err)
     
     out = outb.decode("utf-8")
+    
     if len(out) == 0:
         print(f'Command "{" ".join(args)}" failed.')
         print(outb)
         print(out)
+        
         
     with open('dump.lp', 'w') as outfile:
         result = json.loads(out)
@@ -170,16 +177,18 @@ def parse_json_result(out):
     assert len(result['Call'][0]['Witnesses']) > 0
     all_preds = []
     ids = list(range(len(result['Call'][0]['Witnesses'])))
+    
     random.shuffle(ids)
     for id in ids[:]:
-        witness = result['Call'][0]['Witnesses'][id]['Value']
+        witness = sorted(result['Call'][0]['Witnesses'][id]['Value'])
+        
         preds = collections.defaultdict(list)
         env = identitydefaultdict()
         for atom in witness:
             parsed, dummy = parse_terms(atom)
             preds[parsed[0]['predicate']].append(parsed)
         all_preds.append(preds)
-        
+    
     return all_preds
 
 class MyErrorListener( ErrorListener ):
@@ -265,6 +274,10 @@ class KismetVisitor(ParseTreeVisitor):
         return ('Propensity',self.visitChildren(ctx))
 
 
+    # Visit a parse tree produced by kismetParser#modifier.
+    def visitTag_agnostic_modifier(self, ctx):
+        return ('Tag Agnostic Propensity',self.visitChildren(ctx))
+
     # Visit a parse tree produced by kismetParser#goto.
     def visitGoto(self, ctx:kismetParser.GotoContext):
         return ('GoToPropensity',self.visitChildren(ctx))
@@ -304,6 +317,8 @@ class KismetVisitor(ParseTreeVisitor):
 
     def visitPattern(self, ctx):
         return ('Pattern', self.visitChildren(ctx))
+    def visitHas_not(self, ctx):
+        return 'Negated'
     
     # Visit a parse tree produced by kismetParser#visibility.
     def visitVisibility(self, ctx:kismetParser.VisibilityContext):
@@ -612,7 +627,7 @@ def thing2dict(thing):
         if name not in output:
             output[name] = []
         output[name].append(rest)
-    for n,v in output.items():
+    for n,v in sorted(output.items()):
         if len(v) == 1:
             output[n] = v[0]
             
@@ -626,7 +641,7 @@ def unsqueeze(t):
     return t
 
 def unsqueeze_dict(d):
-    return {k:unsqueeze(v) for k,v in d.items()}
+    return {k:unsqueeze(v) for k,v in sorted(d.items())}
 
 def simpleDictify(thing):
     d = {}
@@ -875,9 +890,14 @@ def parseConditional(conditional,conditional_type='Conditional'):
         text = [f'update({char1},{stat},Y) :- is({char1},{stat},X), {operator_text}, ',
                 f'update({char1},{stat},{missing_text}) :- not is({char1},{stat},_), ']
     elif cond_type == 'CondPattern':
+        if  isinstance(arguments[0], str):
+            negation = 'not '
+            arguments = arguments[1:]
+        else:
+            negation = ''
         name = arguments[0][1]
         args = [name] + [arg[1][1] for arg in arguments[1:]]
-        text = f'pattern({",".join(args)})'
+        text = f'{negation}pattern({",".join(args)})'
     elif cond_type == 'Time':
         timeVar = arguments[0][1]
         timeVal = arguments[1][1]
@@ -1181,7 +1201,7 @@ def parseRole(role,rolename):
 Propensity = namedtuple('Propensity',['is_propensity','is_goto','valence','constraints','modified_tags'])
 def parsePropensity(propensity):
     propensity = unsqueeze(propensity)
-    is_propensity = propensity[0] == 'Propensity'
+    is_propensity = propensity[0] in ('Propensity', 'Tag Agnostic Propensity')
     is_goto = not is_propensity
     propensity = propensity[1]
     
@@ -1200,7 +1220,6 @@ def parsePropensity(propensity):
         else:
             print(thing)
             print('ERROR: Expected Name, PropensityName, or Condition but encountered ' + thing[0])
-    
     return Propensity(is_propensity,is_goto,valence,constraints,modified_tags)
 
 
@@ -1243,8 +1262,11 @@ def parseTrait(trait,traitname):
     
     
     for is_propensity,is_goto,valence,constraints,modified_tags in pos_propensities:
-        if len(modified_tags) == 0:
+        if len(modified_tags) == 0 and is_goto:
             modified_tags = ['go_to_location']
+        elif len(modified_tags) == 0:
+            modified_tags = ['tag_agnostic']
+            
         for tag in modified_tags:
             if is_goto:
                 kind = 'go_to_propensity'
@@ -1259,7 +1281,7 @@ def parseTrait(trait,traitname):
             if kind == 'propensity':
                 premises = ['action(ACTION_NAME,'+','.join([f'{arguments[arg_type]}' for arg_type in ['>','<','^','*','@']] ) +')']
             else:
-                premises = []
+                premises = [f'location({arguments["@"]})']
             premises.append(f'is({arguments[">"]}, {get_common_name(traitname)})')
             
             constraints = unsqueeze(constraints)
@@ -1800,7 +1822,7 @@ def patternToASP(pattern,pattern_name):
 class KismetModule():
     def __init__(self,module_files,
                  tracery_files=[],
-                 temperature=1.0,
+                 temperature=5.0,
                  observation_temp=1.0,
                  ignore_logit=5.0,
                  history_cutoff=10,
@@ -1900,14 +1922,14 @@ class KismetModule():
             self.uniq2name[uniq_name] = name
             name = uniq_name
             things[thing[0]][name] = thing2dict(thing[1])
-        self.removal_traits = {removal_trait['Name'] for n,removal_trait in things['RemovalTrait'].items()}
+        self.removal_traits = {removal_trait['Name'] for n,removal_trait in sorted(things['RemovalTrait'].items())}
        
         self.time = parseTime(list(things['Time'].values())[0])
         self.current_time = self.time()
         
         self.actions = {action:parseActionOrEvent(things['Action'][action],action) for action in things['Action']}
         self.events = {event:parseActionOrEvent(things['Event'][event],event,is_event=True) for event in things['Event']}
-        for name,action in self.actions.items():
+        for name,action in sorted(self.actions.items()):
             if action.cost <= 0:
                 action.cost = self.default_cost
 
@@ -1920,7 +1942,7 @@ class KismetModule():
         
         traits_ = {}
         self.alternative_names = {}
-        for trait in self.traits:
+        for trait in sorted(self.traits):
             for trait_ in self.traits[trait]:
                 names = trait_.alternative_names
                 self.alternative_names[names[0]] = names[1:]
@@ -1935,7 +1957,7 @@ class KismetModule():
         self.default_traits = []
         self.selectable_traits = []
         self.numerical_status = []
-        for name,trait in self.traits.items():
+        for name,trait in sorted(self.traits.items()):
             if trait.is_trait:
                 if trait.is_default:
                     self.default_traits.append(trait)
@@ -1943,7 +1965,7 @@ class KismetModule():
                     self.selectable_traits.append(trait)
             if trait.is_num:
                 self.numerical_status.append(trait)
-        for name, role in self.roles.items():
+        for name, role in sorted(self.roles.items()):
             
             characters, constraints, extension, tags,arguments = role
             char_text = ', '.join([''.join(c) for c in characters])
@@ -1954,20 +1976,20 @@ class KismetModule():
             self.name2uniq[f'cast_{self.uniq2name[name]}'] = [f'cast_{name}']
             self.uniq2name[f'cast_{name}'] = f'cast_{self.uniq2name[name]}'
         self.extension_graph = {}
-        for name in self.actions:
+        for name in sorted(self.actions):
             extension = self.actions[name].extensions
             if extension:
                 extension = extension[0]
             self.extension_graph[name] = extension
         
-        for name in self.events:
+        for name in sorted(self.events):
             extension = self.events[name].extensions
             if extension:
                 extension = extension[0]
             self.extension_graph[name] = extension
            
         self.traitASP = []
-        for trait in self.traits:
+        for trait in sorted(self.traits):
             self.traitASP += self.traits[trait].propensityASP
 
             trait_type = 'trait'
@@ -1982,12 +2004,12 @@ class KismetModule():
                 else:
                     self.traitASP.append(f'is(Person,{get_common_name(trait)},0) :- person(Person), not is(Person,{get_common_name(trait)},N), non_zero(N).')
                 
-        for trait in self.removal_traits:
+        for trait in sorted(self.removal_traits):
             self.traitASP.append(f'status({trait}).')
             
         self.locationASP = []
         
-        for location in self.locations:
+        for location in sorted(self.locations):
             
             supported_roles = self.locations[location].supports
             tags = self.locations[location].tags
@@ -1996,8 +2018,8 @@ class KismetModule():
             for tag in tags:                
                 self.locationASP.append(f'is({get_common_name(location)},{tag}).')
             
-            self.locationASP.append(f'hashed({get_common_name(location)},{hash(get_common_name(location))&0xFFFFFFFF}).')
-        self.patternASP = [pattern.asp_str for pattern in self.patterns.values()]
+            self.locationASP.append(f'hashed({get_common_name(location)},{hash_(get_common_name(location))&0xFFFFFFFF}).')
+        self.patternASP = [pattern.asp_str for _, pattern in sorted(self.patterns.items())]
         
         self.actions2rules()
         
@@ -2012,25 +2034,45 @@ class KismetModule():
                        (',',','),(', ',','),(', ',' ,'),(',',' ,'),
                        (',',')'),(', ',')'),(', ',' )'),(',',' )')]
 
-            for name in self.alternative_names:
+            for name in sorted(self.alternative_names):
                 for alt in self.alternative_names[name]:
                     for option in options:
                         text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
             asp_file.write(text)
             
         with open(os.path.join(self.path,f'{self.module_file}_action_rules.lp'), 'w') as asp_file:
-            text = '\n\n'.join([line for line in self.locationASP+self.actionASP+self.traitASP if 'go_to_propensity' not in line])
+            lines = []
+            for line in self.locationASP+self.actionASP+self.traitASP:
+                if 'add(' not in line and 'del(' not in line and 'update(' not in line and 'go_to_propensity' not in line:
+                    lines.append(line)
+            text = '\n\n'.join(lines)
             options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
                        ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
                        (',',','),(', ',','),(', ',' ,'),(',',' ,'),
                        (',',')'),(', ',')'),(', ',' )'),(',',' )')]
 
-            for name in self.alternative_names:
+            for name in sorted(self.alternative_names):
                 for alt in self.alternative_names[name]:
                     for option in options:
                         text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
             asp_file.write(text)
             
+        with open(os.path.join(self.path,f'{self.module_file}_action_results.lp'), 'w') as asp_file:
+            lines = []
+            for line in self.locationASP+self.actionASP+self.traitASP:
+                if 'add(' in line or 'del(' in line or 'update(' in line:
+                    lines.append(line)
+            text = '\n\n'.join(lines)
+            options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
+                       ('(',','),('( ',','),('( ',' ,'),('(',' ,'),
+                       (',',','),(', ',','),(', ',' ,'),(',',' ,'),
+                       (',',')'),(', ',')'),(', ',' )'),(',',' )')]
+
+            for name in sorted(self.alternative_names):
+                for alt in self.alternative_names[name]:
+                    for option in options:
+                        text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
+            asp_file.write(text)    
         with open(os.path.join(self.path,f'{self.module_file}_location_rules.lp'), 'w') as asp_file:
             text = '\n\n'.join([line for line in self.locationASP+self.traitASP if line.find('propensity') != 0])
             options = [('(',')'),('( ',')'),('( ',' )'),('(',' )'),
@@ -2038,7 +2080,7 @@ class KismetModule():
                        (',',','),(', ',','),(', ',' ,'),(',',' ,'),
                        (',',')'),(', ',')'),(', ',' )'),(',',' )')]
 
-            for name in self.alternative_names:
+            for name in sorted(self.alternative_names):
                 for alt in self.alternative_names[name]:
                     for option in options:
                         text = text.replace(f'{option[0]}{alt}{option[1]}',f'{option[0]}{name}{option[1]}')
@@ -2280,7 +2322,7 @@ class KismetModule():
             premise = '\t\t'+',\n\t\t'.join(premises)
 
             self.actionASP.append(head +':-\n'+ premise + '.')
-            self.actionASP.append(f'hashed({get_common_name(name)},{hash(get_common_name(name))&0xFFFFFFFF}).')
+            self.actionASP.append(f'hashed({get_common_name(name)},{hash_(get_common_name(name))&0xFFFFFFFF}).')
             at_location = ''
             if is_cast:
                 at_location = f'at({arguments[">"]}, Location), '
@@ -2600,7 +2642,9 @@ class KismetModule():
                 name = thing.get('name',[location_type])[0]
                 l_id = thing['id']
                 uniq_name =get_unique_name(location_type)
-                status = {(key,):value[0] for key,value in thing.items() if key not in set(['name','relationships','type','id','status','location_type'])}
+                
+                
+                status = {(key,):value[0] for key,value in thing.items() if key not in set(['name','relationships','type','id','status','location_type','traits'])}
                 self.created_locations[l_id] = {'id':l_id,'name':name,
                                                     'location_type':location_type,
                                                     'relationships':thing.get('relationships',[]),
@@ -2684,22 +2728,22 @@ class KismetModule():
     def population2asp(self):
         important_times = set()
         with open(os.path.join(self.path,f'{self.module_file}_population.lp'),'w') as population:
-            population.write(f'hashed(time,{hash(tuple(self.current_time))&0xFFFFFFFF}).\n')
-            population.write(f'hashed(null,{hash("KISMET_JRASBS")&0xFFFFFFFF}).\n')
-            population.write(f'hashed_1(null,{hash("KISMET")&0xFFFFFFFF}).\n')
-            population.write(f'hashed_2(null,{hash("KISMET_JAB")&0xFFFFFFFF}).\n')
-            population.write(f'hashed_3(null,{hash("KISMET_RSS")&0xFFFFFFFF}).\n')
+            population.write(f'hashed(time,{hash_(tuple(self.current_time))&0xFFFFFFFF}).\n')
+            population.write(f'hashed(null,{hash_("KISMET_JRASBS")&0xFFFFFFFF}).\n')
+            population.write(f'hashed_1(null,{hash_("KISMET")&0xFFFFFFFF}).\n')
+            population.write(f'hashed_2(null,{hash_("KISMET_JAB")&0xFFFFFFFF}).\n')
+            population.write(f'hashed_3(null,{hash_("KISMET_RSS")&0xFFFFFFFF}).\n')
             for name in self.population:
                 character = self.population[name]
                 population.write(f'person({name}).\n')
-                population.write(f'hashed_1({name},{hash((name,"james_ryan"))&0xFFFFFFFF}).\n')
-                population.write(f'hashed_2({name},{hash((name,"adam_summerville",name,"kismet"))&0xFFFFFFFF}).\n')
-                population.write(f'hashed_3({name},{hash((name,"ben_samuel",name))&0xFFFFFFFF}).\n')
-                for trait in character['traits']:
+                population.write(f'hashed_1({name},{hash_((name,"james_ryan"))&0xFFFFFFFF}).\n')
+                population.write(f'hashed_2({name},{hash_((name,"adam_summerville",name,"kismet"))&0xFFFFFFFF}).\n')
+                population.write(f'hashed_3({name},{hash_((name,"ben_samuel",name))&0xFFFFFFFF}).\n')
+                for trait in sorted(character['traits']):
                     population.write(f'is({name},{trait}).\n')
                 population.write('\n')
                 
-                for combo in character['status']:
+                for combo in sorted(character['status']):
                     val = self.aspify_name(character["status"][combo])
                     if type(val) is str:
                         if 'time' in val:
@@ -2718,7 +2762,7 @@ class KismetModule():
                     else:
                         population.write(f'is({name},{",".join(combo)}).\n')
                 
-                for combo in character['relationships']:
+                for combo in sorted(character['relationships']):
                     val = self.aspify_name(character["relationships"][combo])
                     if type(val) is str:
                         if 'time' in val:
@@ -2737,10 +2781,10 @@ class KismetModule():
                     else:
                         population.write(f'is({name},{",".join(combo)}).\n')
             population.write('\n')
-            for name in self.created_locations:
+            for name in sorted(self.created_locations):
                 location = self.created_locations[name]
                 population.write(f'location({name}).\n')
-                population.write(f'hashed({name},{hash(name)&0xFFFFFFFF}).\n')
+                population.write(f'hashed({name},{hash_(name)&0xFFFFFFFF}).\n')
                 population.write(f'is({name},{location["location_type"]}).\n')
                    
                 for combo in location['status']:
@@ -2759,14 +2803,14 @@ class KismetModule():
                 population.write('\n')
     def compute_actions(self,volitions):
         volitions_by_actor = {}
-        for volition in volitions[0]['likelihood']:
-            logit,action,actor = parse_likelihood(volition)
+        for volition in volitions:
+            logit,action,actor = volition
             if actor not in volitions_by_actor:
                 volitions_by_actor[actor] = [[],[]]
             volitions_by_actor[actor][0].append(logit)
             volitions_by_actor[actor][1].append(action)
         chosen_actions = []
-        for actor in volitions_by_actor:
+        for actor in sorted(volitions_by_actor):
             #print("VOLITIONS BY ACTOR", list(zip(*volitions_by_actor[actor])))
             logits = np.array(volitions_by_actor[actor][0])
             logits = np.exp(logits/self.temperature)
@@ -2781,7 +2825,7 @@ class KismetModule():
                 action_str += f'occurred(action({",".join(action)})).\n'
                 action_file.write(f'occurred(action({",".join(action)})).\n')
     def calculate_events(self):
-        events = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        events = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']],clingo_exe=self.clingo_exe)
         
         events = [[parse_predicate(pred) for pred in event[0]['terms']] for event in  events[0]['to_occur']]
         self.event_history.append(events)
@@ -2791,7 +2835,7 @@ class KismetModule():
             for event in events:
                 event_file.write(f'occurred(to_occur({",".join(event)})).\n')
         
-        updates = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_occurred_events.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)[0]
+        updates = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_occurred_events.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp','results_processing.lp']],clingo_exe=self.clingo_exe)[0]
         for result in updates['add']:
 
             result = [term['predicate'] for term in  result[0]['terms']]
@@ -2837,10 +2881,10 @@ class KismetModule():
             character['status'][result_key] = new_time
             
     def calculate_volitions(self):        
-        #print(' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp', 'testing.lp','volition.lp',f'{self.module_file}_history.lp']]))
         
-        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        #print(' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]))
         
+        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']],clingo_exe=self.clingo_exe)
         #Only select one of a given Actor, Action Type pair -- this is to stop combinatorics from dominating the likelihood
         volitions_by_actor = {}
         for volition in volitions[0]['likelihood']:
@@ -2848,19 +2892,20 @@ class KismetModule():
             action_key = tuple(action[:2])
             if action_key not in volitions_by_actor:
                 volitions_by_actor[action_key] = []
-            volitions_by_actor[action_key].append(volition)
+            volitions_by_actor[action_key].append((logit,action,actor))
             
         possible_actions = []
-        for action_key in volitions_by_actor:
-            possible_actions.append(random.choice(volitions_by_actor[action_key]))
-            
-        return [{'likelihood':possible_actions}]
+        for action_key in sorted(volitions_by_actor):
+            possible_actions.append(random.choice(sorted(volitions_by_actor[action_key])))
+           
+        return possible_actions
+    
     def calculate_action_results(self):
-        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_results.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']],clingo_exe=self.clingo_exe)
         return action_results
     
     def calculate_observability(self):
-        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','observation.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
+        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','observation.lp']],clingo_exe=self.clingo_exe)
         return visibility_results
     
     def knowledge2asp(self):        
@@ -3192,9 +3237,16 @@ class KismetModule():
         return {'characters':list(characters.values()),'relations':relations,
                 'locations':locations,'history':history,'location_history':location_history,'times':self.times}
                             
-    def display_patterns(self,pattern_filter=None,person_filter=None):
+    def display_patterns(self,pattern_filter=None,person_filter=None, aux_code = ''):
         if pattern_filter is None:
             pattern_filter = list(self.patterns)
+        else:
+            used_patterns = []
+            for pattern in self.patterns:
+                for raw in pattern_filter:
+                    if raw in pattern:
+                        used_patterns.append(pattern)
+            pattern_filter = used_patterns
         lengths =set()    
         
         pattern_filter_text = []
@@ -3202,12 +3254,15 @@ class KismetModule():
             lengths.add(len(self.patterns[pattern].arguments)+1)
             args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
             pattern_filter_text.append(f'display_pattern({",".join([get_common_name(pattern)] + args)}) :- pattern({",".join([get_common_name(pattern)] + args)}).')
+        
         for length in sorted(lengths):
-            pattern_filter_text.append(f'#show display_pattern\\{length}.')
+            pattern_filter_text.append(f'#show display_pattern/{length}.')
+            
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
         patterns = solve([os.path.join(self.path,t) for t in 
-                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
+                          ['default.lp',  f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_history.lp', 'pattern_filter.lp']],clingo_exe=self.clingo_exe)
+        
         if person_filter:
             person_filter = set(person_filter)
         for pattern in patterns[0]['display_pattern']:
@@ -3226,10 +3281,26 @@ class KismetModule():
                     can_display = True
             if can_display:
                 print(self.pretty_print_random_text("pattern",pattern))
-                
+    def detect_patterns(self,detection_code):
+        
+        pattern_detection_text = [detection_code]
+        
+        with open(os.path.join(self.path,'pattern_detection.lp'),'w') as outfile:
+            outfile.write('\n'.join(pattern_detection_text))
+            
+        patterns = solve([os.path.join(self.path,t) for t in 
+                          ['default.lp',  f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_detection.lp']],clingo_exe=self.clingo_exe)
+        return patterns
     def patterns_to_json(self,pattern_filter=None,person_filter=None):
         if pattern_filter is None:
             pattern_filter = list(self.patterns)
+        else:
+            used_patterns = []
+            for pattern in self.patterns:
+                for raw in pattern_filter:
+                    if raw in pattern:
+                        used_patterns.append(pattern)
+            pattern_filter = used_patterns
         lengths =set()    
         
         pattern_filter_text = []
@@ -3238,11 +3309,13 @@ class KismetModule():
             args = [f'ARG{ID}' for ID in range(len(self.patterns[pattern].arguments))]
             pattern_filter_text.append(f'display_pattern({pattern},{",".join(args)}) :- pattern({pattern},{",".join(args)}).')
         for length in sorted(lengths):
-            pattern_filter_text.append(f'#show display_pattern\\{length}.')
+            pattern_filter_text.append(f'#show display_pattern/{length}.')
+            
+        
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
         patterns = solve([os.path.join(self.path,t) for t in 
-                          ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_filter.lp']] + ['-t','8'],clingo_exe=self.clingo_exe)
+                          ['default.lp',  f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_filter.lp']],clingo_exe=self.clingo_exe)
         if person_filter:
             person_filter = set(person_filter)
             
@@ -3335,10 +3408,10 @@ class KismetModule():
                     
         
     def determine_character_locations(self):
-        shuffled = [name for name in self.population]
+        shuffled = [name for name in sorted(self.population)]
         random.shuffle(shuffled)
         
-        locations = [location for location in  self.created_locations]
+        locations = [location for location in  sorted(self.created_locations)]
         random.shuffle(locations)
         
         available_slots = {}
@@ -3355,7 +3428,7 @@ class KismetModule():
             for role in supported_roles:
                 role_slots[role] = supported_roles[role]()
                 
-            for relationship in self.created_locations[location]['relationships']:
+            for relationship in sorted(self.created_locations[location]['relationships']):
                 role, name = relationship
                 asp_name = self.aspify_name(name)
                 if asp_name not in location_assignments:
@@ -3370,9 +3443,9 @@ class KismetModule():
             for role in each_turn:
                 available_slots[(location,role)] = role_slots[role]
                 
-        #print('LOCATION VOLITION', ' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]))       
-        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp',  f'{self.module_file}_pattern_rules.lp',f'{self.module_file}_population.lp','location_volition.lp']]+['-t','8'],clingo_exe=self.clingo_exe)
-                
+        #print('LOCATION VOLITION', ' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]))       
+        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp',  f'{self.module_file}_pattern_rules.lp',f'{self.module_file}_population.lp','location_volition.lp']],clingo_exe=self.clingo_exe)
+        
         volitions_by_actor = {}
         for volition in goto_volitions[0]['go_to']:
             volition = volition[0]['terms']
@@ -3382,31 +3455,32 @@ class KismetModule():
             if name not in volitions_by_actor:
                 volitions_by_actor[name] = []
             volitions_by_actor[name].append((value,location))
-        
-        chosen_locations = []    
+            
+        chosen_locations = [] 
         for actor in shuffled:
+            
+            
             available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
-            #print('AVAILABLE LOCATIONS', available_locations)
-            available_locations |= {location for location in location_assignments.get(actor,[])}  
-            volitions_by_actor[actor] = [(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations]
+            #available_locations |= {location for location in location_assignments.get(actor,[])} 
+            volitions_by_actor[actor] = sorted([(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations])
+            
+            
             #print("LOCATION VOLITIONS", [ (v, self.created_locations[l]['location_type']) for v,l in sorted(volitions_by_actor[actor],reverse=True)])
             if len(volitions_by_actor[actor]) == 0:
                 chosen_locations.append((actor, (actor,'by_themself')))
             else :   
                 logits = np.array([float(logit) for logit,_ in volitions_by_actor[actor]])
-                logits = np.exp(logits/self.temperature)
+                logits = np.exp(logits/(self.temperature))
                 probs = logits/np.sum(logits)
                 chosen_location = volitions_by_actor[actor][np.argmax(np.random.multinomial(1,probs))][1]
-                possible_roles = [(location,role) for location,role in available_slots if location == chosen_location and available_slots[(location,role)] > 0]
+                possible_roles = [(location,role) for location,role in sorted(available_slots) if location == chosen_location and available_slots[(location,role)] > 0]
                 for location in location_assignments.get(actor,[]):                    
-                    possible_roles += [(location,role) for role in location_assignments[actor][location]]
-                    
-                chosen_role = random.choice(possible_roles)
+                    possible_roles += [(location,role) for role in sorted(location_assignments[actor][location])]
+                chosen_role = random.choice(sorted(possible_roles))
                 if chosen_role in available_slots:
                     available_slots[chosen_role] -= 1
                 chosen_locations.append((actor, chosen_role))
-                
-           
+             
         with open(os.path.join(self.path,f'{self.module_file}_population_locations.lp'),'w') as location_file:
             for actor, (location, role) in chosen_locations:
                 if actor not in location_assignments or location not in location_assignments[actor]:
@@ -3423,10 +3497,14 @@ class KismetModule():
             return predicate
         
     def step_actions(self):
+        profile = False
+        if profile:
+            current_time = time.time()
+        
         self.timestep += 1
         self.tempstep += 1
         self.current_time = self.time()
-        print(self.current_time)
+        print('STEP', self.current_time)
         simple_time = [str(t[1]) for t in self.current_time]
         asp_time = f'time({",".join(simple_time)})' 
         self.history.append([])
@@ -3435,21 +3513,42 @@ class KismetModule():
         self.knowledge2asp()
         self.population2asp()
         
-        #raise Exception("STOP HERE")
+        if profile:
+            print('SET UP', time.time()-current_time)
+            current_time = time.time()
         self.determine_character_locations()
         
-        character_action_budget = {name:self.action_budget for name in self.population}
+        if profile:
+            print('DETERMINE LOCATIONS', time.time()-current_time)
+            current_time = time.time()
+        character_action_budget = {name:self.action_budget for name in sorted(self.population)}
         
         self.calculate_events()
         
+        if profile:
+            print('DETERMINE EVENTS', time.time()-current_time)
+            current_time = time.time()
         while len(character_action_budget) > 0:
             self.knowledge2asp()
             self.population2asp()
             
+            
+            if profile:
+                print('SETUP 2', time.time()-current_time)
+                current_time = time.time()
             volitions = self.calculate_volitions()
             
+            if profile:
+                print('VOLITIONS', time.time()-current_time)
+                current_time = time.time()
             chosen_actions = self.compute_actions(volitions)
+            
+            if profile:
+                print('ACTIONS', time.time()-current_time)
+                current_time = time.time()
+            
             _chosen_actions = []
+            chosen_actors = set()
             for action in chosen_actions:
                 name = self.name2uniq[action[0]][0]
                 
@@ -3457,10 +3556,12 @@ class KismetModule():
                 if initiator not in character_action_budget:
                     continue
                 cost = self.actions[name].cost
+                chosen_actors.add(initiator)
                 character_action_budget[initiator] -= cost
                 if character_action_budget[initiator] <= 0:
                     del character_action_budget[initiator]
                 _chosen_actions.append(action)
+            possible_actors = set(character_action_budget)
             if len(_chosen_actions) == 0:
                 break
             chosen_actions = _chosen_actions
@@ -3469,6 +3570,9 @@ class KismetModule():
             self.actions2asp(chosen_actions)
             action_results = self.calculate_action_results()[0]
             
+            if profile:
+                print('ACTION RESULTS', time.time()-current_time)
+                current_time = time.time()
             for result in action_results['add']:
                 
                 result = [term['predicate'] for term in  result[0]['terms']]
@@ -3498,18 +3602,27 @@ class KismetModule():
                     val = int(result[-1])
                 character[category][result_key] = val
 
+                
+            if False:
+                visibility_results = self.calculate_observability()
+    
+                if profile:
+                    print('OBSERVABILITIY', time.time()-current_time)
+                    current_time = time.time()
+                self.character_knowledge.append([])
+                for observability in visibility_results[0]['observability']:
+                    terms = [term['predicate'] for term in observability[0]['terms']]
 
-            visibility_results = self.calculate_observability()
-            self.character_knowledge.append([])
-            for observability in visibility_results[0]['observability']:
-                terms = [term['predicate'] for term in observability[0]['terms']]
-
-                action = tuple(terms[:5] + [asp_time])
-                observer = terms[6]
-                location = terms[7]
-                observability = int(terms[8])
-                probs = np.exp(np.array([observability, self.ignore_logit])/self.observation_temp)
-                probs /= np.sum(probs)
-                if np.argmax(np.random.multinomial(1,probs)) == 0:
-                    self.character_knowledge[-1].append(('saw', observer, location, action))
+                    action = tuple(terms[:5] + [asp_time])
+                    observer = terms[6]
+                    location = terms[7]
+                    observability = int(terms[8])
+                    probs = np.exp(np.array([observability, self.ignore_logit])/self.observation_temp)
+                    probs /= np.sum(probs)
+                    if np.argmax(np.random.multinomial(1,probs)) == 0:
+                        self.character_knowledge[-1].append(('saw', observer, location, action))
             
+            if len(possible_actors & chosen_actors) == 0:
+                break
+            print('CHARACTER KNOWLEDGE', time.time()-current_time)
+            current_time = time.time()

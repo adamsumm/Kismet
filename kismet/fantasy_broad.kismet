@@ -1,175 +1,129 @@
 
 time year: ?[1000:1100] season: [winter|spring|summer|fall]* .
 
+   
+//DEFAULT TRAITS
+default trait rare_things_rare(>Self):
+    ---(rare).
+default trait xrare_things_xrare(>Self):
+    -----(extremely_rare).
 
-location town:
-    supports: [8] person;
-    each_turn:
-        cast person.
+default trait do_more_specific_things(>Self):
+    +++(specific).
 
-location house:
-    supports: [10] resident,
-              [4] guest;
-    each_turn:
-        cast guest.
+default trait stay_in_confinement(>Self,@Location):
+    ++++++@if Self is confined of Location@.
+    
+default trait visiting_places_you_like(>Self,@Location):
+      +@if Self is tourist of Location@.
+      
+default trait visiting_as_regular(>Self,@Location):
+      +++@if Self is regular of Location@.
 
-location throne_room:
-	supports:
-		[1] monarch,
-		[1] chancellor,
-		[10] royalty,
-        [10] citizen;
-	each_turn:
-		cast citizen.
+default trait thieves_go_around(>Self,@Location):
+      ---@if Self is thief of Location@.
+      
+default trait spies_go_around(>Self,@Location):
+      ---@if Self is spy of Location@.
+      
+default trait knights_go_around(>Self,@Location):
+      ---@if Self is knight of Location@.
+      
+default trait guards_go_around(>Self,@Location):
+      ---@if Self is guard of Location@.
+      
+default trait squires_go_around(>Self,@Location):
+      ---@if Self is squire of Location@.
+      
+default trait romantic_towards_crush(>Self, <Other):
+    +++(romance if Self crushing_on Other).
+      
+default trait stay_at_hometown(>Self,@Location):
+      +++@if Self's hometown == Location's hometown@.
 
-location docks:
-    supports: [1:2]  shipping_foreman,
-        [4:6] dockworker,
-        [1:2] prostitute ,
-        [1:2] fisher,
-        [3:4] visitor;
-    each_turn:
-        cast visitor.
-        
-location auction_house:
-	supports:
-		[3] curator,
-		[2] auctioneer,
-        [4:5] patron;
-	each_turn:
-		cast patron.
-location ballroom:
-	supports:
-		[10:15] guest,
-		[1] owner,
-		[3] artist;
-	each_turn:
-		cast guest.
-location quad:
-	supports:
-		[20:30] visitor;
-	each_turn:
-		cast visitor.
-location mine:
-	supports:
-		[8] miner,
-		[1] foreman.
-location elders_house:
-	supports:
-		[1] elder,
-        [4:5] visitor;
-	each_turn:
-		cast visitor.
-location dungeon:
-	supports:
-		[3] guard,
-		[1] prisoner.
-location opera_house:
-	supports:
-        [1] impresario,
-		[2] diva,
-		[17] tourist,
-		[5] bard,
-        [4:5] patron;
-	each_turn:
-		cast patron.
-location smith:
-	supports:
-		[2] smith_apprentice,
-		[1] smithy,
-        [4:5] patron;
-	each_turn:
-		cast patron.
-location boat:
-	supports:
-		[6] sailor,
-		[1] captain,
-        [4:5] passenger;
-	each_turn:
-		cast passenger.
-location thieves_den:
-	supports:
-		[3] spy,
-		[5] thief,
-		[1] spy_master,
-		[1] master_thief.
-        
-location library:
-	supports:
-		[3] librarian,
-		[1] tutor,
-		[14] student,
-		[3] researcher,
-        [4:5] visitor;
-	each_turn:
-		cast visitor.
-        
-location kitchen:
-	supports:
-		[9] guest,
-		[2] chef,
-		[3] worker,
-		[1] owner.
-location amphitheatre:
-	supports:
-		[10:20] tourist,
-		[5] bard;
-	each_turn:
-		cast tourist.
-location shipyard:
-	supports:
-		[1] owner,
-		[2] engineer,
-		[4] ship_builder,
-        [4:5] visitor;
-	each_turn:
-		cast visitor.
-location ruins:
-	supports:
-		[3] archaelogist,
-		[3] treasure_hunter,
-        [4:5] visitor;
-	each_turn:
-		cast visitor.
-location temple:
-	supports:
-		[3] priest,
-		[10:20] follower,
-		[8] monk,
-		[1] high_priest,
-        [4:5] parishioner;
-	each_turn:
-		cast parishioner.
-location marketplace:
-	supports:
-		[6] vendor,
-		[3] enforcer,
-		[2] pickpocket,
-		[1] racketeer,
-        [4:5] patron;
-	each_turn:
-		cast patron.
-location tavern:
-	supports:
-		[6] regular,
-		[1] owner,
-		[3] barkeep,
-        [4:5] patron;
-	each_turn:
-		cast patron.
-location classroom:
-	supports:
-		[14] student,
-		[3] professor,
-		[2] dean.
-location garden:
-	supports:
-		[10] guest,
-		[4] gardener,
-		[1] owner,
-        [4:5] visitor;
-	each_turn:
-		cast visitor.
+default trait make_chosen_one_connections_occurLACKING(>Self, <Other, @Location):
+    ++@if pattern(lacking_path, Self, Other),  Other is connected of Location@.
+
+default trait make_chosen_one_connections_occur(>Self, <Other, @Location):
+    +@if Self is chosen_one, Other is chosen_one, Other is connected of Location@.
+
+default trait go_where_people_you_like_go(>Self, <Other, @Location):
+    ++@if Self likes Other >= 1, Other is connected of Location@.
+
+
+default trait chosen_ones_are_connected(>Self, <Other):
+    +++(if pattern(lacking_path, Self, Other)).
+
+default trait do_role_specific_actions(>Self):
+    ++++(role_specific).
+    
+default trait go_to_locations_you_have_connection_with(>Self,@Location):
+    ++++@if Self is connected of Location @.
+    
+default trait clique_formation1(>Self, <Other):
+    ++(if Self likes Other >= 0).
+    
+default trait clique_formation2(>Self, <Other):
+    ++(if Self likes Other <= 0).
+
+
+default trait clique_formationFoF1(>Self, <Other):
+    ++(if pattern(friend_of_friend,Self,Other)).
+    
+default trait clique_formationFoF2(>Self, <Other):
+    ++(if pattern(friend_of_friend,Other,Self)).
+    
+    
+default trait clique_formation1R(>Self, <Other):
+    ++(if Other likes Self >= 0).
+    
+default trait clique_formation2R(>Self, <Other):
+    ++(if Other likes Self <= 0).
+    
+default trait no_pedophilia(>Self, <Other):
+    ------------------------------(romance if Self's age >= 18, Other's age <= 17).
+    
+default trait family_ties(>Self, <Other):
+    +(thoughtful if Self is related_to Other),
+    +(kind if Self is related_to Other),
+    -(mean if Self is related_to Other),
+    +(critical if Self is related_to Other),
+    -------(romance if Self is related_to Other, Self is not spouse Other).
+
+default trait abusive_if_abusive(>Self, <Other):
+    +++(mean if Self's abusiveness >= 0),
+    +++(abusive if Self's abusivenss >= 0).
+
+default trait mean_to_people_you_dislike1(>Self, <Other):
+    +(mean if Self likes Other <= -1).
+    
+default trait mean_to_people_you_dislike2(>Self, <Other):
+    ++(mean if Self likes Other <= -3).
+    
+default trait mean_to_people_you_dislike3(>Self, <Other):
+    +++(mean if Self likes Other <= -5).
+    
+default trait nice_to_people_you_like1(>Self, <Other):
+    -(mean if Self likes Other >= 1).
+    
+default trait mean_to_people_you_dislike2(>Self, <Other):
+    --(mean if Self likes Other >= 3).
+    
+default trait mean_to_people_you_dislike3(>Self, <Other):
+    ---(mean if Self likes Other >= 5).
+
+default trait people_are_usually_serious(>Self):
+    -(silly).
+    
+default trait fail_when_interactin_with_person_who_dislikes_you1(>Self, <Other):
+    +(failure if Other likes Self <= -1).
+    
+default trait fail_when_interactin_with_person_who_dislikes_you2(>Self, <Other):
+    ++(failure if Other likes Self <= -3).
+
+default trait people_joke_with_joker(>Self, <Other):
+    +(silly if Other is comic).
+
   
 trait introvert(>Self) opposes extrovert:
     ---(talk).
@@ -225,81 +179,7 @@ trait feral(>Self):
 trait comic(>Self) opposes stern:
     +++(silly),
     -(thoughtful).
-    
-//DEFAULT TRAITS
-default trait rare_things_rare(>Self):
-    ---(rare).
-default trait xrare_things_xrare(>Self):
-    -----(extremely_rare).
-
-default trait do_more_specific_things(>Self):
-    +++(specific).
-
-default trait stay_in_confinement(>Self,@Location):
-    ++++++@if Self is confined of Location@.
-    
-default trait visiting_places_you_like(>Self,@Location):
-      +@if Self is tourist of Location@.
-      
-default trait visiting_as_regular(>Self,@Location):
-      +++@if Self is regular of Location@.
-
-default trait romantic_towards_crush(>Self, <Other):
-    +++(romance if Self crushing_on Other).
-      
-default trait stay_at_hometown(>Self,@Location):
-      +++@if Self's hometown == Location's hometown@.
-      
-default trait do_role_specific_actions(>Self):
-    ++++(role_specific).
-    
-default trait go_to_locations_you_have_connection_with(>Self,@Location):
-    +++++@if Self is connected of Location @.
-    
-default trait no_pedophilia(>Self, <Other):
-    -------(romance if Self's age >= 18, Other's age <= 17).
-    
-default trait family_ties(>Self, <Other):
-    +(thoughtful if Self is related_to Other),
-    +(kind if Self is related_to Other),
-    -(mean if Self is related_to Other),
-    +(critical if Self is related_to Other),
-    -------(romance if Self is related_to Other).
-
-default trait abusive_if_abusive(>Self, <Other):
-    +++(mean if Self's abusiveness >= 0),
-    +++(abusive if Self's abusivenss >= 0).
-
-default trait mean_to_people_you_dislike1(>Self, <Other):
-    +(mean if Self likes Other <= -1).
-    
-default trait mean_to_people_you_dislike2(>Self, <Other):
-    ++(mean if Self likes Other <= -3).
-    
-default trait mean_to_people_you_dislike3(>Self, <Other):
-    +++(mean if Self likes Other <= -5).
-    
-default trait nice_to_people_you_like1(>Self, <Other):
-    -(mean if Self likes Other >= 1).
-    
-default trait mean_to_people_you_dislike2(>Self, <Other):
-    --(mean if Self likes Other >= 3).
-    
-default trait mean_to_people_you_dislike3(>Self, <Other):
-    ---(mean if Self likes Other >= 5).
-
-default trait people_are_usually_serious(>Self):
-    -(silly).
-    
-default trait fail_when_interactin_with_person_who_dislikes_you1(>Self, <Other):
-    +(failure if Other likes Self <= -1).
-    
-default trait fail_when_interactin_with_person_who_dislikes_you2(>Self, <Other):
-    ++(failure if Other likes Self <= -3).
-
-default trait people_joke_with_joker(>Self, <Other):
-    +(silly if Other is comic).
-
+ 
 //RELATIONSHIP SCALARS
 status scalar likes/like/liked(>Self,<Other):.
 status scalar loves/love/loved(>Self,<Other):.
@@ -1401,15 +1281,16 @@ result: Self's tiredness += 1.
 role thief(>Worker) extends ur_job(>Worker): 
     tags: work. 
 
-action steal_from_mark(>Self:thief, <Mark): 
+action steal_from_mark(>Self, <Mark): 
     tags: role_specific, work, criminal, bold; 
-    if Mark is not criminal;
+    if Mark is not criminal, Self is thief;
     result: Self's self_worth += 1,
-            Mark's suspicion of Self += 1.
+            Mark's suspicion of Self += 1,
+            Mark likes Self -= 1.
 
-action get_caught_stealing(>Self:thief, <Mark): 
+action get_caught_stealing(>Self, <Mark): 
     tags: role_specific, work, criminal, bold, failure;
-    if Mark's suspicion of Self >= 2;
+    if Mark's suspicion of Self >= 2, Self is thief;
     result: Mark likes Self -= 5,
             Self's self_worth -=1,
             Self is on_the_run.
@@ -1425,13 +1306,6 @@ action evade_authorities(>Self):
     if Self is on_the_run;
     result: Self is not on_the_run.
 
-action get_caught(>Self, @Dungeon):
-    tags: role_specific, criminal, failure, rare;
-    if Self is on_the_run,
-        Dungeon is dungeon;
-    result: Self is not on_the_run,
-            Self is confined of Dungeon,
-            Self is prisoner of Dungeon.
 
 
 ////////////////////////////impresario 
@@ -1735,7 +1609,42 @@ action sober_up(>Drunk):
     tags: specific;
     if Drunk is drunk;
     result: Drunk isn't drunk.
+
+pattern friend_of_friend(>PersonA, >PersonC):
+    if PersonA likes PersonB >= 1, PersonB likes PersonC >= 1.
     
+pattern has_connection(>PersonA, <PersonB):
+    if PersonA likes PersonB >= 3, PersonA is chosen_one, PersonB is chosen_one.
+    
+pattern has_connection(>PersonA, <PersonB):
+    if PersonA likes PersonB <= 3, PersonA is chosen_one, PersonB is chosen_one.
+
+pattern has_connection(>PersonA, <PersonB):
+    if PersonA loves PersonB <= 3,PersonA is chosen_one, PersonB is chosen_one.
+    
+pattern has_connection(>PersonA, <PersonB):
+    if PersonA loves PersonB >= 3,PersonA is chosen_one, PersonB is chosen_one.
+    
+pattern has_connection(>PersonA, <PersonB):
+    if pattern(has_connection,PersonB, PersonA), PersonA is chosen_one, PersonB is chosen_one .
+    
+pattern lacking_connection(>PersonA, <PersonB):
+    if not pattern(has_connection, PersonA, PersonB), PersonA is chosen_one, PersonB is chosen_one.
+  
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_connection,PersonA, PersonB), pattern(has_connection,PersonB, PersonC).
+    
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_connection,PersonA, PersonB), pattern(has_path,PersonB, PersonC).
+    
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_path,PersonA, PersonB), pattern(has_connection,PersonB, PersonC).
+    
+pattern has_path(>PersonA, <PersonC):
+    if pattern(has_path,PersonA, PersonB), pattern(has_path,PersonB, PersonC).
+    
+pattern lacking_path(>PersonA, <PersonB):
+    if not pattern(has_path,PersonA, PersonB), PersonA is chosen_one, PersonB is chosen_one.
 ////////////////////////////guest
 ////////////////////////////worker
 ////////////////////////////drinker
@@ -1764,3 +1673,181 @@ action sober_up(>Drunk):
 ////////////////////////////connected
         
  
+location town:
+    supports: [8] person;
+    each_turn:
+        cast person.
+
+location house:
+    supports: [10] resident,
+              [4] guest;
+    each_turn:
+        cast guest.
+
+location throne_room:
+	supports:
+		[1] monarch,
+		[1] chancellor,
+		[10] royalty,
+        [10] citizen,
+        [1] knight;
+	each_turn:
+		cast citizen.
+
+location docks:
+    supports: [1:2]  shipping_foreman,
+        [4:6] dockworker,
+        [1:2] prostitute ,
+        [1:2] fisher,
+        [3:4] visitor;
+    each_turn:
+        cast visitor.
+        
+location auction_house:
+	supports:
+		[3] curator,
+		[2] auctioneer,
+        [4:5] patron;
+	each_turn:
+		cast patron.
+location ballroom:
+	supports:
+		[10:15] guest,
+		[1] owner,
+		[3] artist;
+	each_turn:
+		cast guest.
+location quad:
+	supports:
+		[20:30] visitor;
+	each_turn:
+		cast visitor.
+location mine:
+	supports:
+		[8] miner,
+		[1] foreman,
+        [1] visitor;
+    each_turn:
+        cast visitor.
+location elders_house:
+	supports:
+		[1] elder,
+        [4:5] visitor;
+	each_turn:
+		cast visitor.
+location barracks:
+	supports:
+		[3] guard,
+		[2] knight,
+        [1] squire,
+        [1] monarch,
+        [3] monarchling,
+        [1] visitor;
+    each_turn:
+        cast visitor.
+location opera_house:
+	supports:
+        [1] impresario,
+		[2] diva,
+		[17] tourist,
+		[5] bard,
+        [4:5] patron;
+	each_turn:
+		cast patron.
+location smith:
+	supports:
+		[2] smith_apprentice,
+		[1] smithy,
+        [4:5] patron;
+	each_turn:
+		cast patron.
+location boat:
+	supports:
+		[6] sailor,
+		[1] captain,
+        [4:5] passenger;
+	each_turn:
+		cast passenger.
+location thieves_den:
+	supports:
+		[3] spy,
+		[5] thief,
+		[1] spy_master,
+		[1] master_thief.
+        
+location library:
+	supports:
+		[3] librarian,
+		[1] tutor,
+		[14] student,
+		[3] researcher,
+        [4:5] visitor;
+	each_turn:
+		cast visitor.
+        
+location kitchen:
+	supports:
+		[9] guest,
+		[2] chef,
+		[3] worker,
+		[1] owner.
+location amphitheatre:
+	supports:
+		[10:20] tourist,
+		[5] bard;
+	each_turn:
+		cast tourist.
+location shipyard:
+	supports:
+		[1] owner,
+		[2] engineer,
+		[4] ship_builder,
+        [4:5] visitor;
+	each_turn:
+		cast visitor.
+location ruins:
+	supports:
+		[3] archaelogist,
+		[3] treasure_hunter,
+        [4:5] visitor;
+	each_turn:
+		cast visitor.
+location temple:
+	supports:
+		[3] priest,
+		[10:20] follower,
+		[8] monk,
+		[1] high_priest,
+        [4:5] parishioner;
+	each_turn:
+		cast parishioner.
+location marketplace:
+	supports:
+		[6] vendor,
+		[3] enforcer,
+		[2] pickpocket,
+		[1] racketeer,
+        [4:5] patron;
+	each_turn:
+		cast patron.
+location tavern:
+	supports:
+		[6] regular,
+		[1] owner,
+		[3] barkeep,
+        [4:5] patron;
+	each_turn:
+		cast patron.
+location classroom:
+	supports:
+		[14] student,
+		[3] professor,
+		[2] dean.
+location garden:
+	supports:
+		[10] guest,
+		[4] gardener,
+		[1] owner,
+        [8] visitor;
+	each_turn:
+		cast visitor.

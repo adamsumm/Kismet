@@ -80,10 +80,15 @@ default:
 option:
 	assignment |
 	description |
-    optional_check;
+    optional_check|
+    required_check;
 
 optional_check:
     name '?=' var;
+    
+required_check:
+    'has' 'a' name |
+    'has' name;
 
 assignment:
 	(name|var) '=' num_range|

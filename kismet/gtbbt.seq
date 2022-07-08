@@ -2,4 +2,4 @@ load fantasy_broad.kismet with tracery ../tracery/fantasy.tracery;
 
 initialize fantasy_setting.init;
 
-run  10 steps;
+run until 0 characters  in pattern lacking_path / 2;

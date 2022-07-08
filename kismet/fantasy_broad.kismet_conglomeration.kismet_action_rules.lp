@@ -1,12 +1,12 @@
 castable(person,town).
 
-hashed(town,3800169534).
+hashed(town,1847986528).
 
 castable(resident,house).
 
 castable(guest,house).
 
-hashed(house,1411520087).
+hashed(house,1525629524).
 
 castable(monarch,throne_room).
 
@@ -16,7 +16,7 @@ castable(royalty,throne_room).
 
 castable(citizen,throne_room).
 
-hashed(throne_room,1867351542).
+hashed(throne_room,2643431354).
 
 castable(shipping_foreman,docks).
 
@@ -28,7 +28,7 @@ castable(fisher,docks).
 
 castable(visitor,docks).
 
-hashed(docks,3084516114).
+hashed(docks,2483392761).
 
 castable(curator,auction_house).
 
@@ -36,7 +36,7 @@ castable(auctioneer,auction_house).
 
 castable(patron,auction_house).
 
-hashed(auction_house,1225024184).
+hashed(auction_house,251081).
 
 castable(guest,ballroom).
 
@@ -44,29 +44,29 @@ castable(owner,ballroom).
 
 castable(artist,ballroom).
 
-hashed(ballroom,1135972631).
+hashed(ballroom,1584520778).
 
 castable(visitor,quad).
 
-hashed(quad,3553595830).
+hashed(quad,1335126987).
 
 castable(miner,mine).
 
 castable(foreman,mine).
 
-hashed(mine,1322758650).
+hashed(mine,3320737235).
 
 castable(elder,elders_house).
 
 castable(visitor,elders_house).
 
-hashed(elders_house,369019926).
+hashed(elders_house,362118887).
 
 castable(guard,dungeon).
 
 castable(prisoner,dungeon).
 
-hashed(dungeon,2806081013).
+hashed(dungeon,2937053838).
 
 castable(impresario,opera_house).
 
@@ -78,7 +78,7 @@ castable(bard,opera_house).
 
 castable(patron,opera_house).
 
-hashed(opera_house,29699353).
+hashed(opera_house,3706091142).
 
 castable(smith_apprentice,smith).
 
@@ -86,7 +86,7 @@ castable(smithy,smith).
 
 castable(patron,smith).
 
-hashed(smith,718066303).
+hashed(smith,2641100780).
 
 castable(sailor,boat).
 
@@ -94,7 +94,7 @@ castable(captain,boat).
 
 castable(passenger,boat).
 
-hashed(boat,772218658).
+hashed(boat,1255492448).
 
 castable(spy,thieves_den).
 
@@ -104,7 +104,7 @@ castable(spy_master,thieves_den).
 
 castable(master_thief,thieves_den).
 
-hashed(thieves_den,3750230703).
+hashed(thieves_den,1775384176).
 
 castable(librarian,library).
 
@@ -116,7 +116,7 @@ castable(researcher,library).
 
 castable(visitor,library).
 
-hashed(library,3592829081).
+hashed(library,54143779).
 
 castable(guest,kitchen).
 
@@ -126,13 +126,13 @@ castable(worker,kitchen).
 
 castable(owner,kitchen).
 
-hashed(kitchen,2428697072).
+hashed(kitchen,2370621531).
 
 castable(tourist,amphitheatre).
 
 castable(bard,amphitheatre).
 
-hashed(amphitheatre,1860998799).
+hashed(amphitheatre,1604642541).
 
 castable(owner,shipyard).
 
@@ -142,7 +142,7 @@ castable(ship_builder,shipyard).
 
 castable(visitor,shipyard).
 
-hashed(shipyard,2855299008).
+hashed(shipyard,2647912198).
 
 castable(archaelogist,ruins).
 
@@ -150,7 +150,7 @@ castable(treasure_hunter,ruins).
 
 castable(visitor,ruins).
 
-hashed(ruins,2324225451).
+hashed(ruins,2625148913).
 
 castable(priest,temple).
 
@@ -162,7 +162,7 @@ castable(high_priest,temple).
 
 castable(parishioner,temple).
 
-hashed(temple,4088116777).
+hashed(temple,1874581559).
 
 castable(vendor,marketplace).
 
@@ -174,7 +174,7 @@ castable(racketeer,marketplace).
 
 castable(patron,marketplace).
 
-hashed(marketplace,1140175054).
+hashed(marketplace,1364753789).
 
 castable(regular,tavern).
 
@@ -184,7 +184,7 @@ castable(barkeep,tavern).
 
 castable(patron,tavern).
 
-hashed(tavern,4025344891).
+hashed(tavern,739457759).
 
 castable(student,classroom).
 
@@ -192,7 +192,7 @@ castable(professor,classroom).
 
 castable(dean,classroom).
 
-hashed(classroom,4132379938).
+hashed(classroom,1300627446).
 
 castable(guest,garden).
 
@@ -202,7 +202,7 @@ castable(owner,garden).
 
 castable(visitor,garden).
 
-hashed(garden,379377716).
+hashed(garden,1586387945).
 
 action(chit_chat, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
@@ -212,13 +212,13 @@ action(chit_chat, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(chit_chat,1336574860).
+hashed(chit_chat,1790205382).
+
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(chit_chat, Self, Other, null, null, null)).
 
 update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(chit_chat, Self, Other, null, null, null)).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(chit_chat, Self, Other, null, null, null)).
-
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(chit_chat, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(chit_chat, Self, Other, null, null, null)).
 
@@ -228,14 +228,14 @@ visibility(chit_chat,0).
 
 action(complain_to_and_make_annoyed, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		not is(Other, compassionate),
 		at(Other,Location),
+		not is(Other, compassionate),
 		at(Self,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(complain_to_and_make_annoyed,2381398740).
+hashed(complain_to_and_make_annoyed,156689909).
 
 update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(complain_to_and_make_annoyed, Self, Other, null, null, null)).
 
@@ -255,28 +255,28 @@ visibility(complain_to_and_make_annoyed,0).
 
 action(complain_to_compassionate, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		not is(Other, compassionate),
 		at(Other,Location),
+		not is(Other, compassionate),
 		at(Self,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(complain_to_compassionate,4214464871).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
+hashed(complain_to_compassionate,385003823).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
 
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
 
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
-
 update(Other,self_worth,Y) :- is(Other,self_worth,X), X + 1 = Y, occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
+
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
 
 update(Other,self_worth,1) :- not is(Other,self_worth,_), occurred(action(complain_to_compassionate, Self, Other, null, null, null)).
 
@@ -294,15 +294,15 @@ action(flirt_at, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(flirt_at,2140170504).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y, occurred(action(flirt_at, Self, Other, null, null, null)).
+hashed(flirt_at,2204155240).
 
 update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y, occurred(action(flirt_at, Self, Other, null, null, null)).
 
 update(Self,loves,Other,1) :- not is(Self,loves,Other,_), occurred(action(flirt_at, Self, Other, null, null, null)).
 
 update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(flirt_at, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y, occurred(action(flirt_at, Self, Other, null, null, null)).
 
 is(flirt_at, talk).
 
@@ -320,23 +320,23 @@ action(flirt_with, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(flirt_with,3598476358).
-
-update(Self,loves,Other,1) :- not is(Self,loves,Other,_), occurred(action(flirt_with, Self, Other, null, null, null)).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(flirt_with, Self, Other, null, null, null)).
-
-update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 1 = Y,occurred(action(flirt_with, Self, Other, null, null, null)).
-
-update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y,occurred(action(flirt_with, Self, Other, null, null, null)).
+hashed(flirt_with,4224817490).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(flirt_with, Self, Other, null, null, null)).
 
+update(Self,loves,Other,1) :- not is(Self,loves,Other,_), occurred(action(flirt_with, Self, Other, null, null, null)).
+
+update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 1 = Y,occurred(action(flirt_with, Self, Other, null, null, null)).
+
+update(Other,loves,Self,1) :- not is(Other,loves,Self,_), occurred(action(flirt_with, Self, Other, null, null, null)).
+
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(flirt_with, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(flirt_with, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(flirt_with, Self, Other, null, null, null)).
 
-update(Other,loves,Self,1) :- not is(Other,loves,Self,_), occurred(action(flirt_with, Self, Other, null, null, null)).
+update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y,occurred(action(flirt_with, Self, Other, null, null, null)).
 
 is(flirt_with, talk).
 
@@ -352,25 +352,25 @@ action(use_humor_to_spark_love, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(use_humor_to_spark_love,3245663595).
+hashed(use_humor_to_spark_love,3763359877).
 
-update(Self,loves,Other,1) :- not is(Self,loves,Other,_), occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
-
-update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
-
-update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
+add(Other,crushing_on,Self) :-occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
 
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
+update(Self,loves,Other,1) :- not is(Self,loves,Other,_), occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
 
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
+update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
 
 update(Other,loves,Self,1) :- not is(Other,loves,Self,_), occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
 
-add(Other,crushing_on,Self) :-occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
+
+update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y,occurred(action(use_humor_to_spark_love, Self, Other, null, null, null)).
 
 is(use_humor_to_spark_love, talk).
 
@@ -383,30 +383,30 @@ visibility(use_humor_to_spark_love,0).
 action(be_open_about_crush, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
 		is(Self,crushing_on,Other),
-		is(Other,loves,Self,V_Other_loves_Self), V_Other_loves_Self >= 1,
 		at(Other,Location),
+		is(Other,loves,Self,V_Other_loves_Self), V_Other_loves_Self >= 1,
 		at(Self,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(be_open_about_crush,1919687571).
+hashed(be_open_about_crush,781896210).
 
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 2 = Y,occurred(action(be_open_about_crush, Self, Other, null, null, null)).
-
-update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 2 = Y,occurred(action(be_open_about_crush, Self, Other, null, null, null)).
-
-update(Other,likes,Self,2) :- not is(Other,likes,Self,_), occurred(action(be_open_about_crush, Self, Other, null, null, null)).
+update(Self,loves,Other,2) :- not is(Self,loves,Other,_), occurred(action(be_open_about_crush, Self, Other, null, null, null)).
 
 update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 2 = Y,occurred(action(be_open_about_crush, Self, Other, null, null, null)).
 
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 2 = Y,occurred(action(be_open_about_crush, Self, Other, null, null, null)).
 
-update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(be_open_about_crush, Self, Other, null, null, null)).
-
-update(Self,loves,Other,2) :- not is(Self,loves,Other,_), occurred(action(be_open_about_crush, Self, Other, null, null, null)).
-
 update(Other,loves,Self,2) :- not is(Other,loves,Self,_), occurred(action(be_open_about_crush, Self, Other, null, null, null)).
+
+update(Other,likes,Self,2) :- not is(Other,likes,Self,_), occurred(action(be_open_about_crush, Self, Other, null, null, null)).
+
+update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 2 = Y,occurred(action(be_open_about_crush, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 2 = Y,occurred(action(be_open_about_crush, Self, Other, null, null, null)).
+
+update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(be_open_about_crush, Self, Other, null, null, null)).
 
 is(be_open_about_crush, romance).
 
@@ -420,13 +420,13 @@ action(be_open_about_crush_and_burn, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
 		is(Self,crushing_on,Other),
 		at(Other,Location),
-		is(Other,loves,Self,V_Other_loves_Self), V_Other_loves_Self <= 0,
 		at(Self,Location),
+		is(Other,loves,Self,V_Other_loves_Self), V_Other_loves_Self <= 0,
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(be_open_about_crush_and_burn,2947631759).
+hashed(be_open_about_crush_and_burn,2844875234).
 
 update(Self,self_worth,-2) :- not is(Self,self_worth,_), occurred(action(be_open_about_crush_and_burn, Self, Other, null, null, null)).
 
@@ -452,7 +452,7 @@ action(develop_crush, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(develop_crush,1922679021).
+hashed(develop_crush,250427208).
 
 add(Self,crushing_on,Other) :-occurred(action(develop_crush, Self, Other, null, null, null)).
 
@@ -468,7 +468,7 @@ action(pine_over, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(pine_over,3873628287).
+hashed(pine_over,1159003382).
 
 update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y, occurred(action(pine_over, Self, Other, null, null, null)).
 
@@ -481,30 +481,30 @@ visibility(pine_over,0).
 action(make_out_with, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
 		is(Self,loves,Other,V_Self_love_Other), V_Self_love_Other >= 3,
-		is(Other,loves,Self,V_Other_love_Self), V_Other_love_Self >= 3,
 		at(Other,Location),
 		at(Self,Location),
+		is(Other,loves,Self,V_Other_love_Self), V_Other_love_Self >= 3,
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(make_out_with,1804691420).
-
-update(Self,loves,Other,1) :- not is(Self,loves,Other,_), occurred(action(make_out_with, Self, Other, null, null, null)).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(make_out_with, Self, Other, null, null, null)).
-
-update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 1 = Y,occurred(action(make_out_with, Self, Other, null, null, null)).
-
-update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y,occurred(action(make_out_with, Self, Other, null, null, null)).
+hashed(make_out_with,3526694064).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(make_out_with, Self, Other, null, null, null)).
 
+update(Self,loves,Other,1) :- not is(Self,loves,Other,_), occurred(action(make_out_with, Self, Other, null, null, null)).
+
+update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X + 1 = Y,occurred(action(make_out_with, Self, Other, null, null, null)).
+
+update(Other,loves,Self,1) :- not is(Other,loves,Self,_), occurred(action(make_out_with, Self, Other, null, null, null)).
+
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(make_out_with, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(make_out_with, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(make_out_with, Self, Other, null, null, null)).
 
-update(Other,loves,Self,1) :- not is(Other,loves,Self,_), occurred(action(make_out_with, Self, Other, null, null, null)).
+update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X + 1 = Y,occurred(action(make_out_with, Self, Other, null, null, null)).
 
 is(make_out_with, romance).
 
@@ -512,13 +512,13 @@ visibility(make_out_with,0).
 
 action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null):-
 		person(Self),person(Other),person(ThirdWheel),event(null),location(null),
-		is(Self,loves,Other,V_Self_love_Other), V_Self_love_Other >= 3,
+		is(Other,loves,ThirdWheel,V_Other_love_ThirdWheel), V_Other_love_ThirdWheel >= 3,
 		at(ThirdWheel,Location),
 		is(Other,loves,Self,V_Other_love_Self), V_Other_love_Self >= 3,
-		is(Other,loves,ThirdWheel,V_Other_love_ThirdWheel), V_Other_love_ThirdWheel >= 3,
 		is(ThirdWheel,loves,Other,V_ThirdWheel_love_Other), V_ThirdWheel_love_Other >= 3,
-		at(Other,Location),
 		at(Self,Location),
+		is(Self,loves,Other,V_Self_love_Other), V_Self_love_Other >= 3,
+		at(Other,Location),
 		Self != Other,
 		Self != ThirdWheel,
 		Other != ThirdWheel,
@@ -526,37 +526,37 @@ action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null):-
 		Other != null,
 		ThirdWheel != null.
 
-hashed(blow_up_love_triangle,387638519).
-
-update(Self,loves,ThirdWheel,-5) :- not is(Self,loves,ThirdWheel,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
-
-update(ThirdWheel,likes,Self,Y) :- is(ThirdWheel,likes,Self,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
-
-update(ThirdWheel,loves,Self,-5) :- not is(ThirdWheel,loves,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
-
-update(ThirdWheel,loves,Self,Y) :- is(ThirdWheel,loves,Self,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+hashed(blow_up_love_triangle,3240571130).
 
 update(Self,loves,ThirdWheel,Y) :- is(Self,loves,ThirdWheel,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
-update(Other,loves,Self,-5) :- not is(Other,loves,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
-
-update(Other,likes,Self,-5) :- not is(Other,likes,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+update(ThirdWheel,loves,Self,Y) :- is(ThirdWheel,loves,Self,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
 update(Self,likes,ThirdWheel,Y) :- is(Self,likes,ThirdWheel,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
-update(Self,likes,Other,-5) :- not is(Self,likes,Other,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+
+update(Self,loves,ThirdWheel,-5) :- not is(Self,loves,ThirdWheel,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+
+update(ThirdWheel,loves,Self,-5) :- not is(ThirdWheel,loves,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+
+update(Other,loves,Self,-5) :- not is(Other,loves,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
 update(Self,loves,Other,Y) :- is(Self,loves,Other,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
-update(ThirdWheel,likes,Self,-5) :- not is(ThirdWheel,likes,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+update(Self,likes,Other,-5) :- not is(Self,likes,Other,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
-update(Self,likes,ThirdWheel,-5) :- not is(Self,likes,ThirdWheel,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+update(ThirdWheel,likes,Self,Y) :- is(ThirdWheel,likes,Self,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
 update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 5 = Y,occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+update(ThirdWheel,likes,Self,-5) :- not is(ThirdWheel,likes,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+
+update(Other,likes,Self,-5) :- not is(Other,likes,Self,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
+
+update(Self,likes,ThirdWheel,-5) :- not is(Self,likes,ThirdWheel,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
 update(Self,loves,Other,-5) :- not is(Self,loves,Other,_), occurred(action(blow_up_love_triangle, Self, Other, ThirdWheel, null, null)).
 
@@ -570,13 +570,13 @@ visibility(blow_up_love_triangle,0).
 
 action(plot_about_sabotaging_romantic_rival, Self, Other, ThirdWheel, null, null):-
 		person(Self),person(Other),person(ThirdWheel),event(null),location(null),
-		is(Self,loves,Other,V_Self_love_Other), V_Self_love_Other >= 3,
+		is(Other,loves,ThirdWheel,V_Other_love_ThirdWheel), V_Other_love_ThirdWheel >= 3,
 		at(ThirdWheel,Location),
 		is(Other,loves,Self,V_Other_love_Self), V_Other_love_Self >= 3,
-		is(Other,loves,ThirdWheel,V_Other_love_ThirdWheel), V_Other_love_ThirdWheel >= 3,
 		is(ThirdWheel,loves,Other,V_ThirdWheel_love_Other), V_ThirdWheel_love_Other >= 3,
-		at(Other,Location),
 		at(Self,Location),
+		is(Self,loves,Other,V_Self_love_Other), V_Self_love_Other >= 3,
+		at(Other,Location),
 		Self != Other,
 		Self != ThirdWheel,
 		Other != ThirdWheel,
@@ -584,15 +584,15 @@ action(plot_about_sabotaging_romantic_rival, Self, Other, ThirdWheel, null, null
 		Other != null,
 		ThirdWheel != null.
 
-hashed(plot_about_sabotaging_romantic_rival,2835350267).
+hashed(plot_about_sabotaging_romantic_rival,3154265491).
 
 update(Self,likes,ThirdWheel,-2) :- not is(Self,likes,ThirdWheel,_), occurred(action(plot_about_sabotaging_romantic_rival, Self, Other, ThirdWheel, null, null)).
-
-update(Self,likes,ThirdWheel,Y) :- is(Self,likes,ThirdWheel,X), X - 2 = Y, occurred(action(plot_about_sabotaging_romantic_rival, Self, Other, ThirdWheel, null, null)).
 
 update(Self,loves,ThirdWheel,Y) :- is(Self,loves,ThirdWheel,X), X - 2 = Y, occurred(action(plot_about_sabotaging_romantic_rival, Self, Other, ThirdWheel, null, null)).
 
 update(Self,loves,ThirdWheel,-2) :- not is(Self,loves,ThirdWheel,_), occurred(action(plot_about_sabotaging_romantic_rival, Self, Other, ThirdWheel, null, null)).
+
+update(Self,likes,ThirdWheel,Y) :- is(Self,likes,ThirdWheel,X), X - 2 = Y, occurred(action(plot_about_sabotaging_romantic_rival, Self, Other, ThirdWheel, null, null)).
 
 is(plot_about_sabotaging_romantic_rival, talk).
 
@@ -604,29 +604,29 @@ visibility(plot_about_sabotaging_romantic_rival,0).
 
 action(reject_romance, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		is(Self,likes,Other,V_Self_likes_Other), V_Self_likes_Other <= 0,
 		is(Other,loves,Self,V_Other_loves_Self), V_Other_loves_Self >= 5,
 		at(Other,Location),
 		at(Self,Location),
+		is(Self,likes,Other,V_Self_likes_Other), V_Self_likes_Other <= 0,
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(reject_romance,2547115293).
+hashed(reject_romance,1998187336).
+
+update(Other,shame,Y) :- is(Other,shame,X), X + 1 = Y, occurred(action(reject_romance, Self, Other, null, null, null)).
+
+update(Other,likes,Self,-5) :- not is(Other,likes,Self,_), occurred(action(reject_romance, Self, Other, null, null, null)).
+
+update(Other,self_worth,Y) :- is(Other,self_worth,X), X - 1 = Y, occurred(action(reject_romance, Self, Other, null, null, null)).
 
 update(Other,shame,1) :- not is(Other,shame,_), occurred(action(reject_romance, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 5 = Y, occurred(action(reject_romance, Self, Other, null, null, null)).
 
 update(Other,loves,Self,Y) :- is(Other,loves,Self,X), X - 5 = Y, occurred(action(reject_romance, Self, Other, null, null, null)).
 
 update(Other,loves,Self,-5) :- not is(Other,loves,Self,_), occurred(action(reject_romance, Self, Other, null, null, null)).
-
-update(Other,likes,Self,-5) :- not is(Other,likes,Self,_), occurred(action(reject_romance, Self, Other, null, null, null)).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 5 = Y, occurred(action(reject_romance, Self, Other, null, null, null)).
-
-update(Other,shame,Y) :- is(Other,shame,X), X + 1 = Y, occurred(action(reject_romance, Self, Other, null, null, null)).
-
-update(Other,self_worth,Y) :- is(Other,self_worth,X), X - 1 = Y, occurred(action(reject_romance, Self, Other, null, null, null)).
 
 update(Other,self_worth,-1) :- not is(Other,self_worth,_), occurred(action(reject_romance, Self, Other, null, null, null)).
 
@@ -636,22 +636,22 @@ visibility(reject_romance,0).
 
 action(insult_as_bully, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Other,Location),
 		is(Self, bully),
+		at(Other,Location),
 		at(Self,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(insult_as_bully,215336335).
+hashed(insult_as_bully,1017467779).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 3 = Y, occurred(action(insult_as_bully, Self, Other, null, null, null)).
+
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(insult_as_bully, Self, Other, null, null, null)).
 
 update(Other,likes,Self,-3) :- not is(Other,likes,Self,_), occurred(action(insult_as_bully, Self, Other, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(insult_as_bully, Self, Other, null, null, null)).
-
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(insult_as_bully, Self, Other, null, null, null)).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 3 = Y, occurred(action(insult_as_bully, Self, Other, null, null, null)).
 
 is(insult_as_bully, talk).
 
@@ -663,20 +663,20 @@ visibility(insult_as_bully,0).
 
 action(insult, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		not is(Self, bully),
 		at(Other,Location),
+		not is(Self, bully),
 		at(Self,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(insult,1603281319).
+hashed(insult,1904777627).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X - 1 = Y, occurred(action(insult, Self, Other, null, null, null)).
 
-update(Other,likes,Self,-3) :- not is(Other,likes,Self,_), occurred(action(insult, Self, Other, null, null, null)).
-
 update(Self,self_worth,-1) :- not is(Self,self_worth,_), occurred(action(insult, Self, Other, null, null, null)).
+
+update(Other,likes,Self,-3) :- not is(Other,likes,Self,_), occurred(action(insult, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 3 = Y, occurred(action(insult, Self, Other, null, null, null)).
 
@@ -692,7 +692,7 @@ action(sulk, Self, null, null, null, null):-
 		at(Self,Location),
 		Self != null.
 
-hashed(sulk,775693756).
+hashed(sulk,1913388369).
 
 is(sulk, worry).
 
@@ -704,11 +704,11 @@ action(have_catharsis, Self, null, null, null, null):-
 		at(Self,Location),
 		Self != null.
 
-hashed(have_catharsis,2589427597).
-
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(have_catharsis, Self, null, null, null, null)).
+hashed(have_catharsis,2035105158).
 
 update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(have_catharsis, Self, null, null, null, null)).
+
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(have_catharsis, Self, null, null, null, null)).
 
 is(have_catharsis, thoughtful).
 
@@ -716,22 +716,22 @@ visibility(have_catharsis,0).
 
 action(try_to_help_struggling_friend, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		is(Self,likes,Other,V_Self_likes_Other), V_Self_likes_Other >= 3,
-		at(Other,Location),
 		is(Other,self_worth,V_Other_self_worth), V_Other_self_worth <= -3,
 		is(Other,likes,Self,V_Other_likes_Self), V_Other_likes_Self >= 3,
 		at(Self,Location),
+		is(Self,likes,Other,V_Self_likes_Other), V_Self_likes_Other >= 3,
+		at(Other,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(try_to_help_struggling_friend,3704657214).
+hashed(try_to_help_struggling_friend,2148847884).
+
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(try_to_help_struggling_friend, Self, Other, null, null, null)).
 
 update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(try_to_help_struggling_friend, Self, Other, null, null, null)).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(try_to_help_struggling_friend, Self, Other, null, null, null)).
-
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(try_to_help_struggling_friend, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(try_to_help_struggling_friend, Self, Other, null, null, null)).
 
@@ -743,26 +743,26 @@ action(help_struggling_friend, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
 		is(Other,self_worth,V_Other_self_worth), V_Other_self_worth <= -3,
 		is(Other,likes,Self,V_Other_like_Self), V_Other_like_Self >= 3,
-		at(Other,Location),
 		is(Self,likes,Other,V_Self_like_Other), V_Self_like_Other >= 3,
 		at(Self,Location),
+		at(Other,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(help_struggling_friend,1083074627).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(help_struggling_friend, Self, Other, null, null, null)).
+hashed(help_struggling_friend,2012685201).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(help_struggling_friend, Self, Other, null, null, null)).
 
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(help_struggling_friend, Self, Other, null, null, null)).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(help_struggling_friend, Self, Other, null, null, null)).
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(help_struggling_friend, Self, Other, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(help_struggling_friend, Self, Other, null, null, null)).
 
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(help_struggling_friend, Self, Other, null, null, null)).
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(help_struggling_friend, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(help_struggling_friend, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(help_struggling_friend, Self, Other, null, null, null)).
 
 is(help_struggling_friend, kind).
 
@@ -780,15 +780,15 @@ action(share_personal_info, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(share_personal_info,2076857331).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(share_personal_info, Self, Other, null, null, null)).
-
-add(Other,knows_personal_info_about,Self) :-occurred(action(share_personal_info, Self, Other, null, null, null)).
+hashed(share_personal_info,382781963).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(share_personal_info, Self, Other, null, null, null)).
 
+add(Other,knows_personal_info_about,Self) :-occurred(action(share_personal_info, Self, Other, null, null, null)).
+
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(share_personal_info, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(share_personal_info, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(share_personal_info, Self, Other, null, null, null)).
 
@@ -809,19 +809,19 @@ action(help_really_struggling_person, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(help_really_struggling_person,3028796889).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
+hashed(help_really_struggling_person,3779552170).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
 
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
 
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(help_really_struggling_person, Self, Other, null, null, null)).
 
 is(help_really_struggling_person, kind).
 
@@ -837,13 +837,13 @@ action(joke_around_with, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(joke_around_with,2892635524).
+hashed(joke_around_with,3027682364).
+
+update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(joke_around_with, Self, Other, null, null, null)).
 
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 2 = Y,occurred(action(joke_around_with, Self, Other, null, null, null)).
 
 update(Other,likes,Self,2) :- not is(Other,likes,Self,_), occurred(action(joke_around_with, Self, Other, null, null, null)).
-
-update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(joke_around_with, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 2 = Y,occurred(action(joke_around_with, Self, Other, null, null, null)).
 
@@ -862,11 +862,11 @@ action(joke_around_with_the_wrong_person, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(joke_around_with_the_wrong_person,163203617).
-
-update(Other,likes,Self,-2) :- not is(Other,likes,Self,_), occurred(action(joke_around_with_the_wrong_person, Self, Other, null, null, null)).
+hashed(joke_around_with_the_wrong_person,1548095903).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 2 = Y, occurred(action(joke_around_with_the_wrong_person, Self, Other, null, null, null)).
+
+update(Other,likes,Self,-2) :- not is(Other,likes,Self,_), occurred(action(joke_around_with_the_wrong_person, Self, Other, null, null, null)).
 
 is(joke_around_with_the_wrong_person, talk).
 
@@ -886,11 +886,11 @@ action(criticize, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(criticize,355166778).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y, occurred(action(criticize, Self, Other, null, null, null)).
+hashed(criticize,872655465).
 
 update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(criticize, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y, occurred(action(criticize, Self, Other, null, null, null)).
 
 is(criticize, talk).
 
@@ -900,20 +900,20 @@ visibility(criticize,0).
 
 action(provide_critical_feedback, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		is(Other, agreeable),
 		at(Other,Location),
+		is(Other, agreeable),
 		at(Self,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(provide_critical_feedback,394681101).
+hashed(provide_critical_feedback,1625461630).
+
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(provide_critical_feedback, Self, Other, null, null, null)).
 
 update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(provide_critical_feedback, Self, Other, null, null, null)).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(provide_critical_feedback, Self, Other, null, null, null)).
-
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(provide_critical_feedback, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(provide_critical_feedback, Self, Other, null, null, null)).
 
@@ -927,23 +927,23 @@ visibility(provide_critical_feedback,0).
 
 action(get_into_argument, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		is(Self,likes,Other,V_Self_likes_Other), V_Self_likes_Other <= -1,
-		is(Other,likes,Self,V_Other_likes_Self), V_Other_likes_Self <= -1,
 		at(Other,Location),
+		is(Other,likes,Self,V_Other_likes_Self), V_Other_likes_Self <= -1,
 		at(Self,Location),
+		is(Self,likes,Other,V_Self_likes_Other), V_Self_likes_Other <= -1,
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(get_into_argument,1759995397).
-
-update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(get_into_argument, Self, Other, null, null, null)).
+hashed(get_into_argument,3876861634).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y,occurred(action(get_into_argument, Self, Other, null, null, null)).
 
-update(Self,likes,Other,-1) :- not is(Self,likes,Other,_), occurred(action(get_into_argument, Self, Other, null, null, null)).
+update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(get_into_argument, Self, Other, null, null, null)).
 
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X - 1 = Y,occurred(action(get_into_argument, Self, Other, null, null, null)).
+
+update(Self,likes,Other,-1) :- not is(Self,likes,Other,_), occurred(action(get_into_argument, Self, Other, null, null, null)).
 
 is(get_into_argument, talk).
 
@@ -959,17 +959,17 @@ action(impress, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(impress,3684499232).
-
-update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(impress, Self, Other, null, null, null)).
+hashed(impress,2001530158).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(impress, Self, Other, null, null, null)).
 
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(impress, Self, Other, null, null, null)).
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(impress, Self, Other, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(impress, Self, Other, null, null, null)).
 
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(impress, Self, Other, null, null, null)).
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(impress, Self, Other, null, null, null)).
+
+update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(impress, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(impress, Self, Other, null, null, null)).
 
@@ -987,15 +987,15 @@ action(try_to_impress_and_fail, Self, Other, null, null, null):-
 		Self != null,
 		Other != null.
 
-hashed(try_to_impress_and_fail,736206312).
+hashed(try_to_impress_and_fail,1676197530).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y,occurred(action(try_to_impress_and_fail, Self, Other, null, null, null)).
 
 update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(try_to_impress_and_fail, Self, Other, null, null, null)).
 
-update(Self,self_worth,-1) :- not is(Self,self_worth,_), occurred(action(try_to_impress_and_fail, Self, Other, null, null, null)).
-
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X - 1 = Y,occurred(action(try_to_impress_and_fail, Self, Other, null, null, null)).
+
+update(Self,self_worth,-1) :- not is(Self,self_worth,_), occurred(action(try_to_impress_and_fail, Self, Other, null, null, null)).
 
 update(Self,likes,Other,-1) :- not is(Self,likes,Other,_), occurred(action(try_to_impress_and_fail, Self, Other, null, null, null)).
 
@@ -1021,23 +1021,23 @@ action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null):-
 		Other != null,
 		Friend != null.
 
-hashed(stand_up_for_friend_and_persuade,2976026792).
+hashed(stand_up_for_friend_and_persuade,1541612028).
 
-update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
-
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
-
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
-
-update(Other,likes,Friend,Y) :- is(Other,likes,Friend,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
-
-update(Friend,likes,Self,1) :- not is(Friend,likes,Self,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
+update(Other,likes,Friend,1) :- not is(Other,likes,Friend,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
 
 update(Friend,likes,Self,Y) :- is(Friend,likes,Self,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
 
-update(Other,likes,Friend,1) :- not is(Other,likes,Friend,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
+update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
+
+update(Friend,likes,Self,1) :- not is(Friend,likes,Self,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
+
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
+
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
+
+update(Other,likes,Friend,Y) :- is(Other,likes,Friend,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_persuade, Self, Other, Friend, null, null)).
 
 is(stand_up_for_friend_and_persuade, talk).
 
@@ -1057,23 +1057,23 @@ action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null):-
 		Other != null,
 		Friend != null.
 
-hashed(stand_up_for_friend_and_fail,2299727178).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y, occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
+hashed(stand_up_for_friend_and_fail,1836021499).
 
 update(Other,likes,Friend,Y) :- is(Other,likes,Friend,X), X - 1 = Y, occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
 
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
-
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
+update(Friend,likes,Self,Y) :- is(Friend,likes,Self,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
 
 update(Friend,likes,Self,1) :- not is(Friend,likes,Self,_), occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
 
-update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
 
-update(Friend,likes,Self,Y) :- is(Friend,likes,Self,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
 
 update(Other,likes,Friend,-1) :- not is(Other,likes,Friend,_), occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y, occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
+
+update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(stand_up_for_friend_and_fail, Self, Other, Friend, null, null)).
 
 is(stand_up_for_friend_and_fail, talk).
 
@@ -1090,11 +1090,11 @@ action(pray, Monk, null, null, null, null):-
 		is(Monk,monk,RoleLocation),
 		Monk != null.
 
-hashed(pray,3931282229).
-
-update(Monk,devotion,1) :- not is(Monk,devotion,_), occurred(action(pray, Monk, null, null, null, null)).
+hashed(pray,566169102).
 
 update(Monk,devotion,Y) :- is(Monk,devotion,X), X + 1 = Y, occurred(action(pray, Monk, null, null, null, null)).
+
+update(Monk,devotion,1) :- not is(Monk,devotion,_), occurred(action(pray, Monk, null, null, null, null)).
 
 is(pray, religious).
 
@@ -1104,25 +1104,25 @@ visibility(pray,0).
 
 action(pray_with_follower, Monk, Follower, null, null, null):-
 		person(Monk),person(Follower),person(null),event(null),location(null),
-		is(Monk,monk,RoleLocation),
-		at(Follower,RoleLocation),
 		at(Follower,Location),
-		at(Monk,RoleLocation),
 		at(Monk,Location),
+		at(Monk,RoleLocation),
+		is(Monk,monk,RoleLocation),
 		is(Follower,follower,RoleLocation),
+		at(Follower,RoleLocation),
 		Monk != Follower,
 		Monk != null,
 		Follower != null.
 
-hashed(pray_with_follower,2796360415).
+hashed(pray_with_follower,987596893).
+
+update(Monk,devotion,Y) :- is(Monk,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Monk, Follower, null, null, null)).
 
 update(Monk,devotion,1) :- not is(Monk,devotion,_), occurred(action(pray_with_follower, Monk, Follower, null, null, null)).
 
-update(Follower,devotion,1) :- not is(Follower,devotion,_), occurred(action(pray_with_follower, Monk, Follower, null, null, null)).
-
 update(Follower,devotion,Y) :- is(Follower,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Monk, Follower, null, null, null)).
 
-update(Monk,devotion,Y) :- is(Monk,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Monk, Follower, null, null, null)).
+update(Follower,devotion,1) :- not is(Follower,devotion,_), occurred(action(pray_with_follower, Monk, Follower, null, null, null)).
 
 is(pray_with_follower, religious).
 
@@ -1133,20 +1133,20 @@ visibility(pray_with_follower,0).
 action(perform_ritual, Monk, Other, null, null, null):-
 		person(Monk),person(Other),person(null),event(null),location(null),
 		at(Monk,Location),
-		is(Monk,monk,RoleLocation),
 		at(Monk,RoleLocation),
-		is(Other,monk,RoleLocation),
+		is(Monk,monk,RoleLocation),
 		at(Other,RoleLocation),
 		at(Other,Location),
+		is(Other,monk,RoleLocation),
 		Monk != Other,
 		Monk != null,
 		Other != null.
 
-hashed(perform_ritual,2944216161).
-
-update(Other,devotion,Y) :- is(Other,devotion,X), X + 2 = Y, occurred(action(perform_ritual, Monk, Other, null, null, null)).
+hashed(perform_ritual,2620081072).
 
 update(Other,devotion,2) :- not is(Other,devotion,_), occurred(action(perform_ritual, Monk, Other, null, null, null)).
+
+update(Other,devotion,Y) :- is(Other,devotion,X), X + 2 = Y, occurred(action(perform_ritual, Monk, Other, null, null, null)).
 
 update(Monk,devotion,Y) :- is(Monk,devotion,X), X + 2 = Y, occurred(action(perform_ritual, Monk, Other, null, null, null)).
 
@@ -1161,20 +1161,20 @@ visibility(perform_ritual,0).
 action(screw_up_ritual, Monk, Other, null, null, null):-
 		person(Monk),person(Other),person(null),event(null),location(null),
 		at(Monk,Location),
-		is(Monk,monk,RoleLocation),
 		at(Monk,RoleLocation),
-		is(Other,monk,RoleLocation),
+		is(Monk,monk,RoleLocation),
 		at(Other,RoleLocation),
 		at(Other,Location),
+		is(Other,monk,RoleLocation),
 		Monk != Other,
 		Monk != null,
 		Other != null.
 
-hashed(screw_up_ritual,93686947).
-
-update(Other,likes,Monk,Y) :- is(Other,likes,Monk,X), X - 2 = Y, occurred(action(screw_up_ritual, Monk, Other, null, null, null)).
+hashed(screw_up_ritual,1911705999).
 
 update(Other,likes,Monk,-2) :- not is(Other,likes,Monk,_), occurred(action(screw_up_ritual, Monk, Other, null, null, null)).
+
+update(Other,likes,Monk,Y) :- is(Other,likes,Monk,X), X - 2 = Y, occurred(action(screw_up_ritual, Monk, Other, null, null, null)).
 
 update(Monk,devotion,-1) :- not is(Monk,devotion,_), occurred(action(screw_up_ritual, Monk, Other, null, null, null)).
 
@@ -1199,7 +1199,7 @@ action(have_crisis_of_faith, Monk, null, null, null, null):-
 		is(Monk,monk,RoleLocation),
 		Monk != null.
 
-hashed(have_crisis_of_faith,2277869169).
+hashed(have_crisis_of_faith,3301685657).
 
 update(Monk,self_worth,-1) :- not is(Monk,self_worth,_), occurred(action(have_crisis_of_faith, Monk, null, null, null, null)).
 
@@ -1219,12 +1219,12 @@ visibility(have_crisis_of_faith,0).
 
 action(manage_mine, Foreman, null, null, null, null):-
 		person(Foreman),person(null),person(null),event(null),location(null),
-		at(Foreman,Location),
 		at(Foreman,RoleLocation),
+		at(Foreman,Location),
 		is(Foreman,foreman,RoleLocation),
 		Foreman != null.
 
-hashed(manage_mine,2688877511).
+hashed(manage_mine,756896745).
 
 is(manage_mine, work).
 
@@ -1235,16 +1235,16 @@ visibility(manage_mine,0).
 action(boss_miner_around, Foreman, Miner, null, null, null):-
 		person(Foreman),person(Miner),person(null),event(null),location(null),
 		at(Miner,RoleLocation),
-		at(Foreman,Location),
-		at(Foreman,RoleLocation),
-		is(Miner,miner,RoleLocation),
 		at(Miner,Location),
 		is(Foreman,foreman,RoleLocation),
+		at(Foreman,Location),
+		is(Miner,miner,RoleLocation),
+		at(Foreman,RoleLocation),
 		Foreman != Miner,
 		Foreman != null,
 		Miner != null.
 
-hashed(boss_miner_around,912733249).
+hashed(boss_miner_around,1484668575).
 
 update(Miner,likes,Foreman,-1) :- not is(Miner,likes,Foreman,_), occurred(action(boss_miner_around, Foreman, Miner, null, null, null)).
 
@@ -1261,16 +1261,16 @@ visibility(boss_miner_around,0).
 action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null):-
 		person(Foreman),person(Miner),person(Miner2),event(null),location(null),
 		at(Miner,RoleLocation),
-		at(Miner2,Location),
-		is(Miner2,miner,RoleLocation),
-		at(Miner2,RoleLocation),
-		at(Foreman,Location),
-		at(Foreman,RoleLocation),
-		is(Miner,miner,RoleLocation),
-		is(Miner2,likes,Miner,V_Miner2_likes_Miner), V_Miner2_likes_Miner <= -1,
 		at(Miner,Location),
-		is(Foreman,foreman,RoleLocation),
 		is(Miner,likes,Miner2,V_Miner_likes_Miner2), V_Miner_likes_Miner2 <= -1,
+		is(Foreman,foreman,RoleLocation),
+		is(Miner2,miner,RoleLocation),
+		at(Foreman,Location),
+		at(Miner2,Location),
+		at(Miner2,RoleLocation),
+		is(Miner2,likes,Miner,V_Miner2_likes_Miner), V_Miner2_likes_Miner <= -1,
+		is(Miner,miner,RoleLocation),
+		at(Foreman,RoleLocation),
 		Foreman != Miner,
 		Foreman != Miner2,
 		Miner != Miner2,
@@ -1278,21 +1278,21 @@ action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null):-
 		Miner != null,
 		Miner2 != null.
 
-hashed(manage_dispute_between_miners,512800837).
+hashed(manage_dispute_between_miners,2685258613).
 
-update(Miner,respects,Foreman,Y) :- is(Miner,respects,Foreman,X), X + 1 = Y, occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
+update(Miner2,respects,Foreman,1) :- not is(Miner2,respects,Foreman,_), occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
 
-update(Miner2,respects,Foreman,Y) :- is(Miner2,respects,Foreman,X), X + 1 = Y, occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
+update(Miner,likes,Miner2,Y) :- is(Miner,likes,Miner2,X), X + 1 = Y,occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner,respects,Foreman,1) :- not is(Miner,respects,Foreman,_), occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner2,likes,Miner,Y) :- is(Miner2,likes,Miner,X), X + 1 = Y,occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
 
-update(Miner,likes,Miner2,Y) :- is(Miner,likes,Miner2,X), X + 1 = Y,occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
-
-update(Miner2,respects,Foreman,1) :- not is(Miner2,respects,Foreman,_), occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
+update(Miner2,respects,Foreman,Y) :- is(Miner2,respects,Foreman,X), X + 1 = Y, occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner,likes,Miner2,1) :- not is(Miner,likes,Miner2,_), occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
+
+update(Miner,respects,Foreman,Y) :- is(Miner,respects,Foreman,X), X + 1 = Y, occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner2,likes,Miner,1) :- not is(Miner2,likes,Miner,_), occurred(action(manage_dispute_between_miners, Foreman, Miner, Miner2, null, null)).
 
@@ -1309,14 +1309,14 @@ visibility(manage_dispute_between_miners,0).
 action(endanger_miners, Foreman, Miner, Miner2, null, null):-
 		person(Foreman),person(Miner),person(Miner2),event(null),location(null),
 		at(Miner,RoleLocation),
-		at(Miner2,Location),
-		is(Miner2,miner,RoleLocation),
-		at(Miner2,RoleLocation),
-		at(Foreman,Location),
-		at(Foreman,RoleLocation),
-		is(Miner,miner,RoleLocation),
 		at(Miner,Location),
 		is(Foreman,foreman,RoleLocation),
+		is(Miner2,miner,RoleLocation),
+		at(Foreman,Location),
+		at(Miner2,Location),
+		at(Miner2,RoleLocation),
+		is(Miner,miner,RoleLocation),
+		at(Foreman,RoleLocation),
 		Foreman != Miner,
 		Foreman != Miner2,
 		Miner != Miner2,
@@ -1324,23 +1324,23 @@ action(endanger_miners, Foreman, Miner, Miner2, null, null):-
 		Miner != null,
 		Miner2 != null.
 
-hashed(endanger_miners,1704736636).
+hashed(endanger_miners,605821309).
+
+update(Miner2,respects,Foreman,-2) :- not is(Miner2,respects,Foreman,_), occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner,respects,Foreman,Y) :- is(Miner,respects,Foreman,X), X - 2 = Y, occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner2,respects,Foreman,Y) :- is(Miner2,respects,Foreman,X), X - 2 = Y, occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
-update(Miner,respects,Foreman,-2) :- not is(Miner,respects,Foreman,_), occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
+update(Miner,likes,Foreman,Y) :- is(Miner,likes,Foreman,X), X - 2 = Y, occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner,likes,Foreman,-2) :- not is(Miner,likes,Foreman,_), occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
-update(Miner,likes,Foreman,Y) :- is(Miner,likes,Foreman,X), X - 2 = Y, occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
+update(Miner2,likes,Foreman,-2) :- not is(Miner2,likes,Foreman,_), occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
 update(Miner2,likes,Foreman,Y) :- is(Miner2,likes,Foreman,X), X - 2 = Y, occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
-update(Miner2,respects,Foreman,-2) :- not is(Miner2,respects,Foreman,_), occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
-
-update(Miner2,likes,Foreman,-2) :- not is(Miner2,likes,Foreman,_), occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
+update(Miner,respects,Foreman,-2) :- not is(Miner,respects,Foreman,_), occurred(action(endanger_miners, Foreman, Miner, Miner2, null, null)).
 
 is(endanger_miners, work).
 
@@ -1353,14 +1353,14 @@ visibility(endanger_miners,0).
 action(strike_motherlode, Foreman, Miner, Miner2, null, null):-
 		person(Foreman),person(Miner),person(Miner2),event(null),location(null),
 		at(Miner,RoleLocation),
-		at(Miner2,Location),
-		is(Miner2,miner,RoleLocation),
-		at(Miner2,RoleLocation),
-		at(Foreman,Location),
-		at(Foreman,RoleLocation),
-		is(Miner,miner,RoleLocation),
 		at(Miner,Location),
 		is(Foreman,foreman,RoleLocation),
+		is(Miner2,miner,RoleLocation),
+		at(Foreman,Location),
+		at(Miner2,Location),
+		at(Miner2,RoleLocation),
+		is(Miner,miner,RoleLocation),
+		at(Foreman,RoleLocation),
 		Foreman != Miner,
 		Foreman != Miner2,
 		Miner != Miner2,
@@ -1368,27 +1368,27 @@ action(strike_motherlode, Foreman, Miner, Miner2, null, null):-
 		Miner != null,
 		Miner2 != null.
 
-hashed(strike_motherlode,39985803).
-
-update(Miner2,respects,Foreman,2) :- not is(Miner2,respects,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
-
-update(Miner,likes,Foreman,2) :- not is(Miner,likes,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
-
-update(Miner2,likes,Foreman,2) :- not is(Miner2,likes,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
+hashed(strike_motherlode,1711550652).
 
 update(Foreman,self_worth,Y) :- is(Foreman,self_worth,X), X + 2 = Y, occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
 
+update(Miner,respects,Foreman,Y) :- is(Miner,respects,Foreman,X), X + 2 = Y, occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
+
 update(Miner,likes,Foreman,Y) :- is(Miner,likes,Foreman,X), X + 2 = Y, occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
+
+update(Miner2,respects,Foreman,2) :- not is(Miner2,respects,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
+
+update(Miner2,respects,Foreman,Y) :- is(Miner2,respects,Foreman,X), X + 2 = Y, occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
+
+update(Miner,likes,Foreman,2) :- not is(Miner,likes,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
+
+update(Miner,respects,Foreman,2) :- not is(Miner,respects,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
+
+update(Miner2,likes,Foreman,2) :- not is(Miner2,likes,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
 
 update(Foreman,self_worth,2) :- not is(Foreman,self_worth,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
 
 update(Miner2,likes,Foreman,Y) :- is(Miner2,likes,Foreman,X), X + 2 = Y, occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
-
-update(Miner,respects,Foreman,2) :- not is(Miner,respects,Foreman,_), occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
-
-update(Miner2,respects,Foreman,Y) :- is(Miner2,respects,Foreman,X), X + 2 = Y, occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
-
-update(Miner,respects,Foreman,Y) :- is(Miner,respects,Foreman,X), X + 2 = Y, occurred(action(strike_motherlode, Foreman, Miner, Miner2, null, null)).
 
 is(strike_motherlode, work).
 
@@ -1407,7 +1407,7 @@ action(work_at_mine, Miner, null, null, null, null):-
 		is(Miner,miner,RoleLocation),
 		Miner != null.
 
-hashed(work_at_mine,1856089199).
+hashed(work_at_mine,3594297241).
 
 update(Miner,tiredness,Y) :- is(Miner,tiredness,X), X + 1 = Y, occurred(action(work_at_mine, Miner, null, null, null, null)).
 
@@ -1421,15 +1421,15 @@ visibility(work_at_mine,0).
 
 action(hold_auction, Auctioneer, P1, P2, null, null):-
 		person(Auctioneer),person(P1),person(P2),event(null),location(null),
-		is(Auctioneer,auctioneer,RoleLocation),
 		at(P1,RoleLocation),
-		at(P1,Location),
-		at(P2,RoleLocation),
-		at(Auctioneer,Location),
 		at(Auctioneer,RoleLocation),
-		is(P1,patron,RoleLocation),
+		at(P2,RoleLocation),
 		at(P2,Location),
+		is(Auctioneer,auctioneer,RoleLocation),
 		is(P2,patron,RoleLocation),
+		at(Auctioneer,Location),
+		is(P1,patron,RoleLocation),
+		at(P1,Location),
 		Auctioneer != P1,
 		Auctioneer != P2,
 		P1 != P2,
@@ -1437,15 +1437,15 @@ action(hold_auction, Auctioneer, P1, P2, null, null):-
 		P1 != null,
 		P2 != null.
 
-hashed(hold_auction,3841656780).
+hashed(hold_auction,1613651035).
 
 update(P1,self_worth,1) :- not is(P1,self_worth,_), occurred(action(hold_auction, Auctioneer, P1, P2, null, null)).
-
-update(P1,self_worth,Y) :- is(P1,self_worth,X), X + 1 = Y, occurred(action(hold_auction, Auctioneer, P1, P2, null, null)).
 
 update(Auctioneer,self_worth,1) :- not is(Auctioneer,self_worth,_), occurred(action(hold_auction, Auctioneer, P1, P2, null, null)).
 
 update(Auctioneer,self_worth,Y) :- is(Auctioneer,self_worth,X), X + 1 = Y, occurred(action(hold_auction, Auctioneer, P1, P2, null, null)).
+
+update(P1,self_worth,Y) :- is(P1,self_worth,X), X + 1 = Y, occurred(action(hold_auction, Auctioneer, P1, P2, null, null)).
 
 is(hold_auction, work).
 
@@ -1459,25 +1459,25 @@ visibility(hold_auction,0).
 
 action(discuss_collection, Auctioneer, Curator, null, null, null):-
 		person(Auctioneer),person(Curator),person(null),event(null),location(null),
-		is(Auctioneer,auctioneer,RoleLocation),
-		at(Curator,RoleLocation),
-		is(Curator,curator,RoleLocation),
-		at(Auctioneer,Location),
 		at(Auctioneer,RoleLocation),
+		is(Curator,curator,RoleLocation),
+		at(Curator,RoleLocation),
 		at(Curator,Location),
+		is(Auctioneer,auctioneer,RoleLocation),
+		at(Auctioneer,Location),
 		Auctioneer != Curator,
 		Auctioneer != null,
 		Curator != null.
 
-hashed(discuss_collection,2577658550).
-
-update(Curator,likes,Auctioneer,1) :- not is(Curator,likes,Auctioneer,_), occurred(action(discuss_collection, Auctioneer, Curator, null, null, null)).
+hashed(discuss_collection,2792090492).
 
 update(Auctioneer,likes,Curator,1) :- not is(Auctioneer,likes,Curator,_), occurred(action(discuss_collection, Auctioneer, Curator, null, null, null)).
 
+update(Auctioneer,likes,Curator,Y) :- is(Auctioneer,likes,Curator,X), X + 1 = Y,occurred(action(discuss_collection, Auctioneer, Curator, null, null, null)).
+
 update(Curator,likes,Auctioneer,Y) :- is(Curator,likes,Auctioneer,X), X + 1 = Y,occurred(action(discuss_collection, Auctioneer, Curator, null, null, null)).
 
-update(Auctioneer,likes,Curator,Y) :- is(Auctioneer,likes,Curator,X), X + 1 = Y,occurred(action(discuss_collection, Auctioneer, Curator, null, null, null)).
+update(Curator,likes,Auctioneer,1) :- not is(Curator,likes,Auctioneer,_), occurred(action(discuss_collection, Auctioneer, Curator, null, null, null)).
 
 is(discuss_collection, work).
 
@@ -1491,23 +1491,23 @@ visibility(discuss_collection,0).
 
 action(demand_a_new_piece, Auctioneer, Curator, null, null, null):-
 		person(Auctioneer),person(Curator),person(null),event(null),location(null),
-		is(Auctioneer,auctioneer,RoleLocation),
-		at(Curator,RoleLocation),
-		is(Curator,curator,RoleLocation),
-		at(Auctioneer,Location),
 		at(Auctioneer,RoleLocation),
+		is(Curator,curator,RoleLocation),
+		at(Curator,RoleLocation),
 		at(Curator,Location),
+		is(Auctioneer,auctioneer,RoleLocation),
+		at(Auctioneer,Location),
 		Auctioneer != Curator,
 		Auctioneer != null,
 		Curator != null.
 
-hashed(demand_a_new_piece,1990235508).
+hashed(demand_a_new_piece,2442885104).
 
 update(Auctioneer,likes,Curator,-2) :- not is(Auctioneer,likes,Curator,_), occurred(action(demand_a_new_piece, Auctioneer, Curator, null, null, null)).
 
-update(Auctioneer,likes,Curator,Y) :- is(Auctioneer,likes,Curator,X), X - 2 = Y,occurred(action(demand_a_new_piece, Auctioneer, Curator, null, null, null)).
-
 update(Curator,likes,Auctioneer,-2) :- not is(Curator,likes,Auctioneer,_), occurred(action(demand_a_new_piece, Auctioneer, Curator, null, null, null)).
+
+update(Auctioneer,likes,Curator,Y) :- is(Auctioneer,likes,Curator,X), X - 2 = Y,occurred(action(demand_a_new_piece, Auctioneer, Curator, null, null, null)).
 
 update(Curator,likes,Auctioneer,Y) :- is(Curator,likes,Auctioneer,X), X - 2 = Y,occurred(action(demand_a_new_piece, Auctioneer, Curator, null, null, null)).
 
@@ -1526,7 +1526,7 @@ action(curate_collection, Curator, null, null, null, null):-
 		at(Curator,RoleLocation),
 		Curator != null.
 
-hashed(curate_collection,234812890).
+hashed(curate_collection,2915160980).
 
 is(curate_collection, work).
 
@@ -1541,11 +1541,11 @@ action(acquire_artifacts, Curator, null, null, null, null):-
 		at(Curator,RoleLocation),
 		Curator != null.
 
-hashed(acquire_artifacts,161797026).
-
-update(Curator,self_worth,Y) :- is(Curator,self_worth,X), X + 1 = Y, occurred(action(acquire_artifacts, Curator, null, null, null, null)).
+hashed(acquire_artifacts,618870677).
 
 update(Curator,self_worth,1) :- not is(Curator,self_worth,_), occurred(action(acquire_artifacts, Curator, null, null, null, null)).
+
+update(Curator,self_worth,Y) :- is(Curator,self_worth,X), X + 1 = Y, occurred(action(acquire_artifacts, Curator, null, null, null, null)).
 
 is(acquire_artifacts, work).
 
@@ -1558,18 +1558,18 @@ visibility(acquire_artifacts,0).
 action(discuss_collection, Curator, Other, null, null, null):-
 		person(Curator),person(Other),person(null),event(null),location(null),
 		is(Curator,curator,RoleLocation),
-		at(Curator,Location),
 		at(Other,Location),
+		at(Curator,Location),
 		at(Curator,RoleLocation),
 		Curator != Other,
 		Curator != null,
 		Other != null.
 
-hashed(discuss_collection,2577658550).
-
-update(Other,respects,Curator,1) :- not is(Other,respects,Curator,_), occurred(action(discuss_collection, Curator, Other, null, null, null)).
+hashed(discuss_collection,2792090492).
 
 update(Other,respects,Curator,Y) :- is(Other,respects,Curator,X), X + 1 = Y, occurred(action(discuss_collection, Curator, Other, null, null, null)).
+
+update(Other,respects,Curator,1) :- not is(Other,respects,Curator,_), occurred(action(discuss_collection, Curator, Other, null, null, null)).
 
 is(discuss_collection, work).
 
@@ -1582,18 +1582,18 @@ visibility(discuss_collection,0).
 action(sell_wares, Vendor, Other, null, null, null):-
 		person(Vendor),person(Other),person(null),event(null),location(null),
 		at(Other,Location),
+		at(Vendor,Location),
 		is(Vendor,vendor,RoleLocation),
 		at(Vendor,RoleLocation),
-		at(Vendor,Location),
 		Vendor != Other,
 		Vendor != null,
 		Other != null.
 
-hashed(sell_wares,2669237980).
-
-update(Vendor,likes,Other,Y) :- is(Vendor,likes,Other,X), X + 1 = Y, occurred(action(sell_wares, Vendor, Other, null, null, null)).
+hashed(sell_wares,4294329765).
 
 update(Vendor,likes,Other,1) :- not is(Vendor,likes,Other,_), occurred(action(sell_wares, Vendor, Other, null, null, null)).
+
+update(Vendor,likes,Other,Y) :- is(Vendor,likes,Other,X), X + 1 = Y, occurred(action(sell_wares, Vendor, Other, null, null, null)).
 
 is(sell_wares, work).
 
@@ -1604,19 +1604,19 @@ visibility(sell_wares,0).
 action(give_deal_to, Vendor, Other, null, null, null):-
 		person(Vendor),person(Other),person(null),event(null),location(null),
 		is(Vendor,vendor,RoleLocation),
-		is(Vendor,likes,Other,V_Vendor_likes_Other), V_Vendor_likes_Other >= 3,
-		at(Vendor,RoleLocation),
 		at(Vendor,Location),
 		at(Other,Location),
+		is(Vendor,likes,Other,V_Vendor_likes_Other), V_Vendor_likes_Other >= 3,
+		at(Vendor,RoleLocation),
 		Vendor != Other,
 		Vendor != null,
 		Other != null.
 
-hashed(give_deal_to,518462650).
-
-update(Other,likes,Vendor,Y) :- is(Other,likes,Vendor,X), X + 2 = Y, occurred(action(give_deal_to, Vendor, Other, null, null, null)).
+hashed(give_deal_to,3201084842).
 
 update(Other,likes,Vendor,2) :- not is(Other,likes,Vendor,_), occurred(action(give_deal_to, Vendor, Other, null, null, null)).
+
+update(Other,likes,Vendor,Y) :- is(Other,likes,Vendor,X), X + 2 = Y, occurred(action(give_deal_to, Vendor, Other, null, null, null)).
 
 is(give_deal_to, work).
 
@@ -1630,24 +1630,24 @@ visibility(give_deal_to,0).
 
 action(hustle, Vendor, Other, null, null, null):-
 		person(Vendor),person(Other),person(null),event(null),location(null),
-		at(Other,Location),
 		is(Vendor,vendor,RoleLocation),
-		at(Vendor,RoleLocation),
 		at(Vendor,Location),
 		is(Vendor,likes,Other,V_Vendor_likes_Other), V_Vendor_likes_Other <= 0,
+		at(Other,Location),
+		at(Vendor,RoleLocation),
 		Vendor != Other,
 		Vendor != null,
 		Other != null.
 
-hashed(hustle,1222364103).
-
-update(Other,likes,Vendor,Y) :- is(Other,likes,Vendor,X), X - 1 = Y, occurred(action(hustle, Vendor, Other, null, null, null)).
+hashed(hustle,3343155350).
 
 update(Vendor,self_worth,1) :- not is(Vendor,self_worth,_), occurred(action(hustle, Vendor, Other, null, null, null)).
 
+update(Other,likes,Vendor,-1) :- not is(Other,likes,Vendor,_), occurred(action(hustle, Vendor, Other, null, null, null)).
+
 update(Vendor,self_worth,Y) :- is(Vendor,self_worth,X), X + 1 = Y, occurred(action(hustle, Vendor, Other, null, null, null)).
 
-update(Other,likes,Vendor,-1) :- not is(Other,likes,Vendor,_), occurred(action(hustle, Vendor, Other, null, null, null)).
+update(Other,likes,Vendor,Y) :- is(Other,likes,Vendor,X), X - 1 = Y, occurred(action(hustle, Vendor, Other, null, null, null)).
 
 is(hustle, work).
 
@@ -1663,23 +1663,23 @@ visibility(hustle,0).
 
 action(commiserate_with_fellow_vendor, Vendor, OtherVendor, null, null, null):-
 		person(Vendor),person(OtherVendor),person(null),event(null),location(null),
-		is(Vendor,vendor,RoleLocation),
-		at(OtherVendor,Location),
 		at(OtherVendor,RoleLocation),
-		at(Vendor,Location),
-		at(Vendor,RoleLocation),
+		is(Vendor,vendor,RoleLocation),
 		is(OtherVendor,vendor,RoleLocation),
+		at(Vendor,Location),
+		at(OtherVendor,Location),
+		at(Vendor,RoleLocation),
 		Vendor != OtherVendor,
 		Vendor != null,
 		OtherVendor != null.
 
-hashed(commiserate_with_fellow_vendor,3311961919).
-
-update(OtherVendor,likes,Vendor,Y) :- is(OtherVendor,likes,Vendor,X), X + 1 = Y,occurred(action(commiserate_with_fellow_vendor, Vendor, OtherVendor, null, null, null)).
+hashed(commiserate_with_fellow_vendor,3189453654).
 
 update(Vendor,likes,OtherVendor,Y) :- is(Vendor,likes,OtherVendor,X), X + 1 = Y,occurred(action(commiserate_with_fellow_vendor, Vendor, OtherVendor, null, null, null)).
 
 update(OtherVendor,likes,Vendor,1) :- not is(OtherVendor,likes,Vendor,_), occurred(action(commiserate_with_fellow_vendor, Vendor, OtherVendor, null, null, null)).
+
+update(OtherVendor,likes,Vendor,Y) :- is(OtherVendor,likes,Vendor,X), X + 1 = Y,occurred(action(commiserate_with_fellow_vendor, Vendor, OtherVendor, null, null, null)).
 
 update(Vendor,likes,OtherVendor,1) :- not is(Vendor,likes,OtherVendor,_), occurred(action(commiserate_with_fellow_vendor, Vendor, OtherVendor, null, null, null)).
 
@@ -1697,26 +1697,26 @@ visibility(commiserate_with_fellow_vendor,0).
 
 action(undercut, Vendor, Other, null, null, null):-
 		person(Vendor),person(Other),person(null),event(null),location(null),
+		is(Other,vendor,RoleLocation),
+		is(Vendor,vendor,RoleLocation),
+		at(Other,RoleLocation),
+		at(Vendor,Location),
 		is(Vendor,likes,Other,V_Vendor_likes_Other), V_Vendor_likes_Other <= 0,
 		at(Other,Location),
-		is(Vendor,vendor,RoleLocation),
 		at(Vendor,RoleLocation),
-		at(Vendor,Location),
-		at(Other,RoleLocation),
-		is(Other,vendor,RoleLocation),
 		Vendor != Other,
 		Vendor != null,
 		Other != null.
 
-hashed(undercut,3007419630).
-
-update(Other,likes,Vendor,Y) :- is(Other,likes,Vendor,X), X - 1 = Y, occurred(action(undercut, Vendor, Other, null, null, null)).
+hashed(undercut,481157104).
 
 update(Vendor,self_worth,1) :- not is(Vendor,self_worth,_), occurred(action(undercut, Vendor, Other, null, null, null)).
 
+update(Other,likes,Vendor,-1) :- not is(Other,likes,Vendor,_), occurred(action(undercut, Vendor, Other, null, null, null)).
+
 update(Vendor,self_worth,Y) :- is(Vendor,self_worth,X), X + 1 = Y, occurred(action(undercut, Vendor, Other, null, null, null)).
 
-update(Other,likes,Vendor,-1) :- not is(Other,likes,Vendor,_), occurred(action(undercut, Vendor, Other, null, null, null)).
+update(Other,likes,Vendor,Y) :- is(Other,likes,Vendor,X), X - 1 = Y, occurred(action(undercut, Vendor, Other, null, null, null)).
 
 is(undercut, work).
 
@@ -1730,15 +1730,15 @@ visibility(undercut,0).
 
 action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null):-
 		person(Vendor),person(OtherVendor),person(Enforcer),event(null),location(null),
-		at(Enforcer,Location),
-		is(Vendor,vendor,RoleLocation),
-		at(OtherVendor,Location),
-		is(Vendor,fears,Enforcer,V_Vendor_fears_Enforcer), V_Vendor_fears_Enforcer >= 6,
 		at(OtherVendor,RoleLocation),
-		at(Vendor,Location),
-		at(Vendor,RoleLocation),
+		is(Vendor,vendor,RoleLocation),
 		is(OtherVendor,vendor,RoleLocation),
+		is(Vendor,fears,Enforcer,V_Vendor_fears_Enforcer), V_Vendor_fears_Enforcer >= 6,
+		at(Vendor,Location),
+		at(OtherVendor,Location),
 		is(OtherVendor,fears,Enforcer,V_OtherVendor_fears_Enforcer), V_OtherVendor_fears_Enforcer >= 6,
+		at(Enforcer,Location),
+		at(Vendor,RoleLocation),
 		Vendor != OtherVendor,
 		Vendor != Enforcer,
 		OtherVendor != Enforcer,
@@ -1746,31 +1746,31 @@ action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null):
 		OtherVendor != null,
 		Enforcer != null.
 
-hashed(standup_to_enforcer_together,560471647).
-
-update(Enforcer,likes,Vendor,-3) :- not is(Enforcer,likes,Vendor,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
-
-update(Vendor,fears,Enforcer,-3) :- not is(Vendor,fears,Enforcer,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+hashed(standup_to_enforcer_together,2619926108).
 
 update(OtherVendor,fears,Enforcer,Y) :- is(OtherVendor,fears,Enforcer,X), X - 3 = Y, occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
 
+update(Vendor,fears,Enforcer,-3) :- not is(Vendor,fears,Enforcer,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
 update(Enforcer,likes,OtherVendor,-3) :- not is(Enforcer,likes,OtherVendor,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
-
-update(Vendor,fears,Enforcer,Y) :- is(Vendor,fears,Enforcer,X), X - 3 = Y, occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
-
-update(Enforcer,likes,OtherVendor,Y) :- is(Enforcer,likes,OtherVendor,X), X - 3 = Y, occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
-
-update(Vendor,likes,OtherVendor,5) :- not is(Vendor,likes,OtherVendor,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
-
-update(Vendor,likes,OtherVendor,Y) :- is(Vendor,likes,OtherVendor,X), X + 5 = Y,occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
-
-update(Enforcer,likes,Vendor,Y) :- is(Enforcer,likes,Vendor,X), X - 3 = Y, occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
-
-update(OtherVendor,fears,Enforcer,-3) :- not is(OtherVendor,fears,Enforcer,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
 
 update(OtherVendor,likes,Vendor,Y) :- is(OtherVendor,likes,Vendor,X), X + 5 = Y,occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
 
+update(OtherVendor,fears,Enforcer,-3) :- not is(OtherVendor,fears,Enforcer,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
+update(Enforcer,likes,Vendor,-3) :- not is(Enforcer,likes,Vendor,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
+update(Vendor,likes,OtherVendor,Y) :- is(Vendor,likes,OtherVendor,X), X + 5 = Y,occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
+update(Vendor,likes,OtherVendor,5) :- not is(Vendor,likes,OtherVendor,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
 update(OtherVendor,likes,Vendor,5) :- not is(OtherVendor,likes,Vendor,_), occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
+update(Enforcer,likes,OtherVendor,Y) :- is(Enforcer,likes,OtherVendor,X), X - 3 = Y, occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
+update(Enforcer,likes,Vendor,Y) :- is(Enforcer,likes,Vendor,X), X - 3 = Y, occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
+
+update(Vendor,fears,Enforcer,Y) :- is(Vendor,fears,Enforcer,X), X - 3 = Y, occurred(action(standup_to_enforcer_together, Vendor, OtherVendor, Enforcer, null, null)).
 
 is(standup_to_enforcer_together, work).
 
@@ -1782,21 +1782,21 @@ visibility(standup_to_enforcer_together,0).
 
 action(collect_protection_fees, Enforcer, Vendor, null, null, null):-
 		person(Enforcer),person(Vendor),person(null),event(null),location(null),
-		at(Enforcer,Location),
-		is(Vendor,vendor,RoleLocation),
 		at(Enforcer,RoleLocation),
-		at(Vendor,RoleLocation),
+		is(Vendor,vendor,RoleLocation),
 		at(Vendor,Location),
+		at(Enforcer,Location),
 		is(Enforcer,enforcer,RoleLocation),
+		at(Vendor,RoleLocation),
 		Enforcer != Vendor,
 		Enforcer != null,
 		Vendor != null.
 
-hashed(collect_protection_fees,79564020).
-
-update(Vendor,likes,Enforcer,Y) :- is(Vendor,likes,Enforcer,X), X - 1 = Y, occurred(action(collect_protection_fees, Enforcer, Vendor, null, null, null)).
+hashed(collect_protection_fees,1394894422).
 
 update(Vendor,likes,Enforcer,-1) :- not is(Vendor,likes,Enforcer,_), occurred(action(collect_protection_fees, Enforcer, Vendor, null, null, null)).
+
+update(Vendor,likes,Enforcer,Y) :- is(Vendor,likes,Enforcer,X), X - 1 = Y, occurred(action(collect_protection_fees, Enforcer, Vendor, null, null, null)).
 
 is(collect_protection_fees, work).
 
@@ -1812,25 +1812,25 @@ visibility(collect_protection_fees,0).
 
 action(rough_up, Enforcer, Vendor, null, null, null):-
 		person(Enforcer),person(Vendor),person(null),event(null),location(null),
-		at(Enforcer,Location),
-		is(Vendor,vendor,RoleLocation),
 		at(Enforcer,RoleLocation),
-		at(Vendor,RoleLocation),
+		is(Vendor,vendor,RoleLocation),
 		at(Vendor,Location),
+		at(Enforcer,Location),
 		is(Enforcer,enforcer,RoleLocation),
+		at(Vendor,RoleLocation),
 		Enforcer != Vendor,
 		Enforcer != null,
 		Vendor != null.
 
-hashed(rough_up,1628287899).
-
-update(Vendor,fears,Enforcer,2) :- not is(Vendor,fears,Enforcer,_), occurred(action(rough_up, Enforcer, Vendor, null, null, null)).
+hashed(rough_up,1497457605).
 
 update(Vendor,fears,Enforcer,Y) :- is(Vendor,fears,Enforcer,X), X + 2 = Y, occurred(action(rough_up, Enforcer, Vendor, null, null, null)).
 
-update(Vendor,likes,Enforcer,-2) :- not is(Vendor,likes,Enforcer,_), occurred(action(rough_up, Enforcer, Vendor, null, null, null)).
+update(Vendor,fears,Enforcer,2) :- not is(Vendor,fears,Enforcer,_), occurred(action(rough_up, Enforcer, Vendor, null, null, null)).
 
 update(Vendor,likes,Enforcer,Y) :- is(Vendor,likes,Enforcer,X), X - 2 = Y, occurred(action(rough_up, Enforcer, Vendor, null, null, null)).
+
+update(Vendor,likes,Enforcer,-2) :- not is(Vendor,likes,Enforcer,_), occurred(action(rough_up, Enforcer, Vendor, null, null, null)).
 
 is(rough_up, work).
 
@@ -1846,16 +1846,16 @@ visibility(rough_up,0).
 
 action(load_cargo, Dockworker, null, null, null, null):-
 		person(Dockworker),person(null),person(null),event(null),location(null),
-		at(Dockworker,RoleLocation),
-		is(Dockworker,dockworker,RoleLocation),
 		at(Dockworker,Location),
+		is(Dockworker,dockworker,RoleLocation),
+		at(Dockworker,RoleLocation),
 		Dockworker != null.
 
-hashed(load_cargo,2347310783).
-
-update(Dockworker,tiredness,1) :- not is(Dockworker,tiredness,_), occurred(action(load_cargo, Dockworker, null, null, null, null)).
+hashed(load_cargo,934599516).
 
 update(Dockworker,tiredness,Y) :- is(Dockworker,tiredness,X), X + 1 = Y, occurred(action(load_cargo, Dockworker, null, null, null, null)).
+
+update(Dockworker,tiredness,1) :- not is(Dockworker,tiredness,_), occurred(action(load_cargo, Dockworker, null, null, null, null)).
 
 is(load_cargo, work).
 
@@ -1865,12 +1865,12 @@ visibility(load_cargo,0).
 
 action(fight_seagull, Dockworker, null, null, null, null):-
 		person(Dockworker),person(null),person(null),event(null),location(null),
-		at(Dockworker,RoleLocation),
-		is(Dockworker,dockworker,RoleLocation),
 		at(Dockworker,Location),
+		is(Dockworker,dockworker,RoleLocation),
+		at(Dockworker,RoleLocation),
 		Dockworker != null.
 
-hashed(fight_seagull,1993617866).
+hashed(fight_seagull,3648697197).
 
 update(Dockworker,anger,Y) :- is(Dockworker,anger,X), X + 1 = Y, occurred(action(fight_seagull, Dockworker, null, null, null, null)).
 
@@ -1886,16 +1886,16 @@ visibility(fight_seagull,0).
 
 action(stock_books, Librarian, null, null, null, null):-
 		person(Librarian),person(null),person(null),event(null),location(null),
-		is(Librarian,librarian,RoleLocation),
-		at(Librarian,RoleLocation),
 		at(Librarian,Location),
+		at(Librarian,RoleLocation),
+		is(Librarian,librarian,RoleLocation),
 		Librarian != null.
 
-hashed(stock_books,1545851660).
-
-update(Librarian,tiredness,Y) :- is(Librarian,tiredness,X), X + 1 = Y, occurred(action(stock_books, Librarian, null, null, null, null)).
+hashed(stock_books,430638405).
 
 update(Librarian,tiredness,1) :- not is(Librarian,tiredness,_), occurred(action(stock_books, Librarian, null, null, null, null)).
+
+update(Librarian,tiredness,Y) :- is(Librarian,tiredness,X), X + 1 = Y, occurred(action(stock_books, Librarian, null, null, null, null)).
 
 is(stock_books, work).
 
@@ -1907,23 +1907,23 @@ visibility(stock_books,0).
 
 action(shush_patron, Librarian, Patron, null, null, null):-
 		person(Librarian),person(Patron),person(null),event(null),location(null),
-		at(Librarian,RoleLocation),
 		is(Librarian,librarian,RoleLocation),
-		is(Patron,guest,RoleLocation),
-		at(Patron,Location),
+		at(Librarian,RoleLocation),
 		at(Patron,RoleLocation),
+		at(Patron,Location),
+		is(Patron,guest,RoleLocation),
 		at(Librarian,Location),
 		Librarian != Patron,
 		Librarian != null,
 		Patron != null.
 
-hashed(shush_patron,1837238394).
-
-update(Patron,shame,Y) :- is(Patron,shame,X), X + 1 = Y, occurred(action(shush_patron, Librarian, Patron, null, null, null)).
+hashed(shush_patron,4005426957).
 
 update(Patron,likes,Librarian,-1) :- not is(Patron,likes,Librarian,_), occurred(action(shush_patron, Librarian, Patron, null, null, null)).
 
 update(Patron,likes,Librarian,Y) :- is(Patron,likes,Librarian,X), X - 1 = Y, occurred(action(shush_patron, Librarian, Patron, null, null, null)).
+
+update(Patron,shame,Y) :- is(Patron,shame,X), X + 1 = Y, occurred(action(shush_patron, Librarian, Patron, null, null, null)).
 
 update(Patron,shame,1) :- not is(Patron,shame,_), occurred(action(shush_patron, Librarian, Patron, null, null, null)).
 
@@ -1939,29 +1939,29 @@ visibility(shush_patron,0).
 
 action(assist_research, Librarian, Researcher, null, null, null):-
 		person(Librarian),person(Researcher),person(null),event(null),location(null),
-		at(Librarian,RoleLocation),
-		at(Researcher,RoleLocation),
 		is(Researcher,researcher,RoleLocation),
 		is(Librarian,librarian,RoleLocation),
 		at(Researcher,Location),
+		at(Librarian,RoleLocation),
 		at(Librarian,Location),
+		at(Researcher,RoleLocation),
 		Librarian != Researcher,
 		Librarian != null,
 		Researcher != null.
 
-hashed(assist_research,1793780394).
-
-update(Researcher,likes,Librarian,1) :- not is(Researcher,likes,Librarian,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
-
-update(Librarian,self_worth,Y) :- is(Librarian,self_worth,X), X + 1 = Y, occurred(action(assist_research, Librarian, Researcher, null, null, null)).
-
-update(Librarian,self_worth,1) :- not is(Librarian,self_worth,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+hashed(assist_research,1794877657).
 
 update(Researcher,likes,Librarian,Y) :- is(Researcher,likes,Librarian,X), X + 1 = Y,occurred(action(assist_research, Librarian, Researcher, null, null, null)).
 
-update(Librarian,likes,Researcher,Y) :- is(Librarian,likes,Researcher,X), X + 1 = Y,occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+update(Researcher,likes,Librarian,1) :- not is(Researcher,likes,Librarian,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
 
 update(Librarian,likes,Researcher,1) :- not is(Librarian,likes,Researcher,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+
+update(Librarian,self_worth,Y) :- is(Librarian,self_worth,X), X + 1 = Y, occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+
+update(Librarian,likes,Researcher,Y) :- is(Librarian,likes,Researcher,X), X + 1 = Y,occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+
+update(Librarian,self_worth,1) :- not is(Librarian,self_worth,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
 
 is(assist_research, work).
 
@@ -1973,30 +1973,30 @@ visibility(assist_research,0).
 
 action(assist_research, Librarian, Researcher, null, null, null):-
 		person(Librarian),person(Researcher),person(null),event(null),location(null),
-		at(Librarian,RoleLocation),
-		is(Researcher,guest,RoleLocation),
-		at(Researcher,RoleLocation),
 		is(Librarian,librarian,RoleLocation),
+		is(Researcher,guest,RoleLocation),
 		at(Researcher,Location),
+		at(Librarian,RoleLocation),
 		is(Researcher, scholar),
 		at(Librarian,Location),
+		at(Researcher,RoleLocation),
 		Librarian != Researcher,
 		Librarian != null,
 		Researcher != null.
 
-hashed(assist_research,1793780394).
-
-update(Researcher,likes,Librarian,1) :- not is(Researcher,likes,Librarian,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
-
-update(Librarian,self_worth,Y) :- is(Librarian,self_worth,X), X + 1 = Y, occurred(action(assist_research, Librarian, Researcher, null, null, null)).
-
-update(Librarian,self_worth,1) :- not is(Librarian,self_worth,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+hashed(assist_research,1794877657).
 
 update(Researcher,likes,Librarian,Y) :- is(Researcher,likes,Librarian,X), X + 1 = Y,occurred(action(assist_research, Librarian, Researcher, null, null, null)).
 
-update(Librarian,likes,Researcher,Y) :- is(Librarian,likes,Researcher,X), X + 1 = Y,occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+update(Researcher,likes,Librarian,1) :- not is(Researcher,likes,Librarian,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
 
 update(Librarian,likes,Researcher,1) :- not is(Librarian,likes,Researcher,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+
+update(Librarian,self_worth,Y) :- is(Librarian,self_worth,X), X + 1 = Y, occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+
+update(Librarian,likes,Researcher,Y) :- is(Librarian,likes,Researcher,X), X + 1 = Y,occurred(action(assist_research, Librarian, Researcher, null, null, null)).
+
+update(Librarian,self_worth,1) :- not is(Librarian,self_worth,_), occurred(action(assist_research, Librarian, Researcher, null, null, null)).
 
 is(assist_research, work).
 
@@ -2008,29 +2008,29 @@ visibility(assist_research,0).
 
 action(assist_student, Librarian, Researcher, null, null, null):-
 		person(Librarian),person(Researcher),person(null),event(null),location(null),
-		at(Librarian,RoleLocation),
-		at(Researcher,RoleLocation),
-		is(Librarian,librarian,RoleLocation),
 		is(Researcher,student,RoleLocation),
+		is(Librarian,librarian,RoleLocation),
 		at(Researcher,Location),
+		at(Librarian,RoleLocation),
 		at(Librarian,Location),
+		at(Researcher,RoleLocation),
 		Librarian != Researcher,
 		Librarian != null,
 		Researcher != null.
 
-hashed(assist_student,1637575808).
-
-update(Researcher,likes,Librarian,1) :- not is(Researcher,likes,Librarian,_), occurred(action(assist_student, Librarian, Researcher, null, null, null)).
-
-update(Librarian,self_worth,Y) :- is(Librarian,self_worth,X), X + 1 = Y, occurred(action(assist_student, Librarian, Researcher, null, null, null)).
-
-update(Librarian,self_worth,1) :- not is(Librarian,self_worth,_), occurred(action(assist_student, Librarian, Researcher, null, null, null)).
+hashed(assist_student,819734745).
 
 update(Researcher,likes,Librarian,Y) :- is(Researcher,likes,Librarian,X), X + 1 = Y,occurred(action(assist_student, Librarian, Researcher, null, null, null)).
 
-update(Librarian,likes,Researcher,Y) :- is(Librarian,likes,Researcher,X), X + 1 = Y,occurred(action(assist_student, Librarian, Researcher, null, null, null)).
+update(Researcher,likes,Librarian,1) :- not is(Researcher,likes,Librarian,_), occurred(action(assist_student, Librarian, Researcher, null, null, null)).
 
 update(Librarian,likes,Researcher,1) :- not is(Librarian,likes,Researcher,_), occurred(action(assist_student, Librarian, Researcher, null, null, null)).
+
+update(Librarian,self_worth,Y) :- is(Librarian,self_worth,X), X + 1 = Y, occurred(action(assist_student, Librarian, Researcher, null, null, null)).
+
+update(Librarian,likes,Researcher,Y) :- is(Librarian,likes,Researcher,X), X + 1 = Y,occurred(action(assist_student, Librarian, Researcher, null, null, null)).
+
+update(Librarian,self_worth,1) :- not is(Librarian,self_worth,_), occurred(action(assist_student, Librarian, Researcher, null, null, null)).
 
 is(assist_student, work).
 
@@ -2042,24 +2042,24 @@ visibility(assist_student,0).
 
 action(acquire_ingredients, Chef, ShopOwner, null, null, null):-
 		person(Chef),person(ShopOwner),person(null),event(null),location(null),
-		is(ShopOwner,vendor,RoleLocation),
-		is(Chef, chef),
-		at(Chef,Location),
 		at(ShopOwner,RoleLocation),
+		at(Chef,Location),
+		is(Chef, chef),
 		at(ShopOwner,Location),
+		is(ShopOwner,vendor,RoleLocation),
 		Chef != ShopOwner,
 		Chef != null,
 		ShopOwner != null.
 
-hashed(acquire_ingredients,1415760881).
-
-update(Chef,likes,ShopOwner,1) :- not is(Chef,likes,ShopOwner,_), occurred(action(acquire_ingredients, Chef, ShopOwner, null, null, null)).
+hashed(acquire_ingredients,3952129404).
 
 update(Chef,likes,ShopOwner,Y) :- is(Chef,likes,ShopOwner,X), X + 1 = Y,occurred(action(acquire_ingredients, Chef, ShopOwner, null, null, null)).
 
 update(ShopOwner,likes,Chef,Y) :- is(ShopOwner,likes,Chef,X), X + 1 = Y,occurred(action(acquire_ingredients, Chef, ShopOwner, null, null, null)).
 
 update(ShopOwner,likes,Chef,1) :- not is(ShopOwner,likes,Chef,_), occurred(action(acquire_ingredients, Chef, ShopOwner, null, null, null)).
+
+update(Chef,likes,ShopOwner,1) :- not is(Chef,likes,ShopOwner,_), occurred(action(acquire_ingredients, Chef, ShopOwner, null, null, null)).
 
 is(acquire_ingredients, work).
 
@@ -2070,11 +2070,11 @@ visibility(acquire_ingredients,0).
 action(develop_recipe, Chef, null, null, null, null):-
 		person(Chef),person(null),person(null),event(null),location(null),
 		at(Chef,RoleLocation),
-		at(Chef,Location),
 		is(Chef,chef,RoleLocation),
+		at(Chef,Location),
 		Chef != null.
 
-hashed(develop_recipe,159477229).
+hashed(develop_recipe,334246509).
 
 update(Chef,self_worth,Y) :- is(Chef,self_worth,X), X + 1 = Y, occurred(action(develop_recipe, Chef, null, null, null, null)).
 
@@ -2088,17 +2088,17 @@ visibility(develop_recipe,0).
 
 action(boss_cooks_around, Chef, Cook, null, null, null):-
 		person(Chef),person(Cook),person(null),event(null),location(null),
-		at(Chef,Location),
-		is(Chef,chef,RoleLocation),
 		is(Cook,worker,RoleLocation),
-		at(Cook,Location),
-		at(Chef,RoleLocation),
+		at(Chef,Location),
 		at(Cook,RoleLocation),
+		at(Chef,RoleLocation),
+		is(Chef,chef,RoleLocation),
+		at(Cook,Location),
 		Chef != Cook,
 		Chef != null,
 		Cook != null.
 
-hashed(boss_cooks_around,2620117546).
+hashed(boss_cooks_around,905970021).
 
 update(Cook,likes,Chef,Y) :- is(Cook,likes,Chef,X), X - 1 = Y, occurred(action(boss_cooks_around, Chef, Cook, null, null, null)).
 
@@ -2114,17 +2114,17 @@ visibility(boss_cooks_around,0).
 
 action(mentor_cook, Chef, Cook, null, null, null):-
 		person(Chef),person(Cook),person(null),event(null),location(null),
-		at(Chef,Location),
-		is(Chef,chef,RoleLocation),
 		is(Cook,worker,RoleLocation),
-		at(Cook,Location),
-		at(Chef,RoleLocation),
+		at(Chef,Location),
 		at(Cook,RoleLocation),
+		at(Chef,RoleLocation),
+		is(Chef,chef,RoleLocation),
+		at(Cook,Location),
 		Chef != Cook,
 		Chef != null,
 		Cook != null.
 
-hashed(mentor_cook,1903836185).
+hashed(mentor_cook,3005406443).
 
 update(Cook,likes,Chef,Y) :- is(Cook,likes,Chef,X), X + 1 = Y, occurred(action(mentor_cook, Chef, Cook, null, null, null)).
 
@@ -2140,19 +2140,19 @@ visibility(mentor_cook,0).
 
 action(create_culinary_masterpiece, Chef, Guest, null, null, null):-
 		person(Chef),person(Guest),person(null),event(null),location(null),
-		at(Chef,Location),
-		is(Chef,chef,RoleLocation),
 		at(Guest,Location),
-		is(Guest,guest,RoleLocation),
+		at(Chef,Location),
 		at(Guest,RoleLocation),
 		at(Chef,RoleLocation),
+		is(Chef,chef,RoleLocation),
+		is(Guest,guest,RoleLocation),
 		Chef != Guest,
 		Chef != null,
 		Guest != null.
 
-hashed(create_culinary_masterpiece,2905312114).
+hashed(create_culinary_masterpiece,3414465482).
 
-update(Guest,respects,Chef,3) :- not is(Guest,respects,Chef,_), occurred(action(create_culinary_masterpiece, Chef, Guest, null, null, null)).
+update(Guest,respects,Chef,Y) :- is(Guest,respects,Chef,X), X + 3 = Y, occurred(action(create_culinary_masterpiece, Chef, Guest, null, null, null)).
 
 update(Guest,happiness,Y) :- is(Guest,happiness,X), X + 2 = Y, occurred(action(create_culinary_masterpiece, Chef, Guest, null, null, null)).
 
@@ -2160,9 +2160,9 @@ update(Chef,self_worth,2) :- not is(Chef,self_worth,_), occurred(action(create_c
 
 update(Guest,happiness,2) :- not is(Guest,happiness,_), occurred(action(create_culinary_masterpiece, Chef, Guest, null, null, null)).
 
-update(Guest,respects,Chef,Y) :- is(Guest,respects,Chef,X), X + 3 = Y, occurred(action(create_culinary_masterpiece, Chef, Guest, null, null, null)).
-
 update(Chef,self_worth,Y) :- is(Chef,self_worth,X), X + 2 = Y, occurred(action(create_culinary_masterpiece, Chef, Guest, null, null, null)).
+
+update(Guest,respects,Chef,3) :- not is(Guest,respects,Chef,_), occurred(action(create_culinary_masterpiece, Chef, Guest, null, null, null)).
 
 is(create_culinary_masterpiece, work).
 
@@ -2174,9 +2174,9 @@ visibility(create_culinary_masterpiece,0).
 
 action(bitch_about_boss, Worker, Coworker, Boss, null, null):-
 		person(Worker),person(Coworker),person(Boss),event(null),location(null),
+		at(Worker,Location_0),
 		is(Worker,coworker,Coworker),
 		at(Coworker,Location_0),
-		at(Worker,Location_0),
 		is(Worker,employee,Boss),
 		Worker != Coworker,
 		Worker != Boss,
@@ -2185,19 +2185,19 @@ action(bitch_about_boss, Worker, Coworker, Boss, null, null):-
 		Coworker != null,
 		Boss != null.
 
-hashed(bitch_about_boss,953238720).
-
-update(Worker,likes,Coworker,1) :- not is(Worker,likes,Coworker,_), occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
-
-update(Coworker,likes,Boss,-1) :- not is(Coworker,likes,Boss,_), occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
-
-update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X + 1 = Y,occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
-
-update(Coworker,likes,Boss,Y) :- is(Coworker,likes,Boss,X), X - 1 = Y, occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
+hashed(bitch_about_boss,2876330022).
 
 update(Coworker,likes,Worker,1) :- not is(Coworker,likes,Worker,_), occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
 
+update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X + 1 = Y,occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
+
+update(Worker,likes,Coworker,1) :- not is(Worker,likes,Coworker,_), occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
+
 update(Worker,likes,Coworker,Y) :- is(Worker,likes,Coworker,X), X + 1 = Y,occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
+
+update(Coworker,likes,Boss,Y) :- is(Coworker,likes,Boss,X), X - 1 = Y, occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
+
+update(Coworker,likes,Boss,-1) :- not is(Coworker,likes,Boss,_), occurred(action(bitch_about_boss, Worker, Coworker, Boss, null, null)).
 
 is(bitch_about_boss, work).
 
@@ -2209,11 +2209,11 @@ visibility(bitch_about_boss,0).
 
 action(bitch_about_boss_to_resistance, Worker, Coworker, Boss, null, null):-
 		person(Worker),person(Coworker),person(Boss),event(null),location(null),
-		is(Worker,employee,Boss),
+		is(Coworker,likes,Boss,V_Coworker_likes_Boss), V_Coworker_likes_Boss >= 3,
 		at(Coworker,Location_0),
 		at(Worker,Location_0),
 		is(Worker,coworker,Coworker),
-		is(Coworker,likes,Boss,V_Coworker_likes_Boss), V_Coworker_likes_Boss >= 3,
+		is(Worker,employee,Boss),
 		Worker != Coworker,
 		Worker != Boss,
 		Coworker != Boss,
@@ -2221,15 +2221,15 @@ action(bitch_about_boss_to_resistance, Worker, Coworker, Boss, null, null):-
 		Coworker != null,
 		Boss != null.
 
-hashed(bitch_about_boss_to_resistance,1420029110).
+hashed(bitch_about_boss_to_resistance,2597368744).
 
 update(Worker,likes,Coworker,-1) :- not is(Worker,likes,Coworker,_), occurred(action(bitch_about_boss_to_resistance, Worker, Coworker, Boss, null, null)).
+
+update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X - 1 = Y,occurred(action(bitch_about_boss_to_resistance, Worker, Coworker, Boss, null, null)).
 
 update(Worker,likes,Coworker,Y) :- is(Worker,likes,Coworker,X), X - 1 = Y,occurred(action(bitch_about_boss_to_resistance, Worker, Coworker, Boss, null, null)).
 
 update(Coworker,likes,Worker,-1) :- not is(Coworker,likes,Worker,_), occurred(action(bitch_about_boss_to_resistance, Worker, Coworker, Boss, null, null)).
-
-update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X - 1 = Y,occurred(action(bitch_about_boss_to_resistance, Worker, Coworker, Boss, null, null)).
 
 is(bitch_about_boss_to_resistance, work).
 
@@ -2243,11 +2243,11 @@ visibility(bitch_about_boss_to_resistance,0).
 
 action(praise_boss, Worker, Coworker, Boss, null, null):-
 		person(Worker),person(Coworker),person(Boss),event(null),location(null),
-		is(Worker,employee,Boss),
 		at(Coworker,Location_0),
 		at(Worker,Location_0),
-		is(Worker,coworker,Coworker),
 		is(Worker,likes,Boss,V_Worker_likes_Boss), V_Worker_likes_Boss >= 3,
+		is(Worker,coworker,Coworker),
+		is(Worker,employee,Boss),
 		Worker != Coworker,
 		Worker != Boss,
 		Coworker != Boss,
@@ -2255,17 +2255,17 @@ action(praise_boss, Worker, Coworker, Boss, null, null):-
 		Coworker != null,
 		Boss != null.
 
-hashed(praise_boss,3017362540).
+hashed(praise_boss,1190802252).
 
-update(Worker,likes,Coworker,1) :- not is(Worker,likes,Coworker,_), occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
+update(Coworker,likes,Worker,1) :- not is(Coworker,likes,Worker,_), occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
+
+update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X + 1 = Y,occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
 
 update(Coworker,likes,Boss,1) :- not is(Coworker,likes,Boss,_), occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
 
 update(Coworker,likes,Boss,Y) :- is(Coworker,likes,Boss,X), X + 1 = Y, occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
 
-update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X + 1 = Y,occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
-
-update(Coworker,likes,Worker,1) :- not is(Coworker,likes,Worker,_), occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
+update(Worker,likes,Coworker,1) :- not is(Worker,likes,Coworker,_), occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
 
 update(Worker,likes,Coworker,Y) :- is(Worker,likes,Coworker,X), X + 1 = Y,occurred(action(praise_boss, Worker, Coworker, Boss, null, null)).
 
@@ -2279,12 +2279,12 @@ visibility(praise_boss,0).
 
 action(praise_boss_to_resistance, Worker, Coworker, Boss, null, null):-
 		person(Worker),person(Coworker),person(Boss),event(null),location(null),
-		is(Worker,employee,Boss),
 		at(Coworker,Location_0),
-		at(Worker,Location_0),
-		is(Worker,coworker,Coworker),
-		is(Worker,likes,Boss,V_Worker_likes_Boss), V_Worker_likes_Boss >= 3,
 		is(Coworker,likes,Boss,V_Coworker_likes_Boss), V_Coworker_likes_Boss <= -1,
+		at(Worker,Location_0),
+		is(Worker,likes,Boss,V_Worker_likes_Boss), V_Worker_likes_Boss >= 3,
+		is(Worker,coworker,Coworker),
+		is(Worker,employee,Boss),
 		Worker != Coworker,
 		Worker != Boss,
 		Coworker != Boss,
@@ -2292,15 +2292,15 @@ action(praise_boss_to_resistance, Worker, Coworker, Boss, null, null):-
 		Coworker != null,
 		Boss != null.
 
-hashed(praise_boss_to_resistance,2238819797).
+hashed(praise_boss_to_resistance,2244024625).
 
 update(Worker,likes,Coworker,-1) :- not is(Worker,likes,Coworker,_), occurred(action(praise_boss_to_resistance, Worker, Coworker, Boss, null, null)).
+
+update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X - 1 = Y,occurred(action(praise_boss_to_resistance, Worker, Coworker, Boss, null, null)).
 
 update(Worker,likes,Coworker,Y) :- is(Worker,likes,Coworker,X), X - 1 = Y,occurred(action(praise_boss_to_resistance, Worker, Coworker, Boss, null, null)).
 
 update(Coworker,likes,Worker,-1) :- not is(Coworker,likes,Worker,_), occurred(action(praise_boss_to_resistance, Worker, Coworker, Boss, null, null)).
-
-update(Coworker,likes,Worker,Y) :- is(Coworker,likes,Worker,X), X - 1 = Y,occurred(action(praise_boss_to_resistance, Worker, Coworker, Boss, null, null)).
 
 is(praise_boss_to_resistance, work).
 
@@ -2312,12 +2312,12 @@ visibility(praise_boss_to_resistance,0).
 
 action(search_for_treasure, TreasureHunter, null, null, null, null):-
 		person(TreasureHunter),person(null),person(null),event(null),location(null),
-		is(TreasureHunter,treasure_hunter,RoleLocation),
 		at(TreasureHunter,Location),
 		at(TreasureHunter,RoleLocation),
+		is(TreasureHunter,treasure_hunter,RoleLocation),
 		TreasureHunter != null.
 
-hashed(search_for_treasure,2224616716).
+hashed(search_for_treasure,1486179656).
 
 update(TreasureHunter,tiredness,1) :- not is(TreasureHunter,tiredness,_), occurred(action(search_for_treasure, TreasureHunter, null, null, null, null)).
 
@@ -2335,18 +2335,18 @@ visibility(search_for_treasure,0).
 
 action(find_treasure, TreasureHunter, null, null, null, null):-
 		person(TreasureHunter),person(null),person(null),event(null),location(null),
-		is(TreasureHunter,treasure_hunter,RoleLocation),
 		at(TreasureHunter,Location),
 		at(TreasureHunter,RoleLocation),
+		is(TreasureHunter,treasure_hunter,RoleLocation),
 		TreasureHunter != null.
 
-hashed(find_treasure,3832620581).
-
-add(TreasureHunter, rich) :- occurred(action(find_treasure, TreasureHunter, null, null, null, null)).
+hashed(find_treasure,2049533213).
 
 update(TreasureHunter,self_worth,5) :- not is(TreasureHunter,self_worth,_), occurred(action(find_treasure, TreasureHunter, null, null, null, null)).
 
 update(TreasureHunter,self_worth,Y) :- is(TreasureHunter,self_worth,X), X + 5 = Y, occurred(action(find_treasure, TreasureHunter, null, null, null, null)).
+
+add(TreasureHunter, rich) :- occurred(action(find_treasure, TreasureHunter, null, null, null, null)).
 
 is(find_treasure, work).
 
@@ -2362,12 +2362,12 @@ visibility(find_treasure,0).
 
 action(investigate_ruins, TreasureHunter, null, null, null, null):-
 		person(TreasureHunter),person(null),person(null),event(null),location(null),
-		is(TreasureHunter,treasure_hunter,RoleLocation),
 		at(TreasureHunter,Location),
 		at(TreasureHunter,RoleLocation),
+		is(TreasureHunter,treasure_hunter,RoleLocation),
 		TreasureHunter != null.
 
-hashed(investigate_ruins,1953297998).
+hashed(investigate_ruins,360593515).
 
 is(investigate_ruins, work).
 
@@ -2381,16 +2381,16 @@ visibility(investigate_ruins,0).
 
 action(trigger_trap, TreasureHunter, null, null, null, null):-
 		person(TreasureHunter),person(null),person(null),event(null),location(null),
-		is(TreasureHunter,treasure_hunter,RoleLocation),
 		at(TreasureHunter,Location),
 		at(TreasureHunter,RoleLocation),
+		is(TreasureHunter,treasure_hunter,RoleLocation),
 		TreasureHunter != null.
 
-hashed(trigger_trap,673406268).
-
-update(TreasureHunter,self_worth,-1) :- not is(TreasureHunter,self_worth,_), occurred(action(trigger_trap, TreasureHunter, null, null, null, null)).
+hashed(trigger_trap,3999605714).
 
 update(TreasureHunter,self_worth,Y) :- is(TreasureHunter,self_worth,X), X - 1 = Y, occurred(action(trigger_trap, TreasureHunter, null, null, null, null)).
+
+update(TreasureHunter,self_worth,-1) :- not is(TreasureHunter,self_worth,_), occurred(action(trigger_trap, TreasureHunter, null, null, null, null)).
 
 is(trigger_trap, work).
 
@@ -2402,26 +2402,26 @@ visibility(trigger_trap,0).
 
 action(sabotage_rival_treasure_hunter, TreasureHunter, OtherTH, null, null, null):-
 		person(TreasureHunter),person(OtherTH),person(null),event(null),location(null),
+		at(TreasureHunter,Location),
+		at(OtherTH,Location),
+		is(TreasureHunter,rival,OtherTH),
+		at(TreasureHunter,RoleLocation),
+		is(TreasureHunter,treasure_hunter,RoleLocation),
 		at(OtherTH,RoleLocation),
 		is(OtherTH,treasure_hunter,RoleLocation),
-		is(TreasureHunter,treasure_hunter,RoleLocation),
-		at(TreasureHunter,RoleLocation),
-		at(TreasureHunter,Location),
-		is(TreasureHunter,rival,OtherTH),
-		at(OtherTH,Location),
 		TreasureHunter != OtherTH,
 		TreasureHunter != null,
 		OtherTH != null.
 
-hashed(sabotage_rival_treasure_hunter,4226303219).
+hashed(sabotage_rival_treasure_hunter,699250748).
+
+update(OtherTH,respects,TreasureHunter,Y) :- is(OtherTH,respects,TreasureHunter,X), X + 1 = Y, occurred(action(sabotage_rival_treasure_hunter, TreasureHunter, OtherTH, null, null, null)).
 
 update(OtherTH,likes,TreasureHunter,-1) :- not is(OtherTH,likes,TreasureHunter,_), occurred(action(sabotage_rival_treasure_hunter, TreasureHunter, OtherTH, null, null, null)).
 
 update(OtherTH,likes,TreasureHunter,Y) :- is(OtherTH,likes,TreasureHunter,X), X - 1 = Y, occurred(action(sabotage_rival_treasure_hunter, TreasureHunter, OtherTH, null, null, null)).
 
 update(OtherTH,respects,TreasureHunter,1) :- not is(OtherTH,respects,TreasureHunter,_), occurred(action(sabotage_rival_treasure_hunter, TreasureHunter, OtherTH, null, null, null)).
-
-update(OtherTH,respects,TreasureHunter,Y) :- is(OtherTH,respects,TreasureHunter,X), X + 1 = Y, occurred(action(sabotage_rival_treasure_hunter, TreasureHunter, OtherTH, null, null, null)).
 
 is(sabotage_rival_treasure_hunter, work).
 
@@ -2435,24 +2435,24 @@ visibility(sabotage_rival_treasure_hunter,0).
 
 action(overcome_rivalry_to_work_together, TreasureHunter, OtherTH, null, null, null):-
 		person(TreasureHunter),person(OtherTH),person(null),event(null),location(null),
+		at(TreasureHunter,Location),
+		at(OtherTH,Location),
+		is(TreasureHunter,rival,OtherTH),
+		at(TreasureHunter,RoleLocation),
+		is(TreasureHunter,treasure_hunter,RoleLocation),
 		at(OtherTH,RoleLocation),
 		is(OtherTH,treasure_hunter,RoleLocation),
-		is(TreasureHunter,treasure_hunter,RoleLocation),
-		at(TreasureHunter,RoleLocation),
-		at(TreasureHunter,Location),
-		is(TreasureHunter,rival,OtherTH),
-		at(OtherTH,Location),
 		TreasureHunter != OtherTH,
 		TreasureHunter != null,
 		OtherTH != null.
 
-hashed(overcome_rivalry_to_work_together,2749001725).
-
-update(OtherTH,likes,TreasureHunter,Y) :- is(OtherTH,likes,TreasureHunter,X), X + 1 = Y,occurred(action(overcome_rivalry_to_work_together, TreasureHunter, OtherTH, null, null, null)).
+hashed(overcome_rivalry_to_work_together,4275549355).
 
 update(TreasureHunter,likes,OtherTH,Y) :- is(TreasureHunter,likes,OtherTH,X), X + 1 = Y,occurred(action(overcome_rivalry_to_work_together, TreasureHunter, OtherTH, null, null, null)).
 
 update(OtherTH,likes,TreasureHunter,1) :- not is(OtherTH,likes,TreasureHunter,_), occurred(action(overcome_rivalry_to_work_together, TreasureHunter, OtherTH, null, null, null)).
+
+update(OtherTH,likes,TreasureHunter,Y) :- is(OtherTH,likes,TreasureHunter,X), X + 1 = Y,occurred(action(overcome_rivalry_to_work_together, TreasureHunter, OtherTH, null, null, null)).
 
 update(TreasureHunter,likes,OtherTH,1) :- not is(TreasureHunter,likes,OtherTH,_), occurred(action(overcome_rivalry_to_work_together, TreasureHunter, OtherTH, null, null, null)).
 
@@ -2468,12 +2468,12 @@ visibility(overcome_rivalry_to_work_together,0).
 
 action(investigate_ruins, Archaelogist, null, null, null, null):-
 		person(Archaelogist),person(null),person(null),event(null),location(null),
-		at(Archaelogist,RoleLocation),
 		is(Archaelogist,archaelogist,RoleLocation),
 		at(Archaelogist,Location),
+		at(Archaelogist,RoleLocation),
 		Archaelogist != null.
 
-hashed(investigate_ruins,1953297998).
+hashed(investigate_ruins,360593515).
 
 is(investigate_ruins, work).
 
@@ -2487,12 +2487,12 @@ visibility(investigate_ruins,0).
 
 action(catalog_findings, Archaelogist, null, null, null, null):-
 		person(Archaelogist),person(null),person(null),event(null),location(null),
-		at(Archaelogist,RoleLocation),
 		is(Archaelogist,archaelogist,RoleLocation),
 		at(Archaelogist,Location),
+		at(Archaelogist,RoleLocation),
 		Archaelogist != null.
 
-hashed(catalog_findings,1459076703).
+hashed(catalog_findings,3855040740).
 
 is(catalog_findings, work).
 
@@ -2506,26 +2506,26 @@ visibility(catalog_findings,0).
 
 action(argue_with_treasure_hunter, Archaelogist, TreasureHunter, null, null, null):-
 		person(Archaelogist),person(TreasureHunter),person(null),event(null),location(null),
-		is(Archaelogist,rival,TreasureHunter),
+		at(TreasureHunter,Location),
 		is(Archaelogist,archaelogist,RoleLocation),
 		at(Archaelogist,RoleLocation),
+		at(Archaelogist,Location),
 		at(TreasureHunter,RoleLocation),
 		is(TreasureHunter,treasure_hunter,RoleLocation),
-		at(TreasureHunter,Location),
-		at(Archaelogist,Location),
+		is(Archaelogist,rival,TreasureHunter),
 		Archaelogist != TreasureHunter,
 		Archaelogist != null,
 		TreasureHunter != null.
 
-hashed(argue_with_treasure_hunter,1085990299).
+hashed(argue_with_treasure_hunter,1432100951).
 
 update(Archaelogist,likes,TreasureHunter,-1) :- not is(Archaelogist,likes,TreasureHunter,_), occurred(action(argue_with_treasure_hunter, Archaelogist, TreasureHunter, null, null, null)).
-
-update(TreasureHunter,likes,Archaelogist,Y) :- is(TreasureHunter,likes,Archaelogist,X), X - 1 = Y,occurred(action(argue_with_treasure_hunter, Archaelogist, TreasureHunter, null, null, null)).
 
 update(Archaelogist,likes,TreasureHunter,Y) :- is(Archaelogist,likes,TreasureHunter,X), X - 1 = Y,occurred(action(argue_with_treasure_hunter, Archaelogist, TreasureHunter, null, null, null)).
 
 update(TreasureHunter,likes,Archaelogist,-1) :- not is(TreasureHunter,likes,Archaelogist,_), occurred(action(argue_with_treasure_hunter, Archaelogist, TreasureHunter, null, null, null)).
+
+update(TreasureHunter,likes,Archaelogist,Y) :- is(TreasureHunter,likes,Archaelogist,X), X - 1 = Y,occurred(action(argue_with_treasure_hunter, Archaelogist, TreasureHunter, null, null, null)).
 
 is(argue_with_treasure_hunter, talk).
 
@@ -2537,26 +2537,26 @@ visibility(argue_with_treasure_hunter,0).
 
 action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null):-
 		person(Archaelogist),person(TreasureHunter),person(null),event(null),location(null),
-		is(Archaelogist,rival,TreasureHunter),
+		at(TreasureHunter,Location),
 		is(Archaelogist,archaelogist,RoleLocation),
 		at(Archaelogist,RoleLocation),
+		at(Archaelogist,Location),
 		at(TreasureHunter,RoleLocation),
 		is(TreasureHunter,treasure_hunter,RoleLocation),
-		at(TreasureHunter,Location),
-		at(Archaelogist,Location),
+		is(Archaelogist,rival,TreasureHunter),
 		Archaelogist != TreasureHunter,
 		Archaelogist != null,
 		TreasureHunter != null.
 
-hashed(develop_begrudging_respect_towards,4021951524).
+hashed(develop_begrudging_respect_towards,3471319384).
 
-update(Archaelogist,likes,TreasureHunter,1) :- not is(Archaelogist,likes,TreasureHunter,_), occurred(action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null)).
+update(TreasureHunter,likes,Archaelogist,1) :- not is(TreasureHunter,likes,Archaelogist,_), occurred(action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null)).
 
 update(Archaelogist,likes,TreasureHunter,Y) :- is(Archaelogist,likes,TreasureHunter,X), X + 1 = Y,occurred(action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null)).
 
-update(TreasureHunter,likes,Archaelogist,Y) :- is(TreasureHunter,likes,Archaelogist,X), X + 1 = Y,occurred(action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null)).
+update(Archaelogist,likes,TreasureHunter,1) :- not is(Archaelogist,likes,TreasureHunter,_), occurred(action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null)).
 
-update(TreasureHunter,likes,Archaelogist,1) :- not is(TreasureHunter,likes,Archaelogist,_), occurred(action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null)).
+update(TreasureHunter,likes,Archaelogist,Y) :- is(TreasureHunter,likes,Archaelogist,X), X + 1 = Y,occurred(action(develop_begrudging_respect_towards, Archaelogist, TreasureHunter, null, null, null)).
 
 is(develop_begrudging_respect_towards, talk).
 
@@ -2573,7 +2573,7 @@ action(perform_to_no_effect, Bard, null, null, null, null):-
 		at(Bard,Location),
 		Bard != null.
 
-hashed(perform_to_no_effect,2296952387).
+hashed(perform_to_no_effect,2633819163).
 
 update(Bard,tiredness,1) :- not is(Bard,tiredness,_), occurred(action(perform_to_no_effect, Bard, null, null, null, null)).
 
@@ -2589,25 +2589,25 @@ visibility(perform_to_no_effect,0).
 
 action(amuse_with_performance, Bard, Tourist, null, null, null):-
 		person(Bard),person(Tourist),person(null),event(null),location(null),
-		at(Bard,Location),
-		is(Bard,bard,RoleLocation),
 		at(Bard,RoleLocation),
-		is(Tourist,tourist,RoleLocation),
 		at(Tourist,Location),
+		is(Tourist,tourist,RoleLocation),
+		at(Bard,Location),
 		at(Tourist,RoleLocation),
+		is(Bard,bard,RoleLocation),
 		Bard != Tourist,
 		Bard != null,
 		Tourist != null.
 
-hashed(amuse_with_performance,450167151).
+hashed(amuse_with_performance,1404570911).
+
+update(Tourist,likes,Bard,Y) :- is(Tourist,likes,Bard,X), X + 1 = Y, occurred(action(amuse_with_performance, Bard, Tourist, null, null, null)).
 
 update(Tourist,likes,Bard,1) :- not is(Tourist,likes,Bard,_), occurred(action(amuse_with_performance, Bard, Tourist, null, null, null)).
 
 update(Bard,self_worth,Y) :- is(Bard,self_worth,X), X + 1 = Y, occurred(action(amuse_with_performance, Bard, Tourist, null, null, null)).
 
 update(Bard,self_worth,1) :- not is(Bard,self_worth,_), occurred(action(amuse_with_performance, Bard, Tourist, null, null, null)).
-
-update(Tourist,likes,Bard,Y) :- is(Tourist,likes,Bard,X), X + 1 = Y, occurred(action(amuse_with_performance, Bard, Tourist, null, null, null)).
 
 is(amuse_with_performance, work).
 
@@ -2619,25 +2619,25 @@ visibility(amuse_with_performance,0).
 
 action(grouse_backstage, Bard, Other, null, null, null):-
 		person(Bard),person(Other),person(null),event(null),location(null),
-		at(Bard,Location),
-		is(Other,bard,RoleLocation),
-		is(Bard,bard,RoleLocation),
 		at(Bard,RoleLocation),
 		at(Other,RoleLocation),
+		at(Bard,Location),
+		is(Bard,bard,RoleLocation),
 		at(Other,Location),
+		is(Other,bard,RoleLocation),
 		Bard != Other,
 		Bard != null,
 		Other != null.
 
-hashed(grouse_backstage,3603087718).
-
-update(Other,likes,Bard,Y) :- is(Other,likes,Bard,X), X - 1 = Y,occurred(action(grouse_backstage, Bard, Other, null, null, null)).
+hashed(grouse_backstage,3053397139).
 
 update(Other,likes,Bard,-1) :- not is(Other,likes,Bard,_), occurred(action(grouse_backstage, Bard, Other, null, null, null)).
 
-update(Bard,likes,Other,Y) :- is(Bard,likes,Other,X), X - 1 = Y,occurred(action(grouse_backstage, Bard, Other, null, null, null)).
+update(Other,likes,Bard,Y) :- is(Other,likes,Bard,X), X - 1 = Y,occurred(action(grouse_backstage, Bard, Other, null, null, null)).
 
 update(Bard,likes,Other,-1) :- not is(Bard,likes,Other,_), occurred(action(grouse_backstage, Bard, Other, null, null, null)).
+
+update(Bard,likes,Other,Y) :- is(Bard,likes,Other,X), X - 1 = Y,occurred(action(grouse_backstage, Bard, Other, null, null, null)).
 
 is(grouse_backstage, work).
 
@@ -2649,25 +2649,25 @@ visibility(grouse_backstage,0).
 
 action(encourage_fellow_performer, Bard, Other, null, null, null):-
 		person(Bard),person(Other),person(null),event(null),location(null),
-		at(Bard,Location),
-		is(Other,bard,RoleLocation),
-		is(Bard,bard,RoleLocation),
 		at(Bard,RoleLocation),
 		at(Other,RoleLocation),
+		at(Bard,Location),
+		is(Bard,bard,RoleLocation),
 		at(Other,Location),
+		is(Other,bard,RoleLocation),
 		Bard != Other,
 		Bard != null,
 		Other != null.
 
-hashed(encourage_fellow_performer,780774221).
+hashed(encourage_fellow_performer,1380117686).
+
+update(Other,likes,Bard,Y) :- is(Other,likes,Bard,X), X + 1 = Y,occurred(action(encourage_fellow_performer, Bard, Other, null, null, null)).
 
 update(Other,likes,Bard,1) :- not is(Other,likes,Bard,_), occurred(action(encourage_fellow_performer, Bard, Other, null, null, null)).
 
-update(Bard,likes,Other,1) :- not is(Bard,likes,Other,_), occurred(action(encourage_fellow_performer, Bard, Other, null, null, null)).
-
 update(Bard,likes,Other,Y) :- is(Bard,likes,Other,X), X + 1 = Y,occurred(action(encourage_fellow_performer, Bard, Other, null, null, null)).
 
-update(Other,likes,Bard,Y) :- is(Other,likes,Bard,X), X + 1 = Y,occurred(action(encourage_fellow_performer, Bard, Other, null, null, null)).
+update(Bard,likes,Other,1) :- not is(Bard,likes,Other,_), occurred(action(encourage_fellow_performer, Bard, Other, null, null, null)).
 
 is(encourage_fellow_performer, work).
 
@@ -2677,16 +2677,16 @@ visibility(encourage_fellow_performer,0).
 
 action(annoy_diva_for_laughs, Bard, Diva, Other, null, null):-
 		person(Bard),person(Diva),person(Other),event(null),location(null),
-		at(Bard,Location),
-		at(Other,Location),
-		is(Other,bard,RoleLocation),
-		is(Bard,bard,RoleLocation),
-		at(Diva,RoleLocation),
-		at(Bard,RoleLocation),
-		is(Other,likes,Diva,V_Other_likes_Diva), V_Other_likes_Diva <= -1,
 		is(Diva,diva,RoleLocation),
+		at(Bard,RoleLocation),
+		at(Diva,RoleLocation),
 		at(Other,RoleLocation),
+		at(Bard,Location),
 		at(Diva,Location),
+		is(Bard,bard,RoleLocation),
+		at(Other,Location),
+		is(Other,likes,Diva,V_Other_likes_Diva), V_Other_likes_Diva <= -1,
+		is(Other,bard,RoleLocation),
 		Bard != Diva,
 		Bard != Other,
 		Diva != Other,
@@ -2694,23 +2694,23 @@ action(annoy_diva_for_laughs, Bard, Diva, Other, null, null):-
 		Diva != null,
 		Other != null.
 
-hashed(annoy_diva_for_laughs,1214925201).
-
-update(Bard,self_worth,1) :- not is(Bard,self_worth,_), occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
-
-update(Diva,likes,Bard,Y) :- is(Diva,likes,Bard,X), X - 1 = Y, occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
-
-update(Other,likes,Bard,Y) :- is(Other,likes,Bard,X), X + 1 = Y,occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
+hashed(annoy_diva_for_laughs,3634490834).
 
 update(Other,likes,Bard,1) :- not is(Other,likes,Bard,_), occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
 
-update(Bard,likes,Other,Y) :- is(Bard,likes,Other,X), X + 1 = Y,occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
-
-update(Diva,likes,Bard,-1) :- not is(Diva,likes,Bard,_), occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
+update(Diva,likes,Bard,Y) :- is(Diva,likes,Bard,X), X - 1 = Y, occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
 
 update(Bard,self_worth,Y) :- is(Bard,self_worth,X), X + 1 = Y, occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
 
 update(Bard,likes,Other,1) :- not is(Bard,likes,Other,_), occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
+
+update(Other,likes,Bard,Y) :- is(Other,likes,Bard,X), X + 1 = Y,occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
+
+update(Diva,likes,Bard,-1) :- not is(Diva,likes,Bard,_), occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
+
+update(Bard,likes,Other,Y) :- is(Bard,likes,Other,X), X + 1 = Y,occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
+
+update(Bard,self_worth,1) :- not is(Bard,self_worth,_), occurred(action(annoy_diva_for_laughs, Bard, Diva, Other, null, null)).
 
 is(annoy_diva_for_laughs, work).
 
@@ -2724,17 +2724,17 @@ visibility(annoy_diva_for_laughs,0).
 
 action(become_annoyed_with_bard, Tourist, Bard, null, null, null):-
 		person(Tourist),person(Bard),person(null),event(null),location(null),
-		at(Bard,Location),
-		is(Bard,bard,RoleLocation),
 		at(Bard,RoleLocation),
-		is(Tourist,tourist,RoleLocation),
 		at(Tourist,Location),
+		is(Tourist,tourist,RoleLocation),
+		at(Bard,Location),
 		at(Tourist,RoleLocation),
+		is(Bard,bard,RoleLocation),
 		Tourist != Bard,
 		Tourist != null,
 		Bard != null.
 
-hashed(become_annoyed_with_bard,623557864).
+hashed(become_annoyed_with_bard,480992875).
 
 update(Tourist,likes,Bard,-1) :- not is(Tourist,likes,Bard,_), occurred(action(become_annoyed_with_bard, Tourist, Bard, null, null, null)).
 
@@ -2748,21 +2748,21 @@ visibility(become_annoyed_with_bard,0).
 
 action(be_amused_by_bard, Tourist, Bard, null, null, null):-
 		person(Tourist),person(Bard),person(null),event(null),location(null),
-		at(Bard,Location),
-		is(Bard,bard,RoleLocation),
 		at(Bard,RoleLocation),
-		is(Tourist,tourist,RoleLocation),
 		at(Tourist,Location),
+		is(Tourist,tourist,RoleLocation),
+		at(Bard,Location),
 		at(Tourist,RoleLocation),
+		is(Bard,bard,RoleLocation),
 		Tourist != Bard,
 		Tourist != null,
 		Bard != null.
 
-hashed(be_amused_by_bard,2573496944).
-
-update(Tourist,likes,Bard,1) :- not is(Tourist,likes,Bard,_), occurred(action(be_amused_by_bard, Tourist, Bard, null, null, null)).
+hashed(be_amused_by_bard,2383192046).
 
 update(Tourist,likes,Bard,Y) :- is(Tourist,likes,Bard,X), X + 1 = Y, occurred(action(be_amused_by_bard, Tourist, Bard, null, null, null)).
+
+update(Tourist,likes,Bard,1) :- not is(Tourist,likes,Bard,_), occurred(action(be_amused_by_bard, Tourist, Bard, null, null, null)).
 
 is(be_amused_by_bard, silly).
 
@@ -2772,14 +2772,14 @@ visibility(be_amused_by_bard,0).
 
 action(make_judicious_decree, Monarch, O1, O2, null, null):-
 		person(Monarch),person(O1),person(O2),event(null),location(null),
+		is(Monarch,monarch,RoleLocation),
+		at(Monarch,RoleLocation),
+		at(O2,Location),
+		is(O1,fealty,Monarch),
+		at(O1,Location),
+		is(Monarch, monarch),
 		at(Monarch,Location),
 		is(O2,fealty,Monarch),
-		at(Monarch,RoleLocation),
-		is(O1,fealty,Monarch),
-		is(Monarch, monarch),
-		at(O2,Location),
-		is(Monarch,monarch,RoleLocation),
-		at(O1,Location),
 		Monarch != O1,
 		Monarch != O2,
 		O1 != O2,
@@ -2787,15 +2787,15 @@ action(make_judicious_decree, Monarch, O1, O2, null, null):-
 		O1 != null,
 		O2 != null.
 
-hashed(make_judicious_decree,2943110383).
+hashed(make_judicious_decree,4122482447).
+
+update(O2,likes,Monarch,1) :- not is(O2,likes,Monarch,_), occurred(action(make_judicious_decree, Monarch, O1, O2, null, null)).
 
 update(O2,likes,Monarch,Y) :- is(O2,likes,Monarch,X), X + 1 = Y, occurred(action(make_judicious_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,Y) :- is(O1,likes,Monarch,X), X + 1 = Y, occurred(action(make_judicious_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,1) :- not is(O1,likes,Monarch,_), occurred(action(make_judicious_decree, Monarch, O1, O2, null, null)).
-
-update(O2,likes,Monarch,1) :- not is(O2,likes,Monarch,_), occurred(action(make_judicious_decree, Monarch, O1, O2, null, null)).
 
 is(make_judicious_decree, work).
 
@@ -2807,14 +2807,14 @@ visibility(make_judicious_decree,0).
 
 action(make_imprudent_decree, Monarch, O1, O2, null, null):-
 		person(Monarch),person(O1),person(O2),event(null),location(null),
+		is(Monarch,monarch,RoleLocation),
+		at(Monarch,RoleLocation),
+		at(O2,Location),
+		is(O1,fealty,Monarch),
+		at(O1,Location),
+		is(Monarch, monarch),
 		at(Monarch,Location),
 		is(O2,fealty,Monarch),
-		at(Monarch,RoleLocation),
-		is(O1,fealty,Monarch),
-		is(Monarch, monarch),
-		at(O2,Location),
-		is(Monarch,monarch,RoleLocation),
-		at(O1,Location),
 		Monarch != O1,
 		Monarch != O2,
 		O1 != O2,
@@ -2822,15 +2822,15 @@ action(make_imprudent_decree, Monarch, O1, O2, null, null):-
 		O1 != null,
 		O2 != null.
 
-hashed(make_imprudent_decree,4116075172).
+hashed(make_imprudent_decree,196389003).
+
+update(O2,likes,Monarch,Y) :- is(O2,likes,Monarch,X), X - 1 = Y, occurred(action(make_imprudent_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,-1) :- not is(O1,likes,Monarch,_), occurred(action(make_imprudent_decree, Monarch, O1, O2, null, null)).
 
 update(O2,likes,Monarch,-1) :- not is(O2,likes,Monarch,_), occurred(action(make_imprudent_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,Y) :- is(O1,likes,Monarch,X), X - 1 = Y, occurred(action(make_imprudent_decree, Monarch, O1, O2, null, null)).
-
-update(O2,likes,Monarch,Y) :- is(O2,likes,Monarch,X), X - 1 = Y, occurred(action(make_imprudent_decree, Monarch, O1, O2, null, null)).
 
 is(make_imprudent_decree, work).
 
@@ -2842,14 +2842,14 @@ visibility(make_imprudent_decree,0).
 
 action(make_callous_decree, Monarch, O1, O2, null, null):-
 		person(Monarch),person(O1),person(O2),event(null),location(null),
+		is(Monarch,monarch,RoleLocation),
+		at(Monarch,RoleLocation),
+		at(O2,Location),
+		is(O1,fealty,Monarch),
+		at(O1,Location),
+		is(Monarch, monarch),
 		at(Monarch,Location),
 		is(O2,fealty,Monarch),
-		at(Monarch,RoleLocation),
-		is(O1,fealty,Monarch),
-		is(Monarch, monarch),
-		at(O2,Location),
-		is(Monarch,monarch,RoleLocation),
-		at(O1,Location),
 		Monarch != O1,
 		Monarch != O2,
 		O1 != O2,
@@ -2857,15 +2857,15 @@ action(make_callous_decree, Monarch, O1, O2, null, null):-
 		O1 != null,
 		O2 != null.
 
-hashed(make_callous_decree,1811696930).
+hashed(make_callous_decree,2934328360).
+
+update(O2,likes,Monarch,Y) :- is(O2,likes,Monarch,X), X - 1 = Y, occurred(action(make_callous_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,-1) :- not is(O1,likes,Monarch,_), occurred(action(make_callous_decree, Monarch, O1, O2, null, null)).
 
 update(O2,likes,Monarch,-1) :- not is(O2,likes,Monarch,_), occurred(action(make_callous_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,Y) :- is(O1,likes,Monarch,X), X - 1 = Y, occurred(action(make_callous_decree, Monarch, O1, O2, null, null)).
-
-update(O2,likes,Monarch,Y) :- is(O2,likes,Monarch,X), X - 1 = Y, occurred(action(make_callous_decree, Monarch, O1, O2, null, null)).
 
 is(make_callous_decree, work).
 
@@ -2877,14 +2877,14 @@ visibility(make_callous_decree,0).
 
 action(make_benevolent_decree, Monarch, O1, O2, null, null):-
 		person(Monarch),person(O1),person(O2),event(null),location(null),
+		is(Monarch,monarch,RoleLocation),
+		at(Monarch,RoleLocation),
+		at(O2,Location),
+		is(O1,fealty,Monarch),
+		at(O1,Location),
+		is(Monarch, monarch),
 		at(Monarch,Location),
 		is(O2,fealty,Monarch),
-		at(Monarch,RoleLocation),
-		is(O1,fealty,Monarch),
-		is(Monarch, monarch),
-		at(O2,Location),
-		is(Monarch,monarch,RoleLocation),
-		at(O1,Location),
 		Monarch != O1,
 		Monarch != O2,
 		O1 != O2,
@@ -2892,15 +2892,15 @@ action(make_benevolent_decree, Monarch, O1, O2, null, null):-
 		O1 != null,
 		O2 != null.
 
-hashed(make_benevolent_decree,580338661).
+hashed(make_benevolent_decree,2241020276).
+
+update(O2,likes,Monarch,1) :- not is(O2,likes,Monarch,_), occurred(action(make_benevolent_decree, Monarch, O1, O2, null, null)).
 
 update(O2,likes,Monarch,Y) :- is(O2,likes,Monarch,X), X + 1 = Y, occurred(action(make_benevolent_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,Y) :- is(O1,likes,Monarch,X), X + 1 = Y, occurred(action(make_benevolent_decree, Monarch, O1, O2, null, null)).
 
 update(O1,likes,Monarch,1) :- not is(O1,likes,Monarch,_), occurred(action(make_benevolent_decree, Monarch, O1, O2, null, null)).
-
-update(O2,likes,Monarch,1) :- not is(O2,likes,Monarch,_), occurred(action(make_benevolent_decree, Monarch, O1, O2, null, null)).
 
 is(make_benevolent_decree, work).
 
@@ -2912,30 +2912,30 @@ visibility(make_benevolent_decree,0).
 
 action(banish_monarchling, Monarch, Child, null, null, null):-
 		person(Monarch),person(Child),person(null),event(null),location(null),
-		at(Child,Location),
-		at(Monarch,Location),
-		is(Monarch,likes,Child,V_Monarch_likes_Child), V_Monarch_likes_Child <= -5,
+		is(Monarch,monarch,RoleLocation),
 		at(Monarch,RoleLocation),
-		is(Child, royalty),
+		is(Monarch,likes,Child,V_Monarch_likes_Child), V_Monarch_likes_Child <= -5,
+		is(Child,age,V_Child_age), V_Child_age >= 16,
+		at(Child,Location),
 		is(Child,child,Monarch),
 		is(Monarch, monarch),
-		is(Child,age,V_Child_age), V_Child_age >= 16,
-		is(Monarch,monarch,RoleLocation),
+		at(Monarch,Location),
+		is(Child, royalty),
 		Monarch != Child,
 		Monarch != null,
 		Child != null.
 
-hashed(banish_monarchling,87890239).
+hashed(banish_monarchling,3203397144).
+
+add(Child, ex_royalty) :- occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
 
 update(Child,likes,Monarch,Y) :- is(Child,likes,Monarch,X), X - 10 = Y, occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
 
-del(Child, royalty) :- occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
-
 update(Child,likes,Monarch,-10) :- not is(Child,likes,Monarch,_), occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
 
-del(Child, hometown) :- occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
+del(Child, royalty) :- occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
 
-add(Child, ex_royalty) :- occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
+del(Child, hometown) :- occurred(action(banish_monarchling, Monarch, Child, null, null, null)).
 
 is(banish_monarchling, mean).
 
@@ -2947,23 +2947,23 @@ visibility(banish_monarchling,0).
 
 action(consult_with_chancellor, Monarch, Chancellor, null, null, null):-
 		person(Monarch),person(Chancellor),person(null),event(null),location(null),
-		at(Monarch,Location),
-		at(Chancellor,RoleLocation),
-		at(Chancellor,Location),
-		at(Monarch,RoleLocation),
-		is(Monarch,monarch,RoleLocation),
 		is(Chancellor,chancellor,RoleLocation),
+		at(Chancellor,Location),
+		is(Monarch,monarch,RoleLocation),
+		at(Monarch,RoleLocation),
+		at(Chancellor,RoleLocation),
+		at(Monarch,Location),
 		Monarch != Chancellor,
 		Monarch != null,
 		Chancellor != null.
 
-hashed(consult_with_chancellor,2661346323).
+hashed(consult_with_chancellor,357454732).
 
 update(Chancellor,likes,Monarch,Y) :- is(Chancellor,likes,Monarch,X), X + 1 = Y,occurred(action(consult_with_chancellor, Monarch, Chancellor, null, null, null)).
 
-update(Chancellor,likes,Monarch,1) :- not is(Chancellor,likes,Monarch,_), occurred(action(consult_with_chancellor, Monarch, Chancellor, null, null, null)).
-
 update(Monarch,likes,Chancellor,1) :- not is(Monarch,likes,Chancellor,_), occurred(action(consult_with_chancellor, Monarch, Chancellor, null, null, null)).
+
+update(Chancellor,likes,Monarch,1) :- not is(Chancellor,likes,Monarch,_), occurred(action(consult_with_chancellor, Monarch, Chancellor, null, null, null)).
 
 update(Monarch,likes,Chancellor,Y) :- is(Monarch,likes,Chancellor,X), X + 1 = Y,occurred(action(consult_with_chancellor, Monarch, Chancellor, null, null, null)).
 
@@ -2977,21 +2977,21 @@ visibility(consult_with_chancellor,0).
 
 action(sway_monarch_to_kindness, Chancellor, Monarch, null, null, null):-
 		person(Chancellor),person(Monarch),person(null),event(null),location(null),
-		at(Monarch,Location),
-		at(Chancellor,RoleLocation),
-		at(Chancellor,Location),
-		at(Monarch,RoleLocation),
-		is(Monarch,monarch,RoleLocation),
 		is(Chancellor,chancellor,RoleLocation),
+		at(Chancellor,Location),
+		is(Monarch,monarch,RoleLocation),
+		at(Monarch,RoleLocation),
+		at(Chancellor,RoleLocation),
+		at(Monarch,Location),
 		Chancellor != Monarch,
 		Chancellor != null,
 		Monarch != null.
 
-hashed(sway_monarch_to_kindness,1218358079).
-
-del(Monarch, indifferent) :- occurred(action(sway_monarch_to_kindness, Chancellor, Monarch, null, null, null)).
+hashed(sway_monarch_to_kindness,543315480).
 
 add(Monarch, compassionate) :- occurred(action(sway_monarch_to_kindness, Chancellor, Monarch, null, null, null)).
+
+del(Monarch, indifferent) :- occurred(action(sway_monarch_to_kindness, Chancellor, Monarch, null, null, null)).
 
 is(sway_monarch_to_kindness, kind).
 
@@ -3007,17 +3007,17 @@ visibility(sway_monarch_to_kindness,0).
 
 action(sway_monarch_to_indifference, Chancellor, Monarch, null, null, null):-
 		person(Chancellor),person(Monarch),person(null),event(null),location(null),
-		at(Monarch,Location),
-		at(Chancellor,RoleLocation),
-		at(Chancellor,Location),
-		at(Monarch,RoleLocation),
-		is(Monarch,monarch,RoleLocation),
 		is(Chancellor,chancellor,RoleLocation),
+		at(Chancellor,Location),
+		is(Monarch,monarch,RoleLocation),
+		at(Monarch,RoleLocation),
+		at(Chancellor,RoleLocation),
+		at(Monarch,Location),
 		Chancellor != Monarch,
 		Chancellor != null,
 		Monarch != null.
 
-hashed(sway_monarch_to_indifference,2089499370).
+hashed(sway_monarch_to_indifference,337427431).
 
 add(Monarch, indifferent) :- occurred(action(sway_monarch_to_indifference, Chancellor, Monarch, null, null, null)).
 
@@ -3038,21 +3038,21 @@ visibility(sway_monarch_to_indifference,0).
 action(support_banished_sibling, Monarchling, ExMonarchling, null, null, null):-
 		person(Monarchling),person(ExMonarchling),person(null),event(null),location(null),
 		at(Monarchling,Location),
-		is(Monarchling, royalty),
+		at(ExMonarchling,Location),
 		is(Monarchling,sibling,ExMonarchling),
 		is(ExMonarchling, ex_royalty),
-		at(ExMonarchling,Location),
+		is(Monarchling, royalty),
 		Monarchling != ExMonarchling,
 		Monarchling != null,
 		ExMonarchling != null.
 
-hashed(support_banished_sibling,2604771547).
+hashed(support_banished_sibling,2041328681).
+
+update(Monarchling,likes,ExMonarchling,1) :- not is(Monarchling,likes,ExMonarchling,_), occurred(action(support_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
 update(Monarchling,likes,ExMonarchling,Y) :- is(Monarchling,likes,ExMonarchling,X), X + 1 = Y,occurred(action(support_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
 update(ExMonarchling,likes,Monarchling,1) :- not is(ExMonarchling,likes,Monarchling,_), occurred(action(support_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
-
-update(Monarchling,likes,ExMonarchling,1) :- not is(Monarchling,likes,ExMonarchling,_), occurred(action(support_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
 update(ExMonarchling,likes,Monarchling,Y) :- is(ExMonarchling,likes,Monarchling,X), X + 1 = Y,occurred(action(support_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
@@ -3067,23 +3067,23 @@ visibility(support_banished_sibling,0).
 action(shun_banished_sibling, Monarchling, ExMonarchling, null, null, null):-
 		person(Monarchling),person(ExMonarchling),person(null),event(null),location(null),
 		at(Monarchling,Location),
-		is(Monarchling, royalty),
+		at(ExMonarchling,Location),
 		is(Monarchling,sibling,ExMonarchling),
 		is(ExMonarchling, ex_royalty),
-		at(ExMonarchling,Location),
+		is(Monarchling, royalty),
 		Monarchling != ExMonarchling,
 		Monarchling != null,
 		ExMonarchling != null.
 
-hashed(shun_banished_sibling,2637492398).
+hashed(shun_banished_sibling,4126889009).
+
+update(Monarchling,likes,ExMonarchling,-1) :- not is(Monarchling,likes,ExMonarchling,_), occurred(action(shun_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
 update(ExMonarchling,likes,Monarchling,-1) :- not is(ExMonarchling,likes,Monarchling,_), occurred(action(shun_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
 update(ExMonarchling,likes,Monarchling,Y) :- is(ExMonarchling,likes,Monarchling,X), X - 1 = Y,occurred(action(shun_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
 update(Monarchling,likes,ExMonarchling,Y) :- is(Monarchling,likes,ExMonarchling,X), X - 1 = Y,occurred(action(shun_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
-
-update(Monarchling,likes,ExMonarchling,-1) :- not is(Monarchling,likes,ExMonarchling,_), occurred(action(shun_banished_sibling, Monarchling, ExMonarchling, null, null, null)).
 
 is(shun_banished_sibling, mean).
 
@@ -3099,11 +3099,11 @@ action(play, Child, null, null, null, null):-
 		at(Child,Location),
 		Child != null.
 
-hashed(play,2244934543).
-
-update(Child,happiness,Y) :- is(Child,happiness,X), X + 1 = Y, occurred(action(play, Child, null, null, null, null)).
+hashed(play,1050188127).
 
 update(Child,happiness,1) :- not is(Child,happiness,_), occurred(action(play, Child, null, null, null, null)).
+
+update(Child,happiness,Y) :- is(Child,happiness,X), X + 1 = Y, occurred(action(play, Child, null, null, null, null)).
 
 is(play, silly).
 
@@ -3111,31 +3111,31 @@ visibility(play,0).
 
 action(play_together, Child, OtherChild, null, null, null):-
 		person(Child),person(OtherChild),person(null),event(null),location(null),
-		is(Child,age,V_Child_age), V_Child_age <= 15,
-		at(Child,Location),
 		is(OtherChild,age,V_OtherChild_age), V_OtherChild_age <= 15,
 		at(OtherChild,Location),
+		is(Child,age,V_Child_age), V_Child_age <= 15,
+		at(Child,Location),
 		Child != OtherChild,
 		Child != null,
 		OtherChild != null.
 
-hashed(play_together,1498754300).
-
-update(OtherChild,likes,Child,Y) :- is(OtherChild,likes,Child,X), X + 1 = Y,occurred(action(play_together, Child, OtherChild, null, null, null)).
-
-update(OtherChild,happiness,1) :- not is(OtherChild,happiness,_), occurred(action(play_together, Child, OtherChild, null, null, null)).
-
-update(Child,happiness,Y) :- is(Child,happiness,X), X + 1 = Y, occurred(action(play_together, Child, OtherChild, null, null, null)).
+hashed(play_together,313967687).
 
 update(OtherChild,likes,Child,1) :- not is(OtherChild,likes,Child,_), occurred(action(play_together, Child, OtherChild, null, null, null)).
 
-update(Child,likes,OtherChild,1) :- not is(Child,likes,OtherChild,_), occurred(action(play_together, Child, OtherChild, null, null, null)).
-
 update(Child,likes,OtherChild,Y) :- is(Child,likes,OtherChild,X), X + 1 = Y,occurred(action(play_together, Child, OtherChild, null, null, null)).
+
+update(OtherChild,happiness,Y) :- is(OtherChild,happiness,X), X + 1 = Y, occurred(action(play_together, Child, OtherChild, null, null, null)).
+
+update(OtherChild,likes,Child,Y) :- is(OtherChild,likes,Child,X), X + 1 = Y,occurred(action(play_together, Child, OtherChild, null, null, null)).
+
+update(Child,happiness,Y) :- is(Child,happiness,X), X + 1 = Y, occurred(action(play_together, Child, OtherChild, null, null, null)).
+
+update(Child,likes,OtherChild,1) :- not is(Child,likes,OtherChild,_), occurred(action(play_together, Child, OtherChild, null, null, null)).
 
 update(Child,happiness,1) :- not is(Child,happiness,_), occurred(action(play_together, Child, OtherChild, null, null, null)).
 
-update(OtherChild,happiness,Y) :- is(OtherChild,happiness,X), X + 1 = Y, occurred(action(play_together, Child, OtherChild, null, null, null)).
+update(OtherChild,happiness,1) :- not is(OtherChild,happiness,_), occurred(action(play_together, Child, OtherChild, null, null, null)).
 
 is(play_together, silly).
 
@@ -3147,31 +3147,31 @@ visibility(play_together,0).
 
 action(argue_with_playmate, Child, OtherChild, null, null, null):-
 		person(Child),person(OtherChild),person(null),event(null),location(null),
-		is(Child,age,V_Child_age), V_Child_age <= 15,
-		at(Child,Location),
 		is(OtherChild,age,V_OtherChild_age), V_OtherChild_age <= 15,
 		at(OtherChild,Location),
+		is(Child,age,V_Child_age), V_Child_age <= 15,
+		at(Child,Location),
 		Child != OtherChild,
 		Child != null,
 		OtherChild != null.
 
-hashed(argue_with_playmate,3946999398).
+hashed(argue_with_playmate,65775936).
+
+update(OtherChild,happiness,Y) :- is(OtherChild,happiness,X), X - 1 = Y, occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
+
+update(Child,likes,OtherChild,Y) :- is(Child,likes,OtherChild,X), X - 1 = Y,occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
+
+update(Child,likes,OtherChild,-1) :- not is(Child,likes,OtherChild,_), occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
+
+update(Child,happiness,-1) :- not is(Child,happiness,_), occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
+
+update(OtherChild,likes,Child,Y) :- is(OtherChild,likes,Child,X), X - 1 = Y,occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
 
 update(OtherChild,happiness,-1) :- not is(OtherChild,happiness,_), occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
 
 update(OtherChild,likes,Child,-1) :- not is(OtherChild,likes,Child,_), occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
 
-update(Child,likes,OtherChild,Y) :- is(Child,likes,OtherChild,X), X - 1 = Y,occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
-
-update(OtherChild,happiness,Y) :- is(OtherChild,happiness,X), X - 1 = Y, occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
-
-update(OtherChild,likes,Child,Y) :- is(OtherChild,likes,Child,X), X - 1 = Y,occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
-
-update(Child,happiness,-1) :- not is(Child,happiness,_), occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
-
 update(Child,happiness,Y) :- is(Child,happiness,X), X - 1 = Y, occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
-
-update(Child,likes,OtherChild,-1) :- not is(Child,likes,OtherChild,_), occurred(action(argue_with_playmate, Child, OtherChild, null, null, null)).
 
 is(argue_with_playmate, critical).
 
@@ -3181,11 +3181,11 @@ visibility(argue_with_playmate,0).
 
 action(worry_about_future, Adult, null, null, null, null):-
 		person(Adult),person(null),person(null),event(null),location(null),
-		is(Adult,age,V_Adult_age), V_Adult_age >= 35,
 		at(Adult,Location),
+		is(Adult,age,V_Adult_age), V_Adult_age >= 35,
 		Adult != null.
 
-hashed(worry_about_future,3635991241).
+hashed(worry_about_future,2750471624).
 
 update(Adult,tiredness,1) :- not is(Adult,tiredness,_), occurred(action(worry_about_future, Adult, null, null, null, null)).
 
@@ -3199,15 +3199,15 @@ visibility(worry_about_future,0).
 
 action(worry_about_mortality, Adult, null, null, null, null):-
 		person(Adult),person(null),person(null),event(null),location(null),
-		is(Adult,age,V_Adult_age), V_Adult_age >= 55,
 		at(Adult,Location),
+		is(Adult,age,V_Adult_age), V_Adult_age >= 55,
 		Adult != null.
 
-hashed(worry_about_mortality,242848471).
-
-update(Adult,happiness,Y) :- is(Adult,happiness,X), X - 1 = Y, occurred(action(worry_about_mortality, Adult, null, null, null, null)).
+hashed(worry_about_mortality,977368175).
 
 update(Adult,tiredness,1) :- not is(Adult,tiredness,_), occurred(action(worry_about_mortality, Adult, null, null, null, null)).
+
+update(Adult,happiness,Y) :- is(Adult,happiness,X), X - 1 = Y, occurred(action(worry_about_mortality, Adult, null, null, null, null)).
 
 update(Adult,happiness,-1) :- not is(Adult,happiness,_), occurred(action(worry_about_mortality, Adult, null, null, null, null)).
 
@@ -3222,22 +3222,22 @@ visibility(worry_about_mortality,0).
 action(argue_about_duty, Dutybound, Free, null, null, null):-
 		person(Dutybound),person(Free),person(null),event(null),location(null),
 		at(Dutybound,Location),
+		at(Free,Location),
 		is(Dutybound, duty_bound),
 		is(Free, free_sprited),
-		at(Free,Location),
 		Dutybound != Free,
 		Dutybound != null,
 		Free != null.
 
-hashed(argue_about_duty,2858565074).
+hashed(argue_about_duty,3661120140).
 
 update(Free,likes,Dutybound,Y) :- is(Free,likes,Dutybound,X), X - 1 = Y,occurred(action(argue_about_duty, Dutybound, Free, null, null, null)).
 
-update(Free,likes,Dutybound,-1) :- not is(Free,likes,Dutybound,_), occurred(action(argue_about_duty, Dutybound, Free, null, null, null)).
+update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X - 1 = Y,occurred(action(argue_about_duty, Dutybound, Free, null, null, null)).
 
 update(Dutybound,likes,Free,-1) :- not is(Dutybound,likes,Free,_), occurred(action(argue_about_duty, Dutybound, Free, null, null, null)).
 
-update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X - 1 = Y,occurred(action(argue_about_duty, Dutybound, Free, null, null, null)).
+update(Free,likes,Dutybound,-1) :- not is(Free,likes,Dutybound,_), occurred(action(argue_about_duty, Dutybound, Free, null, null, null)).
 
 is(argue_about_duty, critical).
 
@@ -3248,20 +3248,20 @@ visibility(argue_about_duty,0).
 action(convince_importance_of_duty, Dutybound, Free, null, null, null):-
 		person(Dutybound),person(Free),person(null),event(null),location(null),
 		at(Dutybound,Location),
+		at(Free,Location),
 		is(Dutybound, duty_bound),
 		is(Free, free_sprited),
-		at(Free,Location),
 		Dutybound != Free,
 		Dutybound != null,
 		Free != null.
 
-hashed(convince_importance_of_duty,1181209795).
+hashed(convince_importance_of_duty,3590658116).
 
-update(Free,likes,Dutybound,Y) :- is(Free,likes,Dutybound,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Dutybound, Free, null, null, null)).
+update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Dutybound, Free, null, null, null)).
 
 update(Dutybound,likes,Free,1) :- not is(Dutybound,likes,Free,_), occurred(action(convince_importance_of_duty, Dutybound, Free, null, null, null)).
 
-update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Dutybound, Free, null, null, null)).
+update(Free,likes,Dutybound,Y) :- is(Free,likes,Dutybound,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Dutybound, Free, null, null, null)).
 
 update(Free,likes,Dutybound,1) :- not is(Free,likes,Dutybound,_), occurred(action(convince_importance_of_duty, Dutybound, Free, null, null, null)).
 
@@ -3274,22 +3274,22 @@ visibility(convince_importance_of_duty,0).
 action(argue_about_need_to_be_free, Free, Dutybound, null, null, null):-
 		person(Free),person(Dutybound),person(null),event(null),location(null),
 		at(Dutybound,Location),
+		at(Free,Location),
 		is(Dutybound, duty_bound),
 		is(Free, free_sprited),
-		at(Free,Location),
 		Free != Dutybound,
 		Free != null,
 		Dutybound != null.
 
-hashed(argue_about_need_to_be_free,1397023790).
+hashed(argue_about_need_to_be_free,2006296812).
 
 update(Free,likes,Dutybound,Y) :- is(Free,likes,Dutybound,X), X - 1 = Y,occurred(action(argue_about_need_to_be_free, Free, Dutybound, null, null, null)).
 
-update(Free,likes,Dutybound,-1) :- not is(Free,likes,Dutybound,_), occurred(action(argue_about_need_to_be_free, Free, Dutybound, null, null, null)).
+update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X - 1 = Y,occurred(action(argue_about_need_to_be_free, Free, Dutybound, null, null, null)).
 
 update(Dutybound,likes,Free,-1) :- not is(Dutybound,likes,Free,_), occurred(action(argue_about_need_to_be_free, Free, Dutybound, null, null, null)).
 
-update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X - 1 = Y,occurred(action(argue_about_need_to_be_free, Free, Dutybound, null, null, null)).
+update(Free,likes,Dutybound,-1) :- not is(Free,likes,Dutybound,_), occurred(action(argue_about_need_to_be_free, Free, Dutybound, null, null, null)).
 
 is(argue_about_need_to_be_free, critical).
 
@@ -3300,20 +3300,20 @@ visibility(argue_about_need_to_be_free,0).
 action(convince_importance_of_duty, Free, Dutybound, null, null, null):-
 		person(Free),person(Dutybound),person(null),event(null),location(null),
 		at(Dutybound,Location),
+		at(Free,Location),
 		is(Dutybound, duty_bound),
 		is(Free, free_sprited),
-		at(Free,Location),
 		Free != Dutybound,
 		Free != null,
 		Dutybound != null.
 
-hashed(convince_importance_of_duty,1181209795).
+hashed(convince_importance_of_duty,3590658116).
 
-update(Free,likes,Dutybound,Y) :- is(Free,likes,Dutybound,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Free, Dutybound, null, null, null)).
+update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Free, Dutybound, null, null, null)).
 
 update(Dutybound,likes,Free,1) :- not is(Dutybound,likes,Free,_), occurred(action(convince_importance_of_duty, Free, Dutybound, null, null, null)).
 
-update(Dutybound,likes,Free,Y) :- is(Dutybound,likes,Free,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Free, Dutybound, null, null, null)).
+update(Free,likes,Dutybound,Y) :- is(Free,likes,Dutybound,X), X + 1 = Y,occurred(action(convince_importance_of_duty, Free, Dutybound, null, null, null)).
 
 update(Free,likes,Dutybound,1) :- not is(Free,likes,Dutybound,_), occurred(action(convince_importance_of_duty, Free, Dutybound, null, null, null)).
 
@@ -3325,25 +3325,25 @@ visibility(convince_importance_of_duty,0).
 
 action(hold_lecture, Professor, Student, null, null, null):-
 		person(Professor),person(Student),person(null),event(null),location(null),
-		at(Professor,Location),
-		is(Professor,professor,RoleLocation),
-		at(Student,Location),
 		at(Student,RoleLocation),
-		is(Student,student,RoleLocation),
+		at(Student,Location),
+		is(Professor,professor,RoleLocation),
+		at(Professor,Location),
 		at(Professor,RoleLocation),
+		is(Student,student,RoleLocation),
 		Professor != Student,
 		Professor != null,
 		Student != null.
 
-hashed(hold_lecture,1551993974).
+hashed(hold_lecture,2053893446).
+
+update(Student,likes,Professor,Y) :- is(Student,likes,Professor,X), X + 1 = Y, occurred(action(hold_lecture, Professor, Student, null, null, null)).
 
 update(Professor,self_worth,Y) :- is(Professor,self_worth,X), X + 1 = Y, occurred(action(hold_lecture, Professor, Student, null, null, null)).
 
 update(Professor,self_worth,1) :- not is(Professor,self_worth,_), occurred(action(hold_lecture, Professor, Student, null, null, null)).
 
 update(Student,likes,Professor,1) :- not is(Student,likes,Professor,_), occurred(action(hold_lecture, Professor, Student, null, null, null)).
-
-update(Student,likes,Professor,Y) :- is(Student,likes,Professor,X), X + 1 = Y, occurred(action(hold_lecture, Professor, Student, null, null, null)).
 
 is(hold_lecture, work).
 
@@ -3355,23 +3355,23 @@ visibility(hold_lecture,0).
 
 action(hold_boring_lecture, Professor, Student, null, null, null):-
 		person(Professor),person(Student),person(null),event(null),location(null),
-		at(Professor,Location),
-		is(Professor,professor,RoleLocation),
-		at(Student,Location),
 		at(Student,RoleLocation),
-		is(Student,student,RoleLocation),
+		at(Student,Location),
+		is(Professor,professor,RoleLocation),
+		at(Professor,Location),
 		at(Professor,RoleLocation),
+		is(Student,student,RoleLocation),
 		Professor != Student,
 		Professor != null,
 		Student != null.
 
-hashed(hold_boring_lecture,3556535363).
+hashed(hold_boring_lecture,576891886).
 
-update(Student,likes,Professor,-1) :- not is(Student,likes,Professor,_), occurred(action(hold_boring_lecture, Professor, Student, null, null, null)).
+update(Student,likes,Professor,Y) :- is(Student,likes,Professor,X), X - 1 = Y, occurred(action(hold_boring_lecture, Professor, Student, null, null, null)).
 
 update(Professor,self_worth,-1) :- not is(Professor,self_worth,_), occurred(action(hold_boring_lecture, Professor, Student, null, null, null)).
 
-update(Student,likes,Professor,Y) :- is(Student,likes,Professor,X), X - 1 = Y, occurred(action(hold_boring_lecture, Professor, Student, null, null, null)).
+update(Student,likes,Professor,-1) :- not is(Student,likes,Professor,_), occurred(action(hold_boring_lecture, Professor, Student, null, null, null)).
 
 update(Professor,self_worth,Y) :- is(Professor,self_worth,X), X - 1 = Y, occurred(action(hold_boring_lecture, Professor, Student, null, null, null)).
 
@@ -3388,15 +3388,15 @@ visibility(hold_boring_lecture,0).
 action(perform_research, Professor, null, null, null, null):-
 		person(Professor),person(null),person(null),event(null),location(null),
 		at(Professor,RoleLocation),
-		at(Professor,Location),
 		is(Professor,professor,RoleLocation),
+		at(Professor,Location),
 		Professor != null.
 
-hashed(perform_research,2839958603).
-
-update(Professor,self_worth,Y) :- is(Professor,self_worth,X), X + 1 = Y, occurred(action(perform_research, Professor, null, null, null, null)).
+hashed(perform_research,1328473902).
 
 update(Professor,self_worth,1) :- not is(Professor,self_worth,_), occurred(action(perform_research, Professor, null, null, null, null)).
+
+update(Professor,self_worth,Y) :- is(Professor,self_worth,X), X + 1 = Y, occurred(action(perform_research, Professor, null, null, null, null)).
 
 is(perform_research, work).
 
@@ -3409,21 +3409,21 @@ visibility(perform_research,0).
 action(conspire_against, SpyMaster, Target, null, null, null):-
 		person(SpyMaster),person(Target),person(null),event(null),location(null),
 		is(Target, important),
-		is(SpyMaster,spy_master,RoleLocation),
 		at(SpyMaster,RoleLocation),
+		is(SpyMaster,spy_master,RoleLocation),
 		SpyMaster != Target,
 		SpyMaster != null,
 		Target != null.
 
-hashed(conspire_against,2256914512).
+hashed(conspire_against,167251375).
 
-update(SpyMaster,plotting_against,Target,Y) :- is(SpyMaster,plotting_against,Target,X), 3 = Y, occurred(action(conspire_against, SpyMaster, Target, null, null, null)).
+update(SpyMaster,likes,Target,Y) :- is(SpyMaster,likes,Target,X), X - 1 = Y, occurred(action(conspire_against, SpyMaster, Target, null, null, null)).
 
 update(SpyMaster,likes,Target,-1) :- not is(SpyMaster,likes,Target,_), occurred(action(conspire_against, SpyMaster, Target, null, null, null)).
 
-update(SpyMaster,plotting_against,Target,3) :- not is(SpyMaster,plotting_against,Target,_), occurred(action(conspire_against, SpyMaster, Target, null, null, null)).
+update(SpyMaster,plotting_against,Target,Y) :- is(SpyMaster,plotting_against,Target,X), 3 = Y, occurred(action(conspire_against, SpyMaster, Target, null, null, null)).
 
-update(SpyMaster,likes,Target,Y) :- is(SpyMaster,likes,Target,X), X - 1 = Y, occurred(action(conspire_against, SpyMaster, Target, null, null, null)).
+update(SpyMaster,plotting_against,Target,3) :- not is(SpyMaster,plotting_against,Target,_), occurred(action(conspire_against, SpyMaster, Target, null, null, null)).
 
 is(conspire_against, rare).
 
@@ -3435,10 +3435,10 @@ visibility(conspire_against,0).
 
 action(send_underlings, SpyMaster, Spy, Target, null, null):-
 		person(SpyMaster),person(Spy),person(Target),event(null),location(null),
-		is(SpyMaster,spy_master,RoleLocation),
 		at(Spy,RoleLocation),
-		at(SpyMaster,RoleLocation),
 		is(SpyMaster,plotting_against,Target,V_SpyMaster_plotting_against_Target), V_SpyMaster_plotting_against_Target >= 1,
+		at(SpyMaster,RoleLocation),
+		is(SpyMaster,spy_master,RoleLocation),
 		is(Spy,spy,RoleLocation),
 		SpyMaster != Spy,
 		SpyMaster != Target,
@@ -3447,15 +3447,15 @@ action(send_underlings, SpyMaster, Spy, Target, null, null):-
 		Spy != null,
 		Target != null.
 
-hashed(send_underlings,3888929745).
-
-update(SpyMaster,plotting_against,Target,Y) :- is(SpyMaster,plotting_against,Target,X), X - 1 = Y, occurred(action(send_underlings, SpyMaster, Spy, Target, null, null)).
-
-update(Spy,plotting_against,Target,1) :- not is(Spy,plotting_against,Target,_), occurred(action(send_underlings, SpyMaster, Spy, Target, null, null)).
+hashed(send_underlings,3775113475).
 
 update(SpyMaster,plotting_against,Target,-1) :- not is(SpyMaster,plotting_against,Target,_), occurred(action(send_underlings, SpyMaster, Spy, Target, null, null)).
 
+update(SpyMaster,plotting_against,Target,Y) :- is(SpyMaster,plotting_against,Target,X), X - 1 = Y, occurred(action(send_underlings, SpyMaster, Spy, Target, null, null)).
+
 update(Spy,plotting_against,Target,Y) :- is(Spy,plotting_against,Target,X), 1 = Y, occurred(action(send_underlings, SpyMaster, Spy, Target, null, null)).
+
+update(Spy,plotting_against,Target,1) :- not is(Spy,plotting_against,Target,_), occurred(action(send_underlings, SpyMaster, Spy, Target, null, null)).
 
 is(send_underlings, work).
 
@@ -3465,12 +3465,12 @@ visibility(send_underlings,0).
 
 action(ready_the_ship, Sailor, null, null, null, null):-
 		person(Sailor),person(null),person(null),event(null),location(null),
-		at(Sailor,Location),
-		at(Sailor,RoleLocation),
 		is(Sailor,sailor,RoleLocation),
+		at(Sailor,RoleLocation),
+		at(Sailor,Location),
 		Sailor != null.
 
-hashed(ready_the_ship,1973593488).
+hashed(ready_the_ship,1762020699).
 
 update(Sailor,tiredness,Y) :- is(Sailor,tiredness,X), X + 1 = Y, occurred(action(ready_the_ship, Sailor, null, null, null, null)).
 
@@ -3484,33 +3484,33 @@ visibility(ready_the_ship,0).
 
 action(sing_shanty, Sailor, Other, null, null, null):-
 		person(Sailor),person(Other),person(null),event(null),location(null),
-		at(Sailor,Location),
-		is(Other,sailor,RoleLocation),
 		at(Sailor,RoleLocation),
-		is(Sailor,sailor,RoleLocation),
 		at(Other,RoleLocation),
 		at(Other,Location),
+		is(Sailor,sailor,RoleLocation),
+		is(Other,sailor,RoleLocation),
+		at(Sailor,Location),
 		Sailor != Other,
 		Sailor != null,
 		Other != null.
 
-hashed(sing_shanty,129683609).
+hashed(sing_shanty,1136019947).
 
 update(Other,likes,Sailor,2) :- not is(Other,likes,Sailor,_), occurred(action(sing_shanty, Sailor, Other, null, null, null)).
 
-update(Other,happiness,Y) :- is(Other,happiness,X), X + 1 = Y, occurred(action(sing_shanty, Sailor, Other, null, null, null)).
+update(Sailor,happiness,Y) :- is(Sailor,happiness,X), X + 1 = Y, occurred(action(sing_shanty, Sailor, Other, null, null, null)).
 
 update(Sailor,happiness,1) :- not is(Sailor,happiness,_), occurred(action(sing_shanty, Sailor, Other, null, null, null)).
 
-update(Other,happiness,1) :- not is(Other,happiness,_), occurred(action(sing_shanty, Sailor, Other, null, null, null)).
+update(Other,likes,Sailor,Y) :- is(Other,likes,Sailor,X), X + 2 = Y,occurred(action(sing_shanty, Sailor, Other, null, null, null)).
 
-update(Sailor,happiness,Y) :- is(Sailor,happiness,X), X + 1 = Y, occurred(action(sing_shanty, Sailor, Other, null, null, null)).
+update(Other,happiness,Y) :- is(Other,happiness,X), X + 1 = Y, occurred(action(sing_shanty, Sailor, Other, null, null, null)).
+
+update(Sailor,likes,Other,Y) :- is(Sailor,likes,Other,X), X + 2 = Y,occurred(action(sing_shanty, Sailor, Other, null, null, null)).
 
 update(Sailor,likes,Other,2) :- not is(Sailor,likes,Other,_), occurred(action(sing_shanty, Sailor, Other, null, null, null)).
 
-update(Other,likes,Sailor,Y) :- is(Other,likes,Sailor,X), X + 2 = Y,occurred(action(sing_shanty, Sailor, Other, null, null, null)).
-
-update(Sailor,likes,Other,Y) :- is(Sailor,likes,Other,X), X + 2 = Y,occurred(action(sing_shanty, Sailor, Other, null, null, null)).
+update(Other,happiness,1) :- not is(Other,happiness,_), occurred(action(sing_shanty, Sailor, Other, null, null, null)).
 
 is(sing_shanty, role_specific).
 
@@ -3523,11 +3523,11 @@ visibility(sing_shanty,0).
 action(prepare_auction, Auctioneer, null, null, null, null):-
 		person(Auctioneer),person(null),person(null),event(null),location(null),
 		at(Auctioneer,RoleLocation),
-		at(Auctioneer,Location),
 		is(Auctioneer,auctioneer,RoleLocation),
+		at(Auctioneer,Location),
 		Auctioneer != null.
 
-hashed(prepare_auction,3251006718).
+hashed(prepare_auction,4056334793).
 
 update(Auctioneer,readiness,1) :- not is(Auctioneer,readiness,_), occurred(action(prepare_auction, Auctioneer, null, null, null, null)).
 
@@ -3541,28 +3541,28 @@ visibility(prepare_auction,0).
 
 action(prime_auction_goer, Auctioneer, Attendee, null, null, null):-
 		person(Auctioneer),person(Attendee),person(null),event(null),location(null),
-		is(Auctioneer,auctioneer,RoleLocation),
 		is(Attendee, rich),
+		at(Auctioneer,RoleLocation),
+		is(Auctioneer,auctioneer,RoleLocation),
 		at(Attendee,Location),
 		at(Auctioneer,Location),
-		at(Auctioneer,RoleLocation),
 		Auctioneer != Attendee,
 		Auctioneer != null,
 		Attendee != null.
 
-hashed(prime_auction_goer,696734938).
-
-update(Attendee,likes,Auctioneer,1) :- not is(Attendee,likes,Auctioneer,_), occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
+hashed(prime_auction_goer,3333124854).
 
 update(Attendee,auction_readiness,Y) :- is(Attendee,auction_readiness,X), X + 1 = Y, occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
 
-update(Attendee,auction_readiness,1) :- not is(Attendee,auction_readiness,_), occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
+update(Auctioneer,readiness,1) :- not is(Auctioneer,readiness,_), occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
 
 update(Attendee,likes,Auctioneer,Y) :- is(Attendee,likes,Auctioneer,X), X + 1 = Y, occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
 
-update(Auctioneer,readiness,1) :- not is(Auctioneer,readiness,_), occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
+update(Attendee,likes,Auctioneer,1) :- not is(Attendee,likes,Auctioneer,_), occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
 
 update(Auctioneer,readiness,Y) :- is(Auctioneer,readiness,X), X + 1 = Y, occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
+
+update(Attendee,auction_readiness,1) :- not is(Attendee,auction_readiness,_), occurred(action(prime_auction_goer, Auctioneer, Attendee, null, null, null)).
 
 is(prime_auction_goer, role_specific).
 
@@ -3574,14 +3574,14 @@ visibility(prime_auction_goer,0).
 
 action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null):-
 		person(Auctioneer),person(Bidder1),person(Bidder2),event(null),location(null),
-		at(Bidder1,Location),
-		is(Auctioneer,auctioneer,RoleLocation),
+		is(Auctioneer,readiness,V_Auctioneer_readiness), V_Auctioneer_readiness >= 5,
+		at(Auctioneer,RoleLocation),
 		is(Bidder1,auction_readiness,V_Bidder1_auction_readiness), V_Bidder1_auction_readiness >= 1,
 		is(Bidder2,auction_readiness,V_Bidder2_auction_readiness), V_Bidder2_auction_readiness >= 1,
-		at(Auctioneer,Location),
-		at(Auctioneer,RoleLocation),
-		is(Auctioneer,readiness,V_Auctioneer_readiness), V_Auctioneer_readiness >= 5,
+		at(Bidder1,Location),
+		is(Auctioneer,auctioneer,RoleLocation),
 		at(Bidder2,Location),
+		at(Auctioneer,Location),
 		Auctioneer != Bidder1,
 		Auctioneer != Bidder2,
 		Bidder1 != Bidder2,
@@ -3589,13 +3589,9 @@ action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null):
 		Bidder1 != null,
 		Bidder2 != null.
 
-hashed(hold_auction_with_bidding_war,1502587576).
+hashed(hold_auction_with_bidding_war,143844494).
 
-update(Bidder1,happiness,5) :- not is(Bidder1,happiness,_), occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
-
-update(Bidder2,likes,Bidder1,-5) :- not is(Bidder2,likes,Bidder1,_), occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
-
-update(Bidder2,likes,Bidder1,Y) :- is(Bidder2,likes,Bidder1,X), X - 5 = Y,occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
+update(Auctioneer,readiness,Y) :- is(Auctioneer,readiness,X), 0 = Y, occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
 
 update(Auctioneer,readiness,0) :- not is(Auctioneer,readiness,_), occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
 
@@ -3603,13 +3599,17 @@ update(Bidder1,happiness,Y) :- is(Bidder1,happiness,X), X + 5 = Y, occurred(acti
 
 update(Bidder2,happiness,-5) :- not is(Bidder2,happiness,_), occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
 
+update(Bidder1,happiness,5) :- not is(Bidder1,happiness,_), occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
+
 update(Bidder1,likes,Bidder2,Y) :- is(Bidder1,likes,Bidder2,X), X - 5 = Y,occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
 
-update(Auctioneer,readiness,Y) :- is(Auctioneer,readiness,X), 0 = Y, occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
+update(Bidder2,happiness,Y) :- is(Bidder2,happiness,X), X - 5 = Y, occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
 
 update(Bidder1,likes,Bidder2,-5) :- not is(Bidder1,likes,Bidder2,_), occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
 
-update(Bidder2,happiness,Y) :- is(Bidder2,happiness,X), X - 5 = Y, occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
+update(Bidder2,likes,Bidder1,Y) :- is(Bidder2,likes,Bidder1,X), X - 5 = Y,occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
+
+update(Bidder2,likes,Bidder1,-5) :- not is(Bidder2,likes,Bidder1,_), occurred(action(hold_auction_with_bidding_war, Auctioneer, Bidder1, Bidder2, null, null)).
 
 is(hold_auction_with_bidding_war, role_specific).
 
@@ -3623,12 +3623,12 @@ visibility(hold_auction_with_bidding_war,0).
 
 action(hold_auction_with_no_results, Auctioneer, Bidder1, Bidder2, null, null):-
 		person(Auctioneer),person(Bidder1),person(Bidder2),event(null),location(null),
+		is(Auctioneer,readiness,V_Auctioneer_readiness), V_Auctioneer_readiness >= 5,
+		at(Auctioneer,RoleLocation),
 		at(Bidder1,Location),
 		is(Auctioneer,auctioneer,RoleLocation),
-		at(Auctioneer,Location),
-		at(Auctioneer,RoleLocation),
-		is(Auctioneer,readiness,V_Auctioneer_readiness), V_Auctioneer_readiness >= 5,
 		at(Bidder2,Location),
+		at(Auctioneer,Location),
 		Auctioneer != Bidder1,
 		Auctioneer != Bidder2,
 		Bidder1 != Bidder2,
@@ -3636,15 +3636,15 @@ action(hold_auction_with_no_results, Auctioneer, Bidder1, Bidder2, null, null):-
 		Bidder1 != null,
 		Bidder2 != null.
 
-hashed(hold_auction_with_no_results,465650974).
+hashed(hold_auction_with_no_results,3595021806).
 
 update(Auctioneer,happiness,-5) :- not is(Auctioneer,happiness,_), occurred(action(hold_auction_with_no_results, Auctioneer, Bidder1, Bidder2, null, null)).
+
+update(Auctioneer,happiness,Y) :- is(Auctioneer,happiness,X), X - 5 = Y, occurred(action(hold_auction_with_no_results, Auctioneer, Bidder1, Bidder2, null, null)).
 
 update(Auctioneer,readiness,Y) :- is(Auctioneer,readiness,X), 0 = Y, occurred(action(hold_auction_with_no_results, Auctioneer, Bidder1, Bidder2, null, null)).
 
 update(Auctioneer,readiness,0) :- not is(Auctioneer,readiness,_), occurred(action(hold_auction_with_no_results, Auctioneer, Bidder1, Bidder2, null, null)).
-
-update(Auctioneer,happiness,Y) :- is(Auctioneer,happiness,X), X - 5 = Y, occurred(action(hold_auction_with_no_results, Auctioneer, Bidder1, Bidder2, null, null)).
 
 is(hold_auction_with_no_results, role_specific).
 
@@ -3664,7 +3664,7 @@ action(search_for_artistic_inspiration_at_location, Self, null, null, null, Loca
 		at(Self,Location),
 		Self != null.
 
-hashed(search_for_artistic_inspiration_at_location,1942511817).
+hashed(search_for_artistic_inspiration_at_location,159867625).
 
 add(Self,inspired,Location) :-occurred(action(search_for_artistic_inspiration_at_location, Self, null, null, null, Location)).
 
@@ -3676,14 +3676,14 @@ visibility(search_for_artistic_inspiration_at_location,0).
 
 action(find_muse, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		is(Self, artist),
 		at(Other,Location),
+		is(Self, artist),
 		at(Self,Location),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(find_muse,3247740033).
+hashed(find_muse,2048620278).
 
 add(Self,inspired,Other) :-occurred(action(find_muse, Self, Other, null, null, null)).
 
@@ -3695,20 +3695,20 @@ visibility(find_muse,0).
 
 action(produce_work_about_muse, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
+		is(Self,inspired,Other),
 		at(Self,RoleLocation),
 		is(Self,artist,RoleLocation),
-		is(Self,inspired,Other),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(produce_work_about_muse,2634881053).
+hashed(produce_work_about_muse,2539823438).
+
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(produce_work_about_muse, Self, Other, null, null, null)).
 
 add(Self, has_art) :- occurred(action(produce_work_about_muse, Self, Other, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(produce_work_about_muse, Self, Other, null, null, null)).
-
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(produce_work_about_muse, Self, Other, null, null, null)).
 
 is(produce_work_about_muse, role_specific).
 
@@ -3718,18 +3718,18 @@ visibility(produce_work_about_muse,0).
 
 action(produce_work_about_inspiration, Self, null, null, null, Other):-
 		person(Self),person(null),person(null),event(null),location(Other),
+		is(Self,inspired,Other),
 		at(Self,RoleLocation),
 		is(Self,artist,RoleLocation),
-		is(Self,inspired,Other),
 		Self != null.
 
-hashed(produce_work_about_inspiration,169502430).
+hashed(produce_work_about_inspiration,1329643756).
+
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(produce_work_about_inspiration, Self, null, null, null, Other)).
 
 add(Self, has_art) :- occurred(action(produce_work_about_inspiration, Self, null, null, null, Other)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(produce_work_about_inspiration, Self, null, null, null, Other)).
-
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(produce_work_about_inspiration, Self, null, null, null, Other)).
 
 is(produce_work_about_inspiration, role_specific).
 
@@ -3739,20 +3739,20 @@ visibility(produce_work_about_inspiration,0).
 
 action(lose_muse, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
+		is(Self,inspired,Other),
 		at(Self,RoleLocation),
 		is(Self,artist,RoleLocation),
-		is(Self,inspired,Other),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(lose_muse,37513374).
-
-del(Self,inspired,Other) :-occurred(action(lose_muse, Self, Other, null, null, null)).
+hashed(lose_muse,788063936).
 
 update(Self,self_worth,-3) :- not is(Self,self_worth,_), occurred(action(lose_muse, Self, Other, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X - 3 = Y, occurred(action(lose_muse, Self, Other, null, null, null)).
+
+del(Self,inspired,Other) :-occurred(action(lose_muse, Self, Other, null, null, null)).
 
 is(lose_muse, role_specific).
 
@@ -3764,18 +3764,18 @@ visibility(lose_muse,0).
 
 action(lose_inspiration, Self, null, null, null, Other):-
 		person(Self),person(null),person(null),event(null),location(Other),
+		is(Self,inspired,Other),
 		at(Self,RoleLocation),
 		is(Self,artist,RoleLocation),
-		is(Self,inspired,Other),
 		Self != null.
 
-hashed(lose_inspiration,1743589467).
-
-del(Self,inspired,Other) :-occurred(action(lose_inspiration, Self, null, null, null, Other)).
+hashed(lose_inspiration,1811294882).
 
 update(Self,self_worth,-3) :- not is(Self,self_worth,_), occurred(action(lose_inspiration, Self, null, null, null, Other)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X - 3 = Y, occurred(action(lose_inspiration, Self, null, null, null, Other)).
+
+del(Self,inspired,Other) :-occurred(action(lose_inspiration, Self, null, null, null, Other)).
 
 is(lose_inspiration, role_specific).
 
@@ -3787,22 +3787,22 @@ visibility(lose_inspiration,0).
 
 action(discuss_art, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,artist,RoleLocation),
 		is(Self, has_art),
-		at(Other,Location),
 		at(Self,Location),
+		at(Other,Location),
+		at(Self,RoleLocation),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(discuss_art,3052751863).
+hashed(discuss_art,220148466).
+
+update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(discuss_art, Self, Other, null, null, null)).
 
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 2 = Y,occurred(action(discuss_art, Self, Other, null, null, null)).
 
 update(Other,likes,Self,2) :- not is(Other,likes,Self,_), occurred(action(discuss_art, Self, Other, null, null, null)).
-
-update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(discuss_art, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 2 = Y,occurred(action(discuss_art, Self, Other, null, null, null)).
 
@@ -3814,17 +3814,17 @@ visibility(discuss_art,0).
 
 action(give_art_to_benefactor, Self, Baron, null, null, null):-
 		person(Self),person(Baron),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,artist,RoleLocation),
-		at(Baron,Location),
 		is(Self, has_art),
-		is(Self,servant,Baron),
 		at(Self,Location),
+		is(Self,servant,Baron),
+		at(Baron,Location),
+		at(Self,RoleLocation),
 		Self != Baron,
 		Self != null,
 		Baron != null.
 
-hashed(give_art_to_benefactor,118290933).
+hashed(give_art_to_benefactor,4128377527).
 
 update(Baron,likes,Self,2) :- not is(Baron,likes,Self,_), occurred(action(give_art_to_benefactor, Self, Baron, null, null, null)).
 
@@ -3838,15 +3838,15 @@ visibility(give_art_to_benefactor,0).
 
 action(investigate_target, Spy, null, Target, null, null):-
 		person(Spy),person(null),person(Target),event(null),location(null),
+		is(Spy, spy),
+		is(Spy,plotting_against,Target,V_Spy_plotting_against_Target), V_Spy_plotting_against_Target >= 1,
 		at(Target,Location),
 		at(Spy,Location),
-		is(Spy,plotting_against,Target,V_Spy_plotting_against_Target), V_Spy_plotting_against_Target >= 1,
-		is(Spy, spy),
 		Spy != Target,
 		Spy != null,
 		Target != null.
 
-hashed(investigate_target,1283779134).
+hashed(investigate_target,3854104205).
 
 add(Spy,knows_personal_info_about,Target) :-occurred(action(investigate_target, Spy, null, Target, null, null)).
 
@@ -3858,21 +3858,21 @@ visibility(investigate_target,0).
 
 action(get_too_close_to_target, Spy, null, Target, null, null):-
 		person(Spy),person(null),person(Target),event(null),location(null),
+		is(Spy, spy),
+		is(Spy,plotting_against,Target,V_Spy_plotting_against_Target), V_Spy_plotting_against_Target >= 1,
 		at(Target,Location),
 		at(Spy,Location),
-		is(Spy,plotting_against,Target,V_Spy_plotting_against_Target), V_Spy_plotting_against_Target >= 1,
-		is(Spy, spy),
 		Spy != Target,
 		Spy != null,
 		Target != null.
 
-hashed(get_too_close_to_target,3177632656).
-
-update(Target,likes,Spy,2) :- not is(Target,likes,Spy,_), occurred(action(get_too_close_to_target, Spy, null, Target, null, null)).
+hashed(get_too_close_to_target,666747286).
 
 update(Target,likes,Spy,Y) :- is(Target,likes,Spy,X), X + 2 = Y,occurred(action(get_too_close_to_target, Spy, null, Target, null, null)).
 
 update(Spy,likes,Target,Y) :- is(Spy,likes,Target,X), X + 2 = Y,occurred(action(get_too_close_to_target, Spy, null, Target, null, null)).
+
+update(Target,likes,Spy,2) :- not is(Target,likes,Spy,_), occurred(action(get_too_close_to_target, Spy, null, Target, null, null)).
 
 update(Spy,likes,Target,2) :- not is(Spy,likes,Target,_), occurred(action(get_too_close_to_target, Spy, null, Target, null, null)).
 
@@ -3886,15 +3886,15 @@ visibility(get_too_close_to_target,0).
 
 action(report_back, Spy, Spymaster, Target, null, null):-
 		person(Spy),person(Spymaster),person(Target),event(null),location(null),
-		is(Spy,knows_personal_info_about,Target),
-		at(Spy,RoleLocation),
-		at(Spymaster,Location_0),
 		at(Spy,Location_0),
-		Location_0 != Target,
-		is(Spy,spy,RoleLocation),
+		at(Spy,RoleLocation),
 		is(Spymaster,spy_master,RoleLocation),
-		is(Spy,plotting_against,Target,V_Spy_plotting_against_Target), V_Spy_plotting_against_Target >= 1,
+		at(Spymaster,Location_0),
+		is(Spy,knows_personal_info_about,Target),
 		at(Spymaster,RoleLocation),
+		is(Spy,plotting_against,Target,V_Spy_plotting_against_Target), V_Spy_plotting_against_Target >= 1,
+		is(Spy,spy,RoleLocation),
+		Target != Location_0,
 		Spy != Spymaster,
 		Spy != Target,
 		Spymaster != Target,
@@ -3902,13 +3902,13 @@ action(report_back, Spy, Spymaster, Target, null, null):-
 		Spymaster != null,
 		Target != null.
 
-hashed(report_back,1459633414).
-
-update(Spymaster,likes,Spy,Y) :- is(Spymaster,likes,Spy,X), X + 1 = Y, occurred(action(report_back, Spy, Spymaster, Target, null, null)).
+hashed(report_back,4162133261).
 
 update(Spymaster,likes,Spy,1) :- not is(Spymaster,likes,Spy,_), occurred(action(report_back, Spy, Spymaster, Target, null, null)).
 
 add(Spymaster,knows_personal_info_about,Target) :-occurred(action(report_back, Spy, Spymaster, Target, null, null)).
+
+update(Spymaster,likes,Spy,Y) :- is(Spymaster,likes,Spy,X), X + 1 = Y, occurred(action(report_back, Spy, Spymaster, Target, null, null)).
 
 is(report_back, role_specific).
 
@@ -3920,13 +3920,13 @@ visibility(report_back,0).
 
 action(turn_against_spymaster, Spy, Target, Spymaster, null, null):-
 		person(Spy),person(Target),person(Spymaster),event(null),location(null),
+		at(Target,Location_0),
 		at(Spy,Location_0),
-		is(Spy, spy),
-		Location_0 != Spymaster,
 		is(Spymaster, spy_master),
 		is(Spy,likes,Target,V_Spy_likes_Target), V_Spy_likes_Target >= 5,
+		Spymaster != Location_0,
 		is(Spy,plotting_against,Target,V_Spy_plotting_against_Target), V_Spy_plotting_against_Target >= 1,
-		at(Target,Location_0),
+		is(Spy, spy),
 		Spy != Target,
 		Spy != Spymaster,
 		Target != Spymaster,
@@ -3934,13 +3934,13 @@ action(turn_against_spymaster, Spy, Target, Spymaster, null, null):-
 		Target != null,
 		Spymaster != null.
 
-hashed(turn_against_spymaster,2630683583).
+hashed(turn_against_spymaster,3179520235).
+
+update(Spy,likes,Spymaster,Y) :- is(Spy,likes,Spymaster,X), X - 10 = Y, occurred(action(turn_against_spymaster, Spy, Target, Spymaster, null, null)).
 
 update(Spy,plotting_against,Target,-10) :- not is(Spy,plotting_against,Target,_), occurred(action(turn_against_spymaster, Spy, Target, Spymaster, null, null)).
 
 update(Spy,plotting_against,Target,Y) :- is(Spy,plotting_against,Target,X), X - 10 = Y, occurred(action(turn_against_spymaster, Spy, Target, Spymaster, null, null)).
-
-update(Spy,likes,Spymaster,Y) :- is(Spy,likes,Spymaster,X), X - 10 = Y, occurred(action(turn_against_spymaster, Spy, Target, Spymaster, null, null)).
 
 update(Spy,likes,Spymaster,-10) :- not is(Spy,likes,Spymaster,_), occurred(action(turn_against_spymaster, Spy, Target, Spymaster, null, null)).
 
@@ -3954,20 +3954,20 @@ visibility(turn_against_spymaster,0).
 
 action(teach_student, Tutor, Student, null, null, null):-
 		person(Tutor),person(Student),person(null),event(null),location(null),
-		at(Tutor,Location),
-		is(Tutor,tutor,Student),
-		at(Tutor,RoleLocation),
-		at(Student,Location),
 		is(Tutor,tutor,RoleLocation),
+		at(Tutor,RoleLocation),
+		is(Tutor,tutor,Student),
+		at(Student,Location),
+		at(Tutor,Location),
 		Tutor != Student,
 		Tutor != null,
 		Student != null.
 
-hashed(teach_student,2532763102).
-
-update(Tutor,self_worth,Y) :- is(Tutor,self_worth,X), X + 1 = Y, occurred(action(teach_student, Tutor, Student, null, null, null)).
+hashed(teach_student,2822685370).
 
 update(Student,likes,Tutor,Y) :- is(Student,likes,Tutor,X), X + 1 = Y, occurred(action(teach_student, Tutor, Student, null, null, null)).
+
+update(Tutor,self_worth,Y) :- is(Tutor,self_worth,X), X + 1 = Y, occurred(action(teach_student, Tutor, Student, null, null, null)).
 
 update(Student,likes,Tutor,1) :- not is(Student,likes,Tutor,_), occurred(action(teach_student, Tutor, Student, null, null, null)).
 
@@ -3983,24 +3983,24 @@ visibility(teach_student,0).
 
 action(bore_student, Tutor, Student, null, null, null):-
 		person(Tutor),person(Student),person(null),event(null),location(null),
-		at(Tutor,Location),
-		is(Tutor,tutor,Student),
-		at(Tutor,RoleLocation),
-		at(Student,Location),
 		is(Tutor,tutor,RoleLocation),
+		at(Tutor,RoleLocation),
+		is(Tutor,tutor,Student),
+		at(Student,Location),
+		at(Tutor,Location),
 		Tutor != Student,
 		Tutor != null,
 		Student != null.
 
-hashed(bore_student,855638595).
+hashed(bore_student,964067999).
+
+update(Student,likes,Tutor,-1) :- not is(Student,likes,Tutor,_), occurred(action(bore_student, Tutor, Student, null, null, null)).
 
 update(Tutor,self_worth,-1) :- not is(Tutor,self_worth,_), occurred(action(bore_student, Tutor, Student, null, null, null)).
 
 update(Student,likes,Tutor,Y) :- is(Student,likes,Tutor,X), X - 1 = Y, occurred(action(bore_student, Tutor, Student, null, null, null)).
 
 update(Tutor,self_worth,Y) :- is(Tutor,self_worth,X), X - 1 = Y, occurred(action(bore_student, Tutor, Student, null, null, null)).
-
-update(Student,likes,Tutor,-1) :- not is(Student,likes,Tutor,_), occurred(action(bore_student, Tutor, Student, null, null, null)).
 
 is(bore_student, work).
 
@@ -4014,16 +4014,16 @@ visibility(bore_student,0).
 
 action(build_ship, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,ship_builder,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(build_ship,533640414).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(build_ship, Self, null, null, null, null)).
+hashed(build_ship,1143341535).
 
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(build_ship, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(build_ship, Self, null, null, null, null)).
 
 is(build_ship, role_specific).
 
@@ -4033,23 +4033,23 @@ visibility(build_ship,0).
 
 action(help_with_ship_building, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Other,ship_builder,RoleLocation),
-		is(Self,ship_builder,RoleLocation),
 		at(Other,RoleLocation),
-		at(Other,Location),
 		at(Self,Location),
+		is(Self,ship_builder,RoleLocation),
+		at(Other,Location),
+		at(Self,RoleLocation),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(help_with_ship_building,2337586774).
+hashed(help_with_ship_building,18656227).
+
+update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(help_with_ship_building, Self, Other, null, null, null)).
 
 update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(help_with_ship_building, Self, Other, null, null, null)).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(help_with_ship_building, Self, Other, null, null, null)).
-
-update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 1 = Y,occurred(action(help_with_ship_building, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 1 = Y,occurred(action(help_with_ship_building, Self, Other, null, null, null)).
 
@@ -4063,25 +4063,25 @@ visibility(help_with_ship_building,0).
 
 action(argue_with_engineer, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Other,engineer,RoleLocation),
-		is(Self,ship_builder,RoleLocation),
 		at(Other,RoleLocation),
-		at(Other,Location),
 		at(Self,Location),
+		is(Self,ship_builder,RoleLocation),
+		at(Other,Location),
+		at(Self,RoleLocation),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(argue_with_engineer,98750660).
-
-update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(argue_with_engineer, Self, Other, null, null, null)).
+hashed(argue_with_engineer,3590765379).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 1 = Y,occurred(action(argue_with_engineer, Self, Other, null, null, null)).
 
-update(Self,likes,Other,-1) :- not is(Self,likes,Other,_), occurred(action(argue_with_engineer, Self, Other, null, null, null)).
+update(Other,likes,Self,-1) :- not is(Other,likes,Self,_), occurred(action(argue_with_engineer, Self, Other, null, null, null)).
 
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X - 1 = Y,occurred(action(argue_with_engineer, Self, Other, null, null, null)).
+
+update(Self,likes,Other,-1) :- not is(Self,likes,Other,_), occurred(action(argue_with_engineer, Self, Other, null, null, null)).
 
 is(argue_with_engineer, role_specific).
 
@@ -4093,15 +4093,15 @@ visibility(argue_with_engineer,0).
 
 action(entice_customer, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,prostitute,RoleLocation),
 		at(Other,Location),
+		is(Self,prostitute,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(entice_customer,3268113213).
+hashed(entice_customer,2091788321).
 
 update(Other,likes,Self,1) :- not is(Other,likes,Self,_), occurred(action(entice_customer, Self, Other, null, null, null)).
 
@@ -4115,16 +4115,16 @@ visibility(entice_customer,0).
 
 action(attend_class, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,student,RoleLocation),
 		at(Self,Location),
+		is(Self,student,RoleLocation),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(attend_class,4134826413).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(attend_class, Self, null, null, null, null)).
+hashed(attend_class,3586191153).
 
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(attend_class, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(attend_class, Self, null, null, null, null)).
 
 is(attend_class, role_specific).
 
@@ -4134,25 +4134,25 @@ visibility(attend_class,0).
 
 action(become_inspired_by_lecture, Self, Professor, null, null, null):-
 		person(Self),person(Professor),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		at(Professor,Location),
-		is(Professor,professor,RoleLocation),
 		is(Self,student,RoleLocation),
-		at(Professor,RoleLocation),
+		at(Professor,Location),
 		at(Self,Location),
+		is(Professor,professor,RoleLocation),
+		at(Professor,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Professor,
 		Self != null,
 		Professor != null.
 
-hashed(become_inspired_by_lecture,1712046604).
-
-update(Self,likes,Professor,1) :- not is(Self,likes,Professor,_), occurred(action(become_inspired_by_lecture, Self, Professor, null, null, null)).
+hashed(become_inspired_by_lecture,13318610).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(become_inspired_by_lecture, Self, Professor, null, null, null)).
 
+update(Self,likes,Professor,Y) :- is(Self,likes,Professor,X), X + 1 = Y, occurred(action(become_inspired_by_lecture, Self, Professor, null, null, null)).
+
 update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(become_inspired_by_lecture, Self, Professor, null, null, null)).
 
-update(Self,likes,Professor,Y) :- is(Self,likes,Professor,X), X + 1 = Y, occurred(action(become_inspired_by_lecture, Self, Professor, null, null, null)).
+update(Self,likes,Professor,1) :- not is(Self,likes,Professor,_), occurred(action(become_inspired_by_lecture, Self, Professor, null, null, null)).
 
 is(become_inspired_by_lecture, role_specific).
 
@@ -4170,15 +4170,15 @@ action(bond_over_study, Student1, Student2, null, null, null):-
 		Student1 != null,
 		Student2 != null.
 
-hashed(bond_over_study,2030104006).
-
-update(Student2,likes,Student1,Y) :- is(Student2,likes,Student1,X), X + 2 = Y,occurred(action(bond_over_study, Student1, Student2, null, null, null)).
-
-update(Student1,likes,Student2,2) :- not is(Student1,likes,Student2,_), occurred(action(bond_over_study, Student1, Student2, null, null, null)).
+hashed(bond_over_study,3640970814).
 
 update(Student1,likes,Student2,Y) :- is(Student1,likes,Student2,X), X + 2 = Y,occurred(action(bond_over_study, Student1, Student2, null, null, null)).
 
 update(Student2,likes,Student1,2) :- not is(Student2,likes,Student1,_), occurred(action(bond_over_study, Student1, Student2, null, null, null)).
+
+update(Student1,likes,Student2,2) :- not is(Student1,likes,Student2,_), occurred(action(bond_over_study, Student1, Student2, null, null, null)).
+
+update(Student2,likes,Student1,Y) :- is(Student2,likes,Student1,X), X + 2 = Y,occurred(action(bond_over_study, Student1, Student2, null, null, null)).
 
 is(bond_over_study, role_specific).
 
@@ -4188,11 +4188,11 @@ visibility(bond_over_study,0).
 
 action(pull_all_nighter, Student, null, null, null, null):-
 		person(Student),person(null),person(null),event(null),location(null),
-		is(Student1, student),
 		at(Student,Location),
+		is(Student1, student),
 		Student != null.
 
-hashed(pull_all_nighter,1932234740).
+hashed(pull_all_nighter,2927020575).
 
 update(Student,tiredness,Y) :- is(Student,tiredness,X), X + 3 = Y, occurred(action(pull_all_nighter, Student, null, null, null, null)).
 
@@ -4206,28 +4206,28 @@ visibility(pull_all_nighter,0).
 
 action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null):-
 		person(Student1),person(Student2),person(null),event(null),location(null),
-		is(Student1, student),
-		is(Location_0,tavern),
 		is(Student2, student),
-		at(Student1,Location_0),
+		is(Student1, student),
 		at(Student2,Location_0),
+		at(Student1,Location_0),
+		is(Location_0,tavern),
 		Student1 != Student2,
 		Student1 != null,
 		Student2 != null.
 
-hashed(hang_out_with_classmates_at_tavern,222120148).
+hashed(hang_out_with_classmates_at_tavern,59770752).
 
-update(Student2,likes,Student1,Y) :- is(Student2,likes,Student1,X), X + 2 = Y,occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
-
-update(Student1,likes,Student2,2) :- not is(Student1,likes,Student2,_), occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
-
-update(Student1,likes,Student2,Y) :- is(Student1,likes,Student2,X), X + 2 = Y,occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
-
-add(Student2, drunk) :- occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
+update(Student2,likes,Student1,2) :- not is(Student2,likes,Student1,_), occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
 
 add(Student1, drunk) :- occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
 
-update(Student2,likes,Student1,2) :- not is(Student2,likes,Student1,_), occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
+update(Student1,likes,Student2,2) :- not is(Student1,likes,Student2,_), occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
+
+add(Student2, drunk) :- occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
+
+update(Student1,likes,Student2,Y) :- is(Student1,likes,Student2,X), X + 2 = Y,occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
+
+update(Student2,likes,Student1,Y) :- is(Student2,likes,Student1,X), X + 2 = Y,occurred(action(hang_out_with_classmates_at_tavern, Student1, Student2, null, null, null)).
 
 is(hang_out_with_classmates_at_tavern, role_specific).
 
@@ -4237,32 +4237,32 @@ visibility(hang_out_with_classmates_at_tavern,0).
 
 action(have_fun_in_quad, Student1, Student2, null, null, null):-
 		person(Student1),person(Student2),person(null),event(null),location(null),
-		is(Student1, student),
 		is(Student2, student),
-		at(Student1,Location_0),
+		is(Student1, student),
 		is(Location_0,quad),
 		at(Student2,Location_0),
+		at(Student1,Location_0),
 		Student1 != Student2,
 		Student1 != null,
 		Student2 != null.
 
-hashed(have_fun_in_quad,1790648199).
+hashed(have_fun_in_quad,269028183).
 
-update(Student1,tiredness,0) :- not is(Student1,tiredness,_), occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
+update(Student2,likes,Student1,2) :- not is(Student2,likes,Student1,_), occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
 
-update(Student1,tiredness,Y) :- is(Student1,tiredness,X), 0 = Y, occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
+update(Student2,tiredness,Y) :- is(Student2,tiredness,X), 0 = Y, occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
 
 update(Student2,likes,Student1,Y) :- is(Student2,likes,Student1,X), X + 2 = Y,occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
 
 update(Student1,likes,Student2,2) :- not is(Student1,likes,Student2,_), occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
 
-update(Student2,tiredness,Y) :- is(Student2,tiredness,X), 0 = Y, occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
+update(Student1,tiredness,0) :- not is(Student1,tiredness,_), occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
+
+update(Student2,tiredness,0) :- not is(Student2,tiredness,_), occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
 
 update(Student1,likes,Student2,Y) :- is(Student1,likes,Student2,X), X + 2 = Y,occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
 
-update(Student2,likes,Student1,2) :- not is(Student2,likes,Student1,_), occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
-
-update(Student2,tiredness,0) :- not is(Student2,tiredness,_), occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
+update(Student1,tiredness,Y) :- is(Student1,tiredness,X), 0 = Y, occurred(action(have_fun_in_quad, Student1, Student2, null, null, null)).
 
 is(have_fun_in_quad, role_specific).
 
@@ -4280,13 +4280,13 @@ action(have_late_night_philosophical_argument, Student1, Student2, null, null, n
 		Student1 != null,
 		Student2 != null.
 
-hashed(have_late_night_philosophical_argument,4248287275).
+hashed(have_late_night_philosophical_argument,328081800).
+
+update(Student1,likes,Student2,Y) :- is(Student1,likes,Student2,X), X - 4 = Y,occurred(action(have_late_night_philosophical_argument, Student1, Student2, null, null, null)).
 
 update(Student2,likes,Student1,-4) :- not is(Student2,likes,Student1,_), occurred(action(have_late_night_philosophical_argument, Student1, Student2, null, null, null)).
 
 update(Student1,likes,Student2,-4) :- not is(Student1,likes,Student2,_), occurred(action(have_late_night_philosophical_argument, Student1, Student2, null, null, null)).
-
-update(Student1,likes,Student2,Y) :- is(Student1,likes,Student2,X), X - 4 = Y,occurred(action(have_late_night_philosophical_argument, Student1, Student2, null, null, null)).
 
 update(Student2,likes,Student1,Y) :- is(Student2,likes,Student1,X), X - 4 = Y,occurred(action(have_late_night_philosophical_argument, Student1, Student2, null, null, null)).
 
@@ -4300,16 +4300,16 @@ visibility(have_late_night_philosophical_argument,0).
 
 action(tend_the_forge, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,smith_apprentice,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(tend_the_forge,632917663).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(tend_the_forge, Self, null, null, null, null)).
+hashed(tend_the_forge,2887003035).
 
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(tend_the_forge, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(tend_the_forge, Self, null, null, null, null)).
 
 is(tend_the_forge, role_specific).
 
@@ -4319,16 +4319,16 @@ visibility(tend_the_forge,0).
 
 action(guard_prison, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,guard,RoleLocation),
 		at(Self,Location),
+		is(Self,guard,RoleLocation),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(guard_prison,3732382506).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(guard_prison, Self, null, null, null, null)).
+hashed(guard_prison,2347842326).
 
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(guard_prison, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(guard_prison, Self, null, null, null, null)).
 
 is(guard_prison, role_specific).
 
@@ -4338,21 +4338,21 @@ visibility(guard_prison,0).
 
 action(sneak_treat_to_prisoner, Self, Prisoner, null, null, null):-
 		person(Self),person(Prisoner),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Prisoner,prisoner,RoleLocation),
-		is(Self,guard,RoleLocation),
 		at(Prisoner,RoleLocation),
-		at(Prisoner,Location),
+		is(Prisoner,prisoner,RoleLocation),
 		at(Self,Location),
+		at(Prisoner,Location),
+		is(Self,guard,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Prisoner,
 		Self != null,
 		Prisoner != null.
 
-hashed(sneak_treat_to_prisoner,1329461041).
-
-update(Prisoner,likes,Self,Y) :- is(Prisoner,likes,Self,X), X + 2 = Y, occurred(action(sneak_treat_to_prisoner, Self, Prisoner, null, null, null)).
+hashed(sneak_treat_to_prisoner,706325004).
 
 update(Prisoner,likes,Self,2) :- not is(Prisoner,likes,Self,_), occurred(action(sneak_treat_to_prisoner, Self, Prisoner, null, null, null)).
+
+update(Prisoner,likes,Self,Y) :- is(Prisoner,likes,Self,X), X + 2 = Y, occurred(action(sneak_treat_to_prisoner, Self, Prisoner, null, null, null)).
 
 is(sneak_treat_to_prisoner, role_specific).
 
@@ -4364,21 +4364,21 @@ visibility(sneak_treat_to_prisoner,0).
 
 action(mistreat_prisoner, Self, Prisoner, null, null, null):-
 		person(Self),person(Prisoner),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Prisoner,prisoner,RoleLocation),
-		is(Self,guard,RoleLocation),
 		at(Prisoner,RoleLocation),
-		at(Prisoner,Location),
+		is(Prisoner,prisoner,RoleLocation),
 		at(Self,Location),
+		at(Prisoner,Location),
+		is(Self,guard,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Prisoner,
 		Self != null,
 		Prisoner != null.
 
-hashed(mistreat_prisoner,4072807402).
-
-update(Prisoner,likes,Self,Y) :- is(Prisoner,likes,Self,X), X - 2 = Y, occurred(action(mistreat_prisoner, Self, Prisoner, null, null, null)).
+hashed(mistreat_prisoner,2801497069).
 
 update(Prisoner,likes,Self,-2) :- not is(Prisoner,likes,Self,_), occurred(action(mistreat_prisoner, Self, Prisoner, null, null, null)).
+
+update(Prisoner,likes,Self,Y) :- is(Prisoner,likes,Self,X), X - 2 = Y, occurred(action(mistreat_prisoner, Self, Prisoner, null, null, null)).
 
 is(mistreat_prisoner, role_specific).
 
@@ -4390,16 +4390,16 @@ visibility(mistreat_prisoner,0).
 
 action(manage_docks, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,shipping_foreman,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(manage_docks,3176509390).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(manage_docks, Self, null, null, null, null)).
+hashed(manage_docks,1490064160).
 
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(manage_docks, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(manage_docks, Self, null, null, null, null)).
 
 is(manage_docks, role_specific).
 
@@ -4409,24 +4409,24 @@ visibility(manage_docks,0).
 
 action(steal_from_mark, Self, Mark, null, null, null):-
 		person(Self),person(Mark),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		not is(Mark, criminal),
 		is(Self,thief,RoleLocation),
 		at(Mark,Location),
+		not is(Mark, criminal),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Mark,
 		Self != null,
 		Mark != null.
 
-hashed(steal_from_mark,4113457750).
+hashed(steal_from_mark,966108144).
 
 update(Mark,suspicion,Self,Y) :- is(Mark,suspicion,Self,X), X + 1 = Y, occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
-update(Mark,suspicion,Self,1) :- not is(Mark,suspicion,Self,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
+update(Mark,suspicion,Self,1) :- not is(Mark,suspicion,Self,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
 is(steal_from_mark, role_specific).
 
@@ -4440,24 +4440,24 @@ visibility(steal_from_mark,0).
 
 action(get_caught_stealing, Self, Mark, null, null, null):-
 		person(Self),person(Mark),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,thief,RoleLocation),
 		is(Mark,suspicion,Self,V_Mark_suspicion_Self), V_Mark_suspicion_Self >= 2,
 		at(Mark,Location),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Mark,
 		Self != null,
 		Mark != null.
 
-hashed(get_caught_stealing,828928666).
+hashed(get_caught_stealing,1881642906).
 
-add(Self, on_the_run) :- occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
-
-update(Self,self_worth,-1) :- not is(Self,self_worth,_), occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
+update(Mark,likes,Self,Y) :- is(Mark,likes,Self,X), X - 5 = Y, occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
 update(Mark,likes,Self,-5) :- not is(Mark,likes,Self,_), occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
-update(Mark,likes,Self,Y) :- is(Mark,likes,Self,X), X - 5 = Y, occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
+update(Self,self_worth,-1) :- not is(Self,self_worth,_), occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
+
+add(Self, on_the_run) :- occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X - 1 = Y, occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
@@ -4483,11 +4483,11 @@ action(run_from_authorities, Self, Authority, null, null, null):-
 		Self != null,
 		Authority != null.
 
-hashed(run_from_authorities,382194284).
-
-update(Authority,likes,Self,Y) :- is(Authority,likes,Self,X), X - 2 = Y,occurred(action(run_from_authorities, Self, Authority, null, null, null)).
+hashed(run_from_authorities,1804187253).
 
 update(Self,likes,Authority,-2) :- not is(Self,likes,Authority,_), occurred(action(run_from_authorities, Self, Authority, null, null, null)).
+
+update(Authority,likes,Self,Y) :- is(Authority,likes,Self,X), X - 2 = Y,occurred(action(run_from_authorities, Self, Authority, null, null, null)).
 
 update(Authority,likes,Self,-2) :- not is(Authority,likes,Self,_), occurred(action(run_from_authorities, Self, Authority, null, null, null)).
 
@@ -4505,7 +4505,7 @@ action(evade_authorities, Self, null, null, null, null):-
 		at(Self,Location),
 		Self != null.
 
-hashed(evade_authorities,3047848051).
+hashed(evade_authorities,1347178723).
 
 del(Self, on_the_run) :- occurred(action(evade_authorities, Self, null, null, null, null)).
 
@@ -4517,18 +4517,18 @@ visibility(evade_authorities,0).
 
 action(get_caught, Self, null, null, null, Dungeon):-
 		person(Self),person(null),person(null),event(null),location(Dungeon),
-		is(Self, on_the_run),
 		is(Dungeon, dungeon),
+		is(Self, on_the_run),
 		at(Self,Location),
 		Self != null.
 
-hashed(get_caught,3499852260).
+hashed(get_caught,1301902987).
+
+del(Self, on_the_run) :- occurred(action(get_caught, Self, null, null, null, Dungeon)).
 
 add(Self,confined,Dungeon) :-occurred(action(get_caught, Self, null, null, null, Dungeon)).
 
 add(Self,prisoner,Dungeon) :-occurred(action(get_caught, Self, null, null, null, Dungeon)).
-
-del(Self, on_the_run) :- occurred(action(get_caught, Self, null, null, null, Dungeon)).
 
 is(get_caught, role_specific).
 
@@ -4542,25 +4542,25 @@ visibility(get_caught,0).
 
 action(assuage_benefactor, Self, Patron, null, null, null):-
 		person(Self),person(Patron),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,impresario,RoleLocation),
+		at(Patron,RoleLocation),
 		at(Patron,Location),
 		is(Patron,patron,RoleLocation),
-		at(Patron,RoleLocation),
 		at(Self,Location),
+		is(Self,impresario,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Patron,
 		Self != null,
 		Patron != null.
 
-hashed(assuage_benefactor,3971836120).
+hashed(assuage_benefactor,3522385793).
 
-update(Patron,likes,Self,Y) :- is(Patron,likes,Self,X), X + 1 = Y, occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
-
-update(Patron,self_worth,1) :- not is(Patron,self_worth,_), occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
+update(Patron,likes,Self,1) :- not is(Patron,likes,Self,_), occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
 
 update(Self,likes,Patron,-1) :- not is(Self,likes,Patron,_), occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
 
-update(Patron,likes,Self,1) :- not is(Patron,likes,Self,_), occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
+update(Patron,self_worth,1) :- not is(Patron,self_worth,_), occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
+
+update(Patron,likes,Self,Y) :- is(Patron,likes,Self,X), X + 1 = Y, occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
 
 update(Patron,self_worth,Y) :- is(Patron,self_worth,X), X + 1 = Y, occurred(action(assuage_benefactor, Self, Patron, null, null, null)).
 
@@ -4576,29 +4576,29 @@ visibility(assuage_benefactor,0).
 
 action(assuage_diva, Self, Diva, null, null, null):-
 		person(Self),person(Diva),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,impresario,RoleLocation),
-		at(Diva,RoleLocation),
 		is(Diva,diva,RoleLocation),
-		at(Diva,Location),
+		at(Diva,RoleLocation),
 		at(Self,Location),
+		at(Diva,Location),
+		is(Self,impresario,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Diva,
 		Self != null,
 		Diva != null.
 
-hashed(assuage_diva,3283493928).
-
-update(Self,likes,Diva,-1) :- not is(Self,likes,Diva,_), occurred(action(assuage_diva, Self, Diva, null, null, null)).
-
-update(Diva,self_worth,Y) :- is(Diva,self_worth,X), X + 1 = Y, occurred(action(assuage_diva, Self, Diva, null, null, null)).
+hashed(assuage_diva,3436362876).
 
 update(Diva,likes,Self,1) :- not is(Diva,likes,Self,_), occurred(action(assuage_diva, Self, Diva, null, null, null)).
 
-update(Diva,self_worth,1) :- not is(Diva,self_worth,_), occurred(action(assuage_diva, Self, Diva, null, null, null)).
-
 update(Self,likes,Diva,Y) :- is(Self,likes,Diva,X), X - 1 = Y, occurred(action(assuage_diva, Self, Diva, null, null, null)).
 
+update(Diva,self_worth,Y) :- is(Diva,self_worth,X), X + 1 = Y, occurred(action(assuage_diva, Self, Diva, null, null, null)).
+
+update(Diva,self_worth,1) :- not is(Diva,self_worth,_), occurred(action(assuage_diva, Self, Diva, null, null, null)).
+
 update(Diva,likes,Self,Y) :- is(Diva,likes,Self,X), X + 1 = Y, occurred(action(assuage_diva, Self, Diva, null, null, null)).
+
+update(Self,likes,Diva,-1) :- not is(Self,likes,Diva,_), occurred(action(assuage_diva, Self, Diva, null, null, null)).
 
 is(assuage_diva, role_specific).
 
@@ -4610,25 +4610,25 @@ visibility(assuage_diva,0).
 
 action(guide_cast_and_crew, Self, Bard, null, null, null):-
 		person(Self),person(Bard),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,impresario,RoleLocation),
-		at(Bard,Location),
-		is(Bard,bad,RoleLocation),
 		at(Bard,RoleLocation),
+		is(Bard,bad,RoleLocation),
+		at(Bard,Location),
 		at(Self,Location),
+		is(Self,impresario,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Bard,
 		Self != null,
 		Bard != null.
 
-hashed(guide_cast_and_crew,2956767960).
+hashed(guide_cast_and_crew,1884393838).
 
 update(Self,likes,Bard,1) :- not is(Self,likes,Bard,_), occurred(action(guide_cast_and_crew, Self, Bard, null, null, null)).
-
-update(Bard,likes,Self,1) :- not is(Bard,likes,Self,_), occurred(action(guide_cast_and_crew, Self, Bard, null, null, null)).
 
 update(Self,likes,Bard,Y) :- is(Self,likes,Bard,X), X + 1 = Y,occurred(action(guide_cast_and_crew, Self, Bard, null, null, null)).
 
 update(Bard,likes,Self,Y) :- is(Bard,likes,Self,X), X + 1 = Y,occurred(action(guide_cast_and_crew, Self, Bard, null, null, null)).
+
+update(Bard,likes,Self,1) :- not is(Bard,likes,Self,_), occurred(action(guide_cast_and_crew, Self, Bard, null, null, null)).
 
 is(guide_cast_and_crew, role_specific).
 
@@ -4642,14 +4642,14 @@ visibility(guide_cast_and_crew,0).
 
 action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null):-
 		person(Self),person(Diva),person(Pursuer),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,impresario,RoleLocation),
-		at(Diva,RoleLocation),
-		is(Pursuer,crushing_on,Diva),
 		is(Diva,diva,RoleLocation),
+		at(Diva,RoleLocation),
 		at(Pursuer,Location),
-		at(Diva,Location),
 		at(Self,Location),
+		at(Diva,Location),
+		is(Pursuer,crushing_on,Diva),
+		is(Self,impresario,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Diva,
 		Self != Pursuer,
 		Diva != Pursuer,
@@ -4657,23 +4657,23 @@ action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null):-
 		Diva != null,
 		Pursuer != null.
 
-hashed(fend_off_diva_pursuer,3703572708).
-
-update(Self,likes,Diva,3) :- not is(Self,likes,Diva,_), occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
-
-update(Diva,likes,Self,Y) :- is(Diva,likes,Self,X), X + 3 = Y,occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
-
-update(Pursuer,likes,Self,Y) :- is(Pursuer,likes,Self,X), X - 5 = Y,occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
-
-del(Pursuer,crushing_on,Diva) :-occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
+hashed(fend_off_diva_pursuer,4127666265).
 
 update(Pursuer,likes,Self,-5) :- not is(Pursuer,likes,Self,_), occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
 
+del(Pursuer,crushing_on,Diva) :-occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
+
 update(Diva,likes,Self,3) :- not is(Diva,likes,Self,_), occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
+
+update(Self,likes,Diva,3) :- not is(Self,likes,Diva,_), occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
 
 update(Self,likes,Pursuer,-5) :- not is(Self,likes,Pursuer,_), occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
 
+update(Pursuer,likes,Self,Y) :- is(Pursuer,likes,Self,X), X - 5 = Y,occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
+
 update(Self,likes,Pursuer,Y) :- is(Self,likes,Pursuer,X), X - 5 = Y,occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
+
+update(Diva,likes,Self,Y) :- is(Diva,likes,Self,X), X + 3 = Y,occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
 
 update(Self,likes,Diva,Y) :- is(Self,likes,Diva,X), X + 3 = Y,occurred(action(fend_off_diva_pursuer, Self, Diva, Pursuer, null, null)).
 
@@ -4685,25 +4685,25 @@ visibility(fend_off_diva_pursuer,0).
 
 action(pray_with_follower, Priest, Follower, null, null, null):-
 		person(Priest),person(Follower),person(null),event(null),location(null),
-		is(Priest,priest,RoleLocation),
-		at(Priest,RoleLocation),
-		at(Follower,RoleLocation),
 		at(Follower,Location),
+		is(Priest,priest,RoleLocation),
 		is(Follower,follower,RoleLocation),
 		at(Priest,Location),
+		at(Follower,RoleLocation),
+		at(Priest,RoleLocation),
 		Priest != Follower,
 		Priest != null,
 		Follower != null.
 
-hashed(pray_with_follower,2796360415).
+hashed(pray_with_follower,987596893).
 
-update(Priest,devotion,1) :- not is(Priest,devotion,_), occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
+update(Follower,devotion,Y) :- is(Follower,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
 update(Priest,devotion,Y) :- is(Priest,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
 update(Follower,devotion,1) :- not is(Follower,devotion,_), occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
-update(Follower,devotion,Y) :- is(Follower,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
+update(Priest,devotion,1) :- not is(Priest,devotion,_), occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
 is(pray_with_follower, religious).
 
@@ -4714,22 +4714,22 @@ visibility(pray_with_follower,0).
 action(lead_ritual, Priest, Other, null, null, null):-
 		person(Priest),person(Other),person(null),event(null),location(null),
 		is(Priest,priest,RoleLocation),
+		at(Other,RoleLocation),
+		at(Priest,Location),
+		at(Other,Location),
 		at(Priest,RoleLocation),
 		is(Other,monk,RoleLocation),
-		at(Other,RoleLocation),
-		at(Other,Location),
-		at(Priest,Location),
 		Priest != Other,
 		Priest != null,
 		Other != null.
 
-hashed(lead_ritual,213789253).
+hashed(lead_ritual,1879049088).
 
-update(Other,devotion,Y) :- is(Other,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
+update(Priest,devotion,Y) :- is(Priest,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
 update(Other,devotion,2) :- not is(Other,devotion,_), occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
-update(Priest,devotion,Y) :- is(Priest,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
+update(Other,devotion,Y) :- is(Other,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
 update(Priest,devotion,2) :- not is(Priest,devotion,_), occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
@@ -4741,17 +4741,17 @@ visibility(lead_ritual,0).
 
 action(rationalize_abuse_of_power, Priest, null, null, null, null):-
 		person(Priest),person(null),person(null),event(null),location(null),
+		at(Priest,Location),
+		is(Priest,priest,RoleLocation),
 		at(Priest,RoleLocation),
 		is(Priest,devotion,V_Priest_devotion), V_Priest_devotion >= 8,
-		is(Priest,priest,RoleLocation),
-		at(Priest,Location),
 		Priest != null.
 
-hashed(rationalize_abuse_of_power,3344141019).
-
-update(Priest,abusiveness,Y) :- is(Priest,abusiveness,X), X + 1 = Y, occurred(action(rationalize_abuse_of_power, Priest, null, null, null, null)).
+hashed(rationalize_abuse_of_power,4046407011).
 
 update(Priest,abusiveness,1) :- not is(Priest,abusiveness,_), occurred(action(rationalize_abuse_of_power, Priest, null, null, null, null)).
+
+update(Priest,abusiveness,Y) :- is(Priest,abusiveness,X), X + 1 = Y, occurred(action(rationalize_abuse_of_power, Priest, null, null, null, null)).
 
 is(rationalize_abuse_of_power, religious).
 
@@ -4763,25 +4763,25 @@ visibility(rationalize_abuse_of_power,0).
 
 action(pray_with_follower, Priest, Follower, null, null, null):-
 		person(Priest),person(Follower),person(null),event(null),location(null),
-		at(Priest,RoleLocation),
-		at(Follower,RoleLocation),
 		at(Follower,Location),
-		is(Priest,high_priest,RoleLocation),
 		is(Follower,follower,RoleLocation),
 		at(Priest,Location),
+		at(Follower,RoleLocation),
+		at(Priest,RoleLocation),
+		is(Priest,high_priest,RoleLocation),
 		Priest != Follower,
 		Priest != null,
 		Follower != null.
 
-hashed(pray_with_follower,2796360415).
+hashed(pray_with_follower,987596893).
 
-update(Priest,devotion,1) :- not is(Priest,devotion,_), occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
+update(Follower,devotion,Y) :- is(Follower,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
 update(Priest,devotion,Y) :- is(Priest,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
 update(Follower,devotion,1) :- not is(Follower,devotion,_), occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
-update(Follower,devotion,Y) :- is(Follower,devotion,X), X + 1 = Y, occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
+update(Priest,devotion,1) :- not is(Priest,devotion,_), occurred(action(pray_with_follower, Priest, Follower, null, null, null)).
 
 is(pray_with_follower, religious).
 
@@ -4791,23 +4791,23 @@ visibility(pray_with_follower,0).
 
 action(lead_ritual, Priest, Other, null, null, null):-
 		person(Priest),person(Other),person(null),event(null),location(null),
+		at(Other,RoleLocation),
+		at(Priest,Location),
+		is(Priest,high_priest,RoleLocation),
+		at(Other,Location),
 		at(Priest,RoleLocation),
 		is(Other,monk,RoleLocation),
-		is(Priest,high_priest,RoleLocation),
-		at(Other,RoleLocation),
-		at(Other,Location),
-		at(Priest,Location),
 		Priest != Other,
 		Priest != null,
 		Other != null.
 
-hashed(lead_ritual,213789253).
+hashed(lead_ritual,1879049088).
 
-update(Other,devotion,Y) :- is(Other,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
+update(Priest,devotion,Y) :- is(Priest,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
 update(Other,devotion,2) :- not is(Other,devotion,_), occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
-update(Priest,devotion,Y) :- is(Priest,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
+update(Other,devotion,Y) :- is(Other,devotion,X), X + 2 = Y, occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
 update(Priest,devotion,2) :- not is(Priest,devotion,_), occurred(action(lead_ritual, Priest, Other, null, null, null)).
 
@@ -4819,17 +4819,17 @@ visibility(lead_ritual,0).
 
 action(rationalize_abuse_of_power, Priest, null, null, null, null):-
 		person(Priest),person(null),person(null),event(null),location(null),
+		at(Priest,Location),
+		is(Priest,devotion,V_Priest_devotion), V_Priest_devotion >= 8,
 		at(Priest,RoleLocation),
 		is(Priest,high_priest,RoleLocation),
-		is(Priest,devotion,V_Priest_devotion), V_Priest_devotion >= 8,
-		at(Priest,Location),
 		Priest != null.
 
-hashed(rationalize_abuse_of_power,3344141019).
-
-update(Priest,abusiveness,Y) :- is(Priest,abusiveness,X), X + 1 = Y, occurred(action(rationalize_abuse_of_power, Priest, null, null, null, null)).
+hashed(rationalize_abuse_of_power,4046407011).
 
 update(Priest,abusiveness,1) :- not is(Priest,abusiveness,_), occurred(action(rationalize_abuse_of_power, Priest, null, null, null, null)).
+
+update(Priest,abusiveness,Y) :- is(Priest,abusiveness,X), X + 1 = Y, occurred(action(rationalize_abuse_of_power, Priest, null, null, null, null)).
 
 is(rationalize_abuse_of_power, religious).
 
@@ -4841,23 +4841,23 @@ visibility(rationalize_abuse_of_power,0).
 
 action(steal_from_mark, Self, Mark, null, null, null):-
 		person(Self),person(Mark),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		at(Mark,Location),
-		is(Self,pickpocket,RoleLocation),
+		at(Self,RoleLocation),
 		at(Self,Location),
+		is(Self,pickpocket,RoleLocation),
 		Self != Mark,
 		Self != null,
 		Mark != null.
 
-hashed(steal_from_mark,4113457750).
+hashed(steal_from_mark,966108144).
 
 update(Mark,suspicion,Self,Y) :- is(Mark,suspicion,Self,X), X + 1 = Y, occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
-update(Mark,suspicion,Self,1) :- not is(Mark,suspicion,Self,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
+update(Mark,suspicion,Self,1) :- not is(Mark,suspicion,Self,_), occurred(action(steal_from_mark, Self, Mark, null, null, null)).
 
 is(steal_from_mark, role_specific).
 
@@ -4871,24 +4871,24 @@ visibility(steal_from_mark,0).
 
 action(get_caught_stealing, Self, Mark, null, null, null):-
 		person(Self),person(Mark),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Mark,suspicion,Self,V_Mark_suspicion_Self), V_Mark_suspicion_Self >= 2,
-		is(Self,pickpocket,RoleLocation),
 		at(Mark,Location),
+		is(Self,pickpocket,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Mark,
 		Self != null,
 		Mark != null.
 
-hashed(get_caught_stealing,828928666).
+hashed(get_caught_stealing,1881642906).
 
-add(Self, on_the_run) :- occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
-
-update(Self,self_worth,-1) :- not is(Self,self_worth,_), occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
+update(Mark,likes,Self,Y) :- is(Mark,likes,Self,X), X - 5 = Y, occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
 update(Mark,likes,Self,-5) :- not is(Mark,likes,Self,_), occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
-update(Mark,likes,Self,Y) :- is(Mark,likes,Self,X), X - 5 = Y, occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
+update(Self,self_worth,-1) :- not is(Self,self_worth,_), occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
+
+add(Self, on_the_run) :- occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X - 1 = Y, occurred(action(get_caught_stealing, Self, Mark, null, null, null)).
 
@@ -4906,20 +4906,20 @@ visibility(get_caught_stealing,0).
 
 action(design_ship, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,engineer,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(design_ship,1059712548).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(design_ship, Self, null, null, null, null)).
-
-update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(design_ship, Self, null, null, null, null)).
+hashed(design_ship,876146374).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(design_ship, Self, null, null, null, null)).
 
 update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(design_ship, Self, null, null, null, null)).
+
+update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(design_ship, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(design_ship, Self, null, null, null, null)).
 
 is(design_ship, role_specific).
 
@@ -4929,23 +4929,23 @@ visibility(design_ship,0).
 
 action(guide_shipwrights, Self, ShipBuilder, null, null, null):-
 		person(Self),person(ShipBuilder),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,engineer,RoleLocation),
+		at(ShipBuilder,Location),
 		at(ShipBuilder,RoleLocation),
 		is(ShipBuilder,ship_builder,RoleLocation),
-		at(ShipBuilder,Location),
 		at(Self,Location),
+		is(Self,engineer,RoleLocation),
+		at(Self,RoleLocation),
 		Self != ShipBuilder,
 		Self != null,
 		ShipBuilder != null.
 
-hashed(guide_shipwrights,1247244298).
-
-update(ShipBuilder,likes,Self,Y) :- is(ShipBuilder,likes,Self,X), X + 1 = Y,occurred(action(guide_shipwrights, Self, ShipBuilder, null, null, null)).
+hashed(guide_shipwrights,1009288802).
 
 update(Self,likes,ShipBuilder,Y) :- is(Self,likes,ShipBuilder,X), X + 1 = Y,occurred(action(guide_shipwrights, Self, ShipBuilder, null, null, null)).
 
 update(Self,likes,ShipBuilder,1) :- not is(Self,likes,ShipBuilder,_), occurred(action(guide_shipwrights, Self, ShipBuilder, null, null, null)).
+
+update(ShipBuilder,likes,Self,Y) :- is(ShipBuilder,likes,Self,X), X + 1 = Y,occurred(action(guide_shipwrights, Self, ShipBuilder, null, null, null)).
 
 update(ShipBuilder,likes,Self,1) :- not is(ShipBuilder,likes,Self,_), occurred(action(guide_shipwrights, Self, ShipBuilder, null, null, null)).
 
@@ -4959,33 +4959,33 @@ visibility(guide_shipwrights,0).
 
 action(inspire_crew, Self, Sailor, null, null, null):-
 		person(Self),person(Sailor),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,captain,RoleLocation),
-		at(Sailor,Location),
 		at(Sailor,RoleLocation),
-		is(Sailor,sailor,RoleLocation),
 		at(Self,Location),
+		is(Self,captain,RoleLocation),
+		is(Sailor,sailor,RoleLocation),
+		at(Sailor,Location),
+		at(Self,RoleLocation),
 		Self != Sailor,
 		Self != null,
 		Sailor != null.
 
-hashed(inspire_crew,497389636).
+hashed(inspire_crew,3551598514).
 
 update(Self,likes,Sailor,Y) :- is(Self,likes,Sailor,X), X + 2 = Y,occurred(action(inspire_crew, Self, Sailor, null, null, null)).
 
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(inspire_crew, Self, Sailor, null, null, null)).
+update(Sailor,likes,Self,Y) :- is(Sailor,likes,Self,X), X + 2 = Y,occurred(action(inspire_crew, Self, Sailor, null, null, null)).
+
+update(Self,likes,Sailor,2) :- not is(Self,likes,Sailor,_), occurred(action(inspire_crew, Self, Sailor, null, null, null)).
 
 update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(inspire_crew, Self, Sailor, null, null, null)).
+
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(inspire_crew, Self, Sailor, null, null, null)).
+
+update(Sailor,likes,Self,2) :- not is(Sailor,likes,Self,_), occurred(action(inspire_crew, Self, Sailor, null, null, null)).
 
 update(Sailor,self_worth,Y) :- is(Sailor,self_worth,X), X + 1 = Y, occurred(action(inspire_crew, Self, Sailor, null, null, null)).
 
 update(Sailor,self_worth,1) :- not is(Sailor,self_worth,_), occurred(action(inspire_crew, Self, Sailor, null, null, null)).
-
-update(Self,likes,Sailor,2) :- not is(Self,likes,Sailor,_), occurred(action(inspire_crew, Self, Sailor, null, null, null)).
-
-update(Sailor,likes,Self,2) :- not is(Sailor,likes,Self,_), occurred(action(inspire_crew, Self, Sailor, null, null, null)).
-
-update(Sailor,likes,Self,Y) :- is(Sailor,likes,Self,X), X + 2 = Y,occurred(action(inspire_crew, Self, Sailor, null, null, null)).
 
 is(inspire_crew, role_specific).
 
@@ -4995,21 +4995,21 @@ visibility(inspire_crew,0).
 
 action(provide_guidance, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,elder,RoleLocation),
 		at(Other,Location),
+		is(Self,elder,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(provide_guidance,4190147472).
+hashed(provide_guidance,3960861247).
+
+update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(provide_guidance, Self, Other, null, null, null)).
 
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X + 2 = Y,occurred(action(provide_guidance, Self, Other, null, null, null)).
 
 update(Other,likes,Self,2) :- not is(Other,likes,Self,_), occurred(action(provide_guidance, Self, Other, null, null, null)).
-
-update(Self,likes,Other,2) :- not is(Self,likes,Other,_), occurred(action(provide_guidance, Self, Other, null, null, null)).
 
 update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X + 2 = Y,occurred(action(provide_guidance, Self, Other, null, null, null)).
 
@@ -5021,20 +5021,20 @@ visibility(provide_guidance,0).
 
 action(fish, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,fisher,RoleLocation),
 		at(Self,Location),
+		is(Self,fisher,RoleLocation),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(fish,430093552).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(fish, Self, null, null, null, null)).
-
-update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(fish, Self, null, null, null, null)).
+hashed(fish,393512993).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(fish, Self, null, null, null, null)).
 
 update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(fish, Self, null, null, null, null)).
+
+update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(fish, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(fish, Self, null, null, null, null)).
 
 is(fish, role_specific).
 
@@ -5044,16 +5044,16 @@ visibility(fish,0).
 
 action(fight_seagull, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,fisher,RoleLocation),
 		at(Self,Location),
+		is(Self,fisher,RoleLocation),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(fight_seagull,1993617866).
-
-update(Self,anger,1) :- not is(Self,anger,_), occurred(action(fight_seagull, Self, null, null, null, null)).
+hashed(fight_seagull,3648697197).
 
 update(Self,anger,Y) :- is(Self,anger,X), X + 1 = Y, occurred(action(fight_seagull, Self, null, null, null, null)).
+
+update(Self,anger,1) :- not is(Self,anger,_), occurred(action(fight_seagull, Self, null, null, null, null)).
 
 is(fight_seagull, angry).
 
@@ -5065,25 +5065,25 @@ visibility(fight_seagull,0).
 
 action(command_underlings, Self, Thief, null, null, null):-
 		person(Self),person(Thief),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		at(Thief,RoleLocation),
-		is(Self,master_thief,RoleLocation),
 		is(Thief,thief,RoleLocation),
+		at(Thief,RoleLocation),
 		at(Thief,Location),
+		is(Self,master_thief,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Thief,
 		Self != null,
 		Thief != null.
 
-hashed(command_underlings,2383948234).
+hashed(command_underlings,2689444774).
+
+update(Thief,likes,Self,1) :- not is(Thief,likes,Self,_), occurred(action(command_underlings, Self, Thief, null, null, null)).
 
 update(Self,likes,Thief,1) :- not is(Self,likes,Thief,_), occurred(action(command_underlings, Self, Thief, null, null, null)).
 
 update(Self,likes,Thief,Y) :- is(Self,likes,Thief,X), X + 1 = Y,occurred(action(command_underlings, Self, Thief, null, null, null)).
 
 update(Thief,likes,Self,Y) :- is(Thief,likes,Self,X), X + 1 = Y,occurred(action(command_underlings, Self, Thief, null, null, null)).
-
-update(Thief,likes,Self,1) :- not is(Thief,likes,Self,_), occurred(action(command_underlings, Self, Thief, null, null, null)).
 
 is(command_underlings, role_specific).
 
@@ -5093,25 +5093,25 @@ visibility(command_underlings,0).
 
 action(consult_spymaster, Self, SpyMaster, null, null, null):-
 		person(Self),person(SpyMaster),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(SpyMaster,spy_master,RoleLocation),
 		at(SpyMaster,RoleLocation),
-		is(Self,master_thief,RoleLocation),
 		at(SpyMaster,Location),
+		is(Self,master_thief,RoleLocation),
 		at(Self,Location),
+		is(SpyMaster,spy_master,RoleLocation),
+		at(Self,RoleLocation),
 		Self != SpyMaster,
 		Self != null,
 		SpyMaster != null.
 
-hashed(consult_spymaster,394756120).
-
-update(Self,likes,SpyMaster,Y) :- is(Self,likes,SpyMaster,X), X + 1 = Y,occurred(action(consult_spymaster, Self, SpyMaster, null, null, null)).
-
-update(SpyMaster,likes,Self,Y) :- is(SpyMaster,likes,Self,X), X + 1 = Y,occurred(action(consult_spymaster, Self, SpyMaster, null, null, null)).
+hashed(consult_spymaster,3044276739).
 
 update(SpyMaster,likes,Self,1) :- not is(SpyMaster,likes,Self,_), occurred(action(consult_spymaster, Self, SpyMaster, null, null, null)).
 
+update(Self,likes,SpyMaster,Y) :- is(Self,likes,SpyMaster,X), X + 1 = Y,occurred(action(consult_spymaster, Self, SpyMaster, null, null, null)).
+
 update(Self,likes,SpyMaster,1) :- not is(Self,likes,SpyMaster,_), occurred(action(consult_spymaster, Self, SpyMaster, null, null, null)).
+
+update(SpyMaster,likes,Self,Y) :- is(SpyMaster,likes,Self,X), X + 1 = Y,occurred(action(consult_spymaster, Self, SpyMaster, null, null, null)).
 
 is(consult_spymaster, role_specific).
 
@@ -5123,16 +5123,16 @@ visibility(consult_spymaster,0).
 
 action(patronize, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		at(Self,Location),
 		is(Self,patron,RoleLocation),
+		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(patronize,798877656).
-
-update(Self,happiness,Y) :- is(Self,happiness,X), X + 1 = Y, occurred(action(patronize, Self, null, null, null, null)).
+hashed(patronize,1213320744).
 
 update(Self,happiness,1) :- not is(Self,happiness,_), occurred(action(patronize, Self, null, null, null, null)).
+
+update(Self,happiness,Y) :- is(Self,happiness,X), X + 1 = Y, occurred(action(patronize, Self, null, null, null, null)).
 
 is(patronize, role_specific).
 
@@ -5140,25 +5140,25 @@ visibility(patronize,0).
 
 action(patronize_employee, Self, Employee, null, null, null):-
 		person(Self),person(Employee),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		at(Employee,Location),
-		is(Self,patron,RoleLocation),
 		at(Employee,RoleLocation),
-		is(Employee,employee,RoleLocation),
+		is(Self,patron,RoleLocation),
+		at(Employee,Location),
 		at(Self,Location),
+		is(Employee,employee,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Employee,
 		Self != null,
 		Employee != null.
 
-hashed(patronize_employee,2651588072).
+hashed(patronize_employee,3913514933).
 
 update(Employee,likes,Self,Y) :- is(Employee,likes,Self,X), X - 2 = Y, occurred(action(patronize_employee, Self, Employee, null, null, null)).
 
 update(Employee,likes,Self,-2) :- not is(Employee,likes,Self,_), occurred(action(patronize_employee, Self, Employee, null, null, null)).
 
-update(Self,happiness,Y) :- is(Self,happiness,X), X + 1 = Y, occurred(action(patronize_employee, Self, Employee, null, null, null)).
-
 update(Self,happiness,1) :- not is(Self,happiness,_), occurred(action(patronize_employee, Self, Employee, null, null, null)).
+
+update(Self,happiness,Y) :- is(Self,happiness,X), X + 1 = Y, occurred(action(patronize_employee, Self, Employee, null, null, null)).
 
 is(patronize_employee, role_specific).
 
@@ -5168,16 +5168,16 @@ visibility(patronize_employee,0).
 
 action(work_the_forge, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,smithy,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(work_the_forge,304084257).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(work_the_forge, Self, null, null, null, null)).
+hashed(work_the_forge,1172668541).
 
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(work_the_forge, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(work_the_forge, Self, null, null, null, null)).
 
 is(work_the_forge, role_specific).
 
@@ -5187,21 +5187,21 @@ visibility(work_the_forge,0).
 
 action(craft_the_sacred_weapon, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		not is(Self, sacred_weapon),
 		is(Self,smithy,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(craft_the_sacred_weapon,825912287).
+hashed(craft_the_sacred_weapon,2601777090).
+
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 5 = Y, occurred(action(craft_the_sacred_weapon, Self, null, null, null, null)).
 
 update(Self,self_worth,5) :- not is(Self,self_worth,_), occurred(action(craft_the_sacred_weapon, Self, null, null, null, null)).
 
-del(Self, eworthy) :- occurred(action(craft_the_sacred_weapon, Self, null, null, null, null)).
-
 add(Self, knows_sacred_weapon) :- occurred(action(craft_the_sacred_weapon, Self, null, null, null, null)).
 
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 5 = Y, occurred(action(craft_the_sacred_weapon, Self, null, null, null, null)).
+del(Self, eworthy) :- occurred(action(craft_the_sacred_weapon, Self, null, null, null, null)).
 
 add(Self, sacred_weapon) :- occurred(action(craft_the_sacred_weapon, Self, null, null, null, null)).
 
@@ -5215,14 +5215,14 @@ visibility(craft_the_sacred_weapon,0).
 
 action(talk_about_sacred_weapon, Talker, Listener, null, null, null):-
 		person(Talker),person(Listener),person(null),event(null),location(null),
-		is(Talker, knows_sacred_weapon),
 		at(Listener,Location),
+		is(Talker, knows_sacred_weapon),
 		at(Talker,Location),
 		Talker != Listener,
 		Talker != null,
 		Listener != null.
 
-hashed(talk_about_sacred_weapon,2779798444).
+hashed(talk_about_sacred_weapon,1672201432).
 
 add(Listener, knows_sacred_weapon) :- occurred(action(talk_about_sacred_weapon, Talker, Listener, null, null, null)).
 
@@ -5236,20 +5236,20 @@ visibility(talk_about_sacred_weapon,0).
 
 action(perform_research, Self, null, null, null, null):-
 		person(Self),person(null),person(null),event(null),location(null),
-		at(Self,RoleLocation),
 		is(Self,researcher,RoleLocation),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != null.
 
-hashed(perform_research,2839958603).
-
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(perform_research, Self, null, null, null, null)).
-
-update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(perform_research, Self, null, null, null, null)).
+hashed(perform_research,1328473902).
 
 update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(perform_research, Self, null, null, null, null)).
 
 update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(perform_research, Self, null, null, null, null)).
+
+update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(perform_research, Self, null, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(perform_research, Self, null, null, null, null)).
 
 is(perform_research, role_specific).
 
@@ -5261,15 +5261,15 @@ visibility(perform_research,0).
 
 action(uncover_information_about_noteworthy_person, Self, null, Noteworthy, null, null):-
 		person(Self),person(null),person(Noteworthy),event(null),location(null),
-		at(Self,RoleLocation),
-		Noteworthy != Self,
-		not is(Noteworthy, eworthy),
 		is(Self,researcher,RoleLocation),
+		not is(Noteworthy, eworthy),
+		Self != Noteworthy,
+		at(Self,RoleLocation),
 		Self != Noteworthy,
 		Self != null,
 		Noteworthy != null.
 
-hashed(uncover_information_about_noteworthy_person,828142402).
+hashed(uncover_information_about_noteworthy_person,1571097000).
 
 add(Self,knows_personal_info_about,Noteworthy) :-occurred(action(uncover_information_about_noteworthy_person, Self, null, Noteworthy, null, null)).
 
@@ -5285,8 +5285,8 @@ visibility(uncover_information_about_noteworthy_person,0).
 
 action(share_knowledge_about_noteworthy, Self, Listener, Noteworthy, null, null):-
 		person(Self),person(Listener),person(Noteworthy),event(null),location(null),
-		is(Self,knows_personal_info_about,Noteworthy),
 		not is(Noteworthy, eworthy),
+		is(Self,knows_personal_info_about,Noteworthy),
 		Noteworthy != Location_0,
 		at(Self,Location_0),
 		at(Listener,Location_0),
@@ -5297,7 +5297,7 @@ action(share_knowledge_about_noteworthy, Self, Listener, Noteworthy, null, null)
 		Listener != null,
 		Noteworthy != null.
 
-hashed(share_knowledge_about_noteworthy,1816210533).
+hashed(share_knowledge_about_noteworthy,4215201207).
 
 update(Self,likes,Listener,Y) :- is(Self,likes,Listener,X), X + 1 = Y,occurred(action(share_knowledge_about_noteworthy, Self, Listener, Noteworthy, null, null)).
 
@@ -5319,29 +5319,29 @@ visibility(share_knowledge_about_noteworthy,0).
 
 action(perform_for_tourist, Self, Watcher, null, null, null):-
 		person(Self),person(Watcher),person(null),event(null),location(null),
-		at(Self,RoleLocation),
+		is(Watcher,tourist,RoleLocation),
+		is(Self,diva,RoleLocation),
+		at(Self,Location),
 		at(Watcher,RoleLocation),
 		at(Watcher,Location),
-		is(Self,diva,RoleLocation),
-		is(Watcher,tourist,RoleLocation),
-		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Watcher,
 		Self != null,
 		Watcher != null.
 
-hashed(perform_for_tourist,2270236229).
-
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
-
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
-
-update(Watcher,likes,Self,2) :- not is(Watcher,likes,Self,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+hashed(perform_for_tourist,2962492660).
 
 update(Watcher,likes,Self,Y) :- is(Watcher,likes,Self,X), X + 2 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
 
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
-
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Watcher,likes,Self,2) :- not is(Watcher,likes,Self,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
 
 is(perform_for_tourist, role_specific).
 
@@ -5351,29 +5351,29 @@ visibility(perform_for_tourist,0).
 
 action(perform_for_tourist, Self, Watcher, null, null, null):-
 		person(Self),person(Watcher),person(null),event(null),location(null),
-		at(Self,RoleLocation),
+		is(Watcher,tourist,RoleLocation),
+		is(Self,diva,RoleLocation),
+		at(Self,Location),
 		at(Watcher,RoleLocation),
 		at(Watcher,Location),
-		is(Self,diva,RoleLocation),
-		is(Watcher,tourist,RoleLocation),
-		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Watcher,
 		Self != null,
 		Watcher != null.
 
-hashed(perform_for_tourist,2270236229).
-
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
-
-update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
-
-update(Watcher,likes,Self,2) :- not is(Watcher,likes,Self,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+hashed(perform_for_tourist,2962492660).
 
 update(Watcher,likes,Self,Y) :- is(Watcher,likes,Self,X), X + 2 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
 
-update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
-
 update(Self,tiredness,1) :- not is(Self,tiredness,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Watcher,likes,Self,2) :- not is(Watcher,likes,Self,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Self,self_worth,1) :- not is(Self,self_worth,_), occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
+
+update(Self,tiredness,Y) :- is(Self,tiredness,X), X + 1 = Y, occurred(action(perform_for_tourist, Self, Watcher, null, null, null)).
 
 is(perform_for_tourist, role_specific).
 
@@ -5383,21 +5383,21 @@ visibility(perform_for_tourist,0).
 
 action(turn_fan_into_superfan, Self, Watcher, null, null, null):-
 		person(Self),person(Watcher),person(null),event(null),location(null),
-		at(Self,RoleLocation),
+		is(Watcher,tourist,RoleLocation),
+		is(Self,diva,RoleLocation),
+		at(Self,Location),
 		at(Watcher,RoleLocation),
 		at(Watcher,Location),
-		is(Self,diva,RoleLocation),
-		is(Watcher,tourist,RoleLocation),
-		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Watcher,
 		Self != null,
 		Watcher != null.
 
-hashed(turn_fan_into_superfan,3860215446).
-
-add(Watcher,crushing_on,Self) :-occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
+hashed(turn_fan_into_superfan,1154534612).
 
 update(Watcher,likes,Self,Y) :- is(Watcher,likes,Self,X), X + 2 = Y, occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
+
+add(Watcher,crushing_on,Self) :-occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
 
 update(Watcher,likes,Self,2) :- not is(Watcher,likes,Self,_), occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
 
@@ -5409,21 +5409,21 @@ visibility(turn_fan_into_superfan,0).
 
 action(turn_fan_into_superfan, Self, Watcher, null, null, null):-
 		person(Self),person(Watcher),person(null),event(null),location(null),
-		at(Self,RoleLocation),
+		is(Self,diva,RoleLocation),
+		at(Self,Location),
 		at(Watcher,RoleLocation),
 		at(Watcher,Location),
-		is(Self,diva,RoleLocation),
 		is(Watcher,patron,RoleLocation),
-		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Watcher,
 		Self != null,
 		Watcher != null.
 
-hashed(turn_fan_into_superfan,3860215446).
-
-add(Watcher,crushing_on,Self) :-occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
+hashed(turn_fan_into_superfan,1154534612).
 
 update(Watcher,likes,Self,Y) :- is(Watcher,likes,Self,X), X + 2 = Y, occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
+
+add(Watcher,crushing_on,Self) :-occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
 
 update(Watcher,likes,Self,2) :- not is(Watcher,likes,Self,_), occurred(action(turn_fan_into_superfan, Self, Watcher, null, null, null)).
 
@@ -5435,25 +5435,25 @@ visibility(turn_fan_into_superfan,0).
 
 action(belittle_other_performers, Self, Performer, null, null, null):-
 		person(Self),person(Performer),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		at(Performer,Location),
 		at(Performer,RoleLocation),
-		is(Self,diva,RoleLocation),
 		is(Performer,bard,RoleLocation),
+		is(Self,diva,RoleLocation),
+		at(Performer,Location),
 		at(Self,Location),
+		at(Self,RoleLocation),
 		Self != Performer,
 		Self != null,
 		Performer != null.
 
-hashed(belittle_other_performers,2901497485).
-
-update(Performer,likes,Self,Y) :- is(Performer,likes,Self,X), X - 2 = Y,occurred(action(belittle_other_performers, Self, Performer, null, null, null)).
-
-update(Performer,likes,Self,-2) :- not is(Performer,likes,Self,_), occurred(action(belittle_other_performers, Self, Performer, null, null, null)).
+hashed(belittle_other_performers,4179042077).
 
 update(Self,likes,Performer,-2) :- not is(Self,likes,Performer,_), occurred(action(belittle_other_performers, Self, Performer, null, null, null)).
 
+update(Performer,likes,Self,Y) :- is(Performer,likes,Self,X), X - 2 = Y,occurred(action(belittle_other_performers, Self, Performer, null, null, null)).
+
 update(Self,likes,Performer,Y) :- is(Self,likes,Performer,X), X - 2 = Y,occurred(action(belittle_other_performers, Self, Performer, null, null, null)).
+
+update(Performer,likes,Self,-2) :- not is(Performer,likes,Self,_), occurred(action(belittle_other_performers, Self, Performer, null, null, null)).
 
 is(belittle_other_performers, role_specific).
 
@@ -5463,25 +5463,25 @@ visibility(belittle_other_performers,0).
 
 action(feud_with_diva, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Self,diva,RoleLocation),
-		is(Other,diva,RoleLocation),
 		at(Other,RoleLocation),
-		at(Other,Location),
+		is(Other,diva,RoleLocation),
+		is(Self,diva,RoleLocation),
 		at(Self,Location),
+		at(Other,Location),
+		at(Self,RoleLocation),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(feud_with_diva,320267351).
+hashed(feud_with_diva,2544902883).
 
 update(Self,likes,Other,Y) :- is(Self,likes,Other,X), X - 3 = Y,occurred(action(feud_with_diva, Self, Other, null, null, null)).
-
-update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 3 = Y,occurred(action(feud_with_diva, Self, Other, null, null, null)).
 
 update(Other,likes,Self,-3) :- not is(Other,likes,Self,_), occurred(action(feud_with_diva, Self, Other, null, null, null)).
 
 update(Self,likes,Other,-3) :- not is(Self,likes,Other,_), occurred(action(feud_with_diva, Self, Other, null, null, null)).
+
+update(Other,likes,Self,Y) :- is(Other,likes,Self,X), X - 3 = Y,occurred(action(feud_with_diva, Self, Other, null, null, null)).
 
 is(feud_with_diva, role_specific).
 
@@ -5491,17 +5491,17 @@ visibility(feud_with_diva,0).
 
 action(demand_more_of_impresario, Self, Other, null, null, null):-
 		person(Self),person(Other),person(null),event(null),location(null),
-		at(Self,RoleLocation),
+		at(Other,RoleLocation),
 		is(Other,impresario,RoleLocation),
 		is(Self,diva,RoleLocation),
-		at(Other,RoleLocation),
-		at(Other,Location),
 		at(Self,Location),
+		at(Other,Location),
+		at(Self,RoleLocation),
 		Self != Other,
 		Self != null,
 		Other != null.
 
-hashed(demand_more_of_impresario,3722596430).
+hashed(demand_more_of_impresario,3891589551).
 
 update(Self,likes,Other,1) :- not is(Self,likes,Other,_), occurred(action(demand_more_of_impresario, Self, Other, null, null, null)).
 
@@ -5519,15 +5519,15 @@ visibility(demand_more_of_impresario,0).
 
 action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null):-
 		person(Self),person(Patron),person(Impresario),event(null),location(null),
-		at(Self,RoleLocation),
-		is(Impresario,impresario,RoleLocation),
-		at(Patron,Location),
+		at(Patron,RoleLocation),
 		is(Self,diva,RoleLocation),
-		at(Impresario,RoleLocation),
+		at(Patron,Location),
 		at(Impresario,Location),
 		is(Patron,patron,RoleLocation),
-		at(Patron,RoleLocation),
 		at(Self,Location),
+		at(Impresario,RoleLocation),
+		is(Impresario,impresario,RoleLocation),
+		at(Self,RoleLocation),
 		Self != Patron,
 		Self != Impresario,
 		Patron != Impresario,
@@ -5535,23 +5535,23 @@ action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null):-
 		Patron != null,
 		Impresario != null.
 
-hashed(deliver_stunning_perfomance,1582989271).
-
-update(Self,self_worth,5) :- not is(Self,self_worth,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
-
-update(Impresario,likes,Self,Y) :- is(Impresario,likes,Self,X), X + 5 = Y, occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
-
-update(Patron,likes,Self,5) :- not is(Patron,likes,Self,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
-
-update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 5 = Y, occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
-
-update(Impresario,likes,Self,5) :- not is(Impresario,likes,Self,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
-
-update(Patron,likes,Impresario,5) :- not is(Patron,likes,Impresario,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
+hashed(deliver_stunning_perfomance,3429961285).
 
 update(Patron,likes,Self,Y) :- is(Patron,likes,Self,X), X + 5 = Y, occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
 
+update(Self,self_worth,Y) :- is(Self,self_worth,X), X + 5 = Y, occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
+
 update(Patron,likes,Impresario,Y) :- is(Patron,likes,Impresario,X), X + 5 = Y, occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
+
+update(Self,self_worth,5) :- not is(Self,self_worth,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
+
+update(Patron,likes,Impresario,5) :- not is(Patron,likes,Impresario,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
+
+update(Impresario,likes,Self,5) :- not is(Impresario,likes,Self,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
+
+update(Patron,likes,Self,5) :- not is(Patron,likes,Self,_), occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
+
+update(Impresario,likes,Self,Y) :- is(Impresario,likes,Self,X), X + 5 = Y, occurred(action(deliver_stunning_perfomance, Self, Patron, Impresario, null, null)).
 
 is(deliver_stunning_perfomance, role_specific).
 
@@ -5563,23 +5563,23 @@ visibility(deliver_stunning_perfomance,0).
 
 action(serve_patron, Barkeep, Patron, null, null, null):-
 		person(Barkeep),person(Patron),person(null),event(null),location(null),
-		at(Barkeep,RoleLocation),
-		at(Patron,Location),
-		at(Barkeep,Location),
 		is(Barkeep,barkeep,RoleLocation),
-		is(Patron,patron,RoleLocation),
 		at(Patron,RoleLocation),
+		at(Patron,Location),
+		is(Patron,patron,RoleLocation),
+		at(Barkeep,Location),
+		at(Barkeep,RoleLocation),
 		Barkeep != Patron,
 		Barkeep != null,
 		Patron != null.
 
-hashed(serve_patron,15464427).
+hashed(serve_patron,4058720539).
 
-update(Patron,tiredness,0) :- not is(Patron,tiredness,_), occurred(action(serve_patron, Barkeep, Patron, null, null, null)).
+add(Patron, drunk) :- occurred(action(serve_patron, Barkeep, Patron, null, null, null)).
 
 update(Patron,tiredness,Y) :- is(Patron,tiredness,X), 0 = Y, occurred(action(serve_patron, Barkeep, Patron, null, null, null)).
 
-add(Patron, drunk) :- occurred(action(serve_patron, Barkeep, Patron, null, null, null)).
+update(Patron,tiredness,0) :- not is(Patron,tiredness,_), occurred(action(serve_patron, Barkeep, Patron, null, null, null)).
 
 is(serve_patron, work).
 
@@ -5589,25 +5589,25 @@ visibility(serve_patron,0).
 
 action(chat_with_regular, Barkeep, Regular, null, null, null):-
 		person(Barkeep),person(Regular),person(null),event(null),location(null),
-		at(Barkeep,RoleLocation),
-		at(Barkeep,Location),
-		is(Regular,regular,RoleLocation),
 		is(Barkeep,barkeep,RoleLocation),
 		at(Regular,RoleLocation),
+		at(Barkeep,Location),
+		at(Barkeep,RoleLocation),
 		at(Regular,Location),
+		is(Regular,regular,RoleLocation),
 		Barkeep != Regular,
 		Barkeep != null,
 		Regular != null.
 
-hashed(chat_with_regular,2400446285).
-
-update(Regular,likes,Barkeep,Y) :- is(Regular,likes,Barkeep,X), X + 1 = Y,occurred(action(chat_with_regular, Barkeep, Regular, null, null, null)).
-
-update(Regular,likes,Barkeep,1) :- not is(Regular,likes,Barkeep,_), occurred(action(chat_with_regular, Barkeep, Regular, null, null, null)).
+hashed(chat_with_regular,4092834770).
 
 add(Regular, drunk) :- occurred(action(chat_with_regular, Barkeep, Regular, null, null, null)).
 
 update(Barkeep,likes,Regular,Y) :- is(Barkeep,likes,Regular,X), X + 1 = Y,occurred(action(chat_with_regular, Barkeep, Regular, null, null, null)).
+
+update(Regular,likes,Barkeep,1) :- not is(Regular,likes,Barkeep,_), occurred(action(chat_with_regular, Barkeep, Regular, null, null, null)).
+
+update(Regular,likes,Barkeep,Y) :- is(Regular,likes,Barkeep,X), X + 1 = Y,occurred(action(chat_with_regular, Barkeep, Regular, null, null, null)).
 
 update(Barkeep,likes,Regular,1) :- not is(Barkeep,likes,Regular,_), occurred(action(chat_with_regular, Barkeep, Regular, null, null, null)).
 
@@ -5619,15 +5619,15 @@ visibility(chat_with_regular,0).
 
 action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null):-
 		person(Barkeep),person(Fighter1),person(Fighter2),event(null),location(null),
-		is(Fighter2,likes,Fighter1,V_Fighter2_likes_Fighter1), V_Fighter2_likes_Fighter1 <= -3,
-		at(Barkeep,RoleLocation),
+		is(Barkeep,barkeep,RoleLocation),
 		at(Fighter2,Location),
 		at(Fighter1,Location),
-		at(Barkeep,Location),
-		is(Fighter2, drunk),
-		is(Barkeep,barkeep,RoleLocation),
 		is(Fighter1, drunk),
 		is(Fighter1,likes,Fighter2,V_Fighter1_likes_Fighter2), V_Fighter1_likes_Fighter2 <= -3,
+		is(Fighter2,likes,Fighter1,V_Fighter2_likes_Fighter1), V_Fighter2_likes_Fighter1 <= -3,
+		at(Barkeep,Location),
+		at(Barkeep,RoleLocation),
+		is(Fighter2, drunk),
 		Barkeep != Fighter1,
 		Barkeep != Fighter2,
 		Fighter1 != Fighter2,
@@ -5635,7 +5635,15 @@ action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null):-
 		Fighter1 != null,
 		Fighter2 != null.
 
-hashed(breakup_barfight,256841022).
+hashed(breakup_barfight,2765846353).
+
+update(Fighter2,likes,Fighter1,-3) :- not is(Fighter2,likes,Fighter1,_), occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Barkeep,likes,Fighter2,Y) :- is(Barkeep,likes,Fighter2,X), X - 3 = Y, occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Barkeep,likes,Fighter1,-3) :- not is(Barkeep,likes,Fighter1,_), occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Fighter1,likes,Fighter2,-3) :- not is(Fighter1,likes,Fighter2,_), occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
 update(Barkeep,likes,Fighter1,Y) :- is(Barkeep,likes,Fighter1,X), X - 3 = Y, occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
@@ -5643,15 +5651,7 @@ update(Barkeep,likes,Fighter2,-3) :- not is(Barkeep,likes,Fighter2,_), occurred(
 
 update(Fighter2,likes,Fighter1,Y) :- is(Fighter2,likes,Fighter1,X), X - 3 = Y,occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
-update(Fighter2,likes,Fighter1,-3) :- not is(Fighter2,likes,Fighter1,_), occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Barkeep,likes,Fighter1,-3) :- not is(Barkeep,likes,Fighter1,_), occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Fighter1,likes,Fighter2,-3) :- not is(Fighter1,likes,Fighter2,_), occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
 update(Fighter1,likes,Fighter2,Y) :- is(Fighter1,likes,Fighter2,X), X - 3 = Y,occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Barkeep,likes,Fighter2,Y) :- is(Barkeep,likes,Fighter2,X), X - 3 = Y, occurred(action(breakup_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
 is(breakup_barfight, role_specific).
 
@@ -5661,15 +5661,15 @@ visibility(breakup_barfight,0).
 
 action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null):-
 		person(Barkeep),person(Fighter1),person(Fighter2),event(null),location(null),
-		is(Fighter2,likes,Fighter1,V_Fighter2_likes_Fighter1), V_Fighter2_likes_Fighter1 <= -3,
-		at(Barkeep,RoleLocation),
+		is(Barkeep,barkeep,RoleLocation),
 		at(Fighter2,Location),
 		at(Fighter1,Location),
-		at(Barkeep,Location),
-		is(Fighter2, drunk),
-		is(Barkeep,barkeep,RoleLocation),
 		is(Fighter1, drunk),
 		is(Fighter1,likes,Fighter2,V_Fighter1_likes_Fighter2), V_Fighter1_likes_Fighter2 <= -3,
+		is(Fighter2,likes,Fighter1,V_Fighter2_likes_Fighter1), V_Fighter2_likes_Fighter1 <= -3,
+		at(Barkeep,Location),
+		at(Barkeep,RoleLocation),
+		is(Fighter2, drunk),
 		Barkeep != Fighter1,
 		Barkeep != Fighter2,
 		Fighter1 != Fighter2,
@@ -5677,31 +5677,31 @@ action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null):-
 		Fighter1 != null,
 		Fighter2 != null.
 
-hashed(breakup_cathartic_barfight,3481780173).
-
-update(Fighter1,likes,Barkeep,Y) :- is(Fighter1,likes,Barkeep,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Fighter2,likes,Fighter1,Y) :- is(Fighter2,likes,Fighter1,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Fighter1,likes,Barkeep,3) :- not is(Fighter1,likes,Barkeep,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Fighter1,likes,Fighter2,Y) :- is(Fighter1,likes,Fighter2,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Fighter1,likes,Fighter2,3) :- not is(Fighter1,likes,Fighter2,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+hashed(breakup_cathartic_barfight,464843006).
 
 update(Barkeep,likes,Fighter2,3) :- not is(Barkeep,likes,Fighter2,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
-update(Barkeep,likes,Fighter2,Y) :- is(Barkeep,likes,Fighter2,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+update(Barkeep,likes,Fighter1,3) :- not is(Barkeep,likes,Fighter1,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
-update(Fighter2,likes,Barkeep,Y) :- is(Fighter2,likes,Barkeep,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+update(Fighter1,likes,Fighter2,Y) :- is(Fighter1,likes,Fighter2,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Fighter1,likes,Barkeep,3) :- not is(Fighter1,likes,Barkeep,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Fighter1,likes,Fighter2,3) :- not is(Fighter1,likes,Fighter2,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Fighter2,likes,Fighter1,3) :- not is(Fighter2,likes,Fighter1,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Fighter1,likes,Barkeep,Y) :- is(Fighter1,likes,Barkeep,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
 update(Fighter2,likes,Barkeep,3) :- not is(Fighter2,likes,Barkeep,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
-update(Barkeep,likes,Fighter1,3) :- not is(Barkeep,likes,Fighter1,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+update(Fighter2,likes,Barkeep,Y) :- is(Fighter2,likes,Barkeep,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Fighter2,likes,Fighter1,Y) :- is(Fighter2,likes,Fighter1,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
+
+update(Barkeep,likes,Fighter2,Y) :- is(Barkeep,likes,Fighter2,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
 update(Barkeep,likes,Fighter1,Y) :- is(Barkeep,likes,Fighter1,X), X + 3 = Y,occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
-
-update(Fighter2,likes,Fighter1,3) :- not is(Fighter2,likes,Fighter1,_), occurred(action(breakup_cathartic_barfight, Barkeep, Fighter1, Fighter2, null, null)).
 
 is(breakup_cathartic_barfight, role_specific).
 
@@ -5715,7 +5715,7 @@ action(sober_up, Drunk, null, null, null, null):-
 		at(Drunk,Location),
 		Drunk != null.
 
-hashed(sober_up,3120992131).
+hashed(sober_up,4258722244).
 
 del(Drunk, drunk) :- occurred(action(sober_up, Drunk, null, null, null, null)).
 
@@ -5725,13 +5725,13 @@ visibility(sober_up,0).
 
 action(cast_ur_job, TheWorker, null, null, null, null):-
 		person(TheWorker),person(null),person(null),event(null),location(null),
-		castable(ur_job,Location),
-		at(TheWorker,Location),
 		mode(casting),
 		not is(TheWorker, ur_job),
+		castable(ur_job,Location),
+		at(TheWorker,Location),
 		TheWorker != null.
 
-hashed(cast_ur_job,681582689).
+hashed(cast_ur_job,2144295348).
 
 add(TheWorker,ur_job,Location) :- at(TheWorker, Location), occurred(action(cast_ur_job, TheWorker, null, null, null, null)).
 
@@ -5741,18 +5741,18 @@ visibility(cast_ur_job,0).
 
 action(cast_monk, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
-		castable(monk,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(monk,Location),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_monk,37490167).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_monk, Worker, null, null, null, null)).
+hashed(cast_monk,2983620291).
 
 add(Worker,monk,Location) :- at(Worker, Location), occurred(action(cast_monk, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_monk, Worker, null, null, null, null)).
 
 is(cast_monk, work).
 
@@ -5763,78 +5763,78 @@ visibility(cast_monk,0).
 action(cast_foreman, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
 		castable(foreman,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_foreman,457220032).
+hashed(cast_foreman,1368133345).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_foreman, Worker, null, null, null, null)).
 
 add(Worker,foreman,Location) :- at(Worker, Location), occurred(action(cast_foreman, Worker, null, null, null, null)).
 
+is(cast_foreman, critical).
+
 is(cast_foreman, talk).
 
 is(cast_foreman, work).
-
-is(cast_foreman, critical).
 
 visibility(cast_foreman,0).
 
 action(cast_miner, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		castable(miner,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		castable(miner,Location),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_miner,1881544711).
+hashed(cast_miner,677351969).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_miner, Worker, null, null, null, null)).
 
 add(Worker,miner,Location) :- at(Worker, Location), occurred(action(cast_miner, Worker, null, null, null, null)).
 
-is(cast_miner, work).
-
 is(cast_miner, bold).
+
+is(cast_miner, work).
 
 visibility(cast_miner,0).
 
 action(cast_curator, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
 		castable(curator,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_curator,235036349).
+hashed(cast_curator,4194871603).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_curator, Worker, null, null, null, null)).
 
 add(Worker,curator,Location) :- at(Worker, Location), occurred(action(cast_curator, Worker, null, null, null, null)).
 
-is(cast_curator, work).
-
 is(cast_curator, scholarly).
+
+is(cast_curator, work).
 
 visibility(cast_curator,0).
 
 action(cast_vendor, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		at(Worker,Location),
 		castable(vendor,Location),
-		castable(ur_job,Location),
+		at(Worker,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_vendor,2149809113).
+hashed(cast_vendor,1830728312).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_vendor, Worker, null, null, null, null)).
 
@@ -5848,14 +5848,14 @@ visibility(cast_vendor,0).
 
 action(cast_enforcer, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
-		castable(enforcer,Location),
 		not is(Worker, ur_job),
+		castable(enforcer,Location),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_enforcer,1887912917).
+hashed(cast_enforcer,348245634).
 
 add(Worker,enforcer,Location) :- at(Worker, Location), occurred(action(cast_enforcer, Worker, null, null, null, null)).
 
@@ -5865,68 +5865,68 @@ is(cast_enforcer, criminal).
 
 is(cast_enforcer, work).
 
-is(cast_enforcer, mean).
-
 is(cast_enforcer, risky).
+
+is(cast_enforcer, mean).
 
 visibility(cast_enforcer,0).
 
 action(cast_dockworker, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
 		castable(dockworker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_dockworker,3105840004).
+hashed(cast_dockworker,3480637600).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_dockworker, Worker, null, null, null, null)).
 
 add(Worker,dockworker,Location) :- at(Worker, Location), occurred(action(cast_dockworker, Worker, null, null, null, null)).
 
-is(cast_dockworker, work).
-
 is(cast_dockworker, mariner).
+
+is(cast_dockworker, work).
 
 visibility(cast_dockworker,0).
 
 action(cast_librarian, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		castable(librarian,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
+		castable(librarian,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_librarian,2350257585).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_librarian, Worker, null, null, null, null)).
+hashed(cast_librarian,1613990158).
 
 add(Worker,librarian,Location) :- at(Worker, Location), occurred(action(cast_librarian, Worker, null, null, null, null)).
 
-is(cast_librarian, work).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_librarian, Worker, null, null, null, null)).
 
 is(cast_librarian, scholarly).
+
+is(cast_librarian, work).
 
 visibility(cast_librarian,0).
 
 action(cast_chef, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		at(Worker,Location),
 		castable(chef,Location),
-		castable(ur_job,Location),
+		at(Worker,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_chef,1085042918).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_chef, Worker, null, null, null, null)).
+hashed(cast_chef,225818907).
 
 add(Worker,chef,Location) :- at(Worker, Location), occurred(action(cast_chef, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_chef, Worker, null, null, null, null)).
 
 is(cast_chef, talk).
 
@@ -5936,70 +5936,70 @@ visibility(cast_chef,0).
 
 action(cast_treasure_hunter, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		castable(treasure_hunter,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_treasure_hunter,3115069461).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_treasure_hunter, Worker, null, null, null, null)).
+hashed(cast_treasure_hunter,1174518863).
 
 add(Worker,treasure_hunter,Location) :- at(Worker, Location), occurred(action(cast_treasure_hunter, Worker, null, null, null, null)).
 
-is(cast_treasure_hunter, criminal).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_treasure_hunter, Worker, null, null, null, null)).
 
-is(cast_treasure_hunter, risky).
+is(cast_treasure_hunter, bold).
 
 is(cast_treasure_hunter, work).
 
-is(cast_treasure_hunter, bold).
+is(cast_treasure_hunter, risky).
+
+is(cast_treasure_hunter, criminal).
 
 visibility(cast_treasure_hunter,0).
 
 action(cast_archaelogist, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		castable(archaelogist,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_archaelogist,3096517470).
+hashed(cast_archaelogist,1379078366).
 
 add(Worker,archaelogist,Location) :- at(Worker, Location), occurred(action(cast_archaelogist, Worker, null, null, null, null)).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_archaelogist, Worker, null, null, null, null)).
 
-is(cast_archaelogist, work).
+is(cast_archaelogist, thoughtful).
 
 is(cast_archaelogist, scholarly).
 
-is(cast_archaelogist, thoughtful).
+is(cast_archaelogist, work).
 
 visibility(cast_archaelogist,0).
 
 action(cast_bard, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		castable(bard,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
+		castable(bard,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_bard,2068234373).
+hashed(cast_bard,1028211610).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_bard, Worker, null, null, null, null)).
 
 add(Worker,bard,Location) :- at(Worker, Location), occurred(action(cast_bard, Worker, null, null, null, null)).
 
-is(cast_bard, talk).
-
 is(cast_bard, silly).
+
+is(cast_bard, talk).
 
 is(cast_bard, work).
 
@@ -6007,64 +6007,66 @@ visibility(cast_bard,0).
 
 action(cast_monarch, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		castable(monarch,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
+		castable(monarch,Location),
 		Worker != null.
 
-hashed(cast_monarch,3001504743).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_monarch, Worker, null, null, null, null)).
+hashed(cast_monarch,626607009).
 
 add(Worker,monarch,Location) :- at(Worker, Location), occurred(action(cast_monarch, Worker, null, null, null, null)).
 
-is(cast_monarch, work).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_monarch, Worker, null, null, null, null)).
 
 is(cast_monarch, critical).
 
 is(cast_monarch, bold).
 
+is(cast_monarch, work).
+
 visibility(cast_monarch,0).
 
 action(cast_chancellor, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		castable(chancellor,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(chancellor,Location),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_chancellor,3456264334).
+hashed(cast_chancellor,2290349078).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_chancellor, Worker, null, null, null, null)).
 
 add(Worker,chancellor,Location) :- at(Worker, Location), occurred(action(cast_chancellor, Worker, null, null, null, null)).
 
+is(cast_chancellor, critical).
+
 is(cast_chancellor, talk).
 
 is(cast_chancellor, work).
-
-is(cast_chancellor, critical).
 
 visibility(cast_chancellor,0).
 
 action(cast_professor, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		at(Worker,Location),
-		castable(ur_job,Location),
-		not is(Worker, ur_job),
 		castable(professor,Location),
+		at(Worker,Location),
+		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_professor,3619081011).
+hashed(cast_professor,4157319577).
+
+add(Worker,professor,Location) :- at(Worker, Location), occurred(action(cast_professor, Worker, null, null, null, null)).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_professor, Worker, null, null, null, null)).
 
-add(Worker,professor,Location) :- at(Worker, Location), occurred(action(cast_professor, Worker, null, null, null, null)).
+is(cast_professor, critical).
 
 is(cast_professor, talk).
 
@@ -6072,47 +6074,45 @@ is(cast_professor, scholarly).
 
 is(cast_professor, work).
 
-is(cast_professor, critical).
-
 visibility(cast_professor,0).
 
 action(cast_spy_master, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		castable(spy_master,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_spy_master,3947548369).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_spy_master, Worker, null, null, null, null)).
+hashed(cast_spy_master,2643064978).
 
 add(Worker,spy_master,Location) :- at(Worker, Location), occurred(action(cast_spy_master, Worker, null, null, null, null)).
 
-is(cast_spy_master, work).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_spy_master, Worker, null, null, null, null)).
 
 is(cast_spy_master, critical).
 
 is(cast_spy_master, risky).
 
+is(cast_spy_master, work).
+
 visibility(cast_spy_master,0).
 
 action(cast_sailor, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
+		not is(Worker, ur_job),
+		mode(casting),
 		castable(sailor,Location),
 		castable(ur_job,Location),
-		not is(Worker, ur_job),
 		Worker != null.
 
-hashed(cast_sailor,47669604).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_sailor, Worker, null, null, null, null)).
+hashed(cast_sailor,700503863).
 
 add(Worker,sailor,Location) :- at(Worker, Location), occurred(action(cast_sailor, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_sailor, Worker, null, null, null, null)).
 
 is(cast_sailor, work).
 
@@ -6122,37 +6122,37 @@ visibility(cast_sailor,0).
 
 action(cast_auctioneer, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		castable(auctioneer,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
+		castable(auctioneer,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_auctioneer,2398942100).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_auctioneer, Worker, null, null, null, null)).
+hashed(cast_auctioneer,1651968923).
 
 add(Worker,auctioneer,Location) :- at(Worker, Location), occurred(action(cast_auctioneer, Worker, null, null, null, null)).
 
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_auctioneer, Worker, null, null, null, null)).
+
 is(cast_auctioneer, talk).
 
-is(cast_auctioneer, work).
-
 is(cast_auctioneer, bold).
+
+is(cast_auctioneer, work).
 
 visibility(cast_auctioneer,0).
 
 action(cast_artist, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
-		castable(artist,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		castable(artist,Location),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_artist,2979370592).
+hashed(cast_artist,4287901635).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_artist, Worker, null, null, null, null)).
 
@@ -6166,56 +6166,56 @@ visibility(cast_artist,0).
 
 action(cast_spy, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		not is(Worker, ur_job),
-		at(Worker,Location),
-		castable(ur_job,Location),
 		castable(spy,Location),
+		at(Worker,Location),
+		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_spy,1456768721).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_spy, Worker, null, null, null, null)).
+hashed(cast_spy,837585541).
 
 add(Worker,spy,Location) :- at(Worker, Location), occurred(action(cast_spy, Worker, null, null, null, null)).
 
-is(cast_spy, work).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_spy, Worker, null, null, null, null)).
 
 is(cast_spy, criminal).
+
+is(cast_spy, work).
 
 visibility(cast_spy,0).
 
 action(cast_tutor, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
 		castable(tutor,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_tutor,1888535063).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_tutor, Worker, null, null, null, null)).
+hashed(cast_tutor,4202165348).
 
 add(Worker,tutor,Location) :- at(Worker, Location), occurred(action(cast_tutor, Worker, null, null, null, null)).
 
-is(cast_tutor, work).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_tutor, Worker, null, null, null, null)).
 
 is(cast_tutor, scholarly).
+
+is(cast_tutor, work).
 
 visibility(cast_tutor,0).
 
 action(cast_ship_builder, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		castable(ship_builder,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_ship_builder,3651305260).
+hashed(cast_ship_builder,161698201).
 
 add(Worker,ship_builder,Location) :- at(Worker, Location), occurred(action(cast_ship_builder, Worker, null, null, null, null)).
 
@@ -6227,18 +6227,18 @@ visibility(cast_ship_builder,0).
 
 action(cast_prostitute, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		castable(prostitute,Location),
 		at(Worker,Location),
 		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(prostitute,Location),
 		Worker != null.
 
-hashed(cast_prostitute,1960064863).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_prostitute, Worker, null, null, null, null)).
+hashed(cast_prostitute,1875500192).
 
 add(Worker,prostitute,Location) :- at(Worker, Location), occurred(action(cast_prostitute, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_prostitute, Worker, null, null, null, null)).
 
 is(cast_prostitute, work).
 
@@ -6246,35 +6246,35 @@ visibility(cast_prostitute,0).
 
 action(cast_student, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
 		castable(student,Location),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_student,121481192).
+hashed(cast_student,4021636836).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_student, Worker, null, null, null, null)).
 
 add(Worker,student,Location) :- at(Worker, Location), occurred(action(cast_student, Worker, null, null, null, null)).
 
-is(cast_student, work).
-
 is(cast_student, scholarly).
+
+is(cast_student, work).
 
 visibility(cast_student,0).
 
 action(cast_smith_apprentice, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		at(Worker,Location),
 		castable(smith_apprentice,Location),
-		castable(ur_job,Location),
+		at(Worker,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_smith_apprentice,3865805135).
+hashed(cast_smith_apprentice,598022795).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_smith_apprentice, Worker, null, null, null, null)).
 
@@ -6286,14 +6286,14 @@ visibility(cast_smith_apprentice,0).
 
 action(cast_guard, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
 		castable(guard,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_guard,2801145091).
+hashed(cast_guard,1624474294).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_guard, Worker, null, null, null, null)).
 
@@ -6306,17 +6306,17 @@ visibility(cast_guard,0).
 action(cast_shipping_foreman, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
 		castable(shipping_foreman,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_shipping_foreman,1395473801).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_shipping_foreman, Worker, null, null, null, null)).
+hashed(cast_shipping_foreman,3730578379).
 
 add(Worker,shipping_foreman,Location) :- at(Worker, Location), occurred(action(cast_shipping_foreman, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_shipping_foreman, Worker, null, null, null, null)).
 
 is(cast_shipping_foreman, work).
 
@@ -6324,18 +6324,18 @@ visibility(cast_shipping_foreman,0).
 
 action(cast_thief, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		castable(thief,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_thief,1370252555).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_thief, Worker, null, null, null, null)).
+hashed(cast_thief,1927685510).
 
 add(Worker,thief,Location) :- at(Worker, Location), occurred(action(cast_thief, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_thief, Worker, null, null, null, null)).
 
 is(cast_thief, work).
 
@@ -6343,18 +6343,18 @@ visibility(cast_thief,0).
 
 action(cast_impresario, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		at(Worker,Location),
-		castable(ur_job,Location),
 		castable(impresario,Location),
+		at(Worker,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_impresario,2634565640).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_impresario, Worker, null, null, null, null)).
+hashed(cast_impresario,3320998344).
 
 add(Worker,impresario,Location) :- at(Worker, Location), occurred(action(cast_impresario, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_impresario, Worker, null, null, null, null)).
 
 is(cast_impresario, work).
 
@@ -6362,18 +6362,18 @@ visibility(cast_impresario,0).
 
 action(cast_priest, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		castable(priest,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		castable(priest,Location),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_priest,332587877).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_priest, Worker, null, null, null, null)).
+hashed(cast_priest,4130496123).
 
 add(Worker,priest,Location) :- at(Worker, Location), occurred(action(cast_priest, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_priest, Worker, null, null, null, null)).
 
 is(cast_priest, work).
 
@@ -6381,18 +6381,18 @@ visibility(cast_priest,0).
 
 action(cast_high_priest, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
+		not is(Worker, ur_job),
+		mode(casting),
 		castable(high_priest,Location),
 		castable(ur_job,Location),
-		not is(Worker, ur_job),
 		Worker != null.
 
-hashed(cast_high_priest,1638976192).
-
-add(Worker,high_priest,Location) :- at(Worker, Location), occurred(action(cast_high_priest, Worker, null, null, null, null)).
+hashed(cast_high_priest,3183086186).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_high_priest, Worker, null, null, null, null)).
+
+add(Worker,high_priest,Location) :- at(Worker, Location), occurred(action(cast_high_priest, Worker, null, null, null, null)).
 
 is(cast_high_priest, work).
 
@@ -6400,14 +6400,14 @@ visibility(cast_high_priest,0).
 
 action(cast_pickpocket, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		castable(pickpocket,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
+		castable(pickpocket,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_pickpocket,367139853).
+hashed(cast_pickpocket,2711317257).
 
 add(Worker,pickpocket,Location) :- at(Worker, Location), occurred(action(cast_pickpocket, Worker, null, null, null, null)).
 
@@ -6420,13 +6420,13 @@ visibility(cast_pickpocket,0).
 action(cast_engineer, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
 		castable(engineer,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_engineer,2536316630).
+hashed(cast_engineer,4194225596).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_engineer, Worker, null, null, null, null)).
 
@@ -6438,18 +6438,18 @@ visibility(cast_engineer,0).
 
 action(cast_captain, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		castable(captain,Location),
-		mode(casting),
 		at(Worker,Location),
-		castable(ur_job,Location),
+		castable(captain,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_captain,3239883416).
-
-add(Worker,captain,Location) :- at(Worker, Location), occurred(action(cast_captain, Worker, null, null, null, null)).
+hashed(cast_captain,369429786).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_captain, Worker, null, null, null, null)).
+
+add(Worker,captain,Location) :- at(Worker, Location), occurred(action(cast_captain, Worker, null, null, null, null)).
 
 is(cast_captain, work).
 
@@ -6457,14 +6457,14 @@ visibility(cast_captain,0).
 
 action(cast_elder, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		castable(elder,Location),
 		at(Worker,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_elder,2497673982).
+hashed(cast_elder,898270647).
 
 add(Worker,elder,Location) :- at(Worker, Location), occurred(action(cast_elder, Worker, null, null, null, null)).
 
@@ -6476,18 +6476,18 @@ visibility(cast_elder,0).
 
 action(cast_fisher, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
-		castable(fisher,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		castable(fisher,Location),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_fisher,1647130145).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_fisher, Worker, null, null, null, null)).
+hashed(cast_fisher,3190651295).
 
 add(Worker,fisher,Location) :- at(Worker, Location), occurred(action(cast_fisher, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_fisher, Worker, null, null, null, null)).
 
 is(cast_fisher, work).
 
@@ -6495,33 +6495,33 @@ visibility(cast_fisher,0).
 
 action(cast_master_thief, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		not is(Worker, ur_job),
-		at(Worker,Location),
-		castable(ur_job,Location),
 		castable(master_thief,Location),
+		at(Worker,Location),
+		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_master_thief,2791087122).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_master_thief, Worker, null, null, null, null)).
+hashed(cast_master_thief,4078134525).
 
 add(Worker,master_thief,Location) :- at(Worker, Location), occurred(action(cast_master_thief, Worker, null, null, null, null)).
 
-is(cast_master_thief, criminal).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_master_thief, Worker, null, null, null, null)).
 
 is(cast_master_thief, work).
+
+is(cast_master_thief, criminal).
 
 visibility(cast_master_thief,0).
 
 action(cast_patron, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
+		mode(casting),
 		castable(patron,Location),
 		Worker != null.
 
-hashed(cast_patron,1007065881).
+hashed(cast_patron,3294168397).
 
 add(Worker,patron,Location) :- at(Worker, Location), occurred(action(cast_patron, Worker, null, null, null, null)).
 
@@ -6531,18 +6531,18 @@ visibility(cast_patron,0).
 
 action(cast_smithy, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		not is(Worker, ur_job),
-		at(Worker,Location),
-		castable(ur_job,Location),
 		castable(smithy,Location),
+		at(Worker,Location),
+		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_smithy,3616776956).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_smithy, Worker, null, null, null, null)).
+hashed(cast_smithy,3254624463).
 
 add(Worker,smithy,Location) :- at(Worker, Location), occurred(action(cast_smithy, Worker, null, null, null, null)).
+
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_smithy, Worker, null, null, null, null)).
 
 is(cast_smithy, work).
 
@@ -6550,64 +6550,64 @@ visibility(cast_smithy,0).
 
 action(cast_researcher, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		at(Worker,Location),
 		castable(researcher,Location),
-		castable(ur_job,Location),
+		at(Worker,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_researcher,3161432146).
-
-add(Worker,researcher,Location) :- at(Worker, Location), occurred(action(cast_researcher, Worker, null, null, null, null)).
+hashed(cast_researcher,2811543191).
 
 add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_researcher, Worker, null, null, null, null)).
 
-is(cast_researcher, work).
+add(Worker,researcher,Location) :- at(Worker, Location), occurred(action(cast_researcher, Worker, null, null, null, null)).
 
 is(cast_researcher, scholarly).
+
+is(cast_researcher, work).
 
 visibility(cast_researcher,0).
 
 action(cast_diva, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
-		at(Worker,Location),
 		castable(diva,Location),
-		castable(ur_job,Location),
+		at(Worker,Location),
 		not is(Worker, ur_job),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_diva,2158051114).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_diva, Worker, null, null, null, null)).
+hashed(cast_diva,3004437949).
 
 add(Worker,diva,Location) :- at(Worker, Location), occurred(action(cast_diva, Worker, null, null, null, null)).
 
-is(cast_diva, work).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_diva, Worker, null, null, null, null)).
 
 is(cast_diva, talk).
+
+is(cast_diva, work).
 
 visibility(cast_diva,0).
 
 action(cast_barkeep, Worker, null, null, null, null):-
 		person(Worker),person(null),person(null),event(null),location(null),
-		mode(casting),
 		at(Worker,Location),
-		castable(barkeep,Location),
-		castable(ur_job,Location),
 		not is(Worker, ur_job),
+		castable(barkeep,Location),
+		mode(casting),
+		castable(ur_job,Location),
 		Worker != null.
 
-hashed(cast_barkeep,2967007036).
-
-add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_barkeep, Worker, null, null, null, null)).
+hashed(cast_barkeep,235205639).
 
 add(Worker,barkeep,Location) :- at(Worker, Location), occurred(action(cast_barkeep, Worker, null, null, null, null)).
 
-is(cast_barkeep, work).
+add(Worker,ur_job,Location) :- at(Worker, Location), occurred(action(cast_barkeep, Worker, null, null, null, null)).
 
 is(cast_barkeep, talk).
+
+is(cast_barkeep, work).
 
 visibility(cast_barkeep,0).
 
@@ -6915,6 +6915,10 @@ trait(visiting_places_you_like).
 
 trait(visiting_as_regular).
 
+trait(thieves_go_around).
+
+trait(spies_go_around).
+
 propensity(romance, 3, romantic_towards_crush,Self, Other, DEFAULT_OBJECT, DEFAULT_ACTION, DEFAULT_LOCATION )  :- 
 		action(ACTION_NAME,Self,Other,DEFAULT_OBJECT,DEFAULT_ACTION,DEFAULT_LOCATION),
 		is(Self, romantic_towards_crush),
@@ -6924,6 +6928,19 @@ propensity(romance, 3, romantic_towards_crush,Self, Other, DEFAULT_OBJECT, DEFAU
 trait(romantic_towards_crush).
 
 trait(stay_at_hometown).
+
+trait(make_chosen_one_connections_occur).
+
+trait(go_where_people_you_like_go).
+
+propensity(tag_agnostic, 28, chosen_ones_are_connected,Self, Other, DEFAULT_OBJECT, DEFAULT_ACTION, DEFAULT_LOCATION )  :- 
+		action(ACTION_NAME,Self,Other,DEFAULT_OBJECT,DEFAULT_ACTION,DEFAULT_LOCATION),
+		is(Self, chosen_ones_are_connected),
+		is(Self, chosen_one),
+		is(Other, chosen_one),
+		is(ACTION_NAME,tag_agnostic).
+
+trait(chosen_ones_are_connected).
 
 propensity(role_specific, 4, do_role_specific_actions,Self, DEFAULT_TARGET, DEFAULT_OBJECT, DEFAULT_ACTION, DEFAULT_LOCATION )  :- 
 		action(ACTION_NAME,Self,DEFAULT_TARGET,DEFAULT_OBJECT,DEFAULT_ACTION,DEFAULT_LOCATION),
