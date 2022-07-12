@@ -11,7 +11,8 @@ statement:
         add |
         remove|
         while_block |
-        if_block;
+        if_block |
+        choose_block;
     
 load:
     'load' filename  (',' filename)*  'with' tracery_ filename (',' filename)* ';' ;
@@ -30,6 +31,12 @@ if_block:
 if_statement: 
     conditional_statement ('or' conditional_statement)* OPEN statement+ CLOSE;
 
+choose_block:
+    'choose' '[' (num ':' choose_statement )+ ']';
+    
+choose_statement:
+    OPEN statement+ CLOSE;
+    
 add:
     'add'  filename  (',' filename)* ';';
 

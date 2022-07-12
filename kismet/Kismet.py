@@ -2797,9 +2797,15 @@ class KismetModule():
                         population.write(f'is({name},{",".join(combo)}).\n')
                     
                 for relationship in self.created_locations[name]['relationships']:
-                    role, char_name = relationship
+                    role = relationship['relation_name']
+                    char_name = relationship['target']
+                    val = relationship['value']
                     char_name = self.aspify_name(char_name)
-                    population.write(f'is({char_name},{role},{name}).\n')
+                    if val == '':
+                        population.write(f'is({char_name},{role},{name}).\n')
+                    else:
+                        population.write(f'is({char_name},{role},{name},{val}).\n')
+                        
                 population.write('\n')
     def compute_actions(self,volitions):
         volitions_by_actor = {}
@@ -2972,7 +2978,8 @@ class KismetModule():
             print(time)
             for step in phase:
                 for action in step:
-                    location = self.location_history[start+ind][action[1]]
+                    character = self.to_pretty_name([action[1]])[0]
+                    location = self.location_history[start+ind][character]
                     if location not in action_by_location:
                         action_by_location[location] = []
                     
@@ -3055,6 +3062,9 @@ class KismetModule():
         relations = kismet_module['relations']
         locations = kismet_module['locations']
         history = kismet_module['history']
+        
+        
+        
         location_history = kismet_module['location_history']
         self.population = {}
         for character in characters:
@@ -3084,7 +3094,15 @@ class KismetModule():
             l_id = location['id']
             location['status'] = {(key,):value for key,value in location['status'].items()}
             self.created_locations[l_id] = location
-        self.history = [ [[[self.aspify_name(binding) for binding in action] + ['null']*(5-len(action)) for action in step]] for step in history]
+        
+        
+        self.history = []
+        for step in history:
+            ur_step = []
+            for action in step['actions']:
+                ur_step.append([action['action_name']] +action['arguments'])
+            self.history.append([ur_step])
+        
         self.times = kismet_module['times']
         self.location_history = []
         
@@ -3099,12 +3117,13 @@ class KismetModule():
         
         for step in location_history:
             locations_at_step = {}
-            for location in step:
+            for location in step['locationsAtTime']:
                 location_name = location['location_name']
                 characters = location['characters']
-                asp_location = self.aspify_name(location_name)
+                #asp_location = self.aspify_name(location_name)
                 for person in characters:
-                    locations_at_step[self.aspify_name(person)] = asp_location
+                    #locations_at_step[self.aspify_name(person)] = asp_location
+                    locations_at_step[person] = location_name
             self.location_history.append(locations_at_step)
             
         self.knowledge2asp()
@@ -3130,7 +3149,7 @@ class KismetModule():
             for step in ur_step:
                 for action in step:
                     action_name = action[0]
-                    action_arguments = [thing for thing in action[1:] if thing != 'null'] #self.to_pretty_name([thing for thing in action[1:] if thing != 'null'])
+                    action_arguments = [thing for thing in action[1:]] #self.to_pretty_name([thing for thing in action[1:] if thing != 'null'])
                     actions.append({'action_name':action_name,
                                     'arguments':action_arguments})
             
@@ -3152,7 +3171,21 @@ class KismetModule():
         default_traits = set([trait for trait in self.traits if self.traits[trait].is_default])
         locations = list(self.created_locations.values())
         for location in locations:
-            location['relationships'] = list(location['relationships'])
+            location_relations = []
+            for relationship in location['relationships']:
+                if isinstance(relationship,tuple):
+                    relation_name = relationship[0]
+                    target = relationship[1]
+                    val = ''
+                    if len(relationship) > 2:
+                        val = str(relationship[2])
+                    location_relations.append({'relation_name':relation_name,
+                                              'source':location['name'],
+                                              'target':target,
+                                              'value':val})
+                else:
+                    location_relations.append(relationship)
+            location['relationships'] = location_relations
             location['status'] = {key[0]:value for key,value in location['status'].items()}
         for person in person_filter:
             if person not in self.population:
@@ -3415,6 +3448,7 @@ class KismetModule():
         random.shuffle(locations)
         
         available_slots = {}
+        each_turn_slots = {}
         
         location_assignments = {}
         for location in locations:
@@ -3427,9 +3461,10 @@ class KismetModule():
             role_slots = {}
             for role in supported_roles:
                 role_slots[role] = supported_roles[role]()
-                
-            for relationship in sorted(self.created_locations[location]['relationships']):
-                role, name = relationship
+                available_slots[(location,role)] = role_slots[role]
+            for relationship in self.created_locations[location]['relationships']:
+                role = relationship['relation_name']
+                name = relationship['target']
                 asp_name = self.aspify_name(name)
                 if asp_name not in location_assignments:
                     location_assignments[asp_name] = {}
@@ -3441,7 +3476,7 @@ class KismetModule():
             each_turn = self.locations[uniq].each_turn
             
             for role in each_turn:
-                available_slots[(location,role)] = role_slots[role]
+                each_turn_slots[(location,role)] = role_slots[role]
                 
         #print('LOCATION VOLITION', ' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]))       
         goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp',  f'{self.module_file}_pattern_rules.lp',f'{self.module_file}_population.lp','location_volition.lp']],clingo_exe=self.clingo_exe)
@@ -3460,8 +3495,16 @@ class KismetModule():
         for actor in shuffled:
             
             
-            available_locations = {slot[0] for slot in available_slots if available_slots[slot] > 0}
-            #available_locations |= {location for location in location_assignments.get(actor,[])} 
+            available_locations = {slot[0] for slot in each_turn_slots if available_slots[slot] > 0}
+            
+            for location in location_assignments.get(actor,[]):
+                for role in location_assignments[actor][location]:
+                    slot = (location,role)
+                    if available_slots[slot] > 0:
+                        available_locations.add(location)
+            for slot in available_slots:
+                if slot[0] == 'location430':
+                    print(slot,available_slots[slot])
             volitions_by_actor[actor] = sorted([(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations])
             
             
@@ -3475,10 +3518,12 @@ class KismetModule():
                 chosen_location = volitions_by_actor[actor][np.argmax(np.random.multinomial(1,probs))][1]
                 possible_roles = [(location,role) for location,role in sorted(available_slots) if location == chosen_location and available_slots[(location,role)] > 0]
                 for location in location_assignments.get(actor,[]):                    
-                    possible_roles += [(location,role) for role in sorted(location_assignments[actor][location])]
+                    possible_roles += [(location,role) for role in sorted(location_assignments[actor][location]) if available_slots[(location,role)]>0]
                 chosen_role = random.choice(sorted(possible_roles))
                 if chosen_role in available_slots:
                     available_slots[chosen_role] -= 1
+                else:
+                    print('CHOSE ROLE', chosen_role, ' BUT NOT IN AVAILABLE SLOTS???', available_slots)
                 chosen_locations.append((actor, chosen_role))
              
         with open(os.path.join(self.path,f'{self.module_file}_population_locations.lp'),'w') as location_file:

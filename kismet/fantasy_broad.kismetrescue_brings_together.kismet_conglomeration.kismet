@@ -1712,10 +1712,7 @@ location auction_house:
 		cast patron.
 location ballroom:
 	supports:
-		[5] guest,
-        [1] majordomo,
-        [1] butler,
-        [2] servant,
+		[10:15] guest,
 		[1] owner,
 		[3] artist;
 	each_turn:
@@ -1851,9 +1848,6 @@ location garden:
 		[1] guest,
 		[2] gardener,
 		[1] owner,
-        [1] majordomo,
-        [1] butler,
-        [2] servant,
         [1] visitor;
 	each_turn:
 		cast visitor.

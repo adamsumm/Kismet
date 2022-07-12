@@ -1,0 +1,968 @@
+////////////////////////////////////////////////////////////
+// New from-scratch system
+// CULT TOWN
+////////////////////////////////////////////////////////////
+
+//randomly start somewhere in spring 1900-1910
+//time year: ?[1900:1910] season: [spring|summer|fall|winter]*.1910
+time year: ?[1900:1910] month: [jan|feb|march|apr|may|jun|jul|aug|sep|oct|nov|dec]* day: [1:30]*[5:10].
+
+////////////////////////////////////////////////////////////
+// New from-scratch system
+// CULT TOWN
+////////////////////////////////////////////////////////////
+
+location church:
+    supports: [4:6] patron, 
+        [1:2] priest, 
+        [1] deacon;
+    each_turn:
+        cast patron.
+        
+location school:
+    supports: [1] headmaster,
+        [6] student.
+        
+location boarding_house:
+    supports: [1] owner,
+        [1] housekeeper,
+        [2] boarder,
+        [1] visitor;
+    each_turn:
+        cast visitor.
+
+location bookstore:
+    supports: [1] owner,
+        [1] clerk,
+        [1] regular,
+        [2] customer;
+    each_turn:
+        cast customer.
+        
+location town_square:
+    supports: [5] people;
+    each_turn:
+        cast people.
+        
+location wharf:
+    supports: [4] dockworker,
+        [2] fisherman,
+        [1] sailor,
+        [2] loiterer;
+    each_turn:
+        cast loiterer.
+
+location warehouse:
+    supports: [1] owner,
+        [1] unionrep,
+        [1] foreman,
+        [4] worker.
+        
+location theater:
+    supports: [1] owner,
+        [1] usher,
+        [1] stagehand,
+        [1] director,
+        [1] playwright,
+        [4] actor,
+        [1] ticketer,
+        [4] patron;
+    each_turn:
+        cast patron.
+
+location historicalsociety:
+    supports: [1] curator,
+        [1] contributer,
+        [1] visitor;
+    each_turn:
+        cast visitor.
+        
+location bank:
+    supports: [1] banker,
+        [1] clerk,
+        [2] customers;
+    each_turn:
+        cast customers.
+        
+location graveyard:
+    supports: [1] gravedigger,
+        [2] visitor;
+    each_turn:
+        cast visitor.
+        
+location jailhouse:
+    supports: [1] sheriff,
+        [2] police,
+        [1] visitor;
+    each_turn: 
+        cast visitor.
+        
+location postoffice:
+    supports: [1] worker,
+        [2] customer;
+    each_turn: 
+        cast customer.
+
+location newspaper:
+    supports: [1] editor,
+        [1] reporter,
+        [1] writer,
+        [1] reader;
+    each_turn:
+        cast reader.
+
+location hospital:
+    supports: [1] doctor,
+        [1] nurse,
+        [2] patient;
+    each_turn: 
+        cast patient.
+        
+location library:
+    supports: [1] librarian,
+        [1] clerk,
+        [2] volunteer,
+        [3] visitor;
+    each_turn: 
+        cast visitor.
+        
+location slaughterhouse:
+    supports: [1] owner,
+        [2] butcher.
+
+location baitshop:
+    supports: [1] owner,
+        [1] customer;
+    each_turn: 
+        cast customer.
+        
+location grocer:
+    supports: [1] owner,
+        [1] clerk,
+        [2] customer;
+    each_turn: 
+        cast customer.
+        
+location generalstore:
+    supports: [1] owner,
+        [1] clerk,
+        [2] customer;
+    each_turn: 
+        cast customer.
+        
+location artgallery:
+    supports: [1] owner,
+        [1] residentartist,
+        [1:2] patron,
+        [2] regular,
+        [2] visitor;
+    each_turn:
+        cast visitor.
+        
+location diner:
+    supports: [1] owner,
+        [1] cook,
+        [2] server,
+        [2] regular,
+        [6] customer;
+    each_turn:
+        cast customer.
+        
+location cafe:
+    supports: [1] owner,
+        [4] regular,
+        [4] customer;
+    each_turn:
+        cast customer.
+
+location hotel:
+    supports: [1] owner,
+        [1] receptionist,
+        [1] cleaner,
+        [4] guest.
+
+location townhall:
+    supports: [1] mayor,
+        [1] clerk,
+        [1] regular,
+        [2] visitor;
+    each_turn:
+        cast visitor.
+        
+location butchershop:
+    supports: [1] butcher,
+        [2] visitor;
+    each_turn:
+        cast visitor.
+        
+location bakery:
+    supports: [1] baker,
+        [2] visitor;
+    each_turn:
+        cast visitor.
+        
+location masoniclodge:
+    supports: [1] grandmaster,
+        [5] freemason.
+        
+location gentlemensclub:
+    supports: [4] member.
+        
+location socialparlour:
+    supports: [4] member.
+
+location union:
+    supports: [6] member.
+        
+location apothecary:
+    supports: [1] owner,
+        [2] visitor;
+    each_turn:
+        cast visitor.
+        
+location funeralhome:
+    supports: [1] mortician,
+        [2] visitor;
+    each_turn:
+        cast visitor.
+        
+location charityhouse:
+    supports: [2] volunteer,
+        [6] resident.
+        
+location veteranshome:
+    supports: [4] resident.
+
+location businessassociation:
+    supports: [3] member,
+        [5] associate.
+        
+location university:
+    supports: [1] provost,
+        [1] clerk,
+        [1] janitor,
+        [1] professor_of_medievalmetaphysics,
+        [1] student_of_medievalmetaphysics,
+        [1] professor_of_archaeology,
+        [1] student_of_archaeology,
+        [1] professor_of_anthropology,
+        [1] student_of_anthropology,
+        [1] professor_of_linguistics,
+        [1] student_of_linguistics,
+        [1] professor_of_history,
+        [1] student_of_history,
+        [1] professor_of_psychology,
+        [1] student_of_psychology,
+        [1] professor_of_science,
+        [1] student_of_science.
+        
+location studentapartment:
+    supports: [3] resident,
+        [3] visitor;
+    each_turn:
+        cast visitor.
+        
+location outsidetown:
+    supports: [0] employee.
+    
+location nowhere:
+    supports: [0] employee.
+    
+    
+removal_status dead.
+removal_status exile.
+
+
+////////////////////////////////////////////////////////////
+//  PATTERNS
+////////////////////////////////////////////////////////////
+ 
+pattern romantic_rivals(>Me, >Rival, >Subject)
+    "Me and Rival compete for the love of Subject":
+    if Me likes Rival <= -5,
+        Rival likes Me <= -5,
+        Me likes Subject >= 10,
+        Rival likes Subject >= 10.
+
+pattern nemesis(>Me, >Nemesis)
+    "Me and Nemesis are arch rivals who hate each other":
+    if Me likes Nemesis <= -10,
+        Nemesis likes Me <= -10.
+
+pattern mutual_dislike(>Me, >Rival)
+    "Me and Rival share a mutual dislike for each other.":
+    if Me likes Rival <= -5, Rival likes Me <= -5.
+    
+////////////////////////////////////////////////////////////
+//  ACTIONS
+////////////////////////////////////////////////////////////
+
+//action exist(>Person)
+//"Person exists here.":.
+
+//CHURCH
+action pray_alone(>Churchgoer:patron)
+"Churchgoer prays.":
+    tags: believer;
+    location: church(Churchgoer).
+    
+action sermon(>Deacon:deacon)
+"Deacon conducts a sermon.":
+    location: church(Deacon).
+    
+action study_religion(>Priest:priest)
+"Priest studies from holy manuscripts.":
+    location: church(Priest).
+/*
+default trait do_debug(>Person):
+    +++++(debug).
+
+action debug_time_check(>Person,  *Event):
+    tags: debug;
+    if now is >= 7 day since Event,
+        Person did Event,
+        Event is rich.
+
+action debug_personal_time_check(>Person):
+    tags: debug;
+    if now is >= 1 day since Person's birthday.
+
+*/
+
+event birthday(>Person):
+    if now is >= 1 year since Person's birthday;
+    result: Person's birthday is now,
+            Person's age += 1.
+
+event transform_into_werewolf(>Person):
+    if Person is lycan, now is >= 1 month since Person's last_transformation;
+    result: Person is werewolf, Person's last_transformation is now.
+    
+event transform_into_human(>Person):
+    if Person is werewolf, now is >= 1 day since Person's last_transformation;
+    result: Person is not werewolf.
+
+pattern is_fall():
+    if current month is sep.
+pattern is_fall():
+    if current month is oct.
+pattern is_fall():
+    if current month is nov.
+
+
+pattern is_fall():
+    if current month >= 9, current month <= 11.
+    
+
+pattern is_centennial():
+    if current year is 1900.
+
+pattern pre_war():
+    if current year <= 1914.
+
+action humble_brag_about(>Gossiper, <Gossipee, *GossipedAction ):
+       location: (Gossiper, Gossipee);
+       tags: talk;
+       visibility++;
+       if 
+          now is >= 7 day since GossipedAction,
+          Gossipee  doesn't know GossipedAction,
+          Gossiper did GossipedAction,
+          GossipedAction is cool;
+       result:
+       	     Gossipee likes Gossiper += 1,
+	         Gossipee heard GossipedAction.
+      
+//BOARDING HOUSE
+action boarding_house_maintenance(>Owner:owner)
+"Owner does some maintenance on the building.":
+    location: boarding_house(Owner).
+    
+action housekeeping(>Housekeeper:housekeeper)
+"Housekeeper launders the beds.":
+    location: boarding_house(Housekeeper).
+    
+action boarder_lounge(>Boarder:boarder)
+"Boarder lounges in their room.":
+    location: boarding_house(Boarder).
+    
+action boarding_house_visitor(>Visitor:visitor)
+"Visitor visits the boarding house.":
+    location: boarding_house(Visitor).
+    
+//TOWN SQUARE
+action loiterer(>Loiterer)
+"Loiterer loiters.":
+    location: town_square(Loiterer).
+    
+//SCHOOL
+action student_learning(>Student:student)
+"Student learns.":
+    location: school(Student).
+    
+action headmaster_teaches(>Headmaster:headmaster)
+"Headmaster teaches.":
+    location: school(Headmaster).
+    
+//BOOKSTORE
+action bookstore_owner(>Owner:owner)
+"Owner orders books.":
+    location: bookstore(Owner).
+    
+action bookstore_clerk(>Clerk:clerk)
+"Clerk stocks shelves.":
+    location: bookstore(Clerk).
+    
+action bookstore_regular(>Regular:regular)
+"Regular requests a special order.":
+    location: bookstore(Regular).
+    
+action bookstore_customer(>Customer:customer)
+"Customer browses the books.":
+    tags: rich, artistic, scholar;
+    location: bookstore(Customer).
+    
+//WHARF
+action wharf_work(>Worker:dockworker)
+"Worker unloads cargo.":
+    location: wharf(Worker).
+    
+action fish(>Fisherman:fisherman)
+"Fisherman fishes.":
+    location: wharf(Fisherman).
+    
+action sailor_loiter(>Sailor:sailor)
+"Sailor lounges aboard.":
+    location: wharf(Sailor).
+    
+action wharf_loiter(>Loiterer)
+"Loiterer looks out over the sea.":
+    location: wharf(Loiterer).
+    
+//WAREHOUSE
+action warehouse_owner(>Owner:owner)
+"Owner balances the accounts.":
+    location: warehouse(Owner).
+    
+action warehouse_union_rep(>Self:unionrep)
+"Self organizes the workers.":
+    location: warehouse(Self).
+    
+action warehouse_foreman(>Foreman:foreman)
+"Foreman oversees the workers.":
+    location: warehouse(Foreman).
+    
+action warehouse_worker(>Worker:worker)
+"Worker labours.":
+    tags: employment;
+    location: warehouse(Worker).
+    
+//THEATER
+action theater_visit(>Self:patron)
+"Self watches a play.":
+    tags: rich, artistic;
+    location: theater(Self).
+    
+action theater_promote(>Self:owner)
+"Self promotes the show.":
+    location: theater(Self).
+    
+action theater_usher(>Self:usher)
+"Usher directs the guests.":
+    location: theater(Self).
+    
+action theater_director(>Self:director)
+"Self directs the play.":
+    location: theater(Self).
+    
+action theater_playwright(>Self:playwright)
+"Self makes furious edits to their manuscript.":
+    location: theater(Self).
+
+action theater_actor(>Self:actor)
+"Self acts on stage.":
+    location: theater(Self).
+    
+action theater_ticketer(>Self:ticketer)
+"Self sells tickets to the play.":
+    location: theater(Self).
+
+//HISTORICAL SOCIETY
+action historicalsociety_visit(>Self:visitor)
+"Self visits the collection.":
+    tags: traditionalist, scholar;
+    location: historicalsociety(Self).
+
+action historicalsociety_curate(>Self:curator)
+"Self curates the collection.":
+    location: historicalsociety(Self).
+    
+action historicalsociety_member(>Self:contributer)
+"Self contributes to local history.":
+    location: historicalsociety(Self).
+    
+//BANK
+action bank_generic(>Self:customer)
+"Self deposits money.":
+    location: bank(Self).
+    
+action bank_rich(>Self:customer)
+"Self applies for a business loan.":
+    tags: rich;
+    if Self is owner;
+    location: bank(Self).
+
+action bank_banker(>Self:banker)
+"Self counts money.":
+    location: bank(Self).
+    
+action bank_clerk(>Self:clerk)
+"Self helps customers.":
+    location: bank(Self).
+
+
+//GRAVEYARD
+action graveyard_digger(>Self:gravedigger)
+"Self tends to a grave.":
+    location: graveyard(Self).
+    
+action graveyard_generic(>Self:visitor)
+"Self visits a grave.":
+    location: graveyard(Self).
+
+//JAILHOUSE
+action jailhouse_generic(>Self:visitor)
+"Self visits the jail.":
+    location: jailhouse(Self).
+
+action jailhouse_sheriff(>Self:sheriff)
+"Self reports for duty.":
+    location: jailhouse(Self).
+    
+action jailhouse_police(>Self:police)
+"Self patrols the jailhouse.":
+    location: jailhouse(Self).
+
+//POSTOFFICE
+action postoffice_generic(>Self:customer)
+"Self posts a letter.":
+    location: postoffice(Self).
+    
+action postoffice_work(>Self:worker)
+"Self sorts the mail.":
+    location: postoffice(Self).
+
+//NEWSPAPER
+action newspaper_reader(>Self:reader)
+"Self picks up the morning paper.":
+    location: newspaper(Self).
+    
+action newspaper_editor(>Self:editor)
+"Self edits the daily paper.":
+    location: newspaper(Self).
+    
+action newspaper_reporter(>Self:reporter)
+"Self writes an article.":
+    location: newspaper(Self).
+    
+action newspaper_writer(>Self:writer)
+"Self contributes an article to the paper.":
+    location: newspaper(Self).
+    
+//HOSPITAL
+action hospital_generic(>Self:patient)
+"Self visits.":
+    location: hospital(Self).
+    
+action hospital_doctor(>Self:doctor)
+"Self prescribes treatments.":
+    location: hospital(Self).
+    
+action hospital_nurse(>Self:nurse)
+"Self cares for patients.":
+    location: hospital(Self).
+
+//LIBRARY
+action library_visitor(>Self:visitor)
+"Self reads a book.":
+    tags: scholar;
+    location: library(Self).
+
+action library_librarian(>Self:librarian)
+"Self manages the library.":
+    location: library(Self).
+    
+action library_clerk(>Self:clerk)
+"Self shelves books.":
+    location: library(Self).
+    
+action library_volunteer(>Self:volunteer)
+"Self volunteers.":
+    tags: gregarious;
+    location: library(Self).
+
+//SLAUGHTERHOUSE
+action slaughterhouse_generic(>Self:butcher)
+"Self slaughters a pig.":
+    location: slaughterhouse(Self).
+    
+action slaughterhouse_owner(>Self:owner)
+"Self oversees the livestock.":
+    location: slaughterhouse(Self).
+
+//BAITSHOP
+action baitshop_generic(>Self:customer)
+"Self purchases bait.":
+    location: baitshop(Self).
+    
+action baitshop_owner(>Self:owner)
+"Self sells bait.":
+    location: baitshop(Self).
+
+
+//GROCER
+action grocer_customer(>Self:customer)
+"Self purchases food.":
+    location: grocer(Self).
+    
+action grocer_owner(>Self:owner)
+"Self runs the store.":
+    location: grocer(Self).
+    
+action grocer_clerk(>Self:clerk)
+"Self stocks the shelves.":
+    location: grocer(Self).
+
+//GENERALSTORE
+action generalstore_customer(>Self:customer)
+"Self buys some supplies.":
+    location: generalstore(Self).
+    
+action generalstore_owner(>Self:owner)
+"Self runs the store.":
+    location: generalstore(Self).
+    
+action generalstore_clerk(>Self:clerk)
+"Self stocks the shelves.":
+    location: generalstore(Self).
+
+
+//ARTGALLERY
+action artgallery_owner(>Self:owner)
+"Self runs the art gallery.":
+    location: artgallery(Self).
+
+action artgallery_residentartist(>Self:residentartist)
+"Self hangs their art in the gallery.":
+    location: artgallery(Self).
+    
+action artgallery_patron(>Self:patron)
+"Self donates to the art gallery.":
+    location: artgallery(Self).
+    
+action artgallery_regular(>Self:regular)
+"Self purchases art.":
+    location: artgallery(Self).
+    
+action artgallery_visitor(>Self:visitor)
+"Self visits the art gallery.":
+    tags: artistic, rich;
+    location: artgallery(Self).
+
+//DINER
+action diner_owner(>Self:owner)
+"Self runs the diner.":
+    location: diner(Self).
+    
+action diner_cook(>Self:cook)
+"Self cooks.":
+    location: diner(Self).
+    
+action diner_gserver(>Self:server)
+"Self serves the customers.":
+    location: diner(Self).
+    
+action diner_regular(>Self:regular)
+"Self orders the usual.":
+    location: diner(Self).
+    
+action diner_customer(>Self:customer)
+"Self eats at the diner.":
+    location: diner(Self).
+
+//CAFE
+action cafe_owner(>Self:owner)
+"Self runs the cafe.":
+    location: cafe(Self).
+    
+action cafe_regular(>Self:regular)
+"Self takes their regular seat.":
+    location: cafe(Self).
+    
+action cafe_customer(>Self:customer)
+"Self takes an empty seat.":
+    location: cafe(Self).
+    
+//HOTEL
+action hotel_owner(>Self:owner)
+"Self runs the hotel.":
+    location: hotel(Self).
+    
+action hotel_receptionist(>Self:receptionist)
+"Self greets guests.":
+    location: hotel(Self).
+    
+action hotel_cleaner(>Self:cleaner)
+"Self cleans rooms.":
+    location: hotel(Self).
+    
+action hotel_guest(>Self:guest)
+"Self lounges in their room.":
+    location: hotel(Self).
+    
+//TOWNHALL
+action townhall_mayor(>Self:mayor)
+"Self presides over town business.":
+    location: townhall(Self).
+    
+action townhall_clerk(>Self:clerk)
+"Self collects complaints from locals.":
+    location: townhall(Self).
+    
+action townhall_regular(>Self:regular)
+"Self visits the town hall.":
+    location: townhall(Self).
+    
+action townhall_visitor(>Self:visitor)
+"Self visits the town hall.":
+    location: townhall(Self).
+    
+//BUTCHERSHOP
+action butchershop_butcher(>Self:butcher)
+"Self butchers meat.":
+    location: butchershop(Self).
+
+action butchershop_visitor(>Self:visitor)
+"Self buys meat at the butchershop.":
+    location: butchershop(Self).
+    
+//BAKERY
+action bakery_baker(>Self:baker)
+"Self kneads dough and bakes bread.":
+    location: bakery(Self).
+    
+action bakery_visitor(>Self:visitor)
+"Self buys bread at the bakery.":
+    location: bakery(Self).
+    
+//MASONICLODGE
+action masoniclodge_grandmaster(>Self:grandmaster)
+"Self runs the lodge.":
+    location: masoniclodge(Self).
+    
+action masoniclodge_freemason(>Self:freemason)
+"Self visits the lodge.":
+    location: masoniclodge(Self).
+    
+//GENTLEMENSCLUB
+action gentlemensclub_member(>Self:member)
+"Self smokes at the gentlemen's club.":
+    location: gentlemensclub(Self).
+    
+//SOCIALPARLOUR
+action socialparlour_member(>Self:member)
+"Self visits the women's social parlour.":
+    location: socialparlour(Self).
+    
+//UNION
+action union_member(>Self:member)
+"Self organizes labour at the union headquarters.":
+    location: union(Self).
+    
+//APOTHECARY
+action apothecary_owner(>Self:owner)
+"Self prepares tinctures.":
+    location: apothecary(Self).
+    
+action apothecary_visitor(>Self:visitor)
+"Self purchases tinctures at the apothecary.":
+    location: apothecary(Self).
+    
+//FUNERALHOME
+action funeralhome_mortician(>Self:mortician)
+"Self prepares the dead.":
+    location: funeralhome(Self).
+
+action funeralhome_visitor(>Self:visitor)
+"Self mourns at the funeralhome.":
+    location: funeralhome(Self).
+    
+//CHARITYHOUSE
+action charityhouse_volunteer(>Self:volunteer)
+"Self volunteers to help the destitute.":
+    location: charityhouse(Self).
+    
+action charityhouse_resident(>Self:resident)
+"Self rests in their bed.":
+    location: charityhouse(Self).
+    
+//VETERANSHOME
+action veteranshome_resident(>Self)
+"Self rests in their bed.":
+    location: veteranshome(Self).
+    
+//BUSINESSASSOCIATION
+action businessassociation_member(>Self:member)
+"Self conducts deals among business owners.":
+    location: businessassociation(Self).
+    
+action businessassociation_associate(>Self:associate)
+"Self supports local businesses.":
+    location: businessassociation(Self).
+    
+//UNIVERSITY
+action university_provost(>Self:provost)
+"Self runs the university.":
+    location: university(Self).
+
+action university_clerk(>Self:clerk)
+"Self files paperwork and fetches research.":
+    location: university(Self).
+    
+action university_janitor(>Self:janitor)
+"Self does groundskeeping around campus.":
+    location: university(Self).
+    
+action university_professor_of_medievalmetaphysics(>Self:professor_of_medievalmetaphysics)
+"Self teaches medieval metaphysics.":
+    location: university(Self).
+    
+action university_student_of_medievalmetaphysics(>Self:student_of_medievalmetaphysics)
+"Self researches medieval metaphysics.":
+    location: university(Self).
+
+action university_professor_of_archaeology(>Self:professor_of_archaeology)
+"Self teaches archaeology.":
+    location: university(Self).
+    
+action university_student_of_archaeology(>Self:student_of_archaeology)
+"Self researches archaeology.":
+    location: university(Self).
+    
+action university_professor_of_anthropology(>Self:professor_of_anthropology)
+"Self teaches anthropology.":
+    location: university(Self).
+    
+action university_student_of_anthropology(>Self:student_of_anthropology)
+"Self researches anthropology.":
+    location: university(Self).
+    
+action university_professor_of_linguistics(>Self:professor_of_linguistics)
+"Self teaches linguistics.":
+    location: university(Self).
+    
+action university_student_of_linguistics(>Self:student_of_linguistics)
+"Self researches linguistics.":
+    location: university(Self).
+    
+action university_professor_of_history(>Self:professor_of_history)
+"Self teaches history.":
+    location: university(Self).
+    
+action university_student_of_history(>Self:student_of_history)
+"Self researches history.":
+    location: university(Self).
+    
+action university_professor_of_psychology(>Self:professor_of_psychology)
+"Self teaches psychology.":
+    location: university(Self).
+    
+action university_student_of_psychology(>Self:student_of_psychology)
+"Self researches psychology.":
+    location: university(Self).
+    
+action university_professor_of_science(>Self:professor_of_science)
+"Self teaches science.":
+    location: university(Self).
+    
+action university_student_of_science(>Self:student_of_science)
+"Self researches science.":
+    location: university(Self).
+    
+//STUDENT APARTMENT
+action student_apartment_resident(>Self:resident)
+"Self rests in their apartment.":
+    location: studentapartment(Self).
+    
+action student_apartment_visitor(>Self:visitor)
+"Self visits a student.":
+    location: studentapartment(Self).
+    
+    
+
+///////////////////////////////////////////////////////////////
+//  STATUS
+//////////////////////////////////////////////////////////////
+ 
+//status scalar likes/like/liked(>Self,<Other):.
+
+/////////////////////////////////////////////////////////////
+//  TRAITS
+/////////////////////////////////////////////////////////////
+
+trait gregarious(>Self) opposes narcissistic:
+    +++(gregarious),
+    ---(narcissistic).
+    
+trait narcissistic(>Self) opposes gregarious:
+    +++(narcissistic),
+    ---(gregarious).
+    
+trait traditionalist(>Self) opposes reformist:
+    +++(traditionalist),
+    ---(reformist).
+    
+trait reformist(>Self):
+    +++(reformist),
+    ---(traditionalist).
+
+trait skeptic(>Self) opposes believer:
+    +++(skeptic),
+    ---(believer).
+    
+trait believer(>Self):
+    +++(believer),
+    ---(skeptic).
+    
+trait poor(>Self) opposes rich:
+    +++(poor),
+    ---(rich).
+    
+trait rich(>Self) opposes poor:
+    +++(rich),
+    -(poor).
+    
+trait scholar(>Self):
+    +++(scholar).
+
+trait artistic(>Self):
+    +++(artistic).
+
+trait cultist(>Self):
+    +++(cultist).
+
+trait political(>Self):
+    +++(political).
+    
+
+default trait is_employee_of_location(>Self,@Location):
+    ++@if Self is employee of Location@.    
+
+default trait is_member_of_location(>Self,@Location):
+    ++@if Self is member of Location@.    
+    
+default trait is_regular_of_location(>Self,@Location):
+    ++@if Self is regular of Location@.
+    
+default trait is_resident_of_location(>Self,@Location):
+    ++@if Self is resident of Location@.

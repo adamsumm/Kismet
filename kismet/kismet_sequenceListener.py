@@ -80,6 +80,24 @@ class kismet_sequenceListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by kismet_sequenceParser#choose_block.
+    def enterChoose_block(self, ctx:kismet_sequenceParser.Choose_blockContext):
+        pass
+
+    # Exit a parse tree produced by kismet_sequenceParser#choose_block.
+    def exitChoose_block(self, ctx:kismet_sequenceParser.Choose_blockContext):
+        pass
+
+
+    # Enter a parse tree produced by kismet_sequenceParser#choose_statement.
+    def enterChoose_statement(self, ctx:kismet_sequenceParser.Choose_statementContext):
+        pass
+
+    # Exit a parse tree produced by kismet_sequenceParser#choose_statement.
+    def exitChoose_statement(self, ctx:kismet_sequenceParser.Choose_statementContext):
+        pass
+
+
     # Enter a parse tree produced by kismet_sequenceParser#add.
     def enterAdd(self, ctx:kismet_sequenceParser.AddContext):
         pass

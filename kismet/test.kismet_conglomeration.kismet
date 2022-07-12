@@ -1,0 +1,261 @@
+location bar:
+    supports: [10:20] _-^^^^-_ patron, 
+              [2:3] bartender, 
+              [1] owner;
+    each_turn:
+        cast patron.
+        
+location restaurant:
+    supports: [20:30] _-^^^^-_ patron, 
+              [2:3] server, 
+              [2:3] host, 
+              [1] owner;
+    each_turn:
+        cast patron.
+        
+
+location church:
+    supports: [10:20] _-^^^^-_ parishioners,
+              [1] minister;
+    each_turn:
+        cast parishioners.
+
+location the_office:
+    supports: [1000] people;
+    each_turn:
+        cast people.        
+
+default trait regular(>Self, @Location):
+    +++@hospitality_establishment if Self likes Location@.
+
+default trait favorite_place(>Self, @Location):
+    +++@if Self likes Location@.
+
+default trait worker(>Self,@Location):
+    ++++++@if Self is employee of Location@.                
+        
+action befriend_enemy_of_enemy(>Person,<EnemyOfEnemy):
+    if pattern(enemy_of_my_enemy,Person,EnemyOfEnemy);
+    result: Person and EnemyOfEnemy like each other += 2.
+
+action waste_time(>Person)
+"Person is lazy and just whiles the day away.":
+       tags: lazy, fun.
+       
+action drink_the_day_away(>Person)
+"Person is lazy and goes to the bar to drink the day away":
+       location: bar(Person);
+       tags: lazy, drinking;
+       result: Person's drunk += 1.
+
+action sober_up(>Person)
+"Person sobers up":
+	if Person is drunk;
+       	result: Person isnt drunk.
+
+action mingle(>Person, <Other)
+"Person and Other mingle with each other":
+       location: (Person, Other);
+       tags: talk;
+       result: Other likes Person += 1.
+
+
+action mingle_loudly(>Person, <Other)
+"Person talks loudly at Other mingle loudly with each other":
+       location: (Person, Other);
+       if Person is extroverted;
+       tags: talk;
+       result: Person likes Other += 1,
+               Other likes Person -= 1.
+       
+action humble_brag_about(>Gossiper, <Gossipee, *GossipedAction ):
+       location: (Gossiper, Gossipee) ?(GossipedAbout);
+       tags: talk;
+       visibility++;
+       if 
+          Gossipee  doesn't know GossipedAction,
+          Gossiper did GossipedAction,
+          GossipedAction is cool;
+       result:
+       	     Gossipee likes Gossiper += 1,
+	         Gossipee heard GossipedAction.
+
+action dominate_conversation(>Person, <Other) 
+    "Person talks to Other and dominates the conversation":
+        tags: talk, domineering;
+        if Person's bossiness > Other's bossiness;
+        result:
+            Other likes Person -= 1.
+
+action flirt(>Person, <Other) extends mingle(>Person, <Other)
+"Person flirts with Other":
+       location: (Person, Other);
+       tags: talk, romance;
+       visibility++;
+       result:
+       	       Person likes Other += 1.
+
+action shy_flirt(>Person, <Other) extends mingle(>Person, <Other)
+"Person overcomes their fear of talking to bashfully flirts with Other":
+       location: (Person, Other);
+       tags: talk, romance;
+       if Person is quiet_romantic;
+       visibility++;
+       result:
+       	       Person likes Other += 1.
+               
+               
+action flirt_unsuccessfully(>Person, <Other) extends mingle(>Person, <Other)
+"Person flirts with Other":
+       location: (Person, Other);
+       tags: talk, romance;
+       if Person likes Other > Other likes Person;
+       visibility++;
+       result:
+       	       Person likes Other -= 1.
+
+action sulk(>Person) costs 1:
+       tags: sad;
+       if Person's sadness > 5.
+
+
+
+pattern quiet_romantic(>QuietRomantic):
+  if QuietRomantic is introverted, QuietRomantic is romantic.
+
+//COMMENTS!
+action slap(>Slapper, <Slapped, *UnwantedRomance)
+"Slapper [slaps|hits|strikes] Slapped in the face":  
+    tags: violent;
+    
+    // Slapped did UnwantedRomance to Slapper -- ADD THIS
+    // Slapped did UnwantedRomance with Slapper -- ADD THIS
+    
+    if Slapped did UnwantedRomance,
+       UnwantedRomance is romance,
+       Slapper received UnwantedRomance,
+       Slapper likes Slapped < 2;
+    visibility++++;
+    result: Slapped likes Slapper -= 5,
+            Slapped is hurt.
+ 
+trait romantic(>Self):
+    ++++(romance).
+
+trait religous(>Self, <Other):
+    +++(religious),
+    ---(romance if Other isnt religious).
+
+status hurt(>Self):
+    +++(selfcare).
+
+status scalar likes/like/liked(>Self,<Other):.
+
+default trait horny(>Self,<Other):
+    ++(romance if Self  spark Other).
+    
+default trait but_not_too_horny(>Self,<Other):
+    -(romance).
+
+
+trait snoopy(>Self,*Action):
+      +++(observation if *Action is secretive),
+      +(observation).
+      
+trait drunkard(>Self) opposes teetotaler:
+      +++(drinking),
+      +++@bar@.
+
+    
+status drunk(>Self):
+       +++(impulsive, anger).
+
+trait sad_drunk(>Self):
+      +++(sad if Self is drunk).
+
+trait extrovert/extroverted(>Self) opposes introvert/introverted:
+      +++(talk).
+
+trait violent(>Self) opposes gentle:
+      +++(violent).
+      
+trait religious(>Self) opposes atheist:
+      +++(religious).
+  
+
+action become_bartender(>TheTender) 
+       extends cast bartender(>TheTender)
+       "[TheTender finds a job as a bartender|TheTender decided to become a barkeep]":
+       tags: drinking, job_hunt.
+       
+action repair_location(>Initiator, @Location):
+	location: Location(Initiator);
+	if Location is damaged;
+	result: Location is not damaged.
+
+action tend_bar(>Tender:bartender)
+ "Tender serves drinks at their work.":
+      	tags: work, drinking.
+
+action drink_together(>DrinkerA:patron, <DrinkerB:patron)
+"DrinkerA and DrinkerB share a round together":
+    location: bar(DrinkerA,DrinkerB);
+    tags: drinking, talk, nice;
+    result: DrinkerA and DrinkerB like each other += 1.
+
+
+action drunken_disagreement(>DrinkerA:patron, <DrinkerB:patron)
+"DrinkerA and DrinkerB get into words over a drink":
+    location: bar(DrinkerA,DrinkerB);
+    tags: drinking, talk, mean;
+    result: DrinkerA and DrinkerB like each other -= 3.
+
+action be_sneaky(>Sneaker):
+       tags: sneaky;
+       visibility---.
+
+action barroom_brawl(>Initiator,<Combatant, @Location)
+"Initiator started a drunken brawl with Combatant":
+	location: Location(Initiator, Combatant);
+	tags: fighting, angry, gossipable;
+	visibility++++;
+	if
+		Initiator is drunk,
+		Combatant is drunk,
+		Location is bar,
+		Initiator dislikes Combatant > 5;
+	result: Initiator is hurt, Combatant is hurt,
+		Initiator and Combatant dislike each other,
+		Location is damaged,
+	 	Initiator and Combatant do not like each other,
+	 	Initiator and Combatant like each other -= 5.
+
+response action disregard(>Person,<RudePerson,*Action):
+       if Action is gossipable,
+       	  RudePerson did Action,
+	  Person saw Action;
+       result: Person dislikes RudePerson.	  	
+
+
+role ur_job(>TheWorker):
+	tags: work;
+	if TheWorker missing ur_job.
+	
+role child_laborer(>TheWorker) extends ur_job(>TheWorker):
+     if TheWorker's age < 16.
+
+role bartender(>TheWorker) extends ur_job(>TheWorker):
+     tags: drinking;
+     if TheWorker's age >= 18.
+     
+pattern enemy_of_my_enemy(>Me,>EnemyOfMyEnemy)
+    "Me and EnemyOfMyEnemy are united in their dislike for Enemy":
+    if Me likes Enemy < -3, Enemy likes EnemyOfMyEnemy < -3.
+    
+pattern milquetoast(>Me,>Other)
+    "Me and Other feel pretty ambivalent about each other":
+    if Me likes Other = 0, Other likes Me = 0.
+    
+pattern milquetoast(>Me,>Other)
+    "Me and Other feel pretty ambivalent about each other 2":
+    if Me likes Other = 1, Other likes Me = 0.

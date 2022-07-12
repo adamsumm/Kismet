@@ -49,6 +49,16 @@ class kismet_sequenceVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by kismet_sequenceParser#choose_block.
+    def visitChoose_block(self, ctx:kismet_sequenceParser.Choose_blockContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by kismet_sequenceParser#choose_statement.
+    def visitChoose_statement(self, ctx:kismet_sequenceParser.Choose_statementContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by kismet_sequenceParser#add.
     def visitAdd(self, ctx:kismet_sequenceParser.AddContext):
         return self.visitChildren(ctx)

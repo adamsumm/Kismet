@@ -57,7 +57,7 @@ initialization tavern:
     create [1] location as tavern:
         location_type = "tavern",
         hometown = Location,
-        name = "[The[ Old | ][Red|Blue|Green|Lusty|Sullen|Happy|Insatiable|Naughty|Poisoned|Reveling|Rusty|Silly|Broken|Golden|Laughing|Lonely|Prancing|Silver|Sign of the|Sleepy|Wistful] [Goblin|Boggart|Fae|Unicorn|Dragon|Wolf|Troll|Bear|Badger|Lion|Horse|Skunk|Aardvark|Civet|Dog|Eagle|Ghost|Imp|Jackal|Kobold|Manticore|Gnoll|Octopus|Parrot|Quail|Rusalka|Serpent|Tapir|Vulture|Wendigo|Yak|Zebra][| Inn| Tavern]|[Old |][#TavernLastName#|#TavernFirstName#]'s [Tavern|Inn]] of #Location#",
+        name = "[The[ Old | ][Red|Blue|Green|Lusty|Sullen|Happy|Insatiable|Naughty|Poisoned|Reveling|Rusty|Silly|Broken|Golden|Laughing|Lonely|Prancing|Silver|Sign of the|Sleepy|Wistful] [Goblin|Boggart|Fae|Unicorn|Dragon|Wolf|Troll|Bear|Badger|Lion|Horse|Skunk|Aardvark|Civet|Dog|Eagle|Ghost|Imp|Jackal|Kobold|Manticore|Gnoll|Octopus|Parrot|Quail|Rusalka|Serpent|Tapir|Vulture|Wendigo|Yak|Zebra] Tavern in #Location#|[Old |][#TavernLastName#|#TavernFirstName#]'s Tavern in #Location#]",
         has owner of tavern_owner,
         has barkeep of barkeep,
         is purpose,
@@ -895,7 +895,7 @@ initialization merchant_city:
         is rich,
         age = [20:25];
         
-    select [0:2] character as baronling:
+    select [2] character as baronling:
         is guest of manor_library,
         is noteworthy,
         is guest of manor_ballroom,
@@ -942,7 +942,67 @@ initialization merchant_city:
         hometown ?= Location,
         is rich,
         age = [20:60];
+      
         
+    select [1] character as majordomo:
+        is boss of butler,
+        is boss of librarian,
+        is boss of tutor,
+        is boss of chef,
+        is boss of kitchen_worker,
+        is boss of gardener,
+        is boss of servant,
+        is servant of baron,
+        is connected of manor_library,
+        is connected of manor_ballroom,
+        is connected of manor_garden,
+        is connected of manor_gallery,
+        is connected of manor_kitchen,
+        hometown = Location,
+        is purpose,
+        :where
+        vocation = "majordomo",
+        hometown ?= Location,
+        age = [50:75];   
+           
+        
+    select [1] character as butler:
+        is employee of majordomo,
+        is boss of librarian,
+        is boss of tutor,
+        is boss of chef,
+        is boss of kitchen_worker,
+        is boss of gardener,
+        is boss of servant,
+        is servant of baron,
+        is connected of manor_library,
+        is connected of manor_ballroom,
+        is connected of manor_garden,
+        is connected of manor_gallery,
+        is connected of manor_kitchen,
+        hometown = Location,
+        is purpose,
+        :where
+        vocation = "butler",
+        hometown ?= Location,
+        age = [30:60];   
+        
+          
+    select [2] character as servant:
+        is employee of majordomo,
+        is employee of butler,
+        is servant of baron,
+        is connected of manor_library,
+        is connected of manor_ballroom,
+        is connected of manor_garden,
+        is connected of manor_gallery,
+        is connected of manor_kitchen,
+        hometown = Location,
+        is purpose,
+        :where
+        vocation = "servant",
+        hometown ?= Location,
+        age = [20:50];   
         
     select [1] character as librarian:
         is librarian of manor_library,
@@ -1012,7 +1072,7 @@ initialization merchant_city:
         hometown ?= Location,
         age = [15:30];
         
-    select [21] character as gardener:
+    select [2] character as gardener:
         hometown = Location,
         is worker of manor_garden,
         is connected of manor_garden,
@@ -1384,6 +1444,7 @@ initialization townie_town:
         is connected of elders_house,
         is connected of town,
         is purpose,
+        is boss to chef,
         hometown = Location,
         is important,
         :where
@@ -1430,7 +1491,43 @@ initialization townie_town:
         hometown ?= Location,
         is not child,
         age = [20:40];
-        
+    
+    select [1] character as chef:  
+        is chef of elders_house,
+        is connected of elders_house,
+        is boss of kitchen_worker,
+        is employee of elder,
+        hometown = Location,
+        is purpose,
+        :where
+        vocation = "chef",
+        hometown ?= Location,
+        age = [20:50];
+    
+    select [1] character as kitchen_worker:
+        is employee to chef,
+        is connected of elders_house,
+        hometown = Location,
+        is worker of elders_house,
+        is purpose,
+        :where
+        vocation = "kitchen_worker",
+        hometown ?= Location,
+        age = [15:30];
+    
+    
+          
+    select [2] character as servant:
+        is employee of elder,
+        is servant of elder,
+        is connected of elders_house,
+        hometown = Location,
+        is purpose,
+        :where
+        vocation = "servant",
+        hometown ?= Location,
+        age = [20:50];   
+    
     create [1] location as elders_house:
         location_type = "elders_house",
         hometown = Location,
@@ -1452,7 +1549,12 @@ initialization chosen_ones:
         :where
         has a purpose,
         age = [10:70].
+initialization fated_focus:
 
+    select [1] character as fated_focus:
+        if fated_focus,
+        :where 
+        is chosen_one.
 initialize:
 	create [200] character;
     create [1] royal_country;
@@ -1464,7 +1566,8 @@ initialize:
     create [1] scholar_town;
     create [1] magic_town;
     create [1] townie_town;
-    create [1] chosen_ones.
+    create [1] chosen_ones;
+    create [1] fated_focus.
 
 filter relationships == 0.
 filter status purpose == 0.

@@ -19,6 +19,8 @@ from warnings import warn
 import itertools
 from dataclasses import dataclass, field
 import os
+import numpy as np
+
 class MyErrorListener( ErrorListener ):
     def __init__(self):
         super()
@@ -116,6 +118,15 @@ class kismet_sequenceVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by kismet_sequenceParser#if_statement.
     def visitIf_statement(self, ctx:kismet_sequenceParser.If_statementContext):
         return ('IfStatement',self.visitChildren(ctx))
+
+    # Visit a parse tree produced by kismet_sequenceParser#choose_block.
+    def visitChoose_block(self, ctx:kismet_sequenceParser.Choose_blockContext):
+        return ('ChooseBlock',self.visitChildren(ctx))
+
+
+    # Visit a parse tree produced by kismet_sequenceParser#choose_statement.
+    def visitChoose_statement(self, ctx:kismet_sequenceParser.Choose_statementContext):
+        return ('ChooseStatement',self.visitChildren(ctx))
 
     # Visit a parse tree produced by kismet_sequenceParser#locations.
     def visitLocations(self, ctx:kismet_sequenceParser.LocationsContext):
@@ -390,6 +401,37 @@ class Load:
         return f'Loading {self.filenames} with Tracery Files {self.tracery_files}'
     
 @dataclass
+class Add:
+    filenames: list
+    def __call__(self,module,state):
+        import shutil
+
+#         with open('kismet_conglomeration.kismet','wb') as wfd:
+#             for f in filenames:
+#                 with open(f,'rb') as fd:
+#                     shutil.copyfileobj(fd, wfd)
+        
+        module_files = module.module_files + self.filenames
+        module =  KismetModule(module_files,
+                            module.tracery_files, 
+                                    ignore_logit=3.0, 
+                                    observation_temp=1.5,
+                                    history_cutoff=10,
+                                    action_budget = 3,
+                                    default_cost = 3,)
+        module.from_json(state)
+        return module, state
+    
+    @staticmethod
+    def parse(datum):
+        kismet_files = []
+        for d in datum[1]:
+            kismet_files.append(d[1])
+        return Add(kismet_files)
+    
+    def __str__(self):
+        return f'Adding {self.filenames}' 
+@dataclass
 class WhereClause:
     logic: str
     
@@ -636,9 +678,55 @@ def parse_statement(statement):
         return (WhileLoop.parse(statement))
     elif isinstance(statement_type,tuple):
         return parse_statement(statement_type)
+    elif statement_type == 'ChooseBlock':
+        return ChooseBlock.parse(statement)
+    elif statement_type == 'AddFile':
+        return Add.parse(statement)
     else:
-        print(f'DONT KNOW WHAT TO DO WITH "{statement_type}":\n\t',  statement)
+        raise Exception(f'DONT KNOW WHAT TO DO WITH "{statement_type}":\n\t',  statement)
+        
+@dataclass
+class ChooseBlock:
+    weights:list
+    actions:list
+    def __call__(self,module,state):  
+        chosen_index = np.argmax(np.random.multinomial(1,self.weights))
+        
+        print('CHOSE:', chosen_index)
+         
+        for action in self.actions[chosen_index]:
+            
+            print(f'Starting New Step: {action}')
+            module, state = action(module,state)
+        return module,state
     
+    @staticmethod
+    def parse(datum):
+        datum = datum[1]
+        total = 0
+        exp_transform = False
+        weights = []
+        actions = []
+        for ii in range(0,len(datum),2):
+            weight = float(datum[ii][1])
+            if weight < 0:
+                print('WARNING: exponential transform will be applied if negative weights are found in choose.')
+                exp_transform = True
+            
+            total += weight
+            
+            statements = datum[ii+1][1]
+            weights.append(weight)
+            actions.append([parse_statement(statement) for statement in statements])
+        
+        if exp_transform:
+            weights = [np.exp(weight) for weight in weights]
+        
+        weights = np.array(weights)
+        weights /= np.sum(weights)
+        
+        return ChooseBlock(weights,actions)
+        
 @dataclass
 class WhileLoop:
     condition:list

@@ -1,0 +1,52 @@
+time year: ?[1900:1910] month: [jan|feb|march|apr|may|jun|jul|aug|sep|oct|nov|dec]* day: [1:30]*[5:10].
+
+location test_location:
+    supports: [10] location_role;
+    each_turn:
+        cast location_role.
+        
+
+trait t1(>Self):
+    +++(type1).
+    
+trait t2(>Self):
+    +++(type2).
+trait t3(>Self):
+    +++(type3).
+trait t4(>Self):
+    +++(type4).
+trait t5(>Self):
+    +++(type5).
+trait t6(>Self):
+    +++(type6).
+trait t7(>Self):
+    +++(type7).
+trait t8(>Self):
+    +++(type8).
+trait t9(>Self):
+    +++(type9).
+    
+    
+action a1(>Self,<Other):
+    tags: type1.
+    
+action a2(>Self,<Other):
+    tags: type2.
+    
+action a3(>Self,<Other):
+    tags: type3.
+    
+action a4(>Self,<Other):
+    tags: type4.
+    
+action a5(>Self,<Other):
+    tags: type5.
+    
+action a6(>Self,<Other):
+    tags: type6.
+action a7(>Self,<Other):
+    tags: type7.
+action a8(>Self,<Other):
+    tags: type8.
+action a9(>Self,<Other):
+    tags: type9.
