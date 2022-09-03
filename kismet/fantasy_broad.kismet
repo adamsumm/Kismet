@@ -1717,7 +1717,7 @@ location ballroom:
         [1] butler,
         [2] servant,
 		[1] owner,
-		[3] artist;
+		[1] artist;
 	each_turn:
 		cast guest.
 location quad:

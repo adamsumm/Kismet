@@ -1753,6 +1753,7 @@ class Assignment:
     
     def is_satisfied(self, creations,initializations,selections):
         satisfactory = set()
+        
         for creation in creations:
             if self.assigned_to != 'age':
                 if isinstance(self.assigned_val[0],Lookup):
@@ -2026,6 +2027,7 @@ def parse_create(creation):
     return Creation(num,name,options)
 
 def get_name(character):
+    
     return character.get('name',[character.get('first_name',[''])[0] + ' ' + character.get('last_name',[''])[0]])[0]
     
 @dataclass
@@ -2035,6 +2037,9 @@ class Selection():
     options: list
     conditions: list
     def __call__(self,initializations,selections,creations,used,module):
+        print(len(creations))
+        for creation in creations:
+            print(get_name(creation))
         satisfactory = set([get_name(creation) for creation in creations]) - used
         for condition in self.conditions:
             l_pre = len(satisfactory)
@@ -2044,7 +2049,7 @@ class Selection():
             return [], [], []
             
         selection_type = to_select[0]['type']
-        
+        print('SATISFACTORY', satisfactory, selection_type)
         satisfactory = {get_name(character) for character in creations if get_name(character) in satisfactory and character['type'] == selection_type}
         
        
@@ -2248,7 +2253,9 @@ def parse_initialization(initialization):
 class Initialize:
     creates: list = field(default_factory=list)
     def __call__(self,initializations,selections,creations,module):
-        creations = []
+        if creations is None:
+            creations = []
+            
         for create in self.creates:
             created = create.num(initializations,selections,creations,module)
             creations += created
@@ -2361,7 +2368,7 @@ def parse_filter(filter_text):
     
     return Filter(category,comparator,num,uniq,particular)
 class KismetInitialization():
-    def __init__(self,initialization_file,kismet_module):
+    def __init__(self,initialization_file,kismet_module,kept=set()):
         self.module = kismet_module
         
         init_file = initialization_file
@@ -2381,7 +2388,7 @@ class KismetInitialization():
             warn('\n\n'+'\n\n'.join(errors))
             raise Exception(f'Errors found in {initialization_file}')
         self.all_things = {}
-
+        self.kept = kept
         for thing in initialization[1]:
             if thing[0] not in self.all_things:
                 self.all_things[thing[0]] = []
@@ -2396,10 +2403,41 @@ class KismetInitialization():
         for initialization in self.all_things.get('Initialization',[]):
             initialization = parse_initialization(initialization)
             initializations[initialization.name] = initialization
-
+        
         creations = []
-        for initialize in self.all_things['Initialize']:
-            creations += parse_initialize(initialize)(initializations,{'traits':self.module.selectable_traits},creations,self.module)
+        
+        for previously_kept in self.kept:
+            if 'character' in previously_kept:
+                keeping = self.module.population[previously_kept]
+                keeping['type'] = 'character'
+                keeping['traits'] = [self.module.traits[trait] for trait in keeping['traits']]
+                print(keeping['status'])
+                keeping['age'] = (keeping['status'][('age',)],)
+            elif 'location' in previously_kept:
+                keeping = self.module.created_locations[previously_kept]
+                keeping['type'] = 'location'
+                keeping['location_type'] = (keeping['location_type'],)
+            else:
+                print('DONT KNOW HOW TO KEEP', previously_kept)
+            _relationships = []
+            for relationship in keeping['relationships'] :
+                if isinstance(relationship,dict):
+                    val = relationship['value']
+                    if val != '':
+                        val = parseNumRange([[int(val)]])
+                        _relationships.append((relationship['relation_name'], relationship['target'], val))
+                    else:
+                        _relationships.append((relationship['relation_name'], relationship['target']))
+                else:
+                    _relationships.append(relationship)
+            keeping['relationships'] = _relationships
+            keeping['name'] = [keeping['name']]
+            
+            creations.append(keeping)                     
+            
+        for initialize in self.all_things['Initialize']:  
+            init = parse_initialize(initialize)           
+            creations += init(initializations,{'traits':self.module.selectable_traits},creations,self.module)
         
         found = set()
         kept = []
@@ -2414,7 +2452,6 @@ class KismetInitialization():
         
         while initial_size != len(creations):
             initial_size = len(creations)
-            print('CREATION SIZE', initial_size)
             for filter_text in self.all_things.get('Filter',[]):
                 filter = parse_filter(filter_text)
                 for creation in creations:
@@ -2423,7 +2460,7 @@ class KismetInitialization():
             creations_ = []
             for creation in creations:
                 if creation['id'] not in eliminated:
-                    creation['relationships'] = [relationship for relationship in creation['relationships'] if relationship[1] not in eliminated]
+                    creation['relationships'] = [relationship for relationship in creation['relationships'] if relationship[1] not in eliminated and relationship[1] in found]
                     creations_.append(creation)
             creations = creations_
         

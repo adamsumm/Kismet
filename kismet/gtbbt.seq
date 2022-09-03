@@ -2,20 +2,37 @@ load fantasy_broad.kismet with tracery ../tracery/fantasy.tracery;
 
 initialize fantasy_setting.init;
 
-run until 0 characters  in pattern lacking_path / 2;
+//run until 0 characters  in pattern lacking_path / 2;
+run 1 steps;
 
+//Call to Action 
 choose [
     1:{
-        add group_happens_upon_eachother.kismet; // lotr, 
+        initialize fantasy_quest_start.init: keeping characters where is chosen_one
+                                           : keeping all locations;
+        add group_happens_upon_eachother.kismet; // lotr, ff4, ff5, ff6
     }
-    1:{
-        add sage_calls_council.kismet; //lotr, ff6 banon, 
-    }
-    1:{
-        add rescue_brings_together.kismet;
-    }
-    1:{
-        add one_of_chosens_sparks_calamity.kismet; //ff4
-    }
+    //1:{
+    //    add sage_calls_council.kismet; //lotr, ff6 banon, 
+    //}
+    //1:{
+    //    add rescue_brings_together.kismet; //ff6 terra
+    //}
+    //1:{
+    //    choose [
+    //         1: {
+    //             add chosen_one_unleashes_calamity_due_to_greed.kismet; //ff4
+    //             }             
+    //         1: {
+    //             add chosen_one_unleashes_calamity_due_to_being_tricked.kismet; //ff4
+    //             }
+    //    ]
+    //}
 ]
         
+//MIDDLE STUFF
+
+//Climactic Battle
+
+
+//And then 10 years pass

@@ -1546,6 +1546,7 @@ initialization chosen_ones:
     select [7] character as chosen_one:
         is chosen_one,
         is connected_to of chosen_one,
+        specialty = "[physical|magical|wildcard]",
         :where
         has a purpose,
         age = [10:70].

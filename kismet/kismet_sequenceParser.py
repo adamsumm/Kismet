@@ -9,7 +9,7 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3P")
-        buf.write("\u01d1\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\u01d9\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
         buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31")
@@ -32,41 +32,42 @@ def serializedATN():
         buf.write("\16\3\17\3\17\3\20\3\20\3\21\3\21\3\22\3\22\3\23\3\23")
         buf.write("\3\24\3\24\3\24\3\24\3\24\3\24\5\24\u00f4\n\24\7\24\u00f6")
         buf.write("\n\24\f\24\16\24\u00f9\13\24\3\24\3\24\3\25\3\25\3\26")
-        buf.write("\3\26\3\27\3\27\3\27\5\27\u0104\n\27\3\27\3\27\3\27\5")
-        buf.write("\27\u0109\n\27\3\27\3\27\3\27\7\27\u010e\n\27\f\27\16")
-        buf.write("\27\u0111\13\27\3\30\3\30\3\30\5\30\u0116\n\30\3\30\3")
-        buf.write("\30\3\30\5\30\u011b\n\30\3\30\3\30\3\30\7\30\u0120\n\30")
-        buf.write("\f\30\16\30\u0123\13\30\3\30\5\30\u0126\n\30\3\30\5\30")
-        buf.write("\u0129\n\30\3\30\3\30\3\30\3\31\3\31\3\31\3\31\3\31\5")
-        buf.write("\31\u0133\n\31\3\31\5\31\u0136\n\31\3\31\3\31\3\32\3\32")
-        buf.write("\3\32\3\32\3\32\5\32\u013f\n\32\3\32\7\32\u0142\n\32\f")
-        buf.write("\32\16\32\u0145\13\32\3\33\3\33\3\33\3\33\3\33\5\33\u014c")
-        buf.write("\n\33\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\5\34\u0156")
+        buf.write("\3\26\3\27\3\27\3\27\3\27\5\27\u0105\n\27\3\27\3\27\3")
+        buf.write("\27\5\27\u010a\n\27\3\27\3\27\3\27\5\27\u010f\n\27\3\27")
+        buf.write("\3\27\3\27\7\27\u0114\n\27\f\27\16\27\u0117\13\27\5\27")
+        buf.write("\u0119\n\27\3\30\3\30\3\30\5\30\u011e\n\30\3\30\3\30\3")
+        buf.write("\30\5\30\u0123\n\30\3\30\3\30\3\30\7\30\u0128\n\30\f\30")
+        buf.write("\16\30\u012b\13\30\3\30\5\30\u012e\n\30\3\30\5\30\u0131")
+        buf.write("\n\30\3\30\3\30\3\30\3\31\3\31\3\31\3\31\3\31\5\31\u013b")
+        buf.write("\n\31\3\31\5\31\u013e\n\31\3\31\3\31\3\32\3\32\3\32\3")
+        buf.write("\32\3\32\5\32\u0147\n\32\3\32\7\32\u014a\n\32\f\32\16")
+        buf.write("\32\u014d\13\32\3\33\3\33\3\33\3\33\3\33\5\33\u0154\n")
+        buf.write("\33\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\5\34\u015e")
         buf.write("\n\34\3\35\3\35\3\36\3\36\3\37\3\37\3 \3 \3 \3 \3 \3 ")
-        buf.write("\3 \5 \u0165\n \3 \3 \3 \3 \3 \3 \5 \u016d\n \3!\3!\3")
-        buf.write("!\3!\3\"\3\"\3\"\3#\3#\3#\3#\3#\5#\u017b\n#\3$\3$\3%\3")
-        buf.write("%\3&\3&\3&\3&\3&\3&\3&\5&\u0188\n&\3\'\3\'\3\'\7\'\u018d")
-        buf.write("\n\'\f\'\16\'\u0190\13\'\3(\5(\u0193\n(\3(\3(\3(\3(\3")
-        buf.write("(\5(\u019a\n(\3(\7(\u019d\n(\f(\16(\u01a0\13(\3(\5(\u01a3")
-        buf.write("\n(\3)\3)\3*\3*\3+\3+\3+\5+\u01ac\n+\3+\3+\3+\3+\3+\5")
-        buf.write("+\u01b3\n+\3+\3+\5+\u01b7\n+\3+\3+\3+\5+\u01bc\n+\3+\3")
-        buf.write("+\3+\5+\u01c1\n+\3+\3+\3+\5+\u01c6\n+\3+\3+\3+\3+\3+\3")
-        buf.write("+\3+\5+\u01cf\n+\3+\2\2,\2\4\6\b\n\f\16\20\22\24\26\30")
+        buf.write("\3 \5 \u016d\n \3 \3 \3 \3 \3 \3 \5 \u0175\n \3!\3!\3")
+        buf.write("!\3!\3\"\3\"\3\"\3#\3#\3#\3#\3#\5#\u0183\n#\3$\3$\3%\3")
+        buf.write("%\3&\3&\3&\3&\3&\3&\3&\5&\u0190\n&\3\'\3\'\3\'\7\'\u0195")
+        buf.write("\n\'\f\'\16\'\u0198\13\'\3(\5(\u019b\n(\3(\3(\3(\3(\3")
+        buf.write("(\5(\u01a2\n(\3(\7(\u01a5\n(\f(\16(\u01a8\13(\3(\5(\u01ab")
+        buf.write("\n(\3)\3)\3*\3*\3+\3+\3+\5+\u01b4\n+\3+\3+\3+\3+\3+\5")
+        buf.write("+\u01bb\n+\3+\3+\5+\u01bf\n+\3+\3+\3+\5+\u01c4\n+\3+\3")
+        buf.write("+\3+\5+\u01c9\n+\3+\3+\3+\5+\u01ce\n+\3+\3+\3+\3+\3+\3")
+        buf.write("+\3+\5+\u01d7\n+\3+\2\2,\2\4\6\b\n\f\16\20\22\24\26\30")
         buf.write("\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRT\2\13\3\2")
-        buf.write("\t\16\3\2\33\34\3\2\35\36\4\2$$))\4\2))++\3\2.\64\4\2")
-        buf.write("&\':;\4\2))>>\3\2?D\2\u01ec\2W\3\2\2\2\4e\3\2\2\2\6g\3")
-        buf.write("\2\2\2\b|\3\2\2\2\n~\3\2\2\2\f\u0088\3\2\2\2\16\u008c")
+        buf.write("\t\16\3\2\33\34\3\2\35\36\4\2%%**\4\2**,,\3\2/\65\5\2")
+        buf.write("  \'(;;\4\2**>>\3\2?D\2\u01f6\2W\3\2\2\2\4e\3\2\2\2\6")
+        buf.write("g\3\2\2\2\b|\3\2\2\2\n~\3\2\2\2\f\u0088\3\2\2\2\16\u008c")
         buf.write("\3\2\2\2\20\u00a5\3\2\2\2\22\u00b5\3\2\2\2\24\u00c1\3")
         buf.write("\2\2\2\26\u00c9\3\2\2\2\30\u00d4\3\2\2\2\32\u00e1\3\2")
         buf.write("\2\2\34\u00e3\3\2\2\2\36\u00e5\3\2\2\2 \u00e7\3\2\2\2")
         buf.write("\"\u00e9\3\2\2\2$\u00eb\3\2\2\2&\u00ed\3\2\2\2(\u00fc")
-        buf.write("\3\2\2\2*\u00fe\3\2\2\2,\u0100\3\2\2\2.\u0112\3\2\2\2")
-        buf.write("\60\u012d\3\2\2\2\62\u0139\3\2\2\2\64\u014b\3\2\2\2\66")
-        buf.write("\u014d\3\2\2\28\u0157\3\2\2\2:\u0159\3\2\2\2<\u015b\3")
-        buf.write("\2\2\2>\u016c\3\2\2\2@\u016e\3\2\2\2B\u0172\3\2\2\2D\u017a")
-        buf.write("\3\2\2\2F\u017c\3\2\2\2H\u017e\3\2\2\2J\u0187\3\2\2\2")
-        buf.write("L\u0189\3\2\2\2N\u01a2\3\2\2\2P\u01a4\3\2\2\2R\u01a6\3")
-        buf.write("\2\2\2T\u01ce\3\2\2\2VX\5\4\3\2WV\3\2\2\2XY\3\2\2\2YW")
+        buf.write("\3\2\2\2*\u00fe\3\2\2\2,\u0118\3\2\2\2.\u011a\3\2\2\2")
+        buf.write("\60\u0135\3\2\2\2\62\u0141\3\2\2\2\64\u0153\3\2\2\2\66")
+        buf.write("\u0155\3\2\2\28\u015f\3\2\2\2:\u0161\3\2\2\2<\u0163\3")
+        buf.write("\2\2\2>\u0174\3\2\2\2@\u0176\3\2\2\2B\u017a\3\2\2\2D\u0182")
+        buf.write("\3\2\2\2F\u0184\3\2\2\2H\u0186\3\2\2\2J\u018f\3\2\2\2")
+        buf.write("L\u0191\3\2\2\2N\u01aa\3\2\2\2P\u01ac\3\2\2\2R\u01ae\3")
+        buf.write("\2\2\2T\u01d6\3\2\2\2VX\5\4\3\2WV\3\2\2\2XY\3\2\2\2YW")
         buf.write("\3\2\2\2YZ\3\2\2\2Z[\3\2\2\2[\\\7\2\2\3\\\3\3\2\2\2]f")
         buf.write("\5\6\4\2^f\5&\24\2_f\5@!\2`f\5\26\f\2af\5\30\r\2bf\5\n")
         buf.write("\6\2cf\5\16\b\2df\5\22\n\2e]\3\2\2\2e^\3\2\2\2e_\3\2\2")
@@ -128,103 +129,107 @@ def serializedATN():
         buf.write("\u00f9\3\2\2\2\u00f7\u00f5\3\2\2\2\u00f7\u00f8\3\2\2\2")
         buf.write("\u00f8\u00fa\3\2\2\2\u00f9\u00f7\3\2\2\2\u00fa\u00fb\7")
         buf.write("\6\2\2\u00fb\'\3\2\2\2\u00fc\u00fd\t\3\2\2\u00fd)\3\2")
-        buf.write("\2\2\u00fe\u00ff\t\4\2\2\u00ff+\3\2\2\2\u0100\u0103\7")
-        buf.write("\37\2\2\u0101\u0104\5(\25\2\u0102\u0104\5*\26\2\u0103")
-        buf.write("\u0101\3\2\2\2\u0103\u0102\3\2\2\2\u0104\u0108\3\2\2\2")
-        buf.write("\u0105\u0109\7 \2\2\u0106\u0109\7\5\2\2\u0107\u0109\3")
-        buf.write("\2\2\2\u0108\u0105\3\2\2\2\u0108\u0106\3\2\2\2\u0108\u0107")
-        buf.write("\3\2\2\2\u0109\u010a\3\2\2\2\u010a\u010f\5\62\32\2\u010b")
-        buf.write("\u010c\7\23\2\2\u010c\u010e\5\62\32\2\u010d\u010b\3\2")
-        buf.write("\2\2\u010e\u0111\3\2\2\2\u010f\u010d\3\2\2\2\u010f\u0110")
-        buf.write("\3\2\2\2\u0110-\3\2\2\2\u0111\u010f\3\2\2\2\u0112\u0128")
-        buf.write("\7!\2\2\u0113\u0116\5(\25\2\u0114\u0116\5*\26\2\u0115")
-        buf.write("\u0113\3\2\2\2\u0115\u0114\3\2\2\2\u0116\u011a\3\2\2\2")
-        buf.write("\u0117\u011b\7 \2\2\u0118\u011b\7\5\2\2\u0119\u011b\3")
-        buf.write("\2\2\2\u011a\u0117\3\2\2\2\u011a\u0118\3\2\2\2\u011a\u0119")
-        buf.write("\3\2\2\2\u011b\u011c\3\2\2\2\u011c\u0121\5\62\32\2\u011d")
-        buf.write("\u011e\7\23\2\2\u011e\u0120\5\62\32\2\u011f\u011d\3\2")
-        buf.write("\2\2\u0120\u0123\3\2\2\2\u0121\u011f\3\2\2\2\u0121\u0122")
-        buf.write("\3\2\2\2\u0122\u0129\3\2\2\2\u0123\u0121\3\2\2\2\u0124")
-        buf.write("\u0126\7\"\2\2\u0125\u0124\3\2\2\2\u0125\u0126\3\2\2\2")
-        buf.write("\u0126\u0127\3\2\2\2\u0127\u0129\7#\2\2\u0128\u0115\3")
-        buf.write("\2\2\2\u0128\u0125\3\2\2\2\u0129\u012a\3\2\2\2\u012a\u012b")
-        buf.write("\7$\2\2\u012b\u012c\5 \21\2\u012c/\3\2\2\2\u012d\u0135")
-        buf.write("\7%\2\2\u012e\u0133\5(\25\2\u012f\u0133\5*\26\2\u0130")
-        buf.write("\u0133\7&\2\2\u0131\u0133\7\'\2\2\u0132\u012e\3\2\2\2")
-        buf.write("\u0132\u012f\3\2\2\2\u0132\u0130\3\2\2\2\u0132\u0131\3")
-        buf.write("\2\2\2\u0133\u0134\3\2\2\2\u0134\u0136\7$\2\2\u0135\u0132")
-        buf.write("\3\2\2\2\u0135\u0136\3\2\2\2\u0136\u0137\3\2\2\2\u0137")
-        buf.write("\u0138\5 \21\2\u0138\61\3\2\2\2\u0139\u0143\5> \2\u013a")
-        buf.write("\u013f\7\4\2\2\u013b\u013f\7(\2\2\u013c\u013d\7\4\2\2")
-        buf.write("\u013d\u013f\7(\2\2\u013e\u013a\3\2\2\2\u013e\u013b\3")
-        buf.write("\2\2\2\u013e\u013c\3\2\2\2\u013f\u0140\3\2\2\2\u0140\u0142")
-        buf.write("\5> \2\u0141\u013e\3\2\2\2\u0142\u0145\3\2\2\2\u0143\u0141")
-        buf.write("\3\2\2\2\u0143\u0144\3\2\2\2\u0144\63\3\2\2\2\u0145\u0143")
-        buf.write("\3\2\2\2\u0146\u014c\5\66\34\2\u0147\u0148\t\5\2\2\u0148")
-        buf.write("\u014c\7*\2\2\u0149\u014a\t\6\2\2\u014a\u014c\5\34\17")
-        buf.write("\2\u014b\u0146\3\2\2\2\u014b\u0147\3\2\2\2\u014b\u0149")
-        buf.write("\3\2\2\2\u014c\65\3\2\2\2\u014d\u014e\7$\2\2\u014e\u014f")
-        buf.write("\7,\2\2\u014f\u0150\5\34\17\2\u0150\u0151\7-\2\2\u0151")
-        buf.write("\u0155\5\"\22\2\u0152\u0153\7\5\2\2\u0153\u0154\7\33\2")
-        buf.write("\2\u0154\u0156\5\64\33\2\u0155\u0152\3\2\2\2\u0155\u0156")
-        buf.write("\3\2\2\2\u0156\67\3\2\2\2\u0157\u0158\t\7\2\2\u01589\3")
-        buf.write("\2\2\2\u0159\u015a\7M\2\2\u015a;\3\2\2\2\u015b\u015c\7")
-        buf.write("N\2\2\u015c=\3\2\2\2\u015d\u016d\5\66\34\2\u015e\u015f")
-        buf.write("\5\34\17\2\u015f\u0160\7-\2\2\u0160\u0164\5\"\22\2\u0161")
-        buf.write("\u0162\7\5\2\2\u0162\u0163\7\33\2\2\u0163\u0165\5\64\33")
-        buf.write("\2\u0164\u0161\3\2\2\2\u0164\u0165\3\2\2\2\u0165\u016d")
-        buf.write("\3\2\2\2\u0166\u0167\5\34\17\2\u0167\u0168\58\35\2\u0168")
-        buf.write("\u0169\5\"\22\2\u0169\u016d\3\2\2\2\u016a\u016b\7)\2\2")
-        buf.write("\u016b\u016d\5\34\17\2\u016c\u015d\3\2\2\2\u016c\u015e")
-        buf.write("\3\2\2\2\u016c\u0166\3\2\2\2\u016c\u016a\3\2\2\2\u016d")
-        buf.write("?\3\2\2\2\u016e\u016f\7\65\2\2\u016f\u0170\5L\'\2\u0170")
-        buf.write("\u0171\7\6\2\2\u0171A\3\2\2\2\u0172\u0173\5\"\22\2\u0173")
-        buf.write("\u0174\5\34\17\2\u0174C\3\2\2\2\u0175\u017b\7\66\2\2\u0176")
-        buf.write("\u017b\7\67\2\2\u0177\u017b\78\2\2\u0178\u0179\7\66\2")
-        buf.write("\2\u0179\u017b\79\2\2\u017a\u0175\3\2\2\2\u017a\u0176")
-        buf.write("\3\2\2\2\u017a\u0177\3\2\2\2\u017a\u0178\3\2\2\2\u017b")
-        buf.write("E\3\2\2\2\u017c\u017d\t\b\2\2\u017dG\3\2\2\2\u017e\u017f")
-        buf.write("\7<\2\2\u017fI\3\2\2\2\u0180\u0181\5\"\22\2\u0181\u0182")
-        buf.write("\5H%\2\u0182\u0188\3\2\2\2\u0183\u0188\5\"\22\2\u0184")
-        buf.write("\u0185\58\35\2\u0185\u0186\5\"\22\2\u0186\u0188\3\2\2")
-        buf.write("\2\u0187\u0180\3\2\2\2\u0187\u0183\3\2\2\2\u0187\u0184")
-        buf.write("\3\2\2\2\u0188K\3\2\2\2\u0189\u018e\5N(\2\u018a\u018b")
-        buf.write("\7\23\2\2\u018b\u018d\5N(\2\u018c\u018a\3\2\2\2\u018d")
-        buf.write("\u0190\3\2\2\2\u018e\u018c\3\2\2\2\u018e\u018f\3\2\2\2")
-        buf.write("\u018fM\3\2\2\2\u0190\u018e\3\2\2\2\u0191\u0193\7=\2\2")
-        buf.write("\u0192\u0191\3\2\2\2\u0192\u0193\3\2\2\2\u0193\u0194\3")
-        buf.write("\2\2\2\u0194\u019e\5T+\2\u0195\u019a\7\4\2\2\u0196\u019a")
-        buf.write("\7(\2\2\u0197\u0198\7\4\2\2\u0198\u019a\7(\2\2\u0199\u0195")
-        buf.write("\3\2\2\2\u0199\u0196\3\2\2\2\u0199\u0197\3\2\2\2\u019a")
-        buf.write("\u019b\3\2\2\2\u019b\u019d\5T+\2\u019c\u0199\3\2\2\2\u019d")
-        buf.write("\u01a0\3\2\2\2\u019e\u019c\3\2\2\2\u019e\u019f\3\2\2\2")
-        buf.write("\u019f\u01a3\3\2\2\2\u01a0\u019e\3\2\2\2\u01a1\u01a3\5")
-        buf.write("B\"\2\u01a2\u0192\3\2\2\2\u01a2\u01a1\3\2\2\2\u01a3O\3")
-        buf.write("\2\2\2\u01a4\u01a5\t\t\2\2\u01a5Q\3\2\2\2\u01a6\u01a7")
-        buf.write("\t\n\2\2\u01a7S\3\2\2\2\u01a8\u01ab\5J&\2\u01a9\u01ac")
-        buf.write("\5(\25\2\u01aa\u01ac\5*\26\2\u01ab\u01a9\3\2\2\2\u01ab")
-        buf.write("\u01aa\3\2\2\2\u01ac\u01ad\3\2\2\2\u01ad\u01ae\5\66\34")
-        buf.write("\2\u01ae\u01cf\3\2\2\2\u01af\u01b2\5J&\2\u01b0\u01b3\5")
-        buf.write("(\25\2\u01b1\u01b3\5*\26\2\u01b2\u01b0\3\2\2\2\u01b2\u01b1")
-        buf.write("\3\2\2\2\u01b3\u01b6\3\2\2\2\u01b4\u01b7\5P)\2\u01b5\u01b7")
-        buf.write("\5R*\2\u01b6\u01b4\3\2\2\2\u01b6\u01b5\3\2\2\2\u01b7\u01b8")
-        buf.write("\3\2\2\2\u01b8\u01bb\5\34\17\2\u01b9\u01ba\7-\2\2\u01ba")
-        buf.write("\u01bc\5\"\22\2\u01bb\u01b9\3\2\2\2\u01bb\u01bc\3\2\2")
-        buf.write("\2\u01bc\u01cf\3\2\2\2\u01bd\u01c0\5J&\2\u01be\u01c1\5")
-        buf.write("(\25\2\u01bf\u01c1\5*\26\2\u01c0\u01be\3\2\2\2\u01c0\u01bf")
-        buf.write("\3\2\2\2\u01c1\u01c2\3\2\2\2\u01c2\u01c5\5\34\17\2\u01c3")
-        buf.write("\u01c4\7-\2\2\u01c4\u01c6\5\"\22\2\u01c5\u01c3\3\2\2\2")
-        buf.write("\u01c5\u01c6\3\2\2\2\u01c6\u01c7\3\2\2\2\u01c7\u01c8\5")
-        buf.write("8\35\2\u01c8\u01c9\5\"\22\2\u01c9\u01cf\3\2\2\2\u01ca")
-        buf.write("\u01cb\5\34\17\2\u01cb\u01cc\58\35\2\u01cc\u01cd\5\"\22")
-        buf.write("\2\u01cd\u01cf\3\2\2\2\u01ce\u01a8\3\2\2\2\u01ce\u01af")
-        buf.write("\3\2\2\2\u01ce\u01bd\3\2\2\2\u01ce\u01ca\3\2\2\2\u01cf")
-        buf.write("U\3\2\2\2\62Yemw\u0084\u0092\u0097\u009f\u00a3\u00aa\u00b1")
-        buf.write("\u00bd\u00c5\u00cf\u00da\u00e1\u00f3\u00f7\u0103\u0108")
-        buf.write("\u010f\u0115\u011a\u0121\u0125\u0128\u0132\u0135\u013e")
-        buf.write("\u0143\u014b\u0155\u0164\u016c\u017a\u0187\u018e\u0192")
-        buf.write("\u0199\u019e\u01a2\u01ab\u01b2\u01b6\u01bb\u01c0\u01c5")
-        buf.write("\u01ce")
+        buf.write("\2\2\u00fe\u00ff\t\4\2\2\u00ff+\3\2\2\2\u0100\u0101\7")
+        buf.write("\37\2\2\u0101\u0104\7 \2\2\u0102\u0105\5(\25\2\u0103\u0105")
+        buf.write("\5*\26\2\u0104\u0102\3\2\2\2\u0104\u0103\3\2\2\2\u0105")
+        buf.write("\u0119\3\2\2\2\u0106\u0109\7\37\2\2\u0107\u010a\5(\25")
+        buf.write("\2\u0108\u010a\5*\26\2\u0109\u0107\3\2\2\2\u0109\u0108")
+        buf.write("\3\2\2\2\u010a\u010e\3\2\2\2\u010b\u010f\7!\2\2\u010c")
+        buf.write("\u010f\7\5\2\2\u010d\u010f\3\2\2\2\u010e\u010b\3\2\2\2")
+        buf.write("\u010e\u010c\3\2\2\2\u010e\u010d\3\2\2\2\u010f\u0110\3")
+        buf.write("\2\2\2\u0110\u0115\5\62\32\2\u0111\u0112\7\23\2\2\u0112")
+        buf.write("\u0114\5\62\32\2\u0113\u0111\3\2\2\2\u0114\u0117\3\2\2")
+        buf.write("\2\u0115\u0113\3\2\2\2\u0115\u0116\3\2\2\2\u0116\u0119")
+        buf.write("\3\2\2\2\u0117\u0115\3\2\2\2\u0118\u0100\3\2\2\2\u0118")
+        buf.write("\u0106\3\2\2\2\u0119-\3\2\2\2\u011a\u0130\7\"\2\2\u011b")
+        buf.write("\u011e\5(\25\2\u011c\u011e\5*\26\2\u011d\u011b\3\2\2\2")
+        buf.write("\u011d\u011c\3\2\2\2\u011e\u0122\3\2\2\2\u011f\u0123\7")
+        buf.write("!\2\2\u0120\u0123\7\5\2\2\u0121\u0123\3\2\2\2\u0122\u011f")
+        buf.write("\3\2\2\2\u0122\u0120\3\2\2\2\u0122\u0121\3\2\2\2\u0123")
+        buf.write("\u0124\3\2\2\2\u0124\u0129\5\62\32\2\u0125\u0126\7\23")
+        buf.write("\2\2\u0126\u0128\5\62\32\2\u0127\u0125\3\2\2\2\u0128\u012b")
+        buf.write("\3\2\2\2\u0129\u0127\3\2\2\2\u0129\u012a\3\2\2\2\u012a")
+        buf.write("\u0131\3\2\2\2\u012b\u0129\3\2\2\2\u012c\u012e\7#\2\2")
+        buf.write("\u012d\u012c\3\2\2\2\u012d\u012e\3\2\2\2\u012e\u012f\3")
+        buf.write("\2\2\2\u012f\u0131\7$\2\2\u0130\u011d\3\2\2\2\u0130\u012d")
+        buf.write("\3\2\2\2\u0131\u0132\3\2\2\2\u0132\u0133\7%\2\2\u0133")
+        buf.write("\u0134\5 \21\2\u0134/\3\2\2\2\u0135\u013d\7&\2\2\u0136")
+        buf.write("\u013b\5(\25\2\u0137\u013b\5*\26\2\u0138\u013b\7\'\2\2")
+        buf.write("\u0139\u013b\7(\2\2\u013a\u0136\3\2\2\2\u013a\u0137\3")
+        buf.write("\2\2\2\u013a\u0138\3\2\2\2\u013a\u0139\3\2\2\2\u013b\u013c")
+        buf.write("\3\2\2\2\u013c\u013e\7%\2\2\u013d\u013a\3\2\2\2\u013d")
+        buf.write("\u013e\3\2\2\2\u013e\u013f\3\2\2\2\u013f\u0140\5 \21\2")
+        buf.write("\u0140\61\3\2\2\2\u0141\u014b\5> \2\u0142\u0147\7\4\2")
+        buf.write("\2\u0143\u0147\7)\2\2\u0144\u0145\7\4\2\2\u0145\u0147")
+        buf.write("\7)\2\2\u0146\u0142\3\2\2\2\u0146\u0143\3\2\2\2\u0146")
+        buf.write("\u0144\3\2\2\2\u0147\u0148\3\2\2\2\u0148\u014a\5> \2\u0149")
+        buf.write("\u0146\3\2\2\2\u014a\u014d\3\2\2\2\u014b\u0149\3\2\2\2")
+        buf.write("\u014b\u014c\3\2\2\2\u014c\63\3\2\2\2\u014d\u014b\3\2")
+        buf.write("\2\2\u014e\u0154\5\66\34\2\u014f\u0150\t\5\2\2\u0150\u0154")
+        buf.write("\7+\2\2\u0151\u0152\t\6\2\2\u0152\u0154\5\34\17\2\u0153")
+        buf.write("\u014e\3\2\2\2\u0153\u014f\3\2\2\2\u0153\u0151\3\2\2\2")
+        buf.write("\u0154\65\3\2\2\2\u0155\u0156\7%\2\2\u0156\u0157\7-\2")
+        buf.write("\2\u0157\u0158\5\34\17\2\u0158\u0159\7.\2\2\u0159\u015d")
+        buf.write("\5\"\22\2\u015a\u015b\7\5\2\2\u015b\u015c\7\33\2\2\u015c")
+        buf.write("\u015e\5\64\33\2\u015d\u015a\3\2\2\2\u015d\u015e\3\2\2")
+        buf.write("\2\u015e\67\3\2\2\2\u015f\u0160\t\7\2\2\u01609\3\2\2\2")
+        buf.write("\u0161\u0162\7M\2\2\u0162;\3\2\2\2\u0163\u0164\7N\2\2")
+        buf.write("\u0164=\3\2\2\2\u0165\u0175\5\66\34\2\u0166\u0167\5\34")
+        buf.write("\17\2\u0167\u0168\7.\2\2\u0168\u016c\5\"\22\2\u0169\u016a")
+        buf.write("\7\5\2\2\u016a\u016b\7\33\2\2\u016b\u016d\5\64\33\2\u016c")
+        buf.write("\u0169\3\2\2\2\u016c\u016d\3\2\2\2\u016d\u0175\3\2\2\2")
+        buf.write("\u016e\u016f\5\34\17\2\u016f\u0170\58\35\2\u0170\u0171")
+        buf.write("\5\"\22\2\u0171\u0175\3\2\2\2\u0172\u0173\7*\2\2\u0173")
+        buf.write("\u0175\5\34\17\2\u0174\u0165\3\2\2\2\u0174\u0166\3\2\2")
+        buf.write("\2\u0174\u016e\3\2\2\2\u0174\u0172\3\2\2\2\u0175?\3\2")
+        buf.write("\2\2\u0176\u0177\7\66\2\2\u0177\u0178\5L\'\2\u0178\u0179")
+        buf.write("\7\6\2\2\u0179A\3\2\2\2\u017a\u017b\5\"\22\2\u017b\u017c")
+        buf.write("\5\34\17\2\u017cC\3\2\2\2\u017d\u0183\7\67\2\2\u017e\u0183")
+        buf.write("\78\2\2\u017f\u0183\79\2\2\u0180\u0181\7\67\2\2\u0181")
+        buf.write("\u0183\7:\2\2\u0182\u017d\3\2\2\2\u0182\u017e\3\2\2\2")
+        buf.write("\u0182\u017f\3\2\2\2\u0182\u0180\3\2\2\2\u0183E\3\2\2")
+        buf.write("\2\u0184\u0185\t\b\2\2\u0185G\3\2\2\2\u0186\u0187\7<\2")
+        buf.write("\2\u0187I\3\2\2\2\u0188\u0189\5\"\22\2\u0189\u018a\5H")
+        buf.write("%\2\u018a\u0190\3\2\2\2\u018b\u0190\5\"\22\2\u018c\u018d")
+        buf.write("\58\35\2\u018d\u018e\5\"\22\2\u018e\u0190\3\2\2\2\u018f")
+        buf.write("\u0188\3\2\2\2\u018f\u018b\3\2\2\2\u018f\u018c\3\2\2\2")
+        buf.write("\u0190K\3\2\2\2\u0191\u0196\5N(\2\u0192\u0193\7\23\2\2")
+        buf.write("\u0193\u0195\5N(\2\u0194\u0192\3\2\2\2\u0195\u0198\3\2")
+        buf.write("\2\2\u0196\u0194\3\2\2\2\u0196\u0197\3\2\2\2\u0197M\3")
+        buf.write("\2\2\2\u0198\u0196\3\2\2\2\u0199\u019b\7=\2\2\u019a\u0199")
+        buf.write("\3\2\2\2\u019a\u019b\3\2\2\2\u019b\u019c\3\2\2\2\u019c")
+        buf.write("\u01a6\5T+\2\u019d\u01a2\7\4\2\2\u019e\u01a2\7)\2\2\u019f")
+        buf.write("\u01a0\7\4\2\2\u01a0\u01a2\7)\2\2\u01a1\u019d\3\2\2\2")
+        buf.write("\u01a1\u019e\3\2\2\2\u01a1\u019f\3\2\2\2\u01a2\u01a3\3")
+        buf.write("\2\2\2\u01a3\u01a5\5T+\2\u01a4\u01a1\3\2\2\2\u01a5\u01a8")
+        buf.write("\3\2\2\2\u01a6\u01a4\3\2\2\2\u01a6\u01a7\3\2\2\2\u01a7")
+        buf.write("\u01ab\3\2\2\2\u01a8\u01a6\3\2\2\2\u01a9\u01ab\5B\"\2")
+        buf.write("\u01aa\u019a\3\2\2\2\u01aa\u01a9\3\2\2\2\u01abO\3\2\2")
+        buf.write("\2\u01ac\u01ad\t\t\2\2\u01adQ\3\2\2\2\u01ae\u01af\t\n")
+        buf.write("\2\2\u01afS\3\2\2\2\u01b0\u01b3\5J&\2\u01b1\u01b4\5(\25")
+        buf.write("\2\u01b2\u01b4\5*\26\2\u01b3\u01b1\3\2\2\2\u01b3\u01b2")
+        buf.write("\3\2\2\2\u01b4\u01b5\3\2\2\2\u01b5\u01b6\5\66\34\2\u01b6")
+        buf.write("\u01d7\3\2\2\2\u01b7\u01ba\5J&\2\u01b8\u01bb\5(\25\2\u01b9")
+        buf.write("\u01bb\5*\26\2\u01ba\u01b8\3\2\2\2\u01ba\u01b9\3\2\2\2")
+        buf.write("\u01bb\u01be\3\2\2\2\u01bc\u01bf\5P)\2\u01bd\u01bf\5R")
+        buf.write("*\2\u01be\u01bc\3\2\2\2\u01be\u01bd\3\2\2\2\u01bf\u01c0")
+        buf.write("\3\2\2\2\u01c0\u01c3\5\34\17\2\u01c1\u01c2\7.\2\2\u01c2")
+        buf.write("\u01c4\5\"\22\2\u01c3\u01c1\3\2\2\2\u01c3\u01c4\3\2\2")
+        buf.write("\2\u01c4\u01d7\3\2\2\2\u01c5\u01c8\5J&\2\u01c6\u01c9\5")
+        buf.write("(\25\2\u01c7\u01c9\5*\26\2\u01c8\u01c6\3\2\2\2\u01c8\u01c7")
+        buf.write("\3\2\2\2\u01c9\u01ca\3\2\2\2\u01ca\u01cd\5\34\17\2\u01cb")
+        buf.write("\u01cc\7.\2\2\u01cc\u01ce\5\"\22\2\u01cd\u01cb\3\2\2\2")
+        buf.write("\u01cd\u01ce\3\2\2\2\u01ce\u01cf\3\2\2\2\u01cf\u01d0\5")
+        buf.write("8\35\2\u01d0\u01d1\5\"\22\2\u01d1\u01d7\3\2\2\2\u01d2")
+        buf.write("\u01d3\5\34\17\2\u01d3\u01d4\58\35\2\u01d4\u01d5\5\"\22")
+        buf.write("\2\u01d5\u01d7\3\2\2\2\u01d6\u01b0\3\2\2\2\u01d6\u01b7")
+        buf.write("\3\2\2\2\u01d6\u01c5\3\2\2\2\u01d6\u01d2\3\2\2\2\u01d7")
+        buf.write("U\3\2\2\2\64Yemw\u0084\u0092\u0097\u009f\u00a3\u00aa\u00b1")
+        buf.write("\u00bd\u00c5\u00cf\u00da\u00e1\u00f3\u00f7\u0104\u0109")
+        buf.write("\u010e\u0115\u0118\u011d\u0122\u0129\u012d\u0130\u013a")
+        buf.write("\u013d\u0146\u014b\u0153\u015d\u016c\u0174\u0182\u018f")
+        buf.write("\u0196\u019a\u01a1\u01a6\u01aa\u01b3\u01ba\u01be\u01c3")
+        buf.write("\u01c8\u01cd\u01d6")
         return buf.getvalue()
 
 
@@ -243,16 +248,16 @@ class kismet_sequenceParser ( Parser ):
                      "'time'", "'if'", "'else'", "'elif'", "'elseif'", "'or'", 
                      "'choose'", "'['", "':'", "']'", "'add'", "'remove'", 
                      "'initialize'", "'character'", "'characters'", "'location'", 
-                     "'locations'", "'keeping'", "'where'", "'stashing'", 
+                     "'locations'", "'keeping'", "'all'", "'where'", "'stashing'", 
                      "'the'", "'rest'", "'in'", "'restoring'", "'everybody'", 
                      "'everyone'", "'and'", "'is'", "'kept'", "'who'", "'pattern'", 
                      "'/'", "'='", "'=='", "'<'", "'>'", "'<='", "'>='", 
                      "'!='", "'run'", "'no'", "'none'", "'noone'", "'one'", 
-                     "'all'", "'every'", "'+'", "'until'", "'are'", "'isnt'", 
-                     "'is not'", "'is'nt'", "'arent'", "'are not'", "'are'nt'", 
+                     "'every'", "'+'", "'until'", "'are'", "'isnt'", "'is not'", 
+                     "'is'nt'", "'arent'", "'are not'", "'are'nt'", "<INVALID>", 
                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "'-'", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "'{'", "'}'" ]
+                     "'-'", "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
+                     "'{'", "'}'" ]
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
@@ -468,7 +473,7 @@ class kismet_sequenceParser ( Parser ):
                 self.state = 87 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__50))) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__51))) != 0)):
                     break
 
             self.state = 89
@@ -558,7 +563,7 @@ class kismet_sequenceParser ( Parser ):
                 self.state = 92
                 self.initialize()
                 pass
-            elif token in [kismet_sequenceParser.T__50]:
+            elif token in [kismet_sequenceParser.T__51]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 93
                 self.run()
@@ -798,7 +803,7 @@ class kismet_sequenceParser ( Parser ):
                 self.state = 130 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__50))) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__51))) != 0)):
                     break
 
             self.state = 132
@@ -978,7 +983,7 @@ class kismet_sequenceParser ( Parser ):
                     self.state = 157 
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__50))) != 0)):
+                    if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__51))) != 0)):
                         break
 
                 self.state = 159
@@ -1072,7 +1077,7 @@ class kismet_sequenceParser ( Parser ):
                 self.state = 175 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__50))) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__51))) != 0)):
                     break
 
             self.state = 177
@@ -1221,7 +1226,7 @@ class kismet_sequenceParser ( Parser ):
                 self.state = 195 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__50))) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__0) | (1 << kismet_sequenceParser.T__5) | (1 << kismet_sequenceParser.T__12) | (1 << kismet_sequenceParser.T__17) | (1 << kismet_sequenceParser.T__21) | (1 << kismet_sequenceParser.T__22) | (1 << kismet_sequenceParser.T__23) | (1 << kismet_sequenceParser.T__51))) != 0)):
                     break
 
             self.state = 197
@@ -1738,11 +1743,11 @@ class kismet_sequenceParser ( Parser ):
                     self.state = 238
                     self.keeping()
                     pass
-                elif token in [kismet_sequenceParser.T__30]:
+                elif token in [kismet_sequenceParser.T__31]:
                     self.state = 239
                     self.stashing()
                     pass
-                elif token in [kismet_sequenceParser.T__34]:
+                elif token in [kismet_sequenceParser.T__35]:
                     self.state = 240
                     self.restoring()
                     pass
@@ -1870,19 +1875,19 @@ class kismet_sequenceParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def where(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(kismet_sequenceParser.WhereContext)
-            else:
-                return self.getTypedRuleContext(kismet_sequenceParser.WhereContext,i)
-
-
         def characters(self):
             return self.getTypedRuleContext(kismet_sequenceParser.CharactersContext,0)
 
 
         def locations(self):
             return self.getTypedRuleContext(kismet_sequenceParser.LocationsContext,0)
+
+
+        def where(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(kismet_sequenceParser.WhereContext)
+            else:
+                return self.getTypedRuleContext(kismet_sequenceParser.WhereContext,i)
 
 
         def getRuleIndex(self):
@@ -1911,52 +1916,81 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 42, self.RULE_keeping)
         self._la = 0 # Token type
         try:
-            self.enterOuterAlt(localctx, 1)
-            self.state = 254
-            self.match(kismet_sequenceParser.T__28)
-            self.state = 257
+            self.state = 278
             self._errHandler.sync(self)
-            token = self._input.LA(1)
-            if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
+            la_ = self._interp.adaptivePredict(self._input,22,self._ctx)
+            if la_ == 1:
+                self.enterOuterAlt(localctx, 1)
+                self.state = 254
+                self.match(kismet_sequenceParser.T__28)
                 self.state = 255
-                self.characters()
-                pass
-            elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
-                self.state = 256
-                self.locations()
-                pass
-            else:
-                raise NoViableAltException(self)
-
-            self.state = 262
-            self._errHandler.sync(self)
-            token = self._input.LA(1)
-            if token in [kismet_sequenceParser.T__29]:
-                self.state = 259
                 self.match(kismet_sequenceParser.T__29)
-                pass
-            elif token in [kismet_sequenceParser.T__2]:
-                self.state = 260
-                self.match(kismet_sequenceParser.T__2)
-                pass
-            elif token in [kismet_sequenceParser.T__33, kismet_sequenceParser.T__38, kismet_sequenceParser.NAME]:
-                pass
-            else:
-                raise NoViableAltException(self)
+                self.state = 258
+                self._errHandler.sync(self)
+                token = self._input.LA(1)
+                if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
+                    self.state = 256
+                    self.characters()
+                    pass
+                elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
+                    self.state = 257
+                    self.locations()
+                    pass
+                else:
+                    raise NoViableAltException(self)
 
-            self.state = 264
-            self.where()
-            self.state = 269
-            self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            while _la==kismet_sequenceParser.T__16:
-                self.state = 265
-                self.match(kismet_sequenceParser.T__16)
-                self.state = 266
+                pass
+
+            elif la_ == 2:
+                self.enterOuterAlt(localctx, 2)
+                self.state = 260
+                self.match(kismet_sequenceParser.T__28)
+                self.state = 263
+                self._errHandler.sync(self)
+                token = self._input.LA(1)
+                if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
+                    self.state = 261
+                    self.characters()
+                    pass
+                elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
+                    self.state = 262
+                    self.locations()
+                    pass
+                else:
+                    raise NoViableAltException(self)
+
+                self.state = 268
+                self._errHandler.sync(self)
+                token = self._input.LA(1)
+                if token in [kismet_sequenceParser.T__30]:
+                    self.state = 265
+                    self.match(kismet_sequenceParser.T__30)
+                    pass
+                elif token in [kismet_sequenceParser.T__2]:
+                    self.state = 266
+                    self.match(kismet_sequenceParser.T__2)
+                    pass
+                elif token in [kismet_sequenceParser.T__34, kismet_sequenceParser.T__39, kismet_sequenceParser.NAME]:
+                    pass
+                else:
+                    raise NoViableAltException(self)
+
+                self.state = 270
                 self.where()
-                self.state = 271
+                self.state = 275
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
+                while _la==kismet_sequenceParser.T__16:
+                    self.state = 271
+                    self.match(kismet_sequenceParser.T__16)
+                    self.state = 272
+                    self.where()
+                    self.state = 277
+                    self._errHandler.sync(self)
+                    _la = self._input.LA(1)
+
+                pass
+
 
         except RecognitionException as re:
             localctx.exception = re
@@ -2019,75 +2053,75 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 272
-            self.match(kismet_sequenceParser.T__30)
-            self.state = 294
+            self.state = 280
+            self.match(kismet_sequenceParser.T__31)
+            self.state = 302
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25, kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
-                self.state = 275
+                self.state = 283
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
-                    self.state = 273
+                    self.state = 281
                     self.characters()
                     pass
                 elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
-                    self.state = 274
+                    self.state = 282
                     self.locations()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 280
+                self.state = 288
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
-                if token in [kismet_sequenceParser.T__29]:
-                    self.state = 277
-                    self.match(kismet_sequenceParser.T__29)
+                if token in [kismet_sequenceParser.T__30]:
+                    self.state = 285
+                    self.match(kismet_sequenceParser.T__30)
                     pass
                 elif token in [kismet_sequenceParser.T__2]:
-                    self.state = 278
+                    self.state = 286
                     self.match(kismet_sequenceParser.T__2)
                     pass
-                elif token in [kismet_sequenceParser.T__33, kismet_sequenceParser.T__38, kismet_sequenceParser.NAME]:
+                elif token in [kismet_sequenceParser.T__34, kismet_sequenceParser.T__39, kismet_sequenceParser.NAME]:
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 282
+                self.state = 290
                 self.where()
-                self.state = 287
+                self.state = 295
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==kismet_sequenceParser.T__16:
-                    self.state = 283
+                    self.state = 291
                     self.match(kismet_sequenceParser.T__16)
-                    self.state = 284
+                    self.state = 292
                     self.where()
-                    self.state = 289
+                    self.state = 297
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
                 pass
-            elif token in [kismet_sequenceParser.T__31, kismet_sequenceParser.T__32]:
-                self.state = 291
+            elif token in [kismet_sequenceParser.T__32, kismet_sequenceParser.T__33]:
+                self.state = 299
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==kismet_sequenceParser.T__31:
-                    self.state = 290
-                    self.match(kismet_sequenceParser.T__31)
+                if _la==kismet_sequenceParser.T__32:
+                    self.state = 298
+                    self.match(kismet_sequenceParser.T__32)
 
 
-                self.state = 293
-                self.match(kismet_sequenceParser.T__32)
+                self.state = 301
+                self.match(kismet_sequenceParser.T__33)
                 pass
             else:
                 raise NoViableAltException(self)
 
-            self.state = 296
-            self.match(kismet_sequenceParser.T__33)
-            self.state = 297
+            self.state = 304
+            self.match(kismet_sequenceParser.T__34)
+            self.state = 305
             self.var()
         except RecognitionException as re:
             localctx.exception = re
@@ -2143,39 +2177,39 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 299
-            self.match(kismet_sequenceParser.T__34)
             self.state = 307
+            self.match(kismet_sequenceParser.T__35)
+            self.state = 315
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__24) | (1 << kismet_sequenceParser.T__25) | (1 << kismet_sequenceParser.T__26) | (1 << kismet_sequenceParser.T__27) | (1 << kismet_sequenceParser.T__35) | (1 << kismet_sequenceParser.T__36))) != 0):
-                self.state = 304
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__24) | (1 << kismet_sequenceParser.T__25) | (1 << kismet_sequenceParser.T__26) | (1 << kismet_sequenceParser.T__27) | (1 << kismet_sequenceParser.T__36) | (1 << kismet_sequenceParser.T__37))) != 0):
+                self.state = 312
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
-                    self.state = 300
+                    self.state = 308
                     self.characters()
                     pass
                 elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
-                    self.state = 301
+                    self.state = 309
                     self.locations()
                     pass
-                elif token in [kismet_sequenceParser.T__35]:
-                    self.state = 302
-                    self.match(kismet_sequenceParser.T__35)
-                    pass
                 elif token in [kismet_sequenceParser.T__36]:
-                    self.state = 303
+                    self.state = 310
                     self.match(kismet_sequenceParser.T__36)
+                    pass
+                elif token in [kismet_sequenceParser.T__37]:
+                    self.state = 311
+                    self.match(kismet_sequenceParser.T__37)
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 306
-                self.match(kismet_sequenceParser.T__33)
+                self.state = 314
+                self.match(kismet_sequenceParser.T__34)
 
 
-            self.state = 309
+            self.state = 317
             self.var()
         except RecognitionException as re:
             localctx.exception = re
@@ -2226,36 +2260,36 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 311
+            self.state = 319
             self.where_clause()
-            self.state = 321
+            self.state = 329
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==kismet_sequenceParser.T__1 or _la==kismet_sequenceParser.T__37:
-                self.state = 316
+            while _la==kismet_sequenceParser.T__1 or _la==kismet_sequenceParser.T__38:
+                self.state = 324
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,28,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,30,self._ctx)
                 if la_ == 1:
-                    self.state = 312
+                    self.state = 320
                     self.match(kismet_sequenceParser.T__1)
                     pass
 
                 elif la_ == 2:
-                    self.state = 313
-                    self.match(kismet_sequenceParser.T__37)
+                    self.state = 321
+                    self.match(kismet_sequenceParser.T__38)
                     pass
 
                 elif la_ == 3:
-                    self.state = 314
+                    self.state = 322
                     self.match(kismet_sequenceParser.T__1)
-                    self.state = 315
-                    self.match(kismet_sequenceParser.T__37)
+                    self.state = 323
+                    self.match(kismet_sequenceParser.T__38)
                     pass
 
 
-                self.state = 318
+                self.state = 326
                 self.where_clause()
-                self.state = 323
+                self.state = 331
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -2308,38 +2342,38 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 50, self.RULE_with_clause)
         self._la = 0 # Token type
         try:
-            self.state = 329
+            self.state = 337
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,30,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,32,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 324
+                self.state = 332
                 self.in_pattern()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 325
+                self.state = 333
                 _la = self._input.LA(1)
-                if not(_la==kismet_sequenceParser.T__33 or _la==kismet_sequenceParser.T__38):
+                if not(_la==kismet_sequenceParser.T__34 or _la==kismet_sequenceParser.T__39):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 326
-                self.match(kismet_sequenceParser.T__39)
+                self.state = 334
+                self.match(kismet_sequenceParser.T__40)
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 327
+                self.state = 335
                 _la = self._input.LA(1)
-                if not(_la==kismet_sequenceParser.T__38 or _la==kismet_sequenceParser.T__40):
+                if not(_la==kismet_sequenceParser.T__39 or _la==kismet_sequenceParser.T__41):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 328
+                self.state = 336
                 self.name()
                 pass
 
@@ -2398,25 +2432,25 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 331
-            self.match(kismet_sequenceParser.T__33)
-            self.state = 332
-            self.match(kismet_sequenceParser.T__41)
-            self.state = 333
-            self.name()
-            self.state = 334
-            self.match(kismet_sequenceParser.T__42)
-            self.state = 335
-            self.num()
             self.state = 339
+            self.match(kismet_sequenceParser.T__34)
+            self.state = 340
+            self.match(kismet_sequenceParser.T__42)
+            self.state = 341
+            self.name()
+            self.state = 342
+            self.match(kismet_sequenceParser.T__43)
+            self.state = 343
+            self.num()
+            self.state = 347
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==kismet_sequenceParser.T__2:
-                self.state = 336
+                self.state = 344
                 self.match(kismet_sequenceParser.T__2)
-                self.state = 337
+                self.state = 345
                 self.match(kismet_sequenceParser.T__24)
-                self.state = 338
+                self.state = 346
                 self.with_clause()
 
 
@@ -2463,9 +2497,9 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 341
+            self.state = 349
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__43) | (1 << kismet_sequenceParser.T__44) | (1 << kismet_sequenceParser.T__45) | (1 << kismet_sequenceParser.T__46) | (1 << kismet_sequenceParser.T__47) | (1 << kismet_sequenceParser.T__48) | (1 << kismet_sequenceParser.T__49))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__44) | (1 << kismet_sequenceParser.T__45) | (1 << kismet_sequenceParser.T__46) | (1 << kismet_sequenceParser.T__47) | (1 << kismet_sequenceParser.T__48) | (1 << kismet_sequenceParser.T__49) | (1 << kismet_sequenceParser.T__50))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -2514,7 +2548,7 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 56, self.RULE_types)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 343
+            self.state = 351
             self.match(kismet_sequenceParser.TYPE)
         except RecognitionException as re:
             localctx.exception = re
@@ -2560,7 +2594,7 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 58, self.RULE_tags)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 345
+            self.state = 353
             self.match(kismet_sequenceParser.TAGS)
         except RecognitionException as re:
             localctx.exception = re
@@ -2623,32 +2657,32 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 60, self.RULE_where_clause)
         self._la = 0 # Token type
         try:
-            self.state = 362
+            self.state = 370
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,33,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,35,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 347
+                self.state = 355
                 self.in_pattern()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 348
+                self.state = 356
                 self.name()
-                self.state = 349
-                self.match(kismet_sequenceParser.T__42)
-                self.state = 350
+                self.state = 357
+                self.match(kismet_sequenceParser.T__43)
+                self.state = 358
                 self.num()
-                self.state = 354
+                self.state = 362
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==kismet_sequenceParser.T__2:
-                    self.state = 351
+                    self.state = 359
                     self.match(kismet_sequenceParser.T__2)
-                    self.state = 352
+                    self.state = 360
                     self.match(kismet_sequenceParser.T__24)
-                    self.state = 353
+                    self.state = 361
                     self.with_clause()
 
 
@@ -2656,19 +2690,19 @@ class kismet_sequenceParser ( Parser ):
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 356
+                self.state = 364
                 self.name()
-                self.state = 357
+                self.state = 365
                 self.comparator()
-                self.state = 358
+                self.state = 366
                 self.num()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 360
-                self.match(kismet_sequenceParser.T__38)
-                self.state = 361
+                self.state = 368
+                self.match(kismet_sequenceParser.T__39)
+                self.state = 369
                 self.name()
                 pass
 
@@ -2718,11 +2752,11 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 62, self.RULE_run)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 364
-            self.match(kismet_sequenceParser.T__50)
-            self.state = 365
+            self.state = 372
+            self.match(kismet_sequenceParser.T__51)
+            self.state = 373
             self.until()
-            self.state = 366
+            self.state = 374
             self.match(kismet_sequenceParser.T__3)
         except RecognitionException as re:
             localctx.exception = re
@@ -2773,9 +2807,9 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 64, self.RULE_duration)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 368
+            self.state = 376
             self.num()
-            self.state = 369
+            self.state = 377
             self.name()
         except RecognitionException as re:
             localctx.exception = re
@@ -2818,33 +2852,33 @@ class kismet_sequenceParser ( Parser ):
         localctx = kismet_sequenceParser.NoneContext(self, self._ctx, self.state)
         self.enterRule(localctx, 66, self.RULE_none)
         try:
-            self.state = 376
+            self.state = 384
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,34,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,36,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 371
-                self.match(kismet_sequenceParser.T__51)
+                self.state = 379
+                self.match(kismet_sequenceParser.T__52)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 372
-                self.match(kismet_sequenceParser.T__52)
+                self.state = 380
+                self.match(kismet_sequenceParser.T__53)
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 373
-                self.match(kismet_sequenceParser.T__53)
+                self.state = 381
+                self.match(kismet_sequenceParser.T__54)
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 374
-                self.match(kismet_sequenceParser.T__51)
-                self.state = 375
-                self.match(kismet_sequenceParser.T__54)
+                self.state = 382
+                self.match(kismet_sequenceParser.T__52)
+                self.state = 383
+                self.match(kismet_sequenceParser.T__55)
                 pass
 
 
@@ -2891,9 +2925,9 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 378
+            self.state = 386
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__35) | (1 << kismet_sequenceParser.T__36) | (1 << kismet_sequenceParser.T__55) | (1 << kismet_sequenceParser.T__56))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << kismet_sequenceParser.T__29) | (1 << kismet_sequenceParser.T__36) | (1 << kismet_sequenceParser.T__37) | (1 << kismet_sequenceParser.T__56))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -2940,7 +2974,7 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 70, self.RULE_plus)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 380
+            self.state = 388
             self.match(kismet_sequenceParser.T__57)
         except RecognitionException as re:
             localctx.exception = re
@@ -2994,28 +3028,28 @@ class kismet_sequenceParser ( Parser ):
         localctx = kismet_sequenceParser.QuantityContext(self, self._ctx, self.state)
         self.enterRule(localctx, 72, self.RULE_quantity)
         try:
-            self.state = 389
+            self.state = 397
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,35,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,37,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 382
+                self.state = 390
                 self.num()
-                self.state = 383
+                self.state = 391
                 self.plus()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 385
+                self.state = 393
                 self.num()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 386
+                self.state = 394
                 self.comparator()
-                self.state = 387
+                self.state = 395
                 self.num()
                 pass
 
@@ -3069,17 +3103,17 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 391
+            self.state = 399
             self.until_clauses()
-            self.state = 396
+            self.state = 404
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==kismet_sequenceParser.T__16:
-                self.state = 392
+                self.state = 400
                 self.match(kismet_sequenceParser.T__16)
-                self.state = 393
+                self.state = 401
                 self.until_clauses()
-                self.state = 398
+                self.state = 406
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -3135,49 +3169,49 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 76, self.RULE_until_clauses)
         self._la = 0 # Token type
         try:
-            self.state = 416
+            self.state = 424
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,40,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,42,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 400
+                self.state = 408
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==kismet_sequenceParser.T__58:
-                    self.state = 399
+                    self.state = 407
                     self.match(kismet_sequenceParser.T__58)
 
 
-                self.state = 402
+                self.state = 410
                 self.until_clause()
-                self.state = 412
+                self.state = 420
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==kismet_sequenceParser.T__1 or _la==kismet_sequenceParser.T__37:
-                    self.state = 407
+                while _la==kismet_sequenceParser.T__1 or _la==kismet_sequenceParser.T__38:
+                    self.state = 415
                     self._errHandler.sync(self)
-                    la_ = self._interp.adaptivePredict(self._input,38,self._ctx)
+                    la_ = self._interp.adaptivePredict(self._input,40,self._ctx)
                     if la_ == 1:
-                        self.state = 403
+                        self.state = 411
                         self.match(kismet_sequenceParser.T__1)
                         pass
 
                     elif la_ == 2:
-                        self.state = 404
-                        self.match(kismet_sequenceParser.T__37)
+                        self.state = 412
+                        self.match(kismet_sequenceParser.T__38)
                         pass
 
                     elif la_ == 3:
-                        self.state = 405
+                        self.state = 413
                         self.match(kismet_sequenceParser.T__1)
-                        self.state = 406
-                        self.match(kismet_sequenceParser.T__37)
+                        self.state = 414
+                        self.match(kismet_sequenceParser.T__38)
                         pass
 
 
-                    self.state = 409
+                    self.state = 417
                     self.until_clause()
-                    self.state = 414
+                    self.state = 422
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
@@ -3185,7 +3219,7 @@ class kismet_sequenceParser ( Parser ):
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 415
+                self.state = 423
                 self.duration()
                 pass
 
@@ -3233,9 +3267,9 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 418
+            self.state = 426
             _la = self._input.LA(1)
-            if not(_la==kismet_sequenceParser.T__38 or _la==kismet_sequenceParser.T__59):
+            if not(_la==kismet_sequenceParser.T__39 or _la==kismet_sequenceParser.T__59):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -3283,7 +3317,7 @@ class kismet_sequenceParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 420
+            self.state = 428
             _la = self._input.LA(1)
             if not(((((_la - 61)) & ~0x3f) == 0 and ((1 << (_la - 61)) & ((1 << (kismet_sequenceParser.T__60 - 61)) | (1 << (kismet_sequenceParser.T__61 - 61)) | (1 << (kismet_sequenceParser.T__62 - 61)) | (1 << (kismet_sequenceParser.T__63 - 61)) | (1 << (kismet_sequenceParser.T__64 - 61)) | (1 << (kismet_sequenceParser.T__65 - 61)))) != 0)):
                 self._errHandler.recoverInline(self)
@@ -3370,72 +3404,72 @@ class kismet_sequenceParser ( Parser ):
         self.enterRule(localctx, 82, self.RULE_until_clause)
         self._la = 0 # Token type
         try:
-            self.state = 460
+            self.state = 468
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,47,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,49,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 422
+                self.state = 430
                 self.quantity()
-                self.state = 425
+                self.state = 433
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
-                    self.state = 423
+                    self.state = 431
                     self.characters()
                     pass
                 elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
-                    self.state = 424
+                    self.state = 432
                     self.locations()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 427
+                self.state = 435
                 self.in_pattern()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 429
+                self.state = 437
                 self.quantity()
-                self.state = 432
+                self.state = 440
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
-                    self.state = 430
+                    self.state = 438
                     self.characters()
                     pass
                 elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
-                    self.state = 431
+                    self.state = 439
                     self.locations()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 436
+                self.state = 444
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
-                if token in [kismet_sequenceParser.T__38, kismet_sequenceParser.T__59]:
-                    self.state = 434
+                if token in [kismet_sequenceParser.T__39, kismet_sequenceParser.T__59]:
+                    self.state = 442
                     self.positive_find()
                     pass
                 elif token in [kismet_sequenceParser.T__60, kismet_sequenceParser.T__61, kismet_sequenceParser.T__62, kismet_sequenceParser.T__63, kismet_sequenceParser.T__64, kismet_sequenceParser.T__65]:
-                    self.state = 435
+                    self.state = 443
                     self.negative_find()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 438
+                self.state = 446
                 self.name()
-                self.state = 441
+                self.state = 449
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==kismet_sequenceParser.T__42:
-                    self.state = 439
-                    self.match(kismet_sequenceParser.T__42)
-                    self.state = 440
+                if _la==kismet_sequenceParser.T__43:
+                    self.state = 447
+                    self.match(kismet_sequenceParser.T__43)
+                    self.state = 448
                     self.num()
 
 
@@ -3443,47 +3477,47 @@ class kismet_sequenceParser ( Parser ):
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 443
+                self.state = 451
                 self.quantity()
-                self.state = 446
+                self.state = 454
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [kismet_sequenceParser.T__24, kismet_sequenceParser.T__25]:
-                    self.state = 444
+                    self.state = 452
                     self.characters()
                     pass
                 elif token in [kismet_sequenceParser.T__26, kismet_sequenceParser.T__27]:
-                    self.state = 445
+                    self.state = 453
                     self.locations()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 448
+                self.state = 456
                 self.name()
-                self.state = 451
+                self.state = 459
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==kismet_sequenceParser.T__42:
-                    self.state = 449
-                    self.match(kismet_sequenceParser.T__42)
-                    self.state = 450
+                if _la==kismet_sequenceParser.T__43:
+                    self.state = 457
+                    self.match(kismet_sequenceParser.T__43)
+                    self.state = 458
                     self.num()
 
 
-                self.state = 453
+                self.state = 461
                 self.comparator()
-                self.state = 454
+                self.state = 462
                 self.num()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 456
+                self.state = 464
                 self.name()
-                self.state = 457
+                self.state = 465
                 self.comparator()
-                self.state = 458
+                self.state = 466
                 self.num()
                 pass
 

@@ -2611,7 +2611,8 @@ class KismetModule():
         if type(name) is str:
             return name.replace(' ','_').replace("'",'_').replace("\\",'_').replace("/",'_').lower()
         else:
-            return name
+            print(type(name))
+            return ' '.join(name).replace(' ','_').replace("'",'_').replace("\\",'_').replace("/",'_').lower()
     def make_population(self,initialization):
         
         population = initialization.run_initialization()
@@ -2639,6 +2640,7 @@ class KismetModule():
             elif thing['type'] == 'location':
                 location_type = thing['location_type'][0]
                 
+                print('LOCATION NAME', thing)
                 name = thing.get('name',[location_type])[0]
                 l_id = thing['id']
                 uniq_name =get_unique_name(location_type)
@@ -2666,6 +2668,7 @@ class KismetModule():
         self.sanity_check_population()
         
     def sanity_check_population(self):
+        
         required_locations = {location['location_type'] for location in self.created_locations.values()}
         required_traits = set()
         for character in self.population.values():
@@ -2677,7 +2680,6 @@ class KismetModule():
             for relationship in  character['relationships']:
                 required_traits.add(relationship[0])
         
-        required_locations = {location['location_type'] for location in self.created_locations.values()}
         location_role_counts = {}
         for location in self.created_locations.values():
             current_counts = {}
@@ -2744,6 +2746,9 @@ class KismetModule():
                 population.write('\n')
                 
                 for combo in sorted(character['status']):
+                    if isinstance(character["status"][combo],int):
+                        print(combo)
+                        print(character["status"])
                     val = self.aspify_name(character["status"][combo])
                     if type(val) is str:
                         if 'time' in val:
@@ -2980,12 +2985,13 @@ class KismetModule():
                 for action in step:
                     character = self.to_pretty_name([action[1]])[0]
                     location = self.location_history[start+ind][character]
+                    print(location)
                     if location not in action_by_location:
                         action_by_location[location] = []
                     
                     action_by_location[location].append(self.pretty_print_random_text('action',action))
             for location in sorted(action_by_location):
-                print(f'At {self.created_locations.get(location,{"name":"their own mind"})["name"]}:')
+                print(f'At {location}:')
                 print('\t'+'\n\t'.join(action_by_location[location]))
             print('-------')
     

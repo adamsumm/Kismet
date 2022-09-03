@@ -260,17 +260,37 @@ class Keep:
     
     def find_kept(self,module,state,already_kept):
         if self.keep_type == 'Characters':
+            
             population_file = os.path.join(module.path,f'{module.module_file}_population.lp')
             keep_file = os.path.join(module.path,f'{module.module_file}_keep.lp')
             with open(keep_file,'w') as keep_asp_file:
-                for where in self.conditions:
-                    keep_asp_file.write(f'keep(Characters) :- {",".join([clause.logic for clause in where.conditions])}.\n\n')
+                if len(self.conditions) == 0:
+                    keep_asp_file.write(f'keep(Characters) :- person(Characters).')
+                else:
+                    for where in self.conditions:
+                        keep_asp_file.write(f'keep(Characters) :- {",".join([clause.logic for clause in where.conditions])}.\n\n')
                 for keep in already_kept:
                     keep_asp_file.write(f'kept({keep}).\n')
                 keep_asp_file.write('#show keep/1.')
             solution = Kismet.solve([population_file, keep_file, '-t','8'],clingo_exe=module.clingo_exe)[0]['keep']
             asp_names = set([keep[0]['terms'][0]['predicate'] for keep in solution])
             return asp_names
+        elif self.keep_type == 'Locations':
+            population_file = os.path.join(module.path,f'{module.module_file}_population.lp')
+            keep_file = os.path.join(module.path,f'{module.module_file}_keep.lp')
+            with open(keep_file,'w') as keep_asp_file:
+                if len(self.conditions) == 0:
+                    keep_asp_file.write(f'keep(Location) :- location(Location).')
+                else:
+                    for where in self.conditions:
+                        keep_asp_file.write(f'keep(Characters) :- {",".join([clause.logic for clause in where.conditions])}.\n\n')
+                for keep in already_kept:
+                    keep_asp_file.write(f'kept({keep}).\n')
+                keep_asp_file.write('#show keep/1.')
+            solution = Kismet.solve([population_file, keep_file, '-t','8'],clingo_exe=module.clingo_exe)[0]['keep']
+            asp_names = set([keep[0]['terms'][0]['predicate'] for keep in solution])
+            return asp_names
+            
         return kept
     
     @staticmethod
@@ -278,9 +298,11 @@ class Keep:
         datum = datum[1:][0]
         keep_type = datum[0][0]
         
-        datum = datum[1:]
-        conditions = [Where.parse(where,keep_type) for where in datum]
-        
+        if len(datum) > 1:
+            datum = datum[1:]
+            conditions = [Where.parse(where,keep_type) for where in datum]
+        else:
+            conditions = []
         return Keep(keep_type,conditions)
     
 @dataclass
@@ -297,11 +319,13 @@ class Initialize:
 #                 if module.aspify_name(character['name']) in asp_names:
 #                     kept.append(character)
 #             return {'characters':kept}
-        module.make_population(KismetInitialization.KismetInitialization(self.filename,module))
+        print('TO KEEP', to_keep)
+        module.make_population(KismetInitialization.KismetInitialization(self.filename,module,to_keep))
         new_state = module.to_json()
         
         for category in ['characters','locations']:
             for entity in state.get(category,[]):
+                print("module.aspify_name(entity['name']) = ",module.aspify_name(entity['name']))
                 if module.aspify_name(entity['name']) in to_keep:
                     new_state[category].append(entity)
                     

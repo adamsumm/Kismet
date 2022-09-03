@@ -13,6 +13,6 @@ Make sure that the clingo binary is in your system path
 
 A detailed description of the language can be found here:  https://docs.google.com/document/d/1mhbraeSE9MJOnuzJgVaQk6MYo_G9AP3MD-3GYY9pQKM/edit?usp=sharing
 
-The best way to explore Kismet right now is to look at kismet/kismet.ebnv and to run KismetTestNotebook.ipynb
+The best way to explore Kismet right now is to look at kismet/kismet.ebnv and to run kismet/Kismet Sequence Playground-Current.ipynb
   
 

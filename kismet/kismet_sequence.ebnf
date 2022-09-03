@@ -78,6 +78,7 @@ characters: 'character'|'characters';
 locations: 'location'|'locations';     
 
 keeping:
+    'keeping' 'all' (characters|locations) |
     'keeping' (characters|locations) ('where'|'with'|) where ('or' where)*;
 
 stashing:
