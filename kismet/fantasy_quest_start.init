@@ -1,0 +1,13 @@
+    
+default location:.
+
+initialization quest_start:
+    select [1] location as start:
+        //Dying mystical being -- Secret of Mana/Earthbound/FF6
+        //Big accident -- FF9/Chrono Trigger
+        //Accidentally unleash evil -- Secret of Mana/
+        quest_origin = "[dying_mystical_being|big_accident|unleash_evil]".
+        
+initialize:
+	create [1] quest_start.
+        
