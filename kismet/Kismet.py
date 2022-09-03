@@ -94,12 +94,14 @@ def parse_likelihood(likelihood):
         return logit,action,actor
 
 
-def solve(args,clingo_exe='clingo'):
+def solve(args,clingo_exe='clingo', debug = False):
     """Run clingo with the provided argument list and return the parsed JSON result."""
     
     print_args = [clingo_exe] + list(args) + [' | tr [:space:] \\\\n | sort ']
     args = [clingo_exe, '--outf=2'] + args # + ["--sign-def=rnd","--seed="+str(random.randint(0,1<<30))] #No randomness here
     #print(' '.join(args))
+    if debug:
+        print(' '.join(args))
     start = time.time()
     with subprocess.Popen(
         ' '.join(args),
@@ -2610,9 +2612,9 @@ class KismetModule():
     def aspify_name(self,name):
         if type(name) is str:
             return name.replace(' ','_').replace("'",'_').replace("\\",'_').replace("/",'_').lower()
-        else:
             print(type(name))
-            return ' '.join(name).replace(' ','_').replace("'",'_').replace("\\",'_').replace("/",'_').lower()
+        else:
+            return name
     def make_population(self,initialization):
         
         population = initialization.run_initialization()
@@ -2640,7 +2642,6 @@ class KismetModule():
             elif thing['type'] == 'location':
                 location_type = thing['location_type'][0]
                 
-                print('LOCATION NAME', thing)
                 name = thing.get('name',[location_type])[0]
                 l_id = thing['id']
                 uniq_name =get_unique_name(location_type)
@@ -2746,9 +2747,6 @@ class KismetModule():
                 population.write('\n')
                 
                 for combo in sorted(character['status']):
-                    if isinstance(character["status"][combo],int):
-                        print(combo)
-                        print(character["status"])
                     val = self.aspify_name(character["status"][combo])
                     if type(val) is str:
                         if 'time' in val:
@@ -2779,7 +2777,6 @@ class KismetModule():
                             for label, delta in category_deltas:
                                 time_since = f'time_since(time({",".join(time)}), {label}, {delta}).'
                                 population.write(f'{time_since}\n')
-                            
                     combo = tuple([self.aspify_name(c) for c in combo])
                     if val is not None:
                         population.write(f'is({name},{",".join(combo)},{val}).\n')
@@ -2846,7 +2843,8 @@ class KismetModule():
             for event in events:
                 event_file.write(f'occurred(to_occur({",".join(event)})).\n')
         
-        updates = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_occurred_events.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp','results_processing.lp']],clingo_exe=self.clingo_exe)[0]
+        updates = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_occurred_events.lp', f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp',f'{self.module_file}_actions.lp',f'{self.module_file}_action_results.lp','results_processing.lp']],clingo_exe=self.clingo_exe)[0]
+        
         for result in updates['add']:
 
             result = [term['predicate'] for term in  result[0]['terms']]
@@ -2867,6 +2865,7 @@ class KismetModule():
             character = self.population[result[0]]
             result_key = tuple(result[1:-1])
             #If it isn't a number, treat it as an ASP predicate
+            
             if result[-1][0] in 'abcdefghijklmnopqrstuvwxyz_':
                 val = self.json2asp(raw_result[0]['terms'][-1])
             else:
@@ -2983,15 +2982,14 @@ class KismetModule():
             print(time)
             for step in phase:
                 for action in step:
-                    character = self.to_pretty_name([action[1]])[0]
+                    character = action[1]
                     location = self.location_history[start+ind][character]
-                    print(location)
                     if location not in action_by_location:
                         action_by_location[location] = []
                     
                     action_by_location[location].append(self.pretty_print_random_text('action',action))
             for location in sorted(action_by_location):
-                print(f'At {location}:')
+                print(f'At {self.to_pretty_name([location])[0]}:')
                 print('\t'+'\n\t'.join(action_by_location[location]))
             print('-------')
     
@@ -3326,7 +3324,7 @@ class KismetModule():
         
         with open(os.path.join(self.path,'pattern_detection.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_detection_text))
-            
+       
         patterns = solve([os.path.join(self.path,t) for t in 
                           ['default.lp',  f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_detection.lp']],clingo_exe=self.clingo_exe)
         return patterns

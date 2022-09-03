@@ -2037,9 +2037,6 @@ class Selection():
     options: list
     conditions: list
     def __call__(self,initializations,selections,creations,used,module):
-        print(len(creations))
-        for creation in creations:
-            print(get_name(creation))
         satisfactory = set([get_name(creation) for creation in creations]) - used
         for condition in self.conditions:
             l_pre = len(satisfactory)
@@ -2049,7 +2046,6 @@ class Selection():
             return [], [], []
             
         selection_type = to_select[0]['type']
-        print('SATISFACTORY', satisfactory, selection_type)
         satisfactory = {get_name(character) for character in creations if get_name(character) in satisfactory and character['type'] == selection_type}
         
        

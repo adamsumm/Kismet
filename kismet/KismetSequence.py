@@ -319,13 +319,12 @@ class Initialize:
 #                 if module.aspify_name(character['name']) in asp_names:
 #                     kept.append(character)
 #             return {'characters':kept}
-        print('TO KEEP', to_keep)
         module.make_population(KismetInitialization.KismetInitialization(self.filename,module,to_keep))
         new_state = module.to_json()
         
         for category in ['characters','locations']:
             for entity in state.get(category,[]):
-                print("module.aspify_name(entity['name']) = ",module.aspify_name(entity['name']))
+                #print("module.aspify_name(entity['name']) = ",module.aspify_name(entity['name']))
                 if module.aspify_name(entity['name']) in to_keep:
                     new_state[category].append(entity)
                     
@@ -372,7 +371,7 @@ class Initialize:
         file = datum[0][1]
         keeps = []
         restores = []
-        print('INITIALIZATION', datum[1:])
+        #print('INITIALIZATION', datum[1:])
         if len(datum) > 1:
             for thing in datum[1:]:
                 if thing[0] == 'Keeping':
@@ -461,7 +460,7 @@ class WhereClause:
     
     @staticmethod
     def parse(datum,keep_type,counter):
-        print("WHERECLAUSE", datum)
+        #print("WHERECLAUSE", datum)
         datum = datum[1][0]
         logic = ''
         
@@ -622,8 +621,6 @@ class UntilClause:
     def passes(self,module):
         
         #print("NEED TO CHECK")
-        #print(self.logic)
-        #print(self.aux_pattern)
         code = [f'passes :- {self.logic}.', self.aux_pattern, f'#show passes/0.']
         found_patterns = module.detect_patterns('\n'.join(code))[0]
 

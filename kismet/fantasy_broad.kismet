@@ -1614,16 +1614,16 @@ pattern friend_of_friend(>PersonA, >PersonC):
     if PersonA likes PersonB >= 1, PersonB likes PersonC >= 1.
     
 pattern has_connection(>PersonA, <PersonB):
-    if PersonA likes PersonB >= 3, PersonA is chosen_one, PersonB is chosen_one.
+    if PersonA likes PersonB >= 1, PersonA is chosen_one, PersonB is chosen_one.
     
 pattern has_connection(>PersonA, <PersonB):
-    if PersonA likes PersonB <= 3, PersonA is chosen_one, PersonB is chosen_one.
+    if PersonA likes PersonB <= -1, PersonA is chosen_one, PersonB is chosen_one.
 
 pattern has_connection(>PersonA, <PersonB):
-    if PersonA loves PersonB <= 3,PersonA is chosen_one, PersonB is chosen_one.
+    if PersonA loves PersonB <= -1,PersonA is chosen_one, PersonB is chosen_one.
     
 pattern has_connection(>PersonA, <PersonB):
-    if PersonA loves PersonB >= 3,PersonA is chosen_one, PersonB is chosen_one.
+    if PersonA loves PersonB >= 1,PersonA is chosen_one, PersonB is chosen_one.
     
 pattern has_connection(>PersonA, <PersonB):
     if pattern(has_connection,PersonB, PersonA), PersonA is chosen_one, PersonB is chosen_one .
