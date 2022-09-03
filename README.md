@@ -5,7 +5,7 @@ Kismet is a light weight social simulation language/engine.
 To use Kismet you will need:
 
 * python 3.7+
-* clingo -- https://github.com/potassco/clingo
+* clingo -- https://github.com/potassco/clingo https://github.com/potassco/clingo/releases
 
 Make sure that the clingo binary is in your system path
 
