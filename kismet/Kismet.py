@@ -2833,7 +2833,7 @@ class KismetModule():
                 action_str += f'occurred(action({",".join(action)})).\n'
                 action_file.write(f'occurred(action({",".join(action)})).\n')
     def calculate_events(self):
-        events = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']],clingo_exe=self.clingo_exe)
+        events = solve([f'"{os.path.join(self.path,t)}"' for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']],clingo_exe=self.clingo_exe)
         
         events = [[parse_predicate(pred) for pred in event[0]['terms']] for event in  events[0]['to_occur']]
         self.event_history.append(events)
@@ -2843,7 +2843,7 @@ class KismetModule():
             for event in events:
                 event_file.write(f'occurred(to_occur({",".join(event)})).\n')
         
-        updates = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_occurred_events.lp', f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp',f'{self.module_file}_actions.lp',f'{self.module_file}_action_results.lp','results_processing.lp']],clingo_exe=self.clingo_exe)[0]
+        updates = solve([f'"{os.path.join(self.path,t)}"' for t in ['default.lp', f'{self.module_file}_event_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_occurred_events.lp', f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp',f'{self.module_file}_actions.lp',f'{self.module_file}_action_results.lp','results_processing.lp']],clingo_exe=self.clingo_exe)[0]
         
         for result in updates['add']:
 
@@ -2894,7 +2894,7 @@ class KismetModule():
         
         #print(' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']]))
         
-        volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']],clingo_exe=self.clingo_exe)
+        volitions = solve([f'"{os.path.join(self.path,t)}"' for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_population_locations.lp','volition.lp',f'{self.module_file}_history.lp']],clingo_exe=self.clingo_exe)
         #Only select one of a given Actor, Action Type pair -- this is to stop combinatorics from dominating the likelihood
         volitions_by_actor = {}
         for volition in volitions[0]['likelihood']:
@@ -2911,11 +2911,11 @@ class KismetModule():
         return possible_actions
     
     def calculate_action_results(self):
-        action_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_results.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']],clingo_exe=self.clingo_exe)
+        action_results = solve([f'"{os.path.join(self.path,t)}"' for t in ['default.lp', f'{self.module_file}_action_results.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp',f'{self.module_file}_history.lp','results_processing.lp']],clingo_exe=self.clingo_exe)
         return action_results
     
     def calculate_observability(self):
-        visibility_results = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','observation.lp']],clingo_exe=self.clingo_exe)
+        visibility_results = solve([f'"{os.path.join(self.path,t)}"' for t in ['default.lp', f'{self.module_file}_action_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_actions.lp',f'{self.module_file}_population_locations.lp','observation.lp']],clingo_exe=self.clingo_exe)
         return visibility_results
     
     def knowledge2asp(self):        
@@ -3297,7 +3297,7 @@ class KismetModule():
             
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
-        patterns = solve([os.path.join(self.path,t) for t in 
+        patterns = solve([f'"{os.path.join(self.path,t)}"' for t in 
                           ['default.lp',  f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp', f'{self.module_file}_history.lp', 'pattern_filter.lp']],clingo_exe=self.clingo_exe)
         
         if person_filter:
@@ -3325,7 +3325,7 @@ class KismetModule():
         with open(os.path.join(self.path,'pattern_detection.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_detection_text))
        
-        patterns = solve([os.path.join(self.path,t) for t in 
+        patterns = solve([f'"{os.path.join(self.path,t)}"' for t in 
                           ['default.lp',  f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_detection.lp']],clingo_exe=self.clingo_exe)
         return patterns
     def patterns_to_json(self,pattern_filter=None,person_filter=None):
@@ -3351,7 +3351,7 @@ class KismetModule():
         
         with open(os.path.join(self.path,'pattern_filter.lp'),'w') as outfile:
             outfile.write('\n'.join(pattern_filter_text))
-        patterns = solve([os.path.join(self.path,t) for t in 
+        patterns = solve([f'"{os.path.join(self.path,t)}"' for t in 
                           ['default.lp',  f'{self.module_file}_pattern_rules.lp', f'{self.module_file}_population.lp',f'{self.module_file}_history.lp','pattern_filter.lp']],clingo_exe=self.clingo_exe)
         if person_filter:
             person_filter = set(person_filter)
@@ -3483,7 +3483,7 @@ class KismetModule():
                 each_turn_slots[(location,role)] = role_slots[role]
                 
         #print('LOCATION VOLITION', ' '.join([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp', f'{self.module_file}_population.lp','location_volition.lp']]))       
-        goto_volitions = solve([os.path.join(self.path,t) for t in ['default.lp', f'{self.module_file}_location_rules.lp',  f'{self.module_file}_pattern_rules.lp',f'{self.module_file}_population.lp','location_volition.lp']],clingo_exe=self.clingo_exe)
+        goto_volitions = solve([f'"{os.path.join(self.path,t)}"' for t in ['default.lp', f'{self.module_file}_location_rules.lp',  f'{self.module_file}_pattern_rules.lp',f'{self.module_file}_population.lp','location_volition.lp']],clingo_exe=self.clingo_exe,debug=True)
         
         volitions_by_actor = {}
         for volition in goto_volitions[0]['go_to']:
@@ -3506,9 +3506,6 @@ class KismetModule():
                     slot = (location,role)
                     if available_slots[slot] > 0:
                         available_locations.add(location)
-            for slot in available_slots:
-                if slot[0] == 'location430':
-                    print(slot,available_slots[slot])
             volitions_by_actor[actor] = sorted([(logit,location) for logit, location in volitions_by_actor[actor] if location in available_locations])
             
             
